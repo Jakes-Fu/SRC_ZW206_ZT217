@@ -1,0 +1,6 @@
+---- MMISET_GetWatchMenuStyle Matches (5 in 3 files) ----
+Mmiset_export.h (ms_mmi_main\source\mmi_app\app\setting\h):PUBLIC uint8 MMISET_GetWatchMenuStyle(void);
+Watch_launcher_main.c (ms_mmi_main\source\mmi_app\app\launcher\c):    uint8 style = MMISET_GetWatchMenuStyle();
+Watch_launcher_main.c (ms_mmi_main\source\mmi_app\app\launcher\c):    //uint8 style = MMISET_GetWatchMenuStyle();
+Watch_set_main.c (ms_mmi_main\source\mmi_app\app\setting\c):PUBLIC uint8 MMISET_GetWatchMenuStyle(void)
+Watch_set_main.c (ms_mmi_main\source\mmi_app\app\setting\c):		mainmenustyle_id = MMISET_GetWatchMenuStyle( );
