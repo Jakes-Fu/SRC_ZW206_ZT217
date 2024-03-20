@@ -486,18 +486,58 @@ LOCAL void ZdtWatch_Factory_KEY_DrawTestKeyBG( void )
     char s_test_key_text[][9] =
     {
         {"RED"}, 
+	 {"GREEN"}, 
     };
 	    
-    draw_rect.top = 0;
     LCD_FillRect(lcd_dev_info, draw_rect, MMI_WHITE_COLOR);
-    
-    for (y=0;y<1;y++)
+
+	text_style.align = ALIGN_HVMIDDLE;
+	text_style.font = MMI_DEFAULT_TEXT_FONT;
+	text_style.font_color = MMI_BLACK_COLOR;
+
+	draw_rect.left = 20;
+	draw_rect.top = 10;
+	draw_rect.right = 108;
+	draw_rect.bottom = 60;
+	string.wstr_len = strlen(s_test_key_text[0]);
+	MMI_STRNTOWSTR(disp_text,ZDT_TEST_KEY_TEXT_MAX_LEN, (uint8*)s_test_key_text[0],string.wstr_len,string.wstr_len);
+	string.wstr_ptr = disp_text;
+	GUISTR_DrawTextToLCDInRect( 
+                (const GUI_LCD_DEV_INFO *)lcd_dev_info,
+                (const GUI_RECT_T      *)&draw_rect,       //the fixed display area
+                (const GUI_RECT_T      *)&draw_rect,       //用户要剪切的实际区域
+                (const MMI_STRING_T    *)&string,
+                &text_style,
+                state,
+                GUISTR_TEXT_DIR_AUTO
+                ); 
+	ZDT_TestEditWinDrawFocusRect(draw_rect, MMI_BLACK_COLOR);
+	
+	draw_rect.left = 20;
+	draw_rect.top = 70;
+	draw_rect.right = 108;
+	draw_rect.bottom = 120;
+	string.wstr_len = strlen(s_test_key_text[1]);
+	MMI_STRNTOWSTR(disp_text,ZDT_TEST_KEY_TEXT_MAX_LEN, (uint8*)s_test_key_text[1],string.wstr_len,string.wstr_len);
+	string.wstr_ptr = disp_text;
+	GUISTR_DrawTextToLCDInRect( 
+                (const GUI_LCD_DEV_INFO *)lcd_dev_info,
+                (const GUI_RECT_T      *)&draw_rect,       //the fixed display area
+                (const GUI_RECT_T      *)&draw_rect,       //用户要剪切的实际区域
+                (const MMI_STRING_T    *)&string,
+                &text_style,
+                state,
+                GUISTR_TEXT_DIR_AUTO
+                ); 
+	ZDT_TestEditWinDrawFocusRect(draw_rect, MMI_BLACK_COLOR);
+	
+    /*for (y=0;y<1;y++)
     {
-        for (x=0;x<1;x++)
+        for (x=0;x<2;x++)
         {
-            draw_rect.left = (uint16)ZDT_TEST_KEY_MARGIN_X + (uint16)(x * TESTPAD_KEY_WIDTH);
+            draw_rect.left = (uint16)ZDT_TEST_KEY_MARGIN_X + (uint16)(x * TESTPAD_KEY_WIDTH)+5;
             draw_rect.top = ZDT_TEST_KEY_MARGIN_Y + y * ZDT_TEST_KEY_HIGHT;
-            draw_rect.right = draw_rect.left + TESTPAD_KEY_WIDTH-1;
+            draw_rect.right = draw_rect.left + TESTPAD_KEY_WIDTH+10;
             draw_rect.bottom = draw_rect.top + ZDT_TEST_KEY_HIGHT-1;
             ZDT_TestEditWinDrawFocusRect(draw_rect, MMI_BLACK_COLOR);
             
@@ -524,7 +564,7 @@ LOCAL void ZdtWatch_Factory_KEY_DrawTestKeyBG( void )
                 GUISTR_TEXT_DIR_AUTO
                 ); 
         }
-    }
+    }*/
     
 }
 
@@ -549,9 +589,30 @@ LOCAL BOOLEAN ZDT_TestKeyboard(MMI_MESSAGE_ID_E key_msg_id)
 	
 	
 	//SCI_TRACE_ID(TRACE_TOOL_CONVERT,MMIENG_UITESTWIN_1908_112_2_18_2_17_27_62,(uint8*)"d",key_msg_id);
-	
-	
+
 	switch (key_msg_id)
+	{
+		case MSG_KEYUP_RED:
+			draw_rect.left = 20;
+			draw_rect.top = 10;
+			draw_rect.right = 108;
+			draw_rect.bottom = 60;
+			LCD_FillRect(&lcd_dev_info, draw_rect, MMI_BLACK_COLOR);
+			break;
+		case MSG_KEYDOWN_GREEN:
+		case MSG_KEYUP_GREEN:
+		case MSG_KEYDOWN_UP:
+			draw_rect.left = 20;
+			draw_rect.top = 70;
+			draw_rect.right = 108;
+			draw_rect.bottom = 120;
+			LCD_FillRect(&lcd_dev_info, draw_rect, MMI_BLACK_COLOR);
+			break;
+		default:
+			break;
+	}
+	
+	/*switch (key_msg_id)
 	{
         case MSG_KEYUP_RED:
               test_key_y = 0;
@@ -561,8 +622,8 @@ LOCAL BOOLEAN ZDT_TestKeyboard(MMI_MESSAGE_ID_E key_msg_id)
 
 	default:
 		break;
-    }
-    key_on_map_idx = test_key_y * 1 + test_key_x;
+    }*/
+    /*key_on_map_idx = test_key_y * 1 + test_key_x;
     key_on_map_idx %= ZDT_TEST_KEY_NUM;
     byte_idx = key_on_map_idx / 8;
     bit_idx = key_on_map_idx % 8;
@@ -570,7 +631,7 @@ LOCAL BOOLEAN ZDT_TestKeyboard(MMI_MESSAGE_ID_E key_msg_id)
     key_buf_byte = s_zdt_key_ind_buf[byte_idx];
     s_zdt_key_ind_buf[byte_idx] &= (unsigned char)(~(1<<bit_idx));/*lint !e502*/  
     // show key passed
-    if ((key_buf_byte^s_zdt_key_ind_buf[byte_idx]) != 0)
+    /*if ((key_buf_byte^s_zdt_key_ind_buf[byte_idx]) != 0)
     {        
         {        
             GUI_RECT_T rect = MMITHEME_GetClientRect();
@@ -586,7 +647,7 @@ LOCAL BOOLEAN ZDT_TestKeyboard(MMI_MESSAGE_ID_E key_msg_id)
             update_rect.bottom = rect.bottom;
             GUILCD_InvalidateRect(GUI_MAIN_LCD_ID,update_rect, GUIREF_GetUpdateBlockSet(GUI_BLOCK_MAIN));
         }
-    }
+    }*/
    
     return (0);
 }
@@ -888,7 +949,7 @@ void ZdtWatch_Factory_SWVER_ShowData(void)
     uint16 cal_ok[10] = {0x5DF2, 0x6821, 0x51C6,0}; //已校准5DF2 6821 51C6 
     uint16 cal_fail[10] = {0x672A, 0x6821, 0x51C6,0}; //未校准672A 6821 51C6 
     GUI_FONT_T f_big =FACTORY_BIG_FONT;
-    GUI_FONT_T f_mid =FACTORY_NORMAL_FONT;
+    GUI_FONT_T f_mid =SONG_FONT_12;
     BOOLEAN is_calibration = FALSE; //zdt_app_is_calibrationed();
     uint32 cal_info = 0;
     
@@ -922,9 +983,10 @@ void ZdtWatch_Factory_SWVER_ShowData(void)
         GUISTR_TEXT_DIR_AUTO
         ); 
 
+	text_style.align = ALIGN_LVMIDDLE;
     text_style.font = f_mid-1;//yangyu modify
-    cur_rect.top    = cur_rect.bottom+WATCH_FACTORY_ITEM_HEIGHT -10; //yangyu
-    cur_rect.bottom = cur_rect.top + WATCH_FACTORY_ITEM_HEIGHT +15;//yangyu
+    cur_rect.top    = cur_rect.bottom+2; //yangyu
+    cur_rect.bottom = cur_rect.top + 24;//yangyu
     //cur_str_t.wstr_len = sprintf((char*)disp_str, (char*) "%s", zdt_sw_rev);
     cur_str_t.wstr_len = sprintf((char*)disp_str, (char*) "%s_%s", zdt_sw_rev, VERSION_GetInfo(BUILD_TIME));//yangyu add
     #ifndef WIN32
@@ -947,8 +1009,8 @@ void ZdtWatch_Factory_SWVER_ShowData(void)
     SCI_MEMSET(disp_str,0,sizeof(disp_str));
     SCI_MEMSET(disp_wstr,0,sizeof(disp_wstr));
     cur_rect.top    = cur_rect.bottom+2;//10*SCALE; 
-    cur_rect.bottom = cur_rect.top + WATCH_FACTORY_ITEM_HEIGHT;
-    cur_str_t.wstr_len = sprintf((char*)disp_str, (char*) "IMEI: %s",g_zdt_phone_imei);
+    cur_rect.bottom = cur_rect.top + 24;
+    cur_str_t.wstr_len = sprintf((char*)disp_str, (char*) "IMEI:%s",g_zdt_phone_imei);
     cur_str_t.wstr_ptr = disp_wstr;
     MMI_STRNTOWSTR(cur_str_t.wstr_ptr, cur_str_t.wstr_len, (uint8*)disp_str, cur_str_t.wstr_len, cur_str_t.wstr_len);
     GUISTR_DrawTextToLCDInRect( 
@@ -966,8 +1028,8 @@ void ZdtWatch_Factory_SWVER_ShowData(void)
         SCI_MEMSET(disp_str,0,sizeof(disp_str));
         SCI_MEMSET(disp_wstr,0,sizeof(disp_wstr));
         cur_rect.top    = cur_rect.bottom+2;//10*SCALE; 
-        cur_rect.bottom = cur_rect.top + WATCH_FACTORY_ITEM_HEIGHT;
-        cur_str_t.wstr_len = sprintf((char*)disp_str, (char*) "IMSI: %s",g_zdt_sim_imsi);
+        cur_rect.bottom = cur_rect.top + 24;
+        cur_str_t.wstr_len = sprintf((char*)disp_str, (char*) "IMSI:%s",g_zdt_sim_imsi);
         cur_str_t.wstr_ptr = disp_wstr;
         MMI_STRNTOWSTR(cur_str_t.wstr_ptr, cur_str_t.wstr_len, (uint8*)disp_str, cur_str_t.wstr_len, cur_str_t.wstr_len);
         GUISTR_DrawTextToLCDInRect( 
@@ -983,8 +1045,8 @@ void ZdtWatch_Factory_SWVER_ShowData(void)
         SCI_MEMSET(disp_str,0,sizeof(disp_str));
         SCI_MEMSET(disp_wstr,0,sizeof(disp_wstr));
         cur_rect.top    = cur_rect.bottom+0;//10*SCALE; 
-        cur_rect.bottom = cur_rect.top + WATCH_FACTORY_ITEM_HEIGHT+10;
-        cur_str_t.wstr_len = sprintf((char*)disp_str, (char*) "ICCID: %s",g_zdt_sim_iccid);
+        cur_rect.bottom = cur_rect.top + 24;
+        cur_str_t.wstr_len = sprintf((char*)disp_str, (char*) "ICCID:%s",g_zdt_sim_iccid);
         cur_str_t.wstr_ptr = disp_wstr;
         MMI_STRNTOWSTR(cur_str_t.wstr_ptr, cur_str_t.wstr_len, (uint8*)disp_str, cur_str_t.wstr_len, cur_str_t.wstr_len);
         GUISTR_DrawTextToLCDInRect( 
@@ -1067,7 +1129,7 @@ void ZdtWatch_Factory_SWVER_ShowData(void)
         cur_str_t.wstr_ptr = cal_fail;
     }
     cur_rect.top    = cur_rect.bottom+13;//26*SCALE; 
-    cur_rect.bottom = cur_rect.top + WATCH_FACTORY_ITEM_HEIGHT;
+    cur_rect.bottom = cur_rect.top + 24;
     GUISTR_DrawTextToLCDInRect( 
         (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
         (const GUI_RECT_T      *)&cur_rect,       
@@ -1374,7 +1436,7 @@ static void ZdtWatch_Factory_LoopBack_Stop(void)
 extern void ZdtWatch_Factory_LoopBack_Start(void)
 {
     #if defined(W18_FACTORY_LOOP_BACK_TEST)
-    MMISRVAUD_EnableVoiceLB(TRUE, 3) ;
+    MMISRVAUD_EnableVoiceLB(TRUE, 9) ;
     #else
     MMISRVAUD_EnableVoiceLB(TRUE, 9) ;//yangyu delete modify
     #endif
@@ -5742,12 +5804,12 @@ LOCAL MMI_RESULT_E  HandleZDT_WatchFactoryWinMsg(
 #ifdef ZDT_PLAY_RING_CUSTOM
                     MMIAPISET_PlayCustomRing(MMISET_CUST_ENG_SUCCESS,1);
 #endif
-                    watch_factory_key_power_hdlr();
+                    //watch_factory_key_power_hdlr();
                 }                
              }
              else
              {
-    		    watch_factory_key_power_hdlr();
+    		    //watch_factory_key_power_hdlr();
              }
         break;
         
@@ -6025,7 +6087,7 @@ LOCAL MMI_RESULT_E  HandleZDT_WatchListFactoryWinMsg(
             ZdtWatch_BackLight(TRUE);
             GUILIST_SetMaxItem(ctrl_id, 20, FALSE);
             GUILIST_SetRect(ctrl_id, &full_rect);
-            CTRLLIST_SetTextFont(ctrl_id, SONG_FONT_25, MMI_WHITE_COLOR);
+            CTRLLIST_SetTextFont(ctrl_id, SONG_FONT_20, MMI_WHITE_COLOR);
             Watch_FactoryListInit();
             #if 0
             uint32 idx = 0;
