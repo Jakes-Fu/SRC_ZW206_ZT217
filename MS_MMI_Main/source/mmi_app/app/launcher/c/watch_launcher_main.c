@@ -2440,11 +2440,17 @@ LOCAL void Launcher_App_Start(GUI_POINT_T click_point, MMI_WIN_ID_T win_id)
                 TRACE_APP_LAUNCHER("there is not app rect");
                 return;
             }
+
 		//TRACE_APP_LAUNCHER("click_point.x = %d, click_point.y=%d, i = %d", click_point.x, click_point.y, i);
-            rect.left = win_rect.left + horizontal_space + (horizontal_space + app_menu_img_width)*((i-page_index*4)%2);
-            rect.top = win_rect.top + vertical_space  + (vertical_space + app_menu_img_height)*((i-page_index*4)/2);
-            rect.right = rect.left + app_menu_img_width;
-            rect.bottom = rect.top + app_menu_img_height+50;
+            rect.left = win_rect.left + (horizontal_space + app_menu_img_width)*((i%4)%2) ;
+            rect.top = win_rect.top + (vertical_space + app_menu_img_height)*((i%4)/2);
+            rect.right = rect.left + app_menu_img_width + horizontal_space;
+	     rect.bottom = rect.top + app_menu_img_height + vertical_space;	
+		 //TRACE_APP_LAUNCHER("rect.top = %d, rect.bottom = %d", rect.top, rect.bottom);
+            if(click_point.y > 60 && rect.bottom < click_point.y && i%4 > 1){
+            		rect.bottom = rect.top + app_menu_img_height + vertical_space + 50;
+		}
+		
             if(GUI_PointIsInRect(click_point,rect))
             {
                 if(g_app_list_info[i].check_sim == 1 && MMIAPIPHONE_GetSimStatus(MN_DUAL_SYS_1) != SIM_STATUS_OK)
