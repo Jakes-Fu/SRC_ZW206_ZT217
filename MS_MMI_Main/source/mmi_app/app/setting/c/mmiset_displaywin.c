@@ -2131,7 +2131,7 @@ MMI_IMAGE_ID_T         res_progress_bg = IMAGE_ZTE_CONTROL_PROGRESS_BG;
 #if defined(ADD_TITLE_IN_ALL_SETTING_MENU)	
                      if((point.x > 0&& point.x <42)&&(point.y > 0 &&  point.y < MMI_SPECIAL_TITLE_HEIGHT))
                      {
-			     MMK_CloseWin(win_id);
+			     //MMK_CloseWin(win_id);
 			     return;	 
                      }
 #endif
@@ -2378,7 +2378,7 @@ LOCAL MMI_RESULT_E HandleVolumeWindow(
 
                      if (GUI_PointIsInRect(point, back_rect))
                      {
-			     MMK_CloseWin(win_id);
+			     //MMK_CloseWin(win_id);
 			     return;	 
                      }
 		}

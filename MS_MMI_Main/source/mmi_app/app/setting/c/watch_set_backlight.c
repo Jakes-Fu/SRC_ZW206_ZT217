@@ -311,7 +311,7 @@ LOCAL MMI_RESULT_E HandleSettingsBacklightWindow(
 		point.y = MMK_GET_TP_Y(param);
 		if (GUI_PointIsInRect(point, back_rect))
 		{
-			MMK_CloseWin( winId);
+			//MMK_CloseWin( winId);
 			return;
 		}
 	}

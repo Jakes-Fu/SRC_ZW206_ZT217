@@ -370,7 +370,7 @@ LOCAL MMI_RESULT_E  HandleSettingsMainWindow(
 	        point.x = MMK_GET_TP_X(param);
 	        point.y = MMK_GET_TP_Y(param);
 		if (GUI_PointIsInRect(point, back_rect))
-			MMK_CloseWin( win_id);
+			//MMK_CloseWin( win_id);
 			//Settings_Main_APP_CANCEL();
 		break;
 	}

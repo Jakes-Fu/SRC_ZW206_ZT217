@@ -563,7 +563,7 @@ LOCAL MMI_RESULT_E _Callback_CallRingSelectWin( MMI_WIN_ID_T win_id, MMI_MESSAGE
 		point.y = MMK_GET_TP_Y(param);
 		if (GUI_PointIsInRect(point, back_rect))
 		{
-			MMK_CloseWin( win_id);
+			//MMK_CloseWin( win_id);
 			return;
 		}
 	}

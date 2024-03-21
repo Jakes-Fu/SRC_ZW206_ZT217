@@ -483,7 +483,7 @@ LOCAL MMI_RESULT_E  HandleSettingsRegardWindow(
 
                      if (GUI_PointIsInRect(point, back_rect))
                      {
-			     MMK_CloseWin(win_id);
+			     //MMK_CloseWin(win_id);
 			     return;	 
                      }
 		}
