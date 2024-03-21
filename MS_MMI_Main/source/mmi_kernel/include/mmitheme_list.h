@@ -957,6 +957,13 @@ enum
        //|---------------------------|
 	GUIITEM_STYLE_TWO_TEXT_AND_ONE_ICON_MS,
 	//[end]
+
+	//|---------------------------|
+       //| icon     	text          icon   	|
+       //|      		text                	|
+       //|			icon				|
+       //|---------------------------|
+	GUIITEM_STYLE_TWO_TEXT_AND_THREE_ICON_MS,
 // watch commonlist end
 #ifdef ADULT_WATCH_SUPPORT
 /*************Name Rule************

@@ -74,7 +74,7 @@ PUBLIC void CommonWin_SetTextBoxStyle(
         textBg.color   = MMI_BLACK_COLOR;
     }
 #if defined SCREEN_SHAPE_CIRCULAR
-    tempFont = DP_FONT_22;
+    tempFont = DP_FONT_36;
 #elif defined SCREEN_SHAPE_SQUARE
     tempFont = WATCH_COMMONWIN_NORMAL_FONT;
 #endif

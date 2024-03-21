@@ -3707,7 +3707,57 @@ LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_2_text_and_1_icon_ms =
 
     0, MMILIST_INVALID_ITEM_INDEX
 };
+//|---------------------------|
+//| icon     	text          icon   	|
+//|      		text                	|
+//|			icon				|
+//|---------------------------|
+//GUIITEM_STYLE_TWO_TEXT_AND_THREE_ICON_MS,
+LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_2_text_and_3_icon_ms =
+{
+    43, 43,
 
+    {
+        	{
+            		0,
+            		{ 0, 4, 50, 40},
+            		{ 0, 4, 50, 40},
+            		0, 0,
+            		0, 0
+        	},
+        	{
+			0,
+			{ 45, 5, 120 , 25},
+			{ 45, 5, 120,  25},
+			MMI_LIST_DEFAULT_ITEM_FONT+2, MMI_LIST_DEFAULT_ITEM_FONT+2,
+			0, 0
+		},
+		{
+			0,
+			{ 45, 20, 125, 42},
+			{ 45, 20, 125, 42},
+			MMI_LIST_DEFAULT_ITEM_FONT, MMI_LIST_DEFAULT_ITEM_FONT,
+			0, 0
+		},
+        	{
+            		0,
+            		{ 115, 5, 128, 35},
+            		{ 115, 5, 128, 35},
+            		0, 0,
+            		0, 0
+        	},
+        	{
+            		0,
+            		{ 0, 42, 128, 43},
+            		{ 0, 42, 128, 43},
+            		0, 0,
+            		0, 0
+        	},
+        {0},
+    },
+
+    0, MMILIST_INVALID_ITEM_INDEX
+};
 //============================================================================//
 //                                   For watch                                //
 //============================================================================//
@@ -5448,6 +5498,7 @@ LOCAL THEMELIST_STYLE_TABLE_T const s_style_table[] =
 #endif
 
 	{GUIITEM_STYLE_TWO_TEXT_AND_ONE_ICON_MS, &s_item_style_2_text_and_1_icon_ms},
+	{GUIITEM_STYLE_TWO_TEXT_AND_THREE_ICON_MS, &s_item_style_2_text_and_3_icon_ms},
 //============================================================================//
 //                                   For watch                                //
 //============================================================================//

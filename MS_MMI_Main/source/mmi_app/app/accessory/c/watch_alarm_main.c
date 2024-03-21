@@ -424,6 +424,42 @@ LOCAL BOOLEAN AlarmListGetTimeStr( SCI_TIME_T* sys_time_ptr, MMI_STRING_T* time_
 //  Author: qi.liu1
 //  Note:绘制闹钟list
 /*****************************************************************************/
+LOCAL void AlarmList_appendItem(
+					MMI_CTRL_ID_T listCtrlId,
+					MMI_STRING_T str1,
+                                    MMI_STRING_T str2,
+                                    MMI_IMAGE_ID_T image)
+{
+	GUILIST_ITEM_T          item_t          = {0};
+    GUILIST_ITEM_DATA_T     item_data       = {0};
+
+    item_t.item_style = GUIITEM_STYLE_TWO_TEXT_AND_THREE_ICON_MS;
+
+    item_t.item_data_ptr = &item_data;
+
+    item_data.item_content[0].item_data_type            = GUIITEM_DATA_IMAGE_ID;
+    item_data.item_content[0].item_data.image_id        = image;
+
+    item_data.item_content[1].item_data_type            = GUIITEM_DATA_TEXT_BUFFER;
+    item_data.item_content[1].item_data.text_buffer     = str1;
+
+    item_data.item_content[2].item_data_type            = GUIITEM_DATA_TEXT_BUFFER;
+    item_data.item_content[2].item_data.text_buffer     = str2;
+
+	item_data.item_content[3].item_data_type            = GUIITEM_DATA_IMAGE_ID;
+    item_data.item_content[3].item_data.image_id        = res_aw_alarm_ic_icon;
+
+	item_data.item_content[4].item_data_type            = GUIITEM_DATA_IMAGE_ID;
+    item_data.item_content[4].item_data.image_id        = res_aw_alarm_ic_reg;
+
+     //不画分割线
+    GUILIST_SetListState( listCtrlId, GUILIST_STATE_SPLIT_LINE, FALSE );
+    //不画高亮条
+    GUILIST_SetListState( listCtrlId, GUILIST_STATE_NEED_HIGHTBAR, FALSE );
+
+    GUILIST_AppendItem(listCtrlId, &item_t);
+}
+
 LOCAL void AlarmListDrawList( MMI_WIN_ID_T win_id, MMI_CTRL_ID_T list_ctr_id, uint16 event_num )
 {
     MMI_IMAGE_ID_T onoff_image = 0;
@@ -454,7 +490,7 @@ LOCAL void AlarmListDrawList( MMI_WIN_ID_T win_id, MMI_CTRL_ID_T list_ctr_id, ui
         uint16      index = 0;
         uint16      itemIndex = 0;
         uint16      curSelection = 0;
-        GUI_RECT_T  listRect = { WATCH_ALARM_LIST_X+25, WATCH_ALARM_LIST_Y-3, WATCH_ALARM_LIST_X+WATCH_ALARM_LIST_W-30, WATCH_ALARM_LIST_Y+WATCH_ALARM_LIST_H };
+        GUI_RECT_T  listRect = { 0, 0, 128, 128 };
 		
         curSelection = GUILIST_GetCurItemIndex( list_ctr_id );
 #ifndef ADULT_WATCH_SUPPORT
@@ -516,7 +552,7 @@ LOCAL void AlarmListDrawList( MMI_WIN_ID_T win_id, MMI_CTRL_ID_T list_ctr_id, ui
                 onoff_image = IMAGE_SWITCH_OFF_SELECTED;
             }
 
-            WATCHCOM_LISTITEM_DRAW_2STR_1ICON_2LINE(list_ctr_id, timeStr, repeatStr,onoff_image);
+            AlarmList_appendItem(list_ctr_id, timeStr, repeatStr,img_id_list[index]);
 
             //temp:check
             CTRLLIST_SetItemStateById(list_ctr_id,itemIndex,GUIITEM_STATE_CONTENT_CHECK,TRUE);
@@ -538,7 +574,7 @@ LOCAL void AlarmListDrawList( MMI_WIN_ID_T win_id, MMI_CTRL_ID_T list_ctr_id, ui
         }
         //将某一item中的子内容，设置成GUIITEM_CONTENT_STATE_CHECK模式，
         //用ctrl内部发出MSG_CTL_LIST_CHECK_CONTENT消息
-        SCI_MEMSET(&s_item_style, 0, sizeof(THEMELIST_ITEM_STYLE_T));
+        /*SCI_MEMSET(&s_item_style, 0, sizeof(THEMELIST_ITEM_STYLE_T));
         SCI_MEMCPY(&s_item_style, itemstyle_ptr, sizeof(THEMELIST_ITEM_STYLE_T));
         s_item_style.content[0].state = GUIITEM_CONTENT_STATE_CHECK;
         s_item_style.content[1].state = GUIITEM_CONTENT_STATE_CHECK;
@@ -547,7 +583,7 @@ LOCAL void AlarmListDrawList( MMI_WIN_ID_T win_id, MMI_CTRL_ID_T list_ctr_id, ui
         {
             GUILIST_SetItemStyleEx(list_ctr_id, i, &s_item_style);
 			
-        }
+        }*/
     }
 	
 }
@@ -613,7 +649,7 @@ LOCAL void Alarm_MainList_FULL_PAINT( MMI_WIN_ID_T win_id )
 	//	GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, res_aw_alarm_ic_al1,&lcd_dev_info);
             //icon & label
         //AlarmListSetIconLabel( eventNum );
-    for(i=0;i<eventNum;i++){
+    /*for(i=0;i<eventNum;i++){
 			al_num=i%3;
 			 point.x=0;
 			 point.y=((WATCH_ALARM_LIST_Y)*i)+20+(i*20);
@@ -633,7 +669,7 @@ LOCAL void Alarm_MainList_FULL_PAINT( MMI_WIN_ID_T win_id )
 			  GUIRES_DisplayImg(&point,PNULL,PNULL,win_id,res_aw_alarm_ic_reg,&lcd_dev_info); }
       
 	
-			}
+			}*/
 	
   //      //button
         //AlarmListUpdeteButton( eventNum );

@@ -689,6 +689,7 @@ RES_ADD_IMG(res_aw_alarm_ic_al1,"\\MMI_RES_##\\IMAG\\Alarm\\alarm1.png",IMG_CMP_
 RES_ADD_IMG(res_aw_alarm_ic_al2,"\\MMI_RES_##\\IMAG\\Alarm\\alarm2.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(res_aw_alarm_ic_al3,"\\MMI_RES_##\\IMAG\\Alarm\\alarm3.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(res_aw_alarm_ic_icon,"\\MMI_RES_##\\IMAG\\Alarm\\icon.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(res_aw_alarm_ic_empty,"\\MMI_RES_##\\IMAG\\Alarm\\no_alarm.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_STRING(TXT_ALARM_DELAY_NOTE,"Ring again in 5 minutes")
 #endif
 

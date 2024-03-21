@@ -256,6 +256,7 @@ LOCAL BOOLEAN SetItemStyle(
     case GUIITEM_STYLE_1STR_1LINE_CHECK_LEFT_ADULTWATCH:
 #endif
 	case GUIITEM_STYLE_TWO_TEXT_AND_ONE_ICON_MS:
+	case GUIITEM_STYLE_TWO_TEXT_AND_THREE_ICON_MS:
 //============================================================================//
 //                                   For watch                                //
 //============================================================================//
