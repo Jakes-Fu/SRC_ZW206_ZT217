@@ -479,7 +479,7 @@ LOCAL void AlarmListDrawList( MMI_WIN_ID_T win_id, MMI_CTRL_ID_T list_ctr_id, ui
     if( 0 == event_num )
     {
         //hide list
-        GUI_RECT_T  emptyListRect = { 0, 0, 0, 0 };
+        GUI_RECT_T  emptyListRect = {0, 0, 0, 0};
 
         GUILIST_SetRect( list_ctr_id, &emptyListRect );
         GUILIST_RemoveAllItems( list_ctr_id );
@@ -490,7 +490,8 @@ LOCAL void AlarmListDrawList( MMI_WIN_ID_T win_id, MMI_CTRL_ID_T list_ctr_id, ui
         uint16      index = 0;
         uint16      itemIndex = 0;
         uint16      curSelection = 0;
-        GUI_RECT_T  listRect = { 0, 0, 128, 128 };
+        GUI_RECT_T  listRect = {0};
+	 MMK_GetWinRect(win_id, &listRect);
 		
         curSelection = GUILIST_GetCurItemIndex( list_ctr_id );
 #ifndef ADULT_WATCH_SUPPORT
@@ -645,7 +646,7 @@ LOCAL void Alarm_MainList_FULL_PAINT( MMI_WIN_ID_T win_id )
     else
     {
     AlarmListDrawList( win_id, MMIALM_MAIN_LIST_CTRL_ID, eventNum );
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, res_aw_alarm_ic_bg,&lcd_dev_info);
+    //GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, res_aw_alarm_ic_bg,&lcd_dev_info);
 	//	GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, res_aw_alarm_ic_al1,&lcd_dev_info);
             //icon & label
         //AlarmListSetIconLabel( eventNum );

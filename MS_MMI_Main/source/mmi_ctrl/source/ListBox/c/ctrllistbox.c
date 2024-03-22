@@ -13525,7 +13525,7 @@ LOCAL BOOLEAN isNeedDrawListItemBG(uint32 style_id)
         style_id == GUIITEM_STYLE_1STR_1LINE_RADIO_LAYOUT1 ||
         style_id == GUIITEM_STYLE_TWO_TEXT_AND_ONE_ICON_MS ||
         style_id == GUIITEM_STYLE_1ICON_1STR_1LINE_WITH_UNREAD_NUM ||
-		style_id == GUIITEM_STYLE_1ICON_2STR_1ICON ||
+		/*style_id == GUIITEM_STYLE_1ICON_2STR_1ICON ||*/
         style_id == GUIITEM_STYLE_TWO_LINE_ANIM_TEXT_AND_TEXT_ANIM)
     {
         is_need = TRUE;

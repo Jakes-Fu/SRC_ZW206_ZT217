@@ -455,12 +455,28 @@ LOCAL void UpdateCallLogWinList(void)
     uint8                       i = 0;
     GUILIST_ITEM_T item_t  = {0};
     GUILIST_ITEM_DATA_T item_data = {0};
+	GUI_RECT_T  listRect = { 0, 0, 0, 0 };
 
-    GUILIST_RemoveAllItems(ctrlId);
-
+	GUILIST_RemoveAllItems(ctrlId);
+	
     item_t.item_style = GUIITEM_STYLE_1ICON_2STR_1ICON;//GUIITEM_STYLE_2STR_2LINE_LAYOUT1;
     item_t.item_data_ptr = &item_data;
+	if(arraycallInfo->record_num == 0){
+		GUI_RECT_T  win_rect = { 0, 0, 0, 0 };
+		GUI_LCD_DEV_INFO  lcd_dev_info 	= {GUI_MAIN_LCD_ID, GUI_BLOCK_MAIN};
+		MMK_GetWinRect(WATCHCL_CALLLOG_WIN_ID, &win_rect);
+		LCD_FillRect(&lcd_dev_info, win_rect, MMI_BLACK_COLOR);
+	       GUILIST_SetRect( ctrlId, &listRect );
+		WATCHCOM_DisplayTips(WATCHCL_CALLLOG_WIN_ID,STR_CALL_LOG_EMPTY);
+		return;
+	}
 
+	 MMK_GetWinRect(WATCHCL_CALLLOG_WIN_ID, &listRect);
+	 listRect.top = MMI_SPECIAL_TITLE_HEIGHT+5;
+	
+	GUILIST_SetMaxItem(ctrlId, MMICL_RECORD_MAX_NUM, FALSE);
+	GUILIST_SetRect( ctrlId, &listRect );
+	
     for ( i = 0; i < arraycallInfo->record_num; i++ )
     {
         SCI_MEMSET(&numberStr,0,sizeof(MMI_STRING_T));
@@ -493,7 +509,13 @@ LOCAL void UpdateCallLogWinList(void)
             item_data.item_content[2].item_data.text_buffer.wstr_len = dateTimeStr.wstr_len;
         }
         item_data.item_content[3].item_data_type = GUIITEM_DATA_IMAGE_ID;        
-        item_data.item_content[3].item_data.image_id = arraycallInfo->call_info[i].calltype_image_id;
+        item_data.item_content[3].item_data.image_id = NULL;//arraycallInfo->call_info[i].calltype_image_id;
+
+	 //不画分割线
+    	GUILIST_SetListState( ctrlId, GUILIST_STATE_SPLIT_LINE, FALSE );
+    	//不画高亮条
+    	GUILIST_SetListState( ctrlId, GUILIST_STATE_NEED_HIGHTBAR, FALSE );
+		
         GUILIST_AppendItem (ctrlId, &item_t);
     #else
         WatchCOM_ListItem_Draw_1Str_1Icon(ctrlId, numberStr, arraycallInfo->call_info[i].calltype_image_id);
@@ -530,14 +552,14 @@ LOCAL MMI_RESULT_E   HandleClListWinMsg(
         case MSG_OPEN_WINDOW:
         {
             MMK_SetAtvCtrl(win_id, WATCHCL_CALLLOG_LIST_CTRL_ID);
-#ifdef SCREEN_SHAPE_CIRCULAR
+/*#ifdef SCREEN_SHAPE_CIRCULAR
             GUILIST_SetListState( WATCHCL_CALLLOG_LIST_CTRL_ID, GUILIST_STATE_TEXTSCROLL_ENABLE | GUILIST_STATE_AUTO_SCROLL, TRUE );//bug 2088117 增加list自动滚动属性
             GUILIST_SetRect(WATCHCL_CALLLOG_LIST_CTRL_ID, &list_rect);
 #endif
             GUILIST_SetListState(WATCHCL_CALLLOG_LIST_CTRL_ID, GUILIST_STATE_SPLIT_LINE, FALSE );//不需要分割线
             GUILIST_SetListState(WATCHCL_CALLLOG_LIST_CTRL_ID, GUILIST_STATE_NEED_HIGHTBAR, FALSE );
             GUILIST_SetListState(WATCHCL_CALLLOG_LIST_CTRL_ID, GUILIST_STATE_EFFECT_STR,TRUE);
-            GUILIST_SetMaxItem(WATCHCL_CALLLOG_LIST_CTRL_ID, MMICL_RECORD_MAX_NUM, FALSE);
+            GUILIST_SetMaxItem(WATCHCL_CALLLOG_LIST_CTRL_ID, MMICL_RECORD_MAX_NUM, FALSE);*/
             arraycallInfo = (WATCHCL_ARRAY_CALLINFO_T*)SCI_ALLOCAZ(sizeof(WATCHCL_ARRAY_CALLINFO_T));
             break;
         }

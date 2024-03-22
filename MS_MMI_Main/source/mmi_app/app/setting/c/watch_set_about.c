@@ -468,10 +468,10 @@ LOCAL MMI_RESULT_E  HandleSettingsRegardWindow(
 #endif
         case MSG_KEYDOWN_5:
         {
-            if(!MMIENG_IsMonkeyTestMode())
+            /*if(!MMIENG_IsMonkeyTestMode())
             {
                 MMIAPIENG_MainWinEnter( 0,FALSE );
-            }
+            }*/
             break;
         }
 		case MSG_TP_PRESS_UP:
