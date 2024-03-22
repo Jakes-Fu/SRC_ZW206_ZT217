@@ -1029,12 +1029,15 @@ LOCAL MMI_RESULT_E MMIWatchPanel_HandleWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_I
             break;
 
         case MSG_KEYUP_RED:
-            
-            if(MMK_IsFocusWin(win_id))
+            if(TRUE == MMIDEFAULT_IsBacklightOn())
             {
-                MMIZDT_OpenDialWin();
-                //MMIDEFAULT_CloseAllLight_Watch();
+                MMIDEFAULT_TurnOffBackLight();
+                MMIDEFAULT_CloseAllLight_Watch();//close LCD
+            }else
+            {
+                MMIDEFAULT_TurnOnBackLight();
             }
+            break;
             break;
         case MSG_SLIDEPAGE_OPENED:
             break;
