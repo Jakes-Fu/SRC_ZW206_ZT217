@@ -473,9 +473,12 @@ void MMK_DispatchMSGTp(
             MMK_StopTimer( MMI_TP_LONG_TIMER_ID );
             g_tp_long_timer_active = FALSE;
         }
-	 if(tppress_ptr->y > MMIZDT_GetScreenHight()){
+	//add by fys 2024/03/22
+	 /*if(tppress_ptr->y > MMIZDT_GetScreenHight()){
 	 	MMK_PostMsg(MMK_GerFocusMainWinHandle(), MSG_APP_CANCEL, PNULL, 0);
-	 }
+	 }*/
+	 //add end
+	 
         DispatchMSGTpUp((uint16)tppress_ptr->x, (uint16)tppress_ptr->y);
         break;
 

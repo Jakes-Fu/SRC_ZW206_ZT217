@@ -2066,7 +2066,7 @@ LOCAL MMI_RESULT_E  HandleZDT_TinyChatWinMsg(
         //}
         break;
         
-    case MSG_KEYUP_CANCEL:
+    //case MSG_KEYUP_CANCEL:
     case MSG_CTL_CANCEL:
     case MSG_APP_CANCEL:
         ZDT_LOG("HandleZDT_TinyChatWinMsg MSG_APP_CANCEL");

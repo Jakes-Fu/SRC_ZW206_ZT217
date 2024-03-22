@@ -413,6 +413,8 @@ PUBLIC MMI_RESULT_E HandleGallerytIPWinMsg(
 			break;
         case MSG_KEYDOWN_RED:
             break;
+	 case MSG_KEYUP_CANCEL:
+	 case MSG_APP_CANCEL:
         case MSG_KEYUP_RED:
             MMK_CloseWin(win_id);
             break;
