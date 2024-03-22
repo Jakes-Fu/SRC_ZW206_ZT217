@@ -599,6 +599,7 @@ LOCAL BOOLEAN ZDT_TestKeyboard(MMI_MESSAGE_ID_E key_msg_id)
 			draw_rect.bottom = 60;
 			LCD_FillRect(&lcd_dev_info, draw_rect, MMI_BLACK_COLOR);
 			break;
+		case MSG_APP_CANCEL:
 		case MSG_KEYDOWN_GREEN:
 		case MSG_KEYUP_GREEN:
 		case MSG_KEYDOWN_UP:
@@ -5791,6 +5792,11 @@ LOCAL MMI_RESULT_E  HandleZDT_WatchFactoryWinMsg(
 #endif //TOUCH_PANEL_SUPPORT //IGNORE9527
 
     case MSG_KEYDOWN_CANCEL:
+		if(g_em_test_idx == EM_TEST_KEY)
+             {
+                ZDT_TestKeyboard(msg_id);
+             }
+		break;
     case MSG_KEYDOWN_RED:
         break;
         
@@ -5832,7 +5838,6 @@ LOCAL MMI_RESULT_E  HandleZDT_WatchFactoryWinMsg(
                 watch_factory_key_enter_hdlr();
             }
         break;
-        
     case MSG_KEYUP_UP:
     case MSG_KEYUP_DOWN:
     case MSG_KEYUP_OK:
@@ -6138,11 +6143,10 @@ LOCAL MMI_RESULT_E  HandleZDT_WatchListFactoryWinMsg(
         break;
         
     case MSG_KEYDOWN_CANCEL:
-        break;
     case MSG_CTL_CANCEL:
     case MSG_KEYUP_CANCEL:
             //watch_factory_key_enter_hdlr(); 
-            MMK_CloseWin(win_id);
+            //MMK_CloseWin(win_id);
         break;
 
     case MSG_CLOSE_WINDOW:
