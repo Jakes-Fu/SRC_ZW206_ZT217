@@ -389,7 +389,7 @@ uint32 YX_VCHAT_GetGroupUnread(YX_GROUP_INFO_DATA_T * group_info)
     }
     for(i = 0; i < group_info->file_num; i ++)
     {
-        if(group_info->status_arr[i] != 0x31)
+        if(group_info->status_arr[i] != 0x31 && YX_VOC_IsRcvFile(group_info->file_arr[i].fullname))
         {
             unread_sum++;
         }

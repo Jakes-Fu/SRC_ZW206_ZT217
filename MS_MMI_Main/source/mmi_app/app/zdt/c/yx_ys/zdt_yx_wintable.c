@@ -1031,7 +1031,7 @@ void MMIZDT_TinyShowBottom(MMI_WIN_ID_T  win_id)
     GUI_RECT_T   record_text_rect = WECHART_RECORD_TEXT_RECT;
     
     rect.left = 0;
-    rect.top= TINYCHAT_LIS_BOX_BOTTOM;
+    rect.top= TINYCHAT_LIS_BOX_BOTTOM+30;
     rect.right= (MMI_MAINSCREEN_WIDTH -1);
     rect.bottom = (MMI_MAINSCREEN_HEIGHT-1); 
   
@@ -1525,11 +1525,48 @@ LOCAL void MMIZDT_TinyChatUpdateList()
     uint16 i = 0, j=0;
     uint16 position = 0;
     uint16 line_num = m_pCurGroupInfo->file_num;
-    
-    GUILIST_RemoveAllItems(MMIZDT_TINY_CHAT_LIST_CTRL_ID);
+	MMI_WIN_ID_T        win_id = MMIZDT_TINY_CHAT_WIN_ID;
+	GUILIST_INIT_DATA_T list_init = {0};
+	MMI_CTRL_ID_T           ctrl_id = MMIZDT_TINY_CHAT_LIST_CTRL_ID;
+	GUI_LCD_DEV_INFO  lcd_dev_info 	= {GUI_MAIN_LCD_ID, GUI_BLOCK_MAIN};
+    	GUI_RECT_T rect = {0,0,0,0};
+		
+    GUILIST_RemoveAllItems(ctrl_id);
 	
 	line_num = line_num>= TINY_CHAT_LIST_MAX_SIZE ? TINY_CHAT_LIST_MAX_SIZE:line_num ;
 
+	if(line_num == 0){		
+        	GUILIST_SetRect(ctrl_id,&rect);
+		MMK_GetWinRect(win_id, &rect);
+		rect.bottom = (TINYCHAT_LIS_BOX_BOTTOM -1) + 30;
+		LCD_FillRect(&lcd_dev_info, rect, MMI_BLACK_COLOR);
+		WATCHCOM_DisplayTips(win_id,TXT_NONE_WECHAT_LIST);
+		return;
+	}
+	 list_init.both_rect.v_rect.left = 0;//0;//mic icon width is 52
+        list_init.both_rect.v_rect.right = (MMI_MAINSCREEN_WIDTH -1);
+        list_init.both_rect.v_rect.top = 0;
+        list_init.both_rect.v_rect.bottom = TINYCHAT_LIS_BOX_BOTTOM-1+30;//185;//240;//180;
+
+        list_init.both_rect.h_rect.left = 0;
+        list_init.both_rect.h_rect.right = (MMI_MAINSCREEN_WIDTH -1);//185;//240;//180;
+        list_init.both_rect.h_rect.top = 0;
+        list_init.both_rect.h_rect.bottom =(TINYCHAT_LIS_BOX_BOTTOM -1)+30; //240;
+        
+        list_init.type = GUILIST_TEXTLIST_E;
+                    
+        GUILIST_CreateListBox(win_id, 0, ctrl_id, &list_init);            
+        MMK_SetAtvCtrl(win_id,ctrl_id);
+        //不需要分割线
+        GUILIST_SetListState( ctrl_id, GUILIST_STATE_SPLIT_LINE, FALSE );
+        //不画高亮条
+        GUILIST_SetListState( ctrl_id, GUILIST_STATE_NEED_HIGHTBAR, FALSE );
+
+        CTRLLIST_SetTextFont(ctrl_id, DP_FONT_24, MMI_CYAN_COLOR);
+        GUILIST_SetMaxItem(ctrl_id, TINY_CHAT_LIST_MAX_SIZE, FALSE);
+	 MMK_GetWinRect(win_id, &rect);
+	 rect.bottom = (TINYCHAT_LIS_BOX_BOTTOM -1) + 30;
+	 LCD_FillRect(&lcd_dev_info, rect, MMI_BLACK_COLOR);
     for(i = 0 ; i < line_num ; i++)
     {        
         GUILIST_ITEM_T               item_t    =  {0};
@@ -1606,16 +1643,16 @@ LOCAL void MMIZDT_TinyChatUpdateList()
             }
                    
         }
-        ret = GUILIST_AppendItem (MMIZDT_TINY_CHAT_LIST_CTRL_ID, &item_t);
+        ret = GUILIST_AppendItem (ctrl_id, &item_t);
         ZDT_LOG("MMIZDT_TinyChatUpdateList ret = %d", ret);
         if(ret)
         {
-            CTRLLIST_SetItemUserData(MMIZDT_TINY_CHAT_LIST_CTRL_ID, position, &i);
+            CTRLLIST_SetItemUserData(ctrl_id, position, &i);
             position++;
         }
     }
-    CTRLLIST_SetSelectedItem(MMIZDT_TINY_CHAT_LIST_CTRL_ID, position-1, TRUE);
-    GUILIST_SetCurItemIndex(MMIZDT_TINY_CHAT_LIST_CTRL_ID, position-1);
+    CTRLLIST_SetSelectedItem(ctrl_id, position-1, TRUE);
+    GUILIST_SetCurItemIndex(ctrl_id, position-1);
 }
 
 
@@ -1698,27 +1735,7 @@ LOCAL MMI_RESULT_E  HandleZDT_TinyChatWinMsg(
 
         //view_win_d = (MMIFMM_VIEW_WIN_DATA_T*) MMK_GetWinUserData (win_id);     
         
-        list_init.both_rect.v_rect.left = 0;//0;//mic icon width is 52
-        list_init.both_rect.v_rect.right = (MMI_MAINSCREEN_WIDTH -1);
-        list_init.both_rect.v_rect.top = 0;
-        list_init.both_rect.v_rect.bottom = TINYCHAT_LIS_BOX_BOTTOM-1;//185;//240;//180;
-
-        list_init.both_rect.h_rect.left = 0;
-        list_init.both_rect.h_rect.right = (MMI_MAINSCREEN_WIDTH -1);//185;//240;//180;
-        list_init.both_rect.h_rect.top = 0;
-        list_init.both_rect.h_rect.bottom =(TINYCHAT_LIS_BOX_BOTTOM -1); //240;
-        
-        list_init.type = GUILIST_TEXTLIST_E;
-                    
-        GUILIST_CreateListBox(win_id, 0, ctrl_id, &list_init);            
-        MMK_SetAtvCtrl(win_id,ctrl_id);
-        //不需要分割线
-        GUILIST_SetListState( ctrl_id, GUILIST_STATE_SPLIT_LINE, FALSE );
-        //不画高亮条
-        GUILIST_SetListState( ctrl_id, GUILIST_STATE_NEED_HIGHTBAR, FALSE );
-
-        CTRLLIST_SetTextFont(ctrl_id, DP_FONT_24, MMI_CYAN_COLOR);
-        ret = GUILIST_SetMaxItem(ctrl_id, TINY_CHAT_LIST_MAX_SIZE, FALSE);
+        ret = TRUE;
         //CTRLLIST_SetAutoSwitchItem(ctrl_id , TRUE);
         ZDT_LOG("HandleZDT_TinyChatWinMsg MSG_OPEN_WINDOW GUILIST_SetMaxItem ret =%d", ret);
         //AiUpdateRecordListData (win_id, ctrl_id, MMIFMM_READ_TYPE_FILE_DIR, TXT_NULL, TRUE);
@@ -2583,6 +2600,7 @@ void  MMIZDT_ChatGroup_ShowList(MMI_WIN_ID_T win_id,uint8 * p_friend_id)
         item_data.item_content[0].item_data_type     = GUIITEM_DATA_IMAGE_ID;
         item_data.item_content[0].item_data.image_id = WATCHCOM_GetAvaterImageId(name_buff);
 
+	 SCI_TRACE_LOW("unread_num = %d", unread_num);
         if(unread_num > 0)
         {
         //#if 0 //def ZTE_WATCH
@@ -2666,7 +2684,6 @@ LOCAL void Chat_Contact_List_Title_Back_Click(MMI_WIN_ID_T win_id, DPARAM param)
         #endif
     }
 }
-
 LOCAL void Chat_Contact_List_Item_LongClick(MMI_CTRL_ID_T ctrl_id)
 {
     if(strcmp(m_pCurGroupInfo->group_id,YX_VCHAT_DEFAULT_GROUP_ID) != 0)
@@ -2676,11 +2693,22 @@ LOCAL void Chat_Contact_List_Item_LongClick(MMI_CTRL_ID_T ctrl_id)
         MMI_WIN_ID_T	query_win_id = MMIZDT_QUERY_WIN_ID;
         s_cur_gproup_long_key_handle = 1;
         current_index = GUILIST_GetCurItemIndex(ctrl_id );
+	 if(current_index == 0){
+	 	SCI_TRACE_LOW("%s: group unenable delete!!", __FUNCTION__);
+	 	return;
+	 }
         s_cur_gproup_select_index = current_index;
         GUILIST_GetItemData(ctrl_id, current_index, &pos_user_data);
         m_pCurGroupInfo = &m_vchat_all_group_info_arr[pos_user_data];
-        MMIPUB_OpenQueryWinByTextId(TXT_DELETE_QUERY,IMAGE_PUBWIN_QUERY,&query_win_id,MMIZDT_ChatGroup_QueryDelete);                
-    }
+        MMIPUB_OpenQueryWinByTextId(TXT_DELETE_QUERY,IMAGE_PUBWIN_QUERY,&query_win_id,MMIZDT_ChatGroup_QueryDelete);
+        /*{
+        	uint32 time_out = 0xffff;
+        	MMI_STRING_T prompt_str = {0};
+		MMI_WIN_PRIORITY_E win_priority = WIN_ONE_LEVEL;
+		MMIRES_GetText(TXT_DELETE_QUERY, query_win_id, &prompt_str);
+		MMIPUB_OpenAlertWinByTextPtr(&time_out,&prompt_str,PNULL,NULL,&query_win_id,&win_priority,MMIPUB_SOFTKEY_CUSTOMER,MMIZDT_ChatGroup_QueryDelete);
+	  }*/
+	}
 }
 
 LOCAL void Chat_Contact_List_Item_Click(MMI_CTRL_ID_T ctrl_id)
@@ -2742,7 +2770,7 @@ LOCAL MMI_RESULT_E  HandleZDT_ChatGroupWinMsg(
             break;
         
         case MSG_CTL_LIST_LONGOK:
-            Chat_Contact_List_Item_LongClick(ctrl_id);
+            //Chat_Contact_List_Item_LongClick(ctrl_id);
             break;
         
         case MSG_CTL_PENOK:
@@ -2806,7 +2834,7 @@ PUBLIC MMI_RESULT_E HandleLauncher_ChatContactListWinMsg( MMI_WIN_ID_T win_id, M
             }
             break;    
         case MSG_CTL_LIST_LONGOK:
-            Chat_Contact_List_Item_LongClick(ctrl_id);
+            //Chat_Contact_List_Item_LongClick(ctrl_id);
             break;
         
         case MSG_CTL_PENOK:
