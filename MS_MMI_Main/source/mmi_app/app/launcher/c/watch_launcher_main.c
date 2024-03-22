@@ -337,6 +337,18 @@ LOCAL MMI_RESULT_E HandleLauncherPayWinMsg(
 PUBLIC void MMIZDT_DropUp_EnterWin(eSlideWinStartUpMode launch_mode);
 
 /*****************************************************************/
+//add by fys 2024/03/22
+PUBLIC uint16 MMIZDT_GetScreenHight(void)
+{
+	return LAUNCHER_HEIGHT;
+}
+
+PUBLIC uint16 MMIZDT_GetScreenWidth(void)
+{
+	return LAUNCHER_WIDTH;
+}
+//add end
+
 //judge if point is contained by status bar rect
 LOCAL BOOLEAN IsPressedStatusBarRect(GUI_POINT_T point)
 {
@@ -628,7 +640,7 @@ PUBLIC MMI_RESULT_E WatchLAUNCHER_HandleCommonWinMsg(
             tp_up.x = MMK_GET_TP_X(param);
             tp_up.y = MMK_GET_TP_Y(param);
             bClick = (abs(tp_up.x - tp_point.x) < 3) && (abs(tp_up.y - tp_point.y) < 3);
-            if (b_tp_pressed && bClick)
+            if (b_tp_pressed && bClick && tp_point.y < LAUNCHER_HEIGHT)
             {
                 //post tp click msg to win.
                 //MMK_PostMsg(win_id, MSG_APP_WEB, NULL, NULL);
@@ -660,7 +672,6 @@ PUBLIC MMI_RESULT_E WatchLAUNCHER_HandleCommonWinMsg(
         //    break;
 
         case MSG_NOTIFY_CANCEL:
-        case MSG_APP_CANCEL:
             if(!MMIENG_IsMonkeyTestMode())
             {
                // MMIAPIENG_StartEngineerMenu();
@@ -672,6 +683,8 @@ PUBLIC MMI_RESULT_E WatchLAUNCHER_HandleCommonWinMsg(
         case MSG_APP_RED:
             SCI_TRACE_LOW("WatchLAUNCHER_HandleCommonWinMsg() msg_id = %d.", msg_id);
 #endif
+		break;
+	case MSG_KEYUP_RED:
             if(TRUE == MMIDEFAULT_IsBacklightOn())
             {
                 MMIDEFAULT_TurnOffBackLight();
@@ -680,6 +693,9 @@ PUBLIC MMI_RESULT_E WatchLAUNCHER_HandleCommonWinMsg(
             {
                 MMIDEFAULT_TurnOnBackLight();
             }
+	     break;
+	case MSG_APP_CANCEL:
+            //WatchSLIDEAGE_SetCurrentPageIndex(0);
             break;
         default:
             recode = MMI_RESULT_FALSE;
@@ -1091,7 +1107,7 @@ LOCAL MMI_RESULT_E HandleLauncherPageWinMsg(
         {
             DisplayWinPanelBg(win_id);
             DisplayLauncherPage(win_id);
-            DisplayLauncherIndicator(win_id);
+            //DisplayLauncherIndicator(win_id);
             break;
         }
 

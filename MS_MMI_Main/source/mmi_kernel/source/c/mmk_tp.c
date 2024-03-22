@@ -363,6 +363,7 @@ PUBLIC void MMK_ReInitDblClkState(BOOLEAN is_reset)
 //  Author:Robert Lu
 //  Note:
 /*****************************************************************************/
+extern PUBLIC uint16 MMIZDT_GetScreenHight(void);
 void MMK_DispatchMSGTp(
                        MmiTPPress   *signal_ptr // the pointer of message which need dispatch
                        )
@@ -472,7 +473,9 @@ void MMK_DispatchMSGTp(
             MMK_StopTimer( MMI_TP_LONG_TIMER_ID );
             g_tp_long_timer_active = FALSE;
         }
-
+	 if(tppress_ptr->y > MMIZDT_GetScreenHight()){
+	 	MMK_PostMsg(MMK_GerFocusMainWinHandle(), MSG_APP_CANCEL, PNULL, 0);
+	 }
         DispatchMSGTpUp((uint16)tppress_ptr->x, (uint16)tppress_ptr->y);
         break;
 
