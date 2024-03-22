@@ -2261,7 +2261,9 @@ LOCAL MMI_RESULT_E ZDT_HandleDialWinMsg
 			 point.y = MMK_GET_TP_Y(param);
 			 d_tp_down_x = point.x; //yangyu add
 			 d_is_tp_long_press = FALSE;
-             ZDT_DialNumTPDown(win_id,point);
+			 if(point.y < LAUNCHER_HEIGHT){
+             			ZDT_DialNumTPDown(win_id,point);
+			 }
 	   }
 		break;			 
 	  case MSG_TP_PRESS_LONG:
@@ -2270,7 +2272,9 @@ LOCAL MMI_RESULT_E ZDT_HandleDialWinMsg
 			point.x = MMK_GET_TP_X(param);
 			point.y = MMK_GET_TP_Y(param);
 			d_is_tp_long_press = TRUE;
-			ZDT_DialNumTPLongUp(win_id,point);
+			if(point.y < LAUNCHER_HEIGHT){
+				ZDT_DialNumTPLongUp(win_id,point);
+			}
 	    }	
 	  	break;
 	  case MSG_TP_PRESS_UP:
@@ -2279,21 +2283,23 @@ LOCAL MMI_RESULT_E ZDT_HandleDialWinMsg
             point.x = MMK_GET_TP_X(param);
             point.y = MMK_GET_TP_Y(param);
             d_tp_up_x = point.x;//yangyu add
-				
-            ZDT_DisplayTPUpDialNum(win_id);
-            ZDT_DialNumTPUp(win_id, point);
-					
-            if(d_is_tp_long_press || d_tp_up_x != d_tp_down_x)
-            {
+
+		if(point.y < LAUNCHER_HEIGHT){
+	            ZDT_DisplayTPUpDialNum(win_id);
+	            ZDT_DialNumTPUp(win_id, point);
+						
+	            if(d_is_tp_long_press || d_tp_up_x != d_tp_down_x)
+	            {
+		            d_is_tp_long_press = FALSE;
+		            break;
+	            }
 	            d_is_tp_long_press = FALSE;
-	            break;
-            }
-            d_is_tp_long_press = FALSE;
-            //yangyu add later
-            ZDT_DialNumFactoryCheck(win_id);
-            //yangyu end			 				
-	  	}
-	  	break;
+	            //yangyu add later
+	            ZDT_DialNumFactoryCheck(win_id);
+	            //yangyu end			 	
+		}
+	  }
+	  break;
 
     case MSG_BACKLIGHT_TURN_ON:           
         MMK_SendMsg(MMK_GetParentWinHandle(win_id), MSG_FULL_PAINT, PNULL);
@@ -2439,8 +2445,9 @@ LOCAL MMI_RESULT_E ZDT_HandleDialWinMsg
         GUIEDIT_ClearAllStrEx(edit_ctrl_id, MMK_IsFocusWin(win_id));
         break;
 	//yangyu add
+	case MSG_KEYUP_CANCEL:
 	case MSG_APP_CANCEL:
-		GUIEDIT_ClearAllStr(edit_ctrl_id);
+		//GUIEDIT_ClearAllStr(edit_ctrl_id);
 		MMK_CloseWin(win_id);
 		break;
     case MSG_KEYDOWN_RED:

@@ -418,8 +418,8 @@ WINDOW_TABLE(WATCH_GALLERY_CTRL_TAB_PIC) =
 	WIN_FUNC((uint32)Gallery_Pic_HandleMsg),
 	WIN_HIDE_STATUS,
     CREATE_ANIM_CTRL(MMIGALLERY_PIC_ANIM_CTRL_ID, MMIPICVIEW_SHOW_PREVIEW_WIN_ID),
-    CREATE_BUTTON_CTRL(res_zte_gallery_set, MMIGALLERY_PIC_DEL_BUTTON_CTRL_ID),
-    CREATE_BUTTON_CTRL(res_zte_gallery_back, MMIPICVIEW_SET_BUTTON_CTRL_ID),
+    //CREATE_BUTTON_CTRL(res_zte_gallery_set, MMIGALLERY_PIC_DEL_BUTTON_CTRL_ID),
+    //CREATE_BUTTON_CTRL(res_zte_gallery_back, MMIPICVIEW_SET_BUTTON_CTRL_ID),
     //WIN_SOFTKEY(TXT_NULL, STXT_OK, STXT_RETURN),
     END_WIN
 };
@@ -458,7 +458,7 @@ PUBLIC void Gallery_Pic_PictureFilePreview(MMI_WIN_ID_T win_id,FILEARRAY_DATA_T*
 	MMK_SetWinRect(win_handle, &rect);
 	
 	GUIAPICTRL_SetRect(animCtrlId, &rect);
-    GallerySetPicBtnParam(win_id);
+    //GallerySetPicBtnParam(win_id);
     GallerySetAnimParam(FALSE,file_info, animCtrlId);
     GUIANIM_SetDefaultIcon(animCtrlId,NULL,NULL);
 }

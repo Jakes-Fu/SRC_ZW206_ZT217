@@ -4266,9 +4266,10 @@ LOCAL MMI_RESULT_E HandleCalcWinMsg(
 
     case MSG_KEYDOWN_RED:
         break;
+	case MSG_KEYUP_CANCEL:
     case MSG_KEYUP_RED:
         MMK_CloseWin(win_id);
-        
+        break;
     default:
         recode = MMI_RESULT_FALSE; 
         break;
