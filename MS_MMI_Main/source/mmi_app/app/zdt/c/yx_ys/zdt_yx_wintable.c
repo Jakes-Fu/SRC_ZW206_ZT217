@@ -1140,7 +1140,7 @@ LOCAL void MMIZDT_DisplayTinyChatRecordAnim(MMI_WIN_ID_T win_id)
     GUI_RECT_T   countdown_rect = WECHART_RECORD_COUNTDOWN_TEXT_RECT;
 
     rect.left = 0;
-    rect.top= TINYCHAT_LIS_BOX_BOTTOM;
+    rect.top= TINYCHAT_LIS_BOX_BOTTOM+30;
     rect.right= MMI_MAINSCREEN_WIDTH-1;
     rect.bottom = MMI_MAINSCREEN_HEIGHT-1; 
     
@@ -2700,8 +2700,9 @@ LOCAL void Chat_Contact_List_Item_LongClick(MMI_CTRL_ID_T ctrl_id)
         s_cur_gproup_select_index = current_index;
         GUILIST_GetItemData(ctrl_id, current_index, &pos_user_data);
         m_pCurGroupInfo = &m_vchat_all_group_info_arr[pos_user_data];
-        MMIPUB_OpenQueryWinByTextId(TXT_DELETE_QUERY,IMAGE_PUBWIN_QUERY,&query_win_id,MMIZDT_ChatGroup_QueryDelete);
-        /*{
+        //MMIPUB_OpenQueryWinByTextId(TXT_DELETE_QUERY,IMAGE_PUBWIN_QUERY,&query_win_id,MMIZDT_ChatGroup_QueryDelete);
+	 MMIPUB_OpenAlertWinByTextIdEx(MMK_GetFirstAppletHandle(), PNULL, TXT_COMMON_CONFIRM_DELETE,TXT_NULL,NULL,NULL,PNULL,MMIPUB_SOFTKEY_OKCANCEL,MMIZDT_ChatGroup_QueryDelete, current_index);
+		/*{
         	uint32 time_out = 0xffff;
         	MMI_STRING_T prompt_str = {0};
 		MMI_WIN_PRIORITY_E win_priority = WIN_ONE_LEVEL;
