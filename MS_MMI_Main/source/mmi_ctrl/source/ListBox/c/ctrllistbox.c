@@ -2394,6 +2394,13 @@ LOCAL void ListDrawHighlightBackground(
         return;
     }
 
+    //设置了不需要高亮
+    if (list_ctrl_ptr->total_item_num == 0 || !LIST_GetListStateByPtr(list_ctrl_ptr, GUILIST_STATE_NEED_HIGHTBAR)
+        || !LIST_GetListStateByPtr(list_ctrl_ptr, GUILIST_STATE_ACTIVE))
+    {
+        return;
+    }
+
     if (!LIST_GetValidRect(list_ctrl_ptr, &valid_rect) || !GUI_IntersectRect(&clip_rect, *rect_ptr, valid_rect))
     {
         return;
