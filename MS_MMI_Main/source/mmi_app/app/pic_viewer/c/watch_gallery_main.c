@@ -385,7 +385,7 @@ LOCAL void Gallery_ShowNoPhotosTip(MMI_WIN_ID_T win_id)
 	text_style.align = ALIGN_HVMIDDLE;
 	text_style.font = DP_FONT_24;
 	text_style.font_color = MMI_WHITE_COLOR;
-	img_rect.left = DP2PX_VALUE(60);
+	img_rect.left = DP2PX_VALUE(56);
 	img_rect.top = DP2PX_VALUE(150);
 	img_rect.bottom = DP2PX_VALUE(210);
 	MMI_GetLabelTextByLang(TXT_GALLERY_NO_PHOTOS, &text_string);
