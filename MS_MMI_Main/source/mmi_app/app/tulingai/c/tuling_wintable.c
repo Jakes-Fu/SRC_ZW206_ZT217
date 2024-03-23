@@ -1150,7 +1150,17 @@ PUBLIC void AppendAIListContent(uint8* content, BOOLEAN isLeft)
         #endif
        
     }
-    if(ai_chat_status == AI_CHAT_USAGE_TIPS)
+	{
+		GUI_RECT_T rect = {0};
+		GUI_POINT_T point = {0};
+		GUI_LCD_DEV_INFO    lcd_dev_info = {GUI_MAIN_LCD_ID, GUI_BLOCK_MAIN};
+		
+		//GUIRES_DisplayImg(&point,PNULL,PNULL,MMIAI_CHAT_WIN_ID,res_bg_star,&lcd_dev_info);
+		MMK_GetWinRect(MMIAI_CHAT_WIN_ID, &rect);
+		LCD_FillRect(&lcd_dev_info, rect, MMI_BLACK_COLOR);
+	}
+	
+    //if(ai_chat_status == AI_CHAT_USAGE_TIPS)
     {
         AI_ShowBottom(MMIAI_CHAT_WIN_ID);
     }
@@ -1758,12 +1768,12 @@ LOCAL MMI_RESULT_E  Handle_AIChat_WinMsg(
         list_init.both_rect.v_rect.left = 0;
         list_init.both_rect.v_rect.right = MMI_MAINSCREEN_WIDTH;
         list_init.both_rect.v_rect.top = 0;
-        list_init.both_rect.v_rect.bottom = MMI_MAINSCREEN_HEIGHT-AI_CHAT_RECORD_IMG_MARGIN_BOTTOM;//185;//240;//180;
+        list_init.both_rect.v_rect.bottom = MMI_MAINSCREEN_HEIGHT-AI_CHAT_RECORD_IMG_MARGIN_BOTTOM-5;//185;//240;//180;
 
         list_init.both_rect.h_rect.left = 0;
         list_init.both_rect.h_rect.right = MMI_MAINSCREEN_HEIGHT-AI_CHAT_RECORD_IMG_MARGIN_BOTTOM;//240;//180;
         list_init.both_rect.h_rect.top = 0;
-        list_init.both_rect.h_rect.bottom = MMI_MAINSCREEN_HEIGHT;
+        list_init.both_rect.h_rect.bottom = MMI_MAINSCREEN_HEIGHT-AI_CHAT_RECORD_IMG_MARGIN_BOTTOM-5;
         
         list_init.type = GUILIST_TEXTLIST_E;
                     
