@@ -3255,6 +3255,7 @@ SCI_TRACE_LOW("[HandleNetworkStatusInd]");
 #endif
 
   MAIN_UpdateIdleSignalState();//bug2138051
+  ZDT_UpdateSingal();
     return (result);
 }
 

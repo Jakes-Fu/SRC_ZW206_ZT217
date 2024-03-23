@@ -4356,6 +4356,7 @@ PUBLIC void MAIN_HandleRxLevelTimer(uint8 timer_id, uint32 param)
             //刷新小屏的显示，刷新信号
             MMISUB_UpdateDisplaySubLcd();
 #endif
+            ZDT_UpdateSingal();
         }
     }    
 }

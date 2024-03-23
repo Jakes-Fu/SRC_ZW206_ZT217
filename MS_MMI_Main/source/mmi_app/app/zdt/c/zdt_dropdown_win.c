@@ -131,8 +131,8 @@ extern uint8 cur_ring_volume_img_id;
 extern uint8 cur_bright_img_id;
 extern int16 current_percent_brightness;
 extern uint8 progress_down_flag;
-
 #endif
+LOCAL BOOLEAN slide_end = FALSE;
 /**--------------------------------------------------------------------------*
  **                         MACRO DEFINITION                                 *
  **--------------------------------------------------------------------------*/
@@ -382,6 +382,14 @@ PUBLIC void ZDT_DisplaySingal(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_dev_info
     
 }
 
+PUBLIC void ZDT_UpdateSingal()
+{
+    //slide_end 下滑收起过程中刷新的话会导致界面错乱
+    if (MMK_IsOpenWin(MMIZDT_DROPDOWN_WIN_ID) && MMK_IsFocusWin(MMIZDT_DROPDOWN_WIN_ID) && slide_end)
+    {
+        MMK_SendMsg(MMIZDT_DROPDOWN_WIN_ID, MSG_FULL_PAINT,PNULL);
+    }
+}
 PUBLIC void ZDT_DisplayBattery(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_dev_info)
 {
 
@@ -859,6 +867,7 @@ LOCAL MMI_RESULT_E HandleDropDownWinMsg(
 
         case MSG_CLOSE_WINDOW:
         {
+            slide_end = FALSE;
             break;
         }
 
@@ -1061,12 +1070,12 @@ LOCAL MMI_RESULT_E HandleDropDownWinMsg(
         //bug2143162
         case MSG_SLIDEWIN_END:
         {
-            GUIWIN_SetStbDropDownState(win_id, FALSE);
+            slide_end = TRUE;
         }
         break;
         case MSG_SLIDEWIN_BEGIN:
         {
-            GUIWIN_SetStbDropDownState(win_id, TRUE);
+            slide_end = FALSE;
         }
         break;
         case MSG_KEYDOWN_RED:
