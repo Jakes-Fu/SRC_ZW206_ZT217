@@ -112,6 +112,8 @@
 LOCAL BOOLEAN  s_cc_reject_call_by_sms = FALSE;
 LOCAL uint8    s_cc_waiting_call_ring_timer = 0; //Bug 2194799
 LOCAL uint8    s_cc_call_time_count_timer = 0;
+//拒接陌生电话挂断电话标记
+PUBLIC BOOLEAN s_cc_reject_call_by_unkown_call = FALSE;
 
 /*---------------------------------------------------------------------------*/
 /*                          LOCAL FUNCTION DECLARE                           */
@@ -600,7 +602,6 @@ extern BOOLEAN g_is_inVideo ; //视频通话中
 //  Author: yuming.yang
 //  Note:
 /*****************************************************************************/
-uint8 current_telNum[MMICC_PHONE_NUM_MAX_LEN + 2] = {0};  
 PUBLIC BOOLEAN MMICC_UpdateCallStatusDisplay(MMICC_UPDATESTATUS_TYPE_E type)
 {
     BOOLEAN result = TRUE;
@@ -639,18 +640,16 @@ PUBLIC BOOLEAN MMICC_UpdateCallStatusDisplay(MMICC_UPDATESTATUS_TYPE_E type)
 
 			
              //拒接陌生电
-            if(!ZDT_Reject_UnknownCall())
+            if(ZDT_Reject_UnknownCall())
             {
                 uint8 telNum[MMICC_PHONE_NUM_MAX_LEN + 2] = {0};    
-                uint8 telNumLen = 0;   
-                MMICC_GetCallNumStrByIndex(telNum, &telNumLen, MMICC_GetCurrentCallIndex()); 
-		   YX_Net_Send_Reply_DOWNAPPHANGUP();
-		   memset(&current_telNum, 0, MMICC_PHONE_NUM_MAX_LEN + 2);
-		   SCI_MEMCPY(current_telNum, telNum, telNumLen);
+                uint8 telNumLen = 0;
+                MMICC_GetCallNumStrByIndex(telNum, &telNumLen, MMICC_GetCurrentCallIndex());
                 if(ZDT_Reject_Call(&telNum))
                 {
                     MMIAPICC_ReleaseCallByRedkey();
                     MMICC_StopRingOrVibrateBeforeCCing();
+                    s_cc_reject_call_by_unkown_call = TRUE;
                     return result;
                 }
             }
@@ -678,18 +677,7 @@ PUBLIC BOOLEAN MMICC_UpdateCallStatusDisplay(MMICC_UPDATESTATUS_TYPE_E type)
         }
         case MMICC_DISCONNECTED_IND:
         {
-		//if(1)
-		if(!ZDT_Reject_UnknownCall())
-		{
-               	if(ZDT_Number_Is_In_Contact(&current_telNum))
-			{
-            			CC_UpdateWatchDisconnectedCallStatus();
-               	}
-		}
-		else
-		{
-			CC_UpdateWatchDisconnectedCallStatus();
-		}
+            CC_UpdateWatchDisconnectedCallStatus();
             break;
         }
 #ifdef MMI_VOLTE_SUPPORT
@@ -1120,7 +1108,19 @@ LOCAL void  CC_UpdateWatchDisconnectedCallStatus(void)
             }
             else
             {
-                WatchCC_CallEnded_NoteWin_Enter();
+                if(MMIZDT_ShouldStayInClassModeWin())
+                {
+                    //上课禁用中自动挂断电话就不显示通话结束的窗口了
+                }
+                else if(s_cc_reject_call_by_unkown_call)
+                {
+                    s_cc_reject_call_by_unkown_call = FALSE;
+                    //拒接模生电话中自动挂断电话就不显示通话结束的窗口了
+                }
+                else
+                {
+                    WatchCC_CallEnded_NoteWin_Enter();
+                }
             }
         }
     }
