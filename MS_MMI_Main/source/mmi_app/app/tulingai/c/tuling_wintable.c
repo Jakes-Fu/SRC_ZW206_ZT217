@@ -55,7 +55,11 @@
 
 
 
-
+LOCAL MMI_RESULT_E MMIAI_NoSimHandleFunc(
+                                                MMI_WIN_ID_T win_id, 
+                                                MMI_MESSAGE_ID_E msg_id, 
+                                                DPARAM param
+                                                );
 
 LOCAL MMI_RESULT_E  Handle_AIChat_WinMsg(
                                             MMI_WIN_ID_T        win_id, 
@@ -1873,12 +1877,12 @@ LOCAL MMI_RESULT_E  Handle_AIChat_WinMsg(
         point.y = MMK_GET_TP_Y(param);
         if(ZDT_SIM_Exsit() == FALSE)
         {
-            MMIPUB_OpenAlertWinByTextId(PNULL,STR_SIM_NOT_SIM_EXT01,TXT_NULL,IMAGE_PUBWIN_FAIL,PNULL,PNULL,MMIPUB_SOFTKEY_ONE,PNULL);
+            MMIPUB_OpenAlertWinByTextId(PNULL,STR_SIM_NOT_SIM_EXT01,TXT_NULL,IMAGE_PUBWIN_FAIL,PNULL,PNULL,MMIPUB_SOFTKEY_ONE,MMIAI_NoSimHandleFunc);
             break;
         }
         if (MMIAPICONNECTION_isGPRSSwitchedOff())
         {
-            MMIPUB_OpenAlertWinByTextId(PNULL,TXT_YX_WCHAT_NEED_NET,TXT_NULL,IMAGE_PUBWIN_FAIL,PNULL,PNULL,MMIPUB_SOFTKEY_ONE,PNULL);
+            MMIPUB_OpenAlertWinByTextId(PNULL,TXT_YX_WCHAT_NEED_NET,TXT_NULL,IMAGE_PUBWIN_FAIL,PNULL,PNULL,MMIPUB_SOFTKEY_ONE,MMIAI_NoSimHandleFunc);
             break;
         }
 #ifdef ZDT_PLAT_YX_SUPPORT
@@ -2018,5 +2022,36 @@ LOCAL MMI_RESULT_E  Handle_AIChat_WinMsg(
     return recode;
 }
 
+LOCAL MMI_RESULT_E MMIAI_NoSimHandleFunc(
+                                                MMI_WIN_ID_T win_id, 
+                                                MMI_MESSAGE_ID_E msg_id, 
+                                                DPARAM param
+                                                )
+{
+    MMI_RESULT_E result = MMI_RESULT_TRUE;
 
+    switch(msg_id)
+    {
+        case MSG_KEYDOWN_RED:
+            break;
+
+        case MSG_APP_CANCEL:
+        case MSG_CTL_CANCEL:
+        case MSG_KEYUP_RED:
+            MMK_CloseWin(win_id);
+            break;
+        
+        case MSG_APP_WEB:
+        case MSG_CTL_OK:
+        case MSG_APP_OK:
+        case MSG_CTL_PENOK:
+        case MSG_CTL_MIDSK:
+            break;
+
+        default:
+            result = MMIPUB_HandleQueryWinMsg(win_id, msg_id, param);
+            break;
+    }
+    return result;
+}
 

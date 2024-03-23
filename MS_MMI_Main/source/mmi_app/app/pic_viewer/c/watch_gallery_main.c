@@ -41,12 +41,14 @@
 #if defined(BAIDU_DRIVE_SUPPORT)
 #include "mmibaidu_export.h"
 #endif
+#include "mmipicview_internal.h" 
 #include "guilistbox.h"
 #include "guiiconlist.h"
 #include "mmipicview_position.h"
 #include "guiiconlist.h"
 #include "watch_common.h"
 #include "zdt_app.h"
+#include "watch_launcher_common.h"
 /**--------------------------------------------------------------------------*
  **                         MACRO DEFINITION                                 *
  **--------------------------------------------------------------------------*/
@@ -123,11 +125,12 @@ LOCAL  const uint8 s_gallery_all_suffix[MMIGALLERY_PIC_TYPE_MAX+MMIGALLERY_VIDEO
 
 extern uint8 delete_button_click;
 /*add by fys for bug 10/29*/
-uint32 pic_del_remain_num = 0;
-/*add end*/
+uint16 pic_del_remain_num = 0; //删除剩余文件个数
+uint16 pic_del_num = 0; //删除文件个数
 PUBLIC void WatchGallery_MainWin_Enter(void);
 PUBLIC void GalleryPicListUnmarked(MMI_CTRL_ID_T list_ctrl_id);
 LOCAL void GalleryPicList_TitleShow(MMI_WIN_ID_T win_id);
+LOCAL void CreatePicListCtrl(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T  ctrl_id);
 /*---------------------------------------------------------------------------*
 **                          LOCAL FUNCTION                                   *
 **---------------------------------------------------------------------------*/
@@ -373,18 +376,18 @@ LOCAL void Gallery_ShowNoPhotosTip(MMI_WIN_ID_T win_id)
 	GUISTR_STATE_T text_state = GUISTR_STATE_ALIGN;
 	GUISTR_STYLE_T text_style = {0};
 	MMI_STRING_T text_string = {0};
-	GUI_RECT_T img_rect = DP2PX_RECT(80, 60, 180, 160);
+	GUI_RECT_T img_rect = DP2PX_RECT(80, 60, 190, 160);
 
 	GUI_FillRect(&lcd_dev_info, win_rect, MMI_BLACK_COLOR);
 
 	GUIRES_DisplayImg(PNULL, &img_rect, PNULL, win_id, res_zte_gallery_none, &lcd_dev_info);
 	
 	text_style.align = ALIGN_HVMIDDLE;
-	text_style.font = DP_FONT_16;
+	text_style.font = DP_FONT_24;
 	text_style.font_color = MMI_WHITE_COLOR;
 	img_rect.left = DP2PX_VALUE(60);
 	img_rect.top = DP2PX_VALUE(150);
-	img_rect.bottom = DP2PX_VALUE(190);
+	img_rect.bottom = DP2PX_VALUE(210);
 	MMI_GetLabelTextByLang(TXT_GALLERY_NO_PHOTOS, &text_string);
 	GUISTR_DrawTextToLCDInRect(
 		(const GUI_LCD_DEV_INFO *)&lcd_dev_info,
@@ -625,6 +628,7 @@ LOCAL void Gallery_DisplayFilePreview(MMI_WIN_ID_T win_id, uint32 file_index)
             case MMIGALLERY_FILE_TYPE_PIC:
             {
                  Gallery_Pic_PictureFilePreview(win_id,&file_info);
+                 s_gallery_cur_panel_info.file_index = file_index;
             }
             break;
             case MMIGALLERY_FILE_TYPE_VIDEO:
@@ -644,7 +648,7 @@ LOCAL void Gallery_DisplayFilePreview(MMI_WIN_ID_T win_id, uint32 file_index)
     TRACE_APP_GALLERY("gallery cur file type is %d,cur file index is %d",file_type,file_index);
 }
 
-LOCAL void Gallery_NextFilePreview(MMI_WIN_ID_T win_id)
+PUBLIC void Gallery_NextFilePreview(MMI_WIN_ID_T win_id)
 {
     uint16 file_nume     = 0;
     uint16 cur_file_index= s_gallery_cur_panel_info.file_index;
@@ -937,17 +941,18 @@ LOCAL void HandleFileDeleteCNF(MMI_WIN_ID_T    win_id, DPARAM    param)
 #endif
      BOOLEAN     is_success = FALSE;
      uint32      remain_file_num = 0;
+     LOCAL uint16 delete_num = 0;
      is_success=*((BOOLEAN*)param);
+     delete_num ++;
      if(is_success)
      {
         //update gallery array
-        TRACE_APP_GALLERY("DeleteFileInfo start_time = %d", SCI_GetTickCount());
         MMIAPIFILEARRAY_Delete(s_watch_gallery_lib, s_gallery_cur_panel_info.file_index);
-        TRACE_APP_GALLERY("DeleteFileInfo end_time = %d", SCI_GetTickCount());
 		/*add by fys for bug 10/29*/
         //remain_file_num= Gallery_GetAllFileNum();
-		TRACE_APP_GALLERY("DeleteFileInfo pic_del_remain_num = %d", pic_del_remain_num);
-		//if(remain_file_num==0)
+        if(delete_num == pic_del_num)
+        {
+            delete_num = 0;
         if(pic_del_remain_num==0)//删除的是最后一个文件
         /*add end*/
         {
@@ -965,13 +970,14 @@ LOCAL void HandleFileDeleteCNF(MMI_WIN_ID_T    win_id, DPARAM    param)
                Adult_WatchCOM_NoteWin_Set_Font(PNULL,&fontColor);                       
                #endif
             }*/
-            MMK_CloseWin(win_id);
 			//add by fys for bug 10/24
-			if(MMK_IsOpenWin(MMIPICVIEW_SHOW_PREVIEW_WIN_ID)){
+			    if(MMK_IsOpenWin(MMIPICVIEW_SHOW_PREVIEW_WIN_ID))
+                {
 				MMK_CloseWin(MMIPICVIEW_SHOW_PREVIEW_WIN_ID);
 			}
 			//add end
             WatchGallery_NoPhotosTipWin();
+                MMK_CloseWin(win_id);
             return;
         }
 #ifdef ADULT_WATCH_SUPPORT
@@ -996,24 +1002,18 @@ LOCAL void HandleFileDeleteCNF(MMI_WIN_ID_T    win_id, DPARAM    param)
         }
 #endif
 		/*add by fys for bug 10/29*/
-		//if(s_gallery_cur_panel_info.file_index==remain_file_num)
+		    if(delete_button_click == 2)
 		/*add end*/
-        if(s_gallery_cur_panel_info.file_index==pic_del_remain_num)//if del last file will dis first file
         {
-            s_gallery_cur_panel_info.file_index=0;
-            Gallery_DisplayFilePreview(win_id,0);
+                delete_button_click = 0;
+                MMK_SendMsg(win_id, MSG_PICVIEWER_RELOAD_FILE, PNULL);
         }
         else
         {
-            Gallery_DisplayFilePreview(win_id,s_gallery_cur_panel_info.file_index);
+			    delete_button_click = 0;			
         }
 
 		//add by fys for bug 10/27
-		if(delete_button_click == 2){
-			MMK_CloseWin(win_id);
-			WatchGallery_MainWin_Enter();
-		}else{			
-			delete_button_click = 0;			
 		}
 		//add end
      }
@@ -1060,10 +1060,11 @@ LOCAL void Gallery_HandleTpUpMsg(MMI_WIN_ID_T  win_id, DPARAM    param)
 	
 	if(delete_button_click && GUI_PointIsInRect(up_point,cancel_rect))
 	{
-		//add by fys for bug 10/24
+        GUI_RECT_T    icon_rect = GALLERY_ICONLIST_RECT;
 		delete_button_click = 0;
-		//add end
-		GalleryPicListUnmarked(MMIPICVIEW_LIST_CTRL_ID);
+        GUIAPICTRL_SetRect(MMIPICVIEW_LIST_CTRL_ID, &icon_rect);
+        GUIICONLIST_SetAllSelected(MMIPICVIEW_LIST_CTRL_ID, FALSE);
+        GUIICONLIST_SetMarkable(MMIPICVIEW_LIST_CTRL_ID, FALSE);
 		MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
 	}
 	else if(delete_button_click && GUI_PointIsInRect(up_point,del_rect))
@@ -1077,10 +1078,13 @@ LOCAL void Gallery_HandleTpUpMsg(MMI_WIN_ID_T  win_id, DPARAM    param)
 		SCI_TRACE_LOW("%s: pic_num = %d", __FUNCTION__, pic_num);
 		SCI_TRACE_LOW("%s: mark_num = %d", __FUNCTION__, mark_num);
 		pic_del_remain_num = pic_num - mark_num;
-		if(mark_num == 0 || pic_del_remain_num < 0){
+        pic_del_num = mark_num;
+		if(mark_num == 0 || pic_del_remain_num < 0)
+        {
 			return;
 		}
-		for(index = 0;index < mark_num && index < pic_num;index++){
+		for(index = 0;index < mark_num && index < pic_num;index++)
+        {
 			SCI_TRACE_LOW("%s: sel_index[%d] = %d", __FUNCTION__, index, sel_index[index]);
 			if (Gallery_GetFileInfo(sel_index[index],&file_info))
 			{
@@ -1707,21 +1711,41 @@ LOCAL void GalleryPicListMarkEnable(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_de
 /*add by fys 10/27 */
 LOCAL MMI_RESULT_E GalleryPicList_TitleBackCallbackFunc(void)
 {
+    if(GUIICONLIST_GetMarkable(MMIPICVIEW_LIST_CTRL_ID))//多选操作返回
+    {
+        GUI_RECT_T    icon_rect = GALLERY_ICONLIST_RECT;
+        GUIAPICTRL_SetRect(MMIPICVIEW_LIST_CTRL_ID, &icon_rect);
+        GUIICONLIST_SetAllSelected(MMIPICVIEW_LIST_CTRL_ID, FALSE);
+        GUIICONLIST_SetMarkable(MMIPICVIEW_LIST_CTRL_ID, FALSE);
+        MMK_SendMsg(WATCH_GALLERY_MAIN_WIN_ID, MSG_FULL_PAINT, PNULL);
+        delete_button_click = 0;
+    }
+    else
+    {
 	if(MMK_IsOpenWin(WATCH_GALLERY_MAIN_WIN_ID)){
 		MMK_CloseWin(WATCH_GALLERY_MAIN_WIN_ID);
 	}
 	if(MMK_IsOpenWin(MMIPICVIEW_SHOW_PREVIEW_WIN_ID)){
 		MMK_CloseWin(MMIPICVIEW_SHOW_PREVIEW_WIN_ID);
 	}
+    }
 	return MMI_RESULT_TRUE;
 }
 
 LOCAL MMI_RESULT_E GalleryPicList_TitleDelCallbackFunc(void)
 {
-	if(!delete_button_click){
-		GalleryPicList_TitleBackCallbackFunc();
+	if(!delete_button_click)
+    {
+		//GalleryPicList_TitleBackCallbackFunc();
+        if(MMK_IsOpenWin(MMIPICVIEW_SHOW_PREVIEW_WIN_ID))
+        {
+		    MMK_CloseWin(MMIPICVIEW_SHOW_PREVIEW_WIN_ID);
+	    }
 		delete_button_click = 2;
-		WatchGallery_MainWin_Enter();
+		//WatchGallery_MainWin_Enter();
+        //MMK_SendMsg(WATCH_GALLERY_MAIN_WIN_ID, MSG_PICVIEWER_RELOAD_FILE, PNULL);
+        GalleryPicListMarked(MMIPICVIEW_LIST_CTRL_ID);
+	    MMK_SendMsg(WATCH_GALLERY_MAIN_WIN_ID, MSG_FULL_PAINT, PNULL);
 	}
 	return MMI_RESULT_TRUE;
 }
@@ -1738,7 +1762,7 @@ LOCAL void GalleryPicList_TitleButtonCallbackInit(void)
 LOCAL void GalleryPicList_TitleShow(MMI_WIN_ID_T win_id)
 {
 	GUI_LCD_DEV_INFO lcd_dev_info = {0,0};
-	GUI_RECT_T text_rect = DP2PX_RECT(50, 12, 120, 40);
+	GUI_RECT_T text_rect = {0, 2, LAUNCHER_WIDTH, 28};
 	GUISTR_STATE_T text_state = GUISTR_STATE_ALIGN;
 	GUISTR_STYLE_T text_style = {0};
 	MMI_STRING_T text_string = {0};
@@ -1751,7 +1775,7 @@ LOCAL void GalleryPicList_TitleShow(MMI_WIN_ID_T win_id)
 	//GUIRES_DisplayImg(PNULL, &del_rect, PNULL, win_id, res_zte_gallery_set, &lcd_dev_info);
 
 	text_style.align = ALIGN_HVMIDDLE;
-	text_style.font = DP_FONT_22;
+	text_style.font = DP_FONT_24;
 	text_style.font_color = MMI_WHITE_COLOR;
 	MMIRES_GetText(TXT_GALLERY,win_id,&text_string);
 	GUISTR_DrawTextToLCDInRect(
@@ -1809,18 +1833,20 @@ LOCAL MMI_RESULT_E HandleGalleryMainWinMsg(
                  AdultWatchCOM_WaitingWin_1str_WaveIcon_Enter(wait_win_id, PNULL, HandleLoadGalleryFileWinMsg);
 #endif
              }
+            InitMarkMenuButtons(win_id);
+            GalleryPicList_TitleShow(win_id);
         }
         break;
         case MSG_PICVIEWER_LOAD_FINISH://load file end
         {
              if(TRUE == Gallery_FinishLoadFile())
              {
-                 Gallery_Vp_CreateFsmAndInit();
+                 //Gallery_Vp_CreateFsmAndInit();       //BUG重复申请图层未释放, 无视频功能 不需要开图层播放视频
                  //Gallery_DisplayFilePreview(win_id,0);//进入gallery会显示最新的文件
                  CreatePicListCtrl(win_id, ctrl_id);
-                 InitMarkMenuButtons(win_id);
+                 //InitMarkMenuButtons(win_id);
                  //InitOptionMenuButtons(win_id);
-                 GalleryPicList_TitleShow(win_id);
+                 //GalleryPicList_TitleShow(win_id);
                  
              }
 			 //add by fys for bug 10/24
@@ -1917,10 +1943,20 @@ LOCAL MMI_RESULT_E HandleGalleryMainWinMsg(
         case MSG_PICVIEWER_RELOAD_FILE:
         //load file
         Gallery_DestroyLibArray();
+        Gallery_Vp_FSMRelease();
         Gallery_CreateLibArray();
 
+#ifdef UI_MULTILAYER_SUPPORT
+        Gallery_Vp_DestoryLayer();
+#endif
         //clear pic list
         ClearPicList(win_id, ctrl_id);
+        MMK_DestroyControl(ctrl_id);
+        {
+            MMI_WIN_ID_T     wait_win_id = WATCH_GALLERY_WAITING_WIN_ID;
+            WATCH_SOFTKEY_TEXT_ID_T   softket_test = {TXT_NULL,TXT_NULL,TXT_NULL};
+            WatchCOM_WaitingWin_FullScreen_Enter(wait_win_id,PNULL,image_watch_waitingwin_fullscreen_pic,softket_test,HandleLoadGalleryFileWinMsg);
+        }
         break;
 
     case MSG_PICVIEWER_UPDATE_LIST:
@@ -2122,3 +2158,14 @@ PUBLIC void WatchGallery_MainWin_Enter(void)
 #endif
 }
 #endif
+PUBLIC void WatchGallery_Exit(void)
+{
+    if(MMK_IsOpenWin(MMIPICVIEW_SHOW_PREVIEW_WIN_ID))
+    {
+	    MMK_CloseWin(MMIPICVIEW_SHOW_PREVIEW_WIN_ID);
+    }
+    if(MMK_IsOpenWin(WATCH_GALLERY_MAIN_WIN_ID))
+    {
+	    MMK_CloseWin(WATCH_GALLERY_MAIN_WIN_ID);
+    }
+}

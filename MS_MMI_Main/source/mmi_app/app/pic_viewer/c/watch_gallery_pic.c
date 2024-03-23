@@ -33,6 +33,7 @@
 #ifdef BAIDU_DRIVE_SUPPORT
 #include "mmipicview_internal.h" 
 #endif
+#include "watch_launcher_common.h"
 /**--------------------------------------------------------------------------*
  **                         MACRO DEFINITION                                 *
  **--------------------------------------------------------------------------*/
@@ -41,6 +42,7 @@
 #ifndef BAIDU_DRIVE_SUPPORT
 #define   GALLERY_PIC_DEL_BUTTON_RECT       DP2PX_RECT(96,168,143,215)
 #define   GALLERY_PIC_ANIM_RECT             DP2PX_RECT(36,36,203,203)
+#define   GALLERY_PIC_SWITCH_BUTTON_RECT    DP2PX_RECT(95,168,227,215)
 #else
 #define   GALLERY_PIC_DEL_BUTTON_RECT       DP2PX_RECT(96,168,143,215)
 #define   GALLERY_PIC_SWITCH_BUTTON_RECT    DP2PX_RECT(95,168,227,215)
@@ -68,10 +70,10 @@ LOCAL void GallerySetPicBtnParam(MMI_WIN_ID_T win_id)
 {
     GUI_RECT_T              delete_rect       = GALLERY_PIC_DEL_BUTTON_RECT;
     MMI_CTRL_ID_T           del_button_ctrlid = MMIGALLERY_PIC_DEL_BUTTON_CTRL_ID;
-#ifdef BAIDU_DRIVE_SUPPORT
+//#ifdef BAIDU_DRIVE_SUPPORT
     GUI_RECT_T              switch_rect       = GALLERY_PIC_SWITCH_BUTTON_RECT;
     MMI_CTRL_ID_T           switch_button_ctrlid = MMIPICVIEW_SET_BUTTON_CTRL_ID;
-#endif
+//#endif
 
     GUIBUTTON_SetRect(del_button_ctrlid, &delete_rect);
 
@@ -175,9 +177,9 @@ LOCAL GUIANIM_RESULT_E GallerySetAnimParam(
         //set anim param
         control_info.is_ctrl_id        = TRUE;
         control_info.ctrl_id           = ctrl_id;
-        display_info.is_zoom           = FALSE;
+        display_info.is_zoom           = TRUE;
         display_info.is_syn_decode     = FALSE;
-        display_info.is_auto_zoom_in   = FALSE;
+        display_info.is_auto_zoom_in   = TRUE;
 
         display_info.is_disp_one_frame = FALSE;
 
@@ -187,6 +189,7 @@ LOCAL GUIANIM_RESULT_E GallerySetAnimParam(
 
         //背景色设为黑色
         display_info.bg.color       = MMI_BLACK_COLOR;
+        display_info.is_no_miniatur = TRUE;
 		{
 			anim_info.full_path_wstr_ptr = file_info_ptr->filename;
 			anim_info.full_path_wstr_len = file_info_ptr->name_len;
@@ -211,9 +214,9 @@ LOCAL GUIANIM_RESULT_E GallerySetAnimParam(
 PUBLIC void Gallery_Pic_SetBtnVisible(MMI_WIN_ID_T win_id,BOOLEAN is_visible,BOOLEAN is_update)
 {
     MMI_CTRL_ID_T   DelCtrlId = MMIGALLERY_PIC_DEL_BUTTON_CTRL_ID;
-#ifdef BAIDU_DRIVE_SUPPORT
+//#ifdef BAIDU_DRIVE_SUPPORT
     MMI_CTRL_ID_T   switch_button_ctrlid = MMIPICVIEW_SET_BUTTON_CTRL_ID;
-#endif	
+//#endif	
 #ifdef ADULT_WATCH_SUPPORT
     Gallery_Main_DrawIndicator(is_visible);
 #endif
@@ -251,33 +254,34 @@ LOCAL void PIC_HandlePENOKMsg(MMI_WIN_ID_T  win_id,DPARAM  param)
               /* edit end */
 				MMK_CloseWin(win_id);
 				//add by fys for bug 10/24
-				MMK_CloseWin(WATCH_GALLERY_MAIN_WIN_ID);
-				if(!delete_button_click){
-					delete_button_click = 1;
-					WatchGallery_MainWin_Enter();
-				}
+				//MMK_CloseWin(WATCH_GALLERY_MAIN_WIN_ID);
+				//if(!delete_button_click){
+				//	delete_button_click = 1;
+				//	WatchGallery_MainWin_Enter();
+				//}
 				//add end
            }
            break;
-#ifdef BAIDU_DRIVE_SUPPORT
+
 		   case MMIPICVIEW_SET_BUTTON_CTRL_ID:
 		   {
 			   	MMI_CTRL_ID_T ctrl_id = MMIPICVIEW_LIST_CTRL_ID;
+            #ifdef BAIDU_DRIVE_SUPPORT
 				MMIAPIPICVIEW_SetShowFolderPath(PICVIEW_SOURCE_CLOUD_THUMBNAIL);
+            #endif
 				/*edit by fys 09/26 */
 				//MMK_CreateWin((uint32 *)MMIPICVIEW_LIST_WIN_TAB,PNULL);	
 				MMK_CloseWin(win_id);
 
 				//add by fys for bug 10/24
-				if(MMK_IsOpenWin(WATCH_GALLERY_MAIN_WIN_ID)){
-					GalleryPicListUnmarked(MMIPICVIEW_LIST_CTRL_ID);
-					Gallery_Main_ReLoadFile();
-					MMK_SendMsg(WATCH_GALLERY_MAIN_WIN_ID, MSG_FULL_PAINT, PNULL);
-				}
+				//if(MMK_IsOpenWin(WATCH_GALLERY_MAIN_WIN_ID)){
+				//	GalleryPicListUnmarked(MMIPICVIEW_LIST_CTRL_ID);
+				//	Gallery_Main_ReLoadFile();
+				//	MMK_SendMsg(WATCH_GALLERY_MAIN_WIN_ID, MSG_FULL_PAINT, PNULL);
+				//}
 				//add end
 		   }
            break;
-#endif
            default:
            break;
        }
@@ -366,7 +370,7 @@ PUBLIC MMI_RESULT_E Gallery_Pic_HandleMsg(
 #if defined( ADULT_WATCH_SUPPORT) || defined(SCREEN_SHAPE_CIRCULAR)
         case MSG_FULL_PAINT:
         {
-            GUI_RECT_T       bg_rect     = GALLERY_BG_RECT;
+            GUI_RECT_T       bg_rect     = MMITHEME_GetFullScreenRect();
             GUI_LCD_DEV_INFO lcd_dev_info = {0,0};
             //MMK_GetWinLcdDevInfo(win_id, &lcd_dev_info);
             LCD_FillRect(&lcd_dev_info, bg_rect,    MMI_BLACK_COLOR);
@@ -402,6 +406,15 @@ PUBLIC MMI_RESULT_E Gallery_Pic_HandleMsg(
         break;
         case MSG_KEYDOWN_RED:
             break;
+        case MSG_TP_PRESS_UP:
+        {
+            MMI_TP_FLING_DIRECTION_E fling_direction=((MMI_MULTI_KEY_TP_MSG_PARAM_T *)(param))->tp_fling_direction;
+            if(fling_direction == TP_FLING_LEFT)
+            {
+                 Gallery_NextFilePreview(win_id);
+            }
+            break;
+        }
         default:
         {
              result = MMI_RESULT_FALSE;
@@ -447,7 +460,7 @@ PUBLIC void Gallery_Pic_PictureFilePreview(MMI_WIN_ID_T win_id,FILEARRAY_DATA_T*
 {
 	MMI_HANDLE_T win_handle = 0;
 	MMI_CTRL_ID_T animCtrlId  = MMIGALLERY_PIC_ANIM_CTRL_ID;
-	GUI_RECT_T rect = {0,0,MMI_MAINSCREEN_WIDTH,MMI_MAINSCREEN_HEIGHT};
+	GUI_RECT_T rect = {0,0,LAUNCHER_WIDTH,LAUNCHER_HEIGHT};
 	win_id = MMIPICVIEW_SHOW_PREVIEW_WIN_ID;
 	if (MMK_IsOpenWin(win_id))
 	{

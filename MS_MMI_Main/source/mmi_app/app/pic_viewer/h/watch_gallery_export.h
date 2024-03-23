@@ -47,5 +47,6 @@ PUBLIC void WatchGallery_MainWin_Enter(void);
 
 PUBLIC void GalleryPicListMarked(MMI_CTRL_ID_T  list_ctrl_id);
 
+PUBLIC void WatchGallery_Exit(void);
 #endif
 #endif

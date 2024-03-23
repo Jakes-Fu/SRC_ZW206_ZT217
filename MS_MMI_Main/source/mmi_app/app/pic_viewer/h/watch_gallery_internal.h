@@ -276,6 +276,7 @@ PUBLIC MMIGALLERY_FILE_TYPE_E Gallery_GetCurPreviewFileType(void);
 PUBLIC void Gallery_Main_OpenDelQueryWin(void);
 
 PUBLIC void Gallery_Main_ReLoadFile(void);
+PUBLIC void Gallery_NextFilePreview(MMI_WIN_ID_T win_id);
 #endif
 #endif
 
