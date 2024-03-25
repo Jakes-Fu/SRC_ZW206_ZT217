@@ -37,7 +37,7 @@ ZDT_ZFB_SUPPORT = FALSE                                  ### 支付宝 需要开启 ZDT
 TULING_AI_SUPPORT = TRUE				### 图灵AI						     
 BAIRUI_VIDEOCHAT_SUPPORT = FALSE				### 百锐视频通话
 LEBAO_MUSIC_SUPPORT = FALSE			### 乐宝音乐
-XYSDK_SUPPORT = FALSE					### 喜马拉雅
+XYSDK_SUPPORT = TRUE					### 喜马拉雅
 XYSDK_SRC_SUPPORT = FALSE				### 喜马拉雅源码支持
 #第三方应用结束
 
