@@ -8961,6 +8961,7 @@ RES_ADD_STRING(TXT_COMMON_LINK_DISCONNECTED,"Connection disconnected")
 RES_ADD_STRING(TXT_COMMON_GAME_LINK,"Link game")
 #endif
 RES_ADD_STRING(TXT_COMMON_COMMON_BRIGHTNESS,"Brightness")
+RES_ADD_STRING(TXT_SETTINGS_ABUP_FOTA_CHECK,"Fota")
 RES_ADD_STRING(TXT_BRIGHT_ADJUST,"Adjust bright")
 //RES_ADD_STRING(TXT_COMMON_BRIGHTNESS5,"Adjust brightness5") 
 RES_ADD_STRING(TXT_COMMON_LIST,"List")
@@ -9562,7 +9563,10 @@ RES_ADD_IMG(res_stat_battery_70,"\\MMI_RES_##\\IMAG\\Launcher\\res_stat_battery_
 RES_ADD_IMG(res_stat_battery_80,"\\MMI_RES_##\\IMAG\\Launcher\\res_stat_battery_80.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(res_stat_battery_90,"\\MMI_RES_##\\IMAG\\Launcher\\res_stat_battery_90.png",IMG_CMP_PNG_ARGB_RLE,0)
 #if (!defined ADULT_WATCH_SUPPORT) && (defined SCREEN_SHAPE_CIRCULAR)
-RES_ADD_IMG(res_stat_battery_charing,"\\MMI_RES_##\\IMAG\\Launcher\\res_stat_battery_charing.png",IMG_CMP_PNG_ARGB_RLE,0)
+
+RES_ADD_IMG(res_stat_battery_charing,"\\MMI_RES_##\\IMAG\\Launcher\\res_stat_battery_charing.gif",IMG_CMP_GIF_SCI,0)
+RES_ADD_IMG(res_stat_battery_charing_s,"\\MMI_RES_##\\IMAG\\Launcher\\res_stat_battery_charing7.png",IMG_CMP_PNG_ARGB_RLE,0)
+
 #endif
 RES_ADD_IMG(res_stat_bluetooth,"\\MMI_RES_##\\IMAG\\Launcher\\res_stat_bluetooth.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(res_stat_date_2g,"\\MMI_RES_##\\IMAG\\Launcher\\res_stat_date_2g.png",IMG_CMP_PNG_ARGB_RLE,0)
@@ -9994,6 +9998,7 @@ RES_ADD_IMG(IMAGE_ALARM_ICON,"\\MMI_RES_##\\IMAG\\SecMenuIcon\\AlarmIcon.png",IM
 RES_ADD_IMG(IMAGE_CALL_VOLUME_ICON,"\\MMI_RES_##\\IMAG\\SecMenuIcon\\CallVolume.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(IMAGE_FLASHLIGHT_SET_ICON,"\\MMI_RES_##\\IMAG\\SecMenuIcon\\FlashlightIcon.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(IMAGE_DIAL_SET_ICON,"\\MMI_RES_##\\IMAG\\SecMenuIcon\\DialIcon.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(IMAGE_ABUP_FOTA_SET_ICON,"\\MMI_RES_##\\IMAG\\SecMenuIcon\\res_fota_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
 #ifdef FOTA_SUPPORT
 RES_ADD_IMG(IMAGE_ABUP_FOTA_SET_ICON,"\\MMI_RES_##\\IMAG\\SecMenuIcon\\fota.png",IMG_CMP_PNG_ARGB_RLE,0)
 #endif
