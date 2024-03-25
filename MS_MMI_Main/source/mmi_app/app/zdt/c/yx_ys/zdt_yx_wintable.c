@@ -2607,7 +2607,7 @@ void  MMIZDT_ChatGroup_ShowList(MMI_WIN_ID_T win_id,uint8 * p_friend_id)
             char num[4] = {0};
             if(unread_num > 9)
             {
-                sprintf(num,"%s", "...");
+                sprintf(num,"%s", ".");
             }
             else
             {
@@ -2619,7 +2619,7 @@ void  MMIZDT_ChatGroup_ShowList(MMI_WIN_ID_T win_id,uint8 * p_friend_id)
             item_data.item_content[3].item_data.text_buffer.wstr_len = MMIAPICOM_Wstrlen(item_data.item_content[3].item_data.text_buffer.wstr_ptr);
         //#endif
             item_data.item_content[2].item_data_type     = GUIITEM_DATA_IMAGE_ID;
-            item_data.item_content[2].item_data.image_id = IMAGE_TINYCHAT_UNREAD;
+            item_data.item_content[2].item_data.image_id = IMAGE_TINYCHAT_UNREAD_T;
         }
      #if 0 //ndef ZTE_WATCH
         copy_len = SCI_STRLEN(pGroupInfo->group_num);

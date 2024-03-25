@@ -539,7 +539,7 @@ LOCAL void drawDigitalWatch0()
 #ifdef WATCH_PANEL_DOLPHIN_SUPPORT 
 LOCAL void drawDigitalWatch1()
 {
-	MMI_WIN_ID_T win_id = WATCH_LAUNCHER_PANEL_1_WIN_ID;
+	MMI_WIN_ID_T win_id = WATCH_LAUNCHER_PANEL_2_WIN_ID;
         MMI_IDLE_DISPLAY_T          idle_disp_style     = {0};
         GUI_POINT_T                 point               = {0};
         SCI_TIME_T                  time                = {0};
@@ -551,23 +551,19 @@ LOCAL void drawDigitalWatch1()
         uint8                       datestr[15]         = {0};
         wchar                       date_wstr[30]        = {0};
         wchar                       wstr_buf[30]        = {0};
-        wchar                       wstr_split[]        = {L", "};
+    
         
         GUI_LCD_DEV_INFO lcd_dev_info = {0};
-        MMISET_TIME_DISPLAY_TYPE_E  time_display_type   = MMIAPISET_GetTimeDisplayType();  
-        MMI_IMAGE_ID_T              am_pm_image         = IMAGE_IDLE_BIG_TIME_AM;
+     //   MMISET_TIME_DISPLAY_TYPE_E  time_display_type   = MMIAPISET_GetTimeDisplayType();  
+      
         //uint16                      mmi_main_time_y     = MMI_MAIN_TIME_Y;
         GUISTR_STYLE_T text_style = {0};/*lint !e64*/
-        GUISTR_STATE_T          text_state = GUISTR_STATE_ALIGN|GUISTR_STATE_EFFECT|GUISTR_STATE_ELLIPSIS|GUISTR_STATE_SINGLE_LINE;
+       GUISTR_STATE_T          text_state = GUISTR_STATE_ALIGN|GUISTR_STATE_EFFECT|GUISTR_STATE_ELLIPSIS|GUISTR_STATE_SINGLE_LINE;
         GUI_RECT_T              opn_rect = {0}; 
-        MMI_STRING_T            ampm_str     = {0};
-      
-            
-        MMI_IMAGE_ID_T bg_img_id = IMG_DIGIT_CLOCK8_BG;
-	//	GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_1_WIN_ID, bg_img_id,&lcd_dev_info);
-        //MMI_IMAGE_ID_T colon_img_id = IMG_DIGIT_CLOCK1_WHITE_COLON;
+        MMI_STRING_T            ampm_str     = {0};    
 
-      MMI_TEXT_ID_T week_img_id_list[7] =
+   
+            MMI_IMAGE_ID_T week_img_id_list[7] =
     {
         IMG_DIGIT_CLOCK3_WEEK7,//       TXT_SHORT_IDLE_SUNDAY,
         IMG_DIGIT_CLOCK3_WEEK1,//       TXT_SHORT_IDLE_MONDAY,
@@ -577,73 +573,93 @@ LOCAL void drawDigitalWatch1()
         IMG_DIGIT_CLOCK3_WEEK5,//       TXT_SHORT_IDLE_FRIDAY,
         IMG_DIGIT_CLOCK3_WEEK6,//       TXT_SHORT_IDLE_SATURDAY
     };  
-      
+     
+			
+            MMI_IMAGE_ID_T date_img_id_list[10] =
+    {
+        IMG_DIGIT_CLOCK3_WHITE_NUM0,//       TXT_SHORT_IDLE_SUNDAY,
+        IMG_DIGIT_CLOCK3_WHITE_NUM1,//       TXT_SHORT_IDLE_MONDAY,
+        IMG_DIGIT_CLOCK3_WHITE_NUM2,//      TXT_SHORT_IDLE_TUESDAY,
+        IMG_DIGIT_CLOCK3_WHITE_NUM3,//       TXT_SHORT_IDLE_WEDNESDAY,
+        IMG_DIGIT_CLOCK3_WHITE_NUM4,//       TXT_SHORT_IDLE_THURSDAY,
+        IMG_DIGIT_CLOCK3_WHITE_NUM5,//       TXT_SHORT_IDLE_FRIDAY,
+        IMG_DIGIT_CLOCK3_WHITE_NUM6,//       TXT_SHORT_IDLE_SATURDAY
+		IMG_DIGIT_CLOCK3_WHITE_NUM7,
+		IMG_DIGIT_CLOCK3_WHITE_NUM8,
+		IMG_DIGIT_CLOCK3_WHITE_NUM9,
+    };  
+			
+            MMI_IMAGE_ID_T time_img_id_list[10] =
+    {
+        IMG_DIGIT_CLOCK8_DATE_NUM0,//       TXT_SHORT_IDLE_SUNDAY,
+        IMG_DIGIT_CLOCK8_DATE_NUM1,//       TXT_SHORT_IDLE_MONDAY,
+        IMG_DIGIT_CLOCK8_DATE_NUM2,//      TXT_SHORT_IDLE_TUESDAY,
+        IMG_DIGIT_CLOCK8_DATE_NUM3,//       TXT_SHORT_IDLE_WEDNESDAY,
+        IMG_DIGIT_CLOCK8_DATE_NUM4,//       TXT_SHORT_IDLE_THURSDAY,
+        IMG_DIGIT_CLOCK8_DATE_NUM5,//       TXT_SHORT_IDLE_FRIDAY,
+        IMG_DIGIT_CLOCK8_DATE_NUM6,//       TXT_SHORT_IDLE_SATURDAY
+		IMG_DIGIT_CLOCK8_DATE_NUM7,
+		IMG_DIGIT_CLOCK8_DATE_NUM8,
+		IMG_DIGIT_CLOCK8_DATE_NUM9,
+    };  
+		MMI_IMAGE_ID_T bg_img_id = IMG_DIGIT_CLOCK8_BG; 
+	
+ MMK_GetWinLcdDevInfo(WATCH_LAUNCHER_PANEL_WIN_ID,&lcd_dev_info);    
+        idle_disp_style = MMITHEME_GetIdleDispStyle(MMI_MAIN_LCD_TIME);
+        IMG_EnableTransparentColor(TRUE); 
+        GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, bg_img_id,&lcd_dev_info);
 
-//    GUI_RECT_T display_rect = {0};
-
-    
-     // GUI_POINT_T  point = {0};
-  //  SCI_DATE_T  date = {0};
-	point.x=0;
-	  point.y=0;
-GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_1_WIN_ID, bg_img_id,&lcd_dev_info);
-    TM_GetSysDate(&date);
     point.x = WATCH_PANEL_SPACE_STATION_DATE_START_X ;
     point.y = 35 ;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK3_WHITE_NUM0+date.mon/10,&lcd_dev_info);
+	MMK_GetWinLcdDevInfo(WATCH_LAUNCHER_PANEL_WIN_ID,&lcd_dev_info);    
+        idle_disp_style = MMITHEME_GetIdleDispStyle(MMI_MAIN_LCD_TIME);
+        IMG_EnableTransparentColor(TRUE);
+		 TM_GetSysDate(&date);
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, date_img_id_list[date.mon/10],&lcd_dev_info);
     point.x += WATCH_PANEL_SPACE_STATION_DATE_IMG_WIDTH;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK3_WHITE_NUM0+date.mon%10,&lcd_dev_info);
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, date_img_id_list[date.mon%10],&lcd_dev_info);
     point.x += WATCH_PANEL_SPACE_STATION_DATE_IMG_WIDTH;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK3_HYPHEN,&lcd_dev_info);    
-    point.x += WATCH_PANEL_SPACE_STATION_DATE_IMG_WIDTH;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK3_WHITE_NUM0+date.mday/10,&lcd_dev_info);
-    point.x += WATCH_PANEL_SPACE_STATION_DATE_IMG_WIDTH-2;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK3_WHITE_NUM0+date.mday%10,&lcd_dev_info);
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, IMG_DIGIT_CLOCK3_HYPHEN,&lcd_dev_info);
+    point.x += WATCH_PANEL_SPACE_STATION_DATE_IMG_WIDTH-1;
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, date_img_id_list[date.mday/10],&lcd_dev_info);
+    point.x += WATCH_PANEL_SPACE_STATION_DATE_IMG_WIDTH-1;
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, date_img_id_list[date.mday%10],&lcd_dev_info);
    
-        //text_style.begin_alpha = text_style.end_alpha = 80;
-        GUIRES_DisplayImg(&point,PNULL,PNULL,PNULL, week_img_id_list[date.wday],&lcd_dev_info);
-		   
-        //text_style.begin_alpha = text_style.end_alpha = 80;
-     
-		//draw week
+
    
     point.x = WATCH_PANEL_ASTRONAUT_WEEK_X;
     point.y = 35;
     GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, week_img_id_list[date.wday],&lcd_dev_info);
-     // TM_GetSysDate(&date);
+      TM_GetSysDate(&date);
     point.x =WATCH_PANEL_SPACE_STATION_DATE_START_X-28;
 
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK3_WHITE_NUM0+date.year/1000,&lcd_dev_info);
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, date_img_id_list[date.year/1000],&lcd_dev_info);
     point.x += WATCH_PANEL_ASTRONAUT_DATE_IMG_WIDTH;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK3_WHITE_NUM0+(date.year/100)%10,&lcd_dev_info);
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, date_img_id_list[(date.year/100)%10],&lcd_dev_info);
     point.x += WATCH_PANEL_ASTRONAUT_DATE_IMG_WIDTH-2;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK3_WHITE_NUM0+(date.year%100)/10,&lcd_dev_info);
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, date_img_id_list[(date.year%100)/10],&lcd_dev_info);
     point.x += WATCH_PANEL_ASTRONAUT_DATE_IMG_WIDTH-2;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK3_WHITE_NUM0+(date.year%100)%10,&lcd_dev_info); 
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, date_img_id_list[(date.year%100)%10],&lcd_dev_info); 
       point.x += WATCH_PANEL_SPACE_STATION_DATE_IMG_WIDTH-2;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK3_HYPHEN,&lcd_dev_info);
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, IMG_DIGIT_CLOCK3_HYPHEN,&lcd_dev_info);
        TM_GetSysTime(&time);
       point.x = WATCH_PANEL_ASTRONAUT_TIME_START_X ;
     point.y = WATCH_PANEL_ASTRONAUT_TIME_MARGIN_TOP-10;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK8_DATE_NUM0 +time.hour/10,&lcd_dev_info);
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, time_img_id_list[time.hour/10],&lcd_dev_info);
     point.x += WATCH_PANEL_ASTRONAUT_TIME_IMG_WIDTH+WATCH_PANEL_ASTRONAUT_TIME_X_OFFSET;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK8_DATE_NUM0+time.hour%10,&lcd_dev_info);
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, time_img_id_list[time.hour%10],&lcd_dev_info);
     point.x += WATCH_PANEL_ASTRONAUT_TIME_IMG_WIDTH+WATCH_PANEL_ASTRONAUT_TIME_X_OFFSET;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK8_DATE_COLON,&lcd_dev_info);
-    point.x += WATCH_PANEL_ASTRONAUT_COLON_IMG_WIDTH+WATCH_PANEL_ASTRONAUT_TIME_X_OFFSET;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK8_DATE_NUM0+time.min/10,&lcd_dev_info);
-    point.x += WATCH_PANEL_ASTRONAUT_TIME_IMG_WIDTH+WATCH_PANEL_ASTRONAUT_TIME_X_OFFSET;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK8_DATE_NUM0+time.min%10,&lcd_dev_info); 
+	point.y-=2;
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, IMG_DIGIT_CLOCK8_DATE_COLON,&lcd_dev_info);
+		point.y+=2;
+    point.x += WATCH_PANEL_ASTRONAUT_COLON_IMG_WIDTH+WATCH_PANEL_ASTRONAUT_TIME_X_OFFSET+2;
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, time_img_id_list[time.min/10],&lcd_dev_info);
+    point.x += WATCH_PANEL_ASTRONAUT_TIME_IMG_WIDTH+WATCH_PANEL_ASTRONAUT_TIME_X_OFFSET+2;
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, time_img_id_list[time.min%10],&lcd_dev_info); 
 	
-	  
-       GUISTR_DrawTextToLCDInRect(
-            &lcd_dev_info,
-            (const GUI_RECT_T *)&display_rect,       //the fixed display area
-            (const GUI_RECT_T *)&display_rect,       
-            (const MMI_STRING_T *)&display_string,
-            &text_style,
-            text_state,
-            GUISTR_TEXT_DIR_AUTO);
+	 
+
+      
 }
 #endif
 //===========================海豚表盘 end===========================
@@ -652,7 +668,7 @@ GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_1_WIN_ID, bg_img_id,&l
 #ifdef WATCH_PANEL_ASTRONAUT_SUPPORT //太空人
 LOCAL void drawDigitalWatch2( )
 {
-	MMI_WIN_ID_T win_id = WATCH_LAUNCHER_PANEL_2_WIN_ID;
+	MMI_WIN_ID_T win_id = WATCH_LAUNCHER_PANEL_3_WIN_ID;
     uint8 p_percent = 0;
     GUI_POINT_T  point = {0};
     uint16 img_width = 0;
@@ -668,16 +684,16 @@ LOCAL void drawDigitalWatch2( )
         uint8                       datestr[15]         = {0};
         wchar                       date_wstr[30]        = {0};
         wchar                       wstr_buf[30]        = {0};
-        wchar                       wstr_split[]        = {L", "};
+     
         
         GUI_LCD_DEV_INFO lcd_dev_info = {0};
-        MMISET_TIME_DISPLAY_TYPE_E  time_display_type   = MMIAPISET_GetTimeDisplayType();  
-        MMI_IMAGE_ID_T              am_pm_image         = IMAGE_IDLE_BIG_TIME_AM;
-        //uint16                      mmi_main_time_y     = MMI_MAIN_TIME_Y;
-        GUISTR_STYLE_T text_style = {0};/*lint !e64*/
-        GUISTR_STATE_T          text_state = GUISTR_STATE_ALIGN|GUISTR_STATE_EFFECT|GUISTR_STATE_ELLIPSIS|GUISTR_STATE_SINGLE_LINE;
+      MMI_IMAGE_ID_T bg_img_id = IMG_DIGIT_CLOCK9_BG;
+    //    GUISTR_STYLE_T text_style = {0};/*lint !e64*/
+       // GUISTR_STATE_T          text_state = GUISTR_STATE_ALIGN|GUISTR_STATE_EFFECT|GUISTR_STATE_ELLIPSIS|GUISTR_STATE_SINGLE_LINE;
         GUI_RECT_T              opn_rect = {0}; 
         MMI_STRING_T            ampm_str     = {0};
+	  MMISET_TIME_DISPLAY_TYPE_E  time_display_type   = MMIAPISET_GetTimeDisplayType();  
+
             MMI_TEXT_ID_T week_img_id_list[7] =
     {
         IMG_DIGIT_CLOCK3_WEEK7,//       TXT_SHORT_IDLE_SUNDAY,
@@ -687,66 +703,56 @@ LOCAL void drawDigitalWatch2( )
         IMG_DIGIT_CLOCK3_WEEK4,//       TXT_SHORT_IDLE_THURSDAY,
         IMG_DIGIT_CLOCK3_WEEK5,//       TXT_SHORT_IDLE_FRIDAY,
         IMG_DIGIT_CLOCK3_WEEK6,//       TXT_SHORT_IDLE_SATURDAY
-    };  
-    point.x = 0;
-    point.y = 0;    
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id,IMG_DIGIT_CLOCK9_BG,&lcd_dev_info);    
+    }; 
+			MMK_GetWinLcdDevInfo(WATCH_LAUNCHER_PANEL_WIN_ID,&lcd_dev_info);    
+        idle_disp_style = MMITHEME_GetIdleDispStyle(MMI_MAIN_LCD_TIME);
+        IMG_EnableTransparentColor(TRUE);
+        GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, bg_img_id,&lcd_dev_info);
+
+		
 	 TM_GetSysDate(&date);
     point.x = WATCH_PANEL_SPACE_STATION_DATE_START_X+40 ;
     point.y = MMI_MAINSCREEN_HEIGHT/2;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK3_WHITE_NUM0+date.mon/10,&lcd_dev_info);
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, IMG_DIGIT_CLOCK3_WHITE_NUM0+date.mon/10,&lcd_dev_info);
     point.x += WATCH_PANEL_SPACE_STATION_DATE_IMG_WIDTH;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK3_WHITE_NUM0+date.mon%10,&lcd_dev_info);
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, IMG_DIGIT_CLOCK3_WHITE_NUM0+date.mon%10,&lcd_dev_info);
     point.x += WATCH_PANEL_SPACE_STATION_DATE_IMG_WIDTH;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK3_HYPHEN,&lcd_dev_info);    
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, IMG_DIGIT_CLOCK3_HYPHEN,&lcd_dev_info);    
     point.x += WATCH_PANEL_SPACE_STATION_DATE_IMG_WIDTH;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK3_WHITE_NUM0+date.mday/10,&lcd_dev_info);
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, IMG_DIGIT_CLOCK3_WHITE_NUM0+date.mday/10,&lcd_dev_info);
     point.x += WATCH_PANEL_SPACE_STATION_DATE_IMG_WIDTH-2;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK3_WHITE_NUM0+date.mday%10,&lcd_dev_info);
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, IMG_DIGIT_CLOCK3_WHITE_NUM0+date.mday%10,&lcd_dev_info);
    
-        //text_style.begin_alpha = text_style.end_alpha = 80;
-     //   GUIRES_DisplayImg(&point,PNULL,PNULL,PNULL, week_img_id_list[date.wday],&lcd_dev_info);
-		   
-        //text_style.begin_alpha = text_style.end_alpha = 80;
-     
-		//draw week
-   
+    
     point.x = 40;
     point.y = MMI_MAINSCREEN_HEIGHT-23;
     GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, week_img_id_list[date.wday],&lcd_dev_info);
-     // TM_GetSysDate(&date);
+     TM_GetSysDate(&date);
     point.x =WATCH_PANEL_SPACE_STATION_DATE_START_X+12;
 	point.y = MMI_MAINSCREEN_HEIGHT/2;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK3_WHITE_NUM0+date.year/1000,&lcd_dev_info);
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, IMG_DIGIT_CLOCK3_WHITE_NUM0+date.year/1000,&lcd_dev_info);
     point.x += WATCH_PANEL_ASTRONAUT_DATE_IMG_WIDTH;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK3_WHITE_NUM0+(date.year/100)%10,&lcd_dev_info);
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, IMG_DIGIT_CLOCK3_WHITE_NUM0+(date.year/100)%10,&lcd_dev_info);
     point.x += WATCH_PANEL_ASTRONAUT_DATE_IMG_WIDTH-2;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK3_WHITE_NUM0+(date.year%100)/10,&lcd_dev_info);
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, IMG_DIGIT_CLOCK3_WHITE_NUM0+(date.year%100)/10,&lcd_dev_info);
     point.x += WATCH_PANEL_ASTRONAUT_DATE_IMG_WIDTH-2;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK3_WHITE_NUM0+(date.year%100)%10,&lcd_dev_info); 
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, IMG_DIGIT_CLOCK3_WHITE_NUM0+(date.year%100)%10,&lcd_dev_info); 
       point.x += WATCH_PANEL_SPACE_STATION_DATE_IMG_WIDTH-2;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK3_HYPHEN,&lcd_dev_info);
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, IMG_DIGIT_CLOCK3_HYPHEN,&lcd_dev_info);
        TM_GetSysTime(&time);
       point.x = WATCH_PANEL_SPACE_STATION_DATE_START_X+25 ;
     point.y =MMI_MAINSCREEN_HEIGHT/2-40 ;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK1_WHITE_NUM0 +time.hour/10,&lcd_dev_info);
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, IMG_DIGIT_CLOCK1_WHITE_NUM0 +time.hour/10,&lcd_dev_info);
     point.x += WATCH_PANEL_ASTRONAUT_TIME_IMG_WIDTH+WATCH_PANEL_ASTRONAUT_TIME_X_OFFSET+5;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK1_WHITE_NUM0+time.hour%10,&lcd_dev_info);
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, IMG_DIGIT_CLOCK1_WHITE_NUM0+time.hour%10,&lcd_dev_info);
   point.y =MMI_MAINSCREEN_HEIGHT/2+20 ;
    point.x = WATCH_PANEL_SPACE_STATION_DATE_START_X+25 ;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK1_WHITE_NUM0+time.min/10,&lcd_dev_info);
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, IMG_DIGIT_CLOCK1_WHITE_NUM0+time.min/10,&lcd_dev_info);
     point.x += WATCH_PANEL_ASTRONAUT_TIME_IMG_WIDTH+WATCH_PANEL_ASTRONAUT_TIME_X_OFFSET+5;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK1_WHITE_NUM0+time.min%10,&lcd_dev_info); 
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, IMG_DIGIT_CLOCK1_WHITE_NUM0+time.min%10,&lcd_dev_info); 
 	
-   
-	   GUISTR_DrawTextToLCDInRect(
-            &lcd_dev_info,
-            (const GUI_RECT_T *)&display_rect,       //the fixed display area
-            (const GUI_RECT_T *)&display_rect,       
-            (const MMI_STRING_T *)&display_string,
-            &text_style,
-            text_state,
-            GUISTR_TEXT_DIR_AUTO);
+
+	  
 }
 #endif
 //======================太空人表盘 end==============================
@@ -978,17 +984,17 @@ LOCAL MMI_RESULT_E MMIWatchPanel_HandleWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_I
                 {
                     SCI_TRACE_LOW("MMIWatchIdle_HandleWinMsg. draw clock begin index:%d", style.watch_index);
                     updateClock(style.watch_index);
-                    ZDT_DisplayStatusbar(win_id, lcd_dev_info);
+                   // ZDT_DisplayStatusbar(win_id, lcd_dev_info);
 
                     SCI_TRACE_LOW("MMIWatchIdle_HandleWinMsg. draw clock end.");
                 }
                 else
                 {
                     draw_watch_panel(style.watch_index);
-                    if(style.watch_index == PANEL_SPACE_SHIP || style.watch_index == PANEL_DOLPHIN)
-                    {
-                        ZDT_DisplayStatusbar(win_id, lcd_dev_info);
-                    }
+                    //if(style.watch_index == PANEL_SPACE_SHIP || style.watch_index == PANEL_DOLPHIN)
+                    //{
+                    // //   ZDT_DisplayStatusbar(win_id, lcd_dev_info);
+                    //}
                 }
             #else
                 draw_watch_panel(style.watch_index);
@@ -1037,7 +1043,6 @@ LOCAL MMI_RESULT_E MMIWatchPanel_HandleWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_I
             {
                 MMIDEFAULT_TurnOnBackLight();
             }
-            break;
             break;
         case MSG_SLIDEPAGE_OPENED:
             break;
@@ -1308,16 +1313,16 @@ LOCAL void DrawAClock()
     SCI_DATE_T  date = {0};
     TM_GetSysDate(&date);
     point.x = WATCH_PANEL_SPACE_STATION_DATE_START_X+10 ;
-    point.y =  MMI_MAINSCREEN_HEIGHT-20;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK3_WHITE_NUM0+date.mon/10,&lcd_dev_info);
+    point.y =  MMI_MAINSCREEN_HEIGHT-40;
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, IMG_DIGIT_CLOCK3_WHITE_NUM0+date.mon/10,&lcd_dev_info);
     point.x += WATCH_PANEL_SPACE_STATION_DATE_IMG_WIDTH;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK3_WHITE_NUM0+date.mon%10,&lcd_dev_info);
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, IMG_DIGIT_CLOCK3_WHITE_NUM0+date.mon%10,&lcd_dev_info);
     point.x += WATCH_PANEL_SPACE_STATION_DATE_IMG_WIDTH;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK3_HYPHEN,&lcd_dev_info);    
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, IMG_DIGIT_CLOCK3_HYPHEN,&lcd_dev_info);    
     point.x += WATCH_PANEL_SPACE_STATION_DATE_IMG_WIDTH;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK3_WHITE_NUM0+date.mday/10,&lcd_dev_info);
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, IMG_DIGIT_CLOCK3_WHITE_NUM0+date.mday/10,&lcd_dev_info);
     point.x += WATCH_PANEL_SPACE_STATION_DATE_IMG_WIDTH-2;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK3_WHITE_NUM0+date.mday%10,&lcd_dev_info);
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, IMG_DIGIT_CLOCK3_WHITE_NUM0+date.mday%10,&lcd_dev_info);
    
         //text_style.begin_alpha = text_style.end_alpha = 80;
      //   GUIRES_DisplayImg(&point,PNULL,PNULL,PNULL, week_img_id_list[date.wday],&lcd_dev_info);
@@ -1327,20 +1332,20 @@ LOCAL void DrawAClock()
 		//draw week
    
     point.x = WATCH_PANEL_ASTRONAUT_WEEK_X+10;
-    point.y = MMI_MAINSCREEN_HEIGHT-20;
+    point.y = MMI_MAINSCREEN_HEIGHT-40;
     //GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, week_img_id_list[date.wday],&lcd_dev_info);
      TM_GetSysDate(&date);
     point.x =WATCH_PANEL_SPACE_STATION_DATE_START_X-20;
 
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK3_WHITE_NUM0+date.year/1000,&lcd_dev_info);
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, IMG_DIGIT_CLOCK3_WHITE_NUM0+date.year/1000,&lcd_dev_info);
     point.x += WATCH_PANEL_ASTRONAUT_DATE_IMG_WIDTH;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK3_WHITE_NUM0+(date.year/100)%10,&lcd_dev_info);
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, IMG_DIGIT_CLOCK3_WHITE_NUM0+(date.year/100)%10,&lcd_dev_info);
     point.x += WATCH_PANEL_ASTRONAUT_DATE_IMG_WIDTH-2;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK3_WHITE_NUM0+(date.year%100)/10,&lcd_dev_info);
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, IMG_DIGIT_CLOCK3_WHITE_NUM0+(date.year%100)/10,&lcd_dev_info);
     point.x += WATCH_PANEL_ASTRONAUT_DATE_IMG_WIDTH-2;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK3_WHITE_NUM0+(date.year%100)%10,&lcd_dev_info); 
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, IMG_DIGIT_CLOCK3_WHITE_NUM0+(date.year%100)%10,&lcd_dev_info); 
       point.x += WATCH_PANEL_SPACE_STATION_DATE_IMG_WIDTH;
-    GUIRES_DisplayImg(&point,PNULL,PNULL,win_id, IMG_DIGIT_CLOCK3_HYPHEN,&lcd_dev_info);
+    GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, IMG_DIGIT_CLOCK3_HYPHEN,&lcd_dev_info);
         //text_style.begin_alpha = text_style.end_alpha = 80;
       //  GUIRES_DisplayImg(&point,PNULL,PNULL,PNULL, week_img_id_list[date.wday],&lcd_dev_info);
 		   

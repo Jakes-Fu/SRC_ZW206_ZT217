@@ -24,7 +24,7 @@ RES_ADD_IMG(IMAGE_AI_NO_RECORD_BG,"\\MMI_RES_##\\IMAG\\no_record_bg.png",IMG_CMP
 RES_ADD_IMG(res_icon_big,"\\MMI_RES_##\\IMAG\\res_icon_big.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(res_icon_recode,"\\MMI_RES_##\\IMAG\\res_icon_recode.png",IMG_CMP_PNG_ARGB_RLE,0)
 
-RES_ADD_STRING(TXT_AICHAT_TIPS,"Hi! I am an Ai Assistant")
-RES_ADD_STRING(TXT_AICHAT_USAGE_TIPS,"You can try to call me \n call phone to dad \n tell a story")
+RES_ADD_STRING(TXT_AICHAT_TIPS,"??o?! ?¨°¨º?AI?¨²?¡Â¨¨?")
+RES_ADD_STRING(TXT_AICHAT_USAGE_TIPS,"???¨¦¨°?¨º?¡Á????¨°¡ä¨°¦Ì??¡ã \n ??¡ã?¡ã?¡ä¨°¦Ì??¡ã \n ?21¨º¨º?")
 
 

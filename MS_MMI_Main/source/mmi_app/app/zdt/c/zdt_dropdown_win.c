@@ -159,7 +159,7 @@ LOCAL MMI_IMAGE_ID_T Shortcut_GetSignalInfo(char * string_str)
     MMIPHONE_NET_SERVICE_TYPE_E  service_type = NET_SERVICE_TYPE_MAX;
     MN_DUAL_SYS_E dual_sys = MN_DUAL_SYS_1;
     MMI_IMAGE_ID_T signal_start_id = res_stat_signal_0;
-
+	
     if (is_fly_mode_on)
     {
         image_id = IMAGE_IDLE_TITLE_ICON_FLYMODE;
@@ -330,6 +330,7 @@ PUBLIC void ZDT_DisplaySingal(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_dev_info
     str_char = (char *)SCI_ALLOC_APPZ(10);
     signal_icon_id = Shortcut_GetSignalInfo(str_char);
     volte_icon_id = Shortcut_GetVolteInfo();
+		
     if(signal_icon_id != IMAGE_NULL)
     {
         signal_str_rect = MMI_ConvertWinRect(MMICOM_WINPOS_WIN2DISP, win_id, signal_str_rect);
@@ -349,15 +350,15 @@ PUBLIC void ZDT_DisplaySingal(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_dev_info
         txt_style.align = ALIGN_LEFT;
         if(0 == strcmp(str_char, "GPRS")){
 #if defined(MAINLCD_DEV_SIZE_240X284)
-            txt_style.font = DP_FONT_10;
+            txt_style.font = SONG_FONT_8;
 #else
-            txt_style.font = DP_FONT_10;
+            txt_style.font = SONG_FONT_8;
 #endif
         }else{
 #if defined(MAINLCD_DEV_SIZE_240X284)        
-            txt_style.font = DP_FONT_12;
+            txt_style.font = SONG_FONT_10;
 #else
-            txt_style.font = DP_FONT_12;
+            txt_style.font = SONG_FONT_10;
 #endif
         }
         txt_style.font_color = MMI_WHITE_COLOR;
@@ -396,13 +397,19 @@ PUBLIC void ZDT_DisplayBattery(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_dev_inf
     uint32    icon_index = 0;
     BOOLEAN is_charge = 0;
     uint32    battery = 0;
-    uint32    charge_icon_id[6] ={
-                                    res_stat_battery_0,
-                                    res_stat_battery_10,
-                                    res_stat_battery_20,
-                                    res_stat_battery_30,
-                                    res_stat_battery_40,
-                                    res_stat_battery_50,
+	uint32 i=0;
+    uint32    charge_icon_id[11] ={
+                                   res_stat_battery_0,
+                                                                    res_stat_battery_10,
+                                                                    res_stat_battery_20,
+                                                                    res_stat_battery_30,
+                                                                    res_stat_battery_40,
+                                                                    res_stat_battery_50,
+                                                                    res_stat_battery_60,
+                                                                    res_stat_battery_70,
+                                                                    res_stat_battery_80,
+                                                                    res_stat_battery_90,
+                                                                    res_stat_battery_100,
                                   };
     
     MMI_IMAGE_ID_T          bat_icon_id =IMAGE_NULL;
@@ -416,7 +423,7 @@ PUBLIC void ZDT_DisplayBattery(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_dev_inf
     GUI_RECT_T              charging_str_rect     = {168,8,190,40};
 
     uint8 battery_level = MMIAPIPHONE_GetBatCapacity();
-	battery_level=(battery_level+1)/2;
+	//battery_level=(battery_level+1)/2;
     is_charge = MMIIDLE_GetIdleWinInfo()->is_charge;
     bat_icon_id = charge_icon_id[battery_level];
     SCI_TRACE_LOW("DisplayBattry: is_charge = %d", is_charge);
@@ -432,8 +439,17 @@ PUBLIC void ZDT_DisplayBattery(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_dev_inf
     {
         if(bat_icon_id != IMAGE_NULL) 
         {
-           GUIRES_DisplayImg( PNULL, &bat_icon_rect, PNULL, win_id, res_stat_battery_charing,&lcd_dev_info);
-        }
+			if(battery_level<10)
+			{
+
+			
+					 GUIRES_DisplayImg(PNULL,&bat_icon_rect,PNULL,win_id,res_stat_battery_charing, &lcd_dev_info);
+			 // GUIRES_DisplayImg( PNULL, &bat_icon_rect, PNULL, win_id, res_stat_battery_charing_s,&lcd_dev_info);
+			}
+			else{
+				GUIRES_DisplayImg( PNULL, &bat_icon_rect, PNULL, win_id, res_stat_battery_charing_s,&lcd_dev_info);
+			}
+		}
         
     }  
 }
@@ -479,12 +495,7 @@ GUI_POINT_T   display_point = {0};
     	
 	
 
-		GUIRES_DisplayImg(&display_point,
-		    PNULL,
-		    PNULL,
-		    win_id,
-		    res_bg_star,
-		    &lcd_dev_info);
+		
     GUIRES_DisplayImg(&weather_Location_icon_point,PNULL,PNULL,win_id, IMAGE_WEATHER_LOCATION,&lcd_dev_info);
     //city
     tmp_string.wstr_ptr = g_yx_wt_info.city_name;
@@ -588,6 +599,12 @@ PUBLIC void ZDT_DisplayDataInOutIcon(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_d
 
 PUBLIC void ZDT_DisplayStatusbar(MMI_WIN_ID_T win_id,GUI_LCD_DEV_INFO lcd_dev_info)
 {
+	GUIRES_DisplayImg(&lcd_dev_info,
+		    PNULL,
+		    PNULL,
+		    win_id,
+		    res_bg_star,
+		    &lcd_dev_info);
     ZDT_DisplayBattery(win_id,lcd_dev_info);
     ZDT_DisplaySingal(win_id,lcd_dev_info);
     ZDT_DisplayDataInOutIcon(win_id, lcd_dev_info);
@@ -819,18 +836,7 @@ LOCAL MMI_RESULT_E HandleDropDownWinMsg(
 	MMI_IMAGE_ID_T         res_progress_bg = IMAGE_ZTE_DROP_PROGRESS_BG;
 	MMI_IMAGE_ID_T         res_progress_fg= IMAGE_ZTE_DROP_PROGRESS;
 	MMI_IMAGE_ID_T         res_progress_hand = NULL;
-	/*GUI_POINT_T   display_point = {0};
-	GUI_LCD_DEV_INFO lcd_dev_info = {0};
-	uint32      cur_item_index = 0;
-	uint32  volume_item_total = MMISET_VOL_MAX+1;
-	MMK_GetWinLcdDevInfo(win_id, &lcd_dev_info);
 	
-		GUIRES_DisplayImg(&display_point,
-		    PNULL,
-		    PNULL,
-		    win_id,
-		    res_bg_star,
-		    &lcd_dev_info);*/
 	#endif 
 
     SCI_TRACE_LOW("NotifyWin_HandleWinMsg(), msg_id = %0X.", msg_id);

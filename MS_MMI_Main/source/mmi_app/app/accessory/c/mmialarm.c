@@ -8999,17 +8999,17 @@ LOCAL void SetWeeksParamEditWin(MMI_WIN_ID_T      win_id)
 #ifdef MAINLCD_SIZE_320X480
     enabled_font.font=DP_FONT_20;
 #elif defined MAINLCD_SIZE_128X160
-    enabled_font.font=DP_FONT_14;
+    enabled_font.font=SONG_FONT_12;
 #else
-    enabled_font.font=DP_FONT_16;
+    enabled_font.font=SONG_FONT_14;
 #endif
     disabled_font.color=MMI_GRAY_COLOR;
 #ifdef MAINLCD_SIZE_320X480
     disabled_font.font=DP_FONT_20;
 #elif defined MAINLCD_SIZE_128X160
-    disabled_font.font=DP_FONT_14;
+    disabled_font.font=SONG_FONT_12;
 #else
-    disabled_font.font=DP_FONT_16;
+    disabled_font.font=SONG_FONT_14;
 #endif
 
 	GUIFORM_SetStyle(MMI_EDITWIN_CHILD_FORM_CTRL_ID,GUIFORM_STYLE_UNIT);
@@ -12384,17 +12384,17 @@ LOCAL void SetEditWinButtonBg(MMI_HANDLE_T    win_id,uint32 ctrl_id)
 #ifdef MAINLCD_SIZE_320X480
     enabled_font.font=DP_FONT_20;
 #elif defined MAINLCD_SIZE_128X160
-    enabled_font.font=DP_FONT_14;
+    enabled_font.font=SONG_FONT_12;
 #else
-    enabled_font.font=DP_FONT_16;
+    enabled_font.font=SONG_FONT_14;
 #endif
     disabled_font.color=MMI_GRAY_COLOR;
 #ifdef MAINLCD_SIZE_320X480
     disabled_font.font=DP_FONT_20;
 #elif defined MAINLCD_SIZE_128X160
-    disabled_font.font=DP_FONT_14;
+    disabled_font.font=SONG_FONT_12;
 #else
-    disabled_font.font=DP_FONT_16;
+    disabled_font.font=SONG_FONT_14;
 #endif
     bg.bg_type=GUI_BG_IMG;
     for(i=0;i<ALM_WEEK_DAY_NUM;i++)
