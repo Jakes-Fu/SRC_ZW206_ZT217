@@ -2447,7 +2447,7 @@ LOCAL MMI_RESULT_E ZDT_HandleDialWinMsg
 	//yangyu add
 	case MSG_KEYUP_CANCEL:
 	case MSG_APP_CANCEL:
-		//GUIEDIT_ClearAllStr(edit_ctrl_id);
+		GUIEDIT_ClearAllStr(edit_ctrl_id);
 		MMK_CloseWin(win_id);
 		break;
     case MSG_KEYDOWN_RED:
