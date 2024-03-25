@@ -2242,7 +2242,7 @@ LOCAL MMI_RESULT_E ZDT_HandleDialWinMsg
 		    GUIEDIT_SetSoftkey(edit_ctrl_id,0,0,TXT_NULL,TXT_NULL,NULL); 
             IGUICTRL_SetCircularHandleUpDown(MMK_GetCtrlPtr(edit_ctrl_id), FALSE);
             GUIEDIT_GetString(edit_ctrl_id, &edit_str);
-    	
+    		GUIEDIT_SetMaxLen(edit_ctrl_id, 12);
             s_zdt_is_need_check_input = TRUE;
 
             SCI_MEMSET(temp_wstr, 0x00, sizeof(temp_wstr));
@@ -2521,9 +2521,9 @@ LOCAL void ZDT_InitDialEdit(MMI_WIN_ID_T win_id)
         {
             GUIEDIT_FONT_T  editfont ={0};
             editfont.is_valid = TRUE;
-            editfont.big_font = MMIZDT_DIAL_EDIT_FONT;
-            editfont.mid_font = MMIZDT_DIAL_EDIT_FONT;
-            editfont.small_font = MMIZDT_DIAL_EDIT_FONT;
+            editfont.big_font = SONG_FONT_16;
+            editfont.mid_font = SONG_FONT_16;
+            editfont.small_font = SONG_FONT_16;
             GUIEDIT_SetFontEx(MMK_GetCtrlHandleByWin(win_id, edit_ctrl_id), &editfont);
             GUIEDIT_SetDialEditAdaptive(MMK_GetCtrlHandleByWin(win_id, edit_ctrl_id), TRUE, TRUE);
         }
