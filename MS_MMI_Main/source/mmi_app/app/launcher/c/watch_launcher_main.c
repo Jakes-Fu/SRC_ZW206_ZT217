@@ -181,7 +181,9 @@ const APP_LIST_ITEM_T  g_app_list_info[] =
     MEUN_MUSIC,//咪咕音乐
 #endif
 #if defined(XYSDK_SUPPORT)|| defined(XYSDK_SRC_SUPPORT)
+#ifndef WIN32
     MEUN_XMLY,//喜马拉雅
+#endif
 #endif
 #ifdef MAINMENU_STYLE_SUPPORT
     MEUN_STYLE,//主菜单风格切换

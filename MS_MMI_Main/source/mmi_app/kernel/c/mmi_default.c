@@ -3609,8 +3609,9 @@ PUBLIC void MMIDEFAULT_TurnOnBackLight(void)
 #ifdef XYSDK_SUPPORT
 {
     SCI_TRACE_LOW("LIBXMLYAPI_RefMainWin");
-
+#ifndef WIN32
     LIBXMLYAPI_RefMainWin();        //喜马需要亮屏时刷新一次首页
+#endif
 }
 #endif
 }

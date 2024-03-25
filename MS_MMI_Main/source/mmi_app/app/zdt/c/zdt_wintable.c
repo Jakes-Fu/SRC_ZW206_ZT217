@@ -3072,7 +3072,9 @@ static void watch_mainmenu_key_enter_hdlr(void)
 #ifdef XYSDK_SUPPORT
     else if(g_zdt_mainmenu_idx == ZDT_MAINMENU_XMLY)
     {
+    	#ifndef WIN32
         LIBXMLYAPI_CreateXysdkMainWin();
+	#endif
     }
 #endif
 #ifdef ZDT_ZFB_SUPPORT

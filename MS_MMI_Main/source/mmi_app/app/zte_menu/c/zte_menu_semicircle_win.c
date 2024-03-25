@@ -171,7 +171,9 @@ extern PUBLIC BOOLEAN MMIACC_OpenFlashlighWin(void);
 #ifdef XYSDK_SUPPORT
 PUBLIC void MMIZDT_OpenXmlyWin(void)
 {
+#ifndef WIN32
     LIBXMLYAPI_CreateXysdkMainWin();
+#endif
     return ;
 }
 #endif
