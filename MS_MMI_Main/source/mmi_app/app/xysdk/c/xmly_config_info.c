@@ -1,10 +1,10 @@
 ﻿#include "xmly_config_info.h"
 
-#define XY_APP_KEY ""
-#define XY_APP_SECRET ""
-#define XY_SN ""
+#define XY_APP_KEY "af440de526064e8caa2eeb1b03438edb"
+#define XY_APP_SECRET "C04F065038BE25103BEF9B7509A0F2F7"
+#define XY_SN "11713_00_100713"
 
-#define XY_HOMEPAGE_CH_ID  "e4829b16ebd14608bcbc325741ab89b3"
+#define XY_HOMEPAGE_CH_ID  "04ce0e1271984007961d968f167a5750"
 
 
 PUBLIC void mmixysdk_api_get_appkey(char *appkey)
