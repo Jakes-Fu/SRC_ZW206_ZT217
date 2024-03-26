@@ -633,7 +633,7 @@ LOCAL BOOLEAN ZDT_TestKeyboard(MMI_MESSAGE_ID_E key_msg_id)
 			LCD_FillRect(&lcd_dev_info, draw_rect, MMI_BLACK_COLOR);
 			break;
 	#ifdef ZMT_USE_TWO_KEY_DEVICE
-		case KEY_SHORTCUT:
+		case MSG_KEYDOWN_SHORTCUT:
 			draw_rect.left = 20;
 			draw_rect.top = 90;
 			draw_rect.right = 108;
@@ -5822,7 +5822,9 @@ LOCAL MMI_RESULT_E  HandleZDT_WatchFactoryWinMsg(
         }
         break;
 #endif //TOUCH_PANEL_SUPPORT //IGNORE9527
-
+#ifdef ZMT_USE_TWO_KEY_DEVICE
+    case MSG_KEYDOWN_SHORTCUT:
+#endif
     case MSG_KEYDOWN_CANCEL:
 		if(g_em_test_idx == EM_TEST_KEY)
              {
@@ -5831,9 +5833,6 @@ LOCAL MMI_RESULT_E  HandleZDT_WatchFactoryWinMsg(
 		break;
     case MSG_KEYDOWN_RED:
         break;
-#ifdef ZMT_USE_TWO_KEY_DEVICE
-    case MSG_KEYDOWN_SHORTCUT:
-#endif
     case MSG_KEYUP_CANCEL:
     case MSG_KEYUP_RED:
              if(g_em_test_idx == EM_TEST_KEY)
