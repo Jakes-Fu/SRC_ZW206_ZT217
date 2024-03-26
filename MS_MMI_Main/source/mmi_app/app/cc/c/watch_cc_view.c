@@ -2191,6 +2191,11 @@ LOCAL MMI_RESULT_E   HandleCcMtCallingWinMsg(
             }
             break;
         }
+#ifdef ZMT_USE_TWO_KEY_DEVICE
+	case MSG_KEYDOWN_SHORTCUT:
+		MMICC_AnswerCall();
+		break;
+#endif
 #ifdef TOUCH_PANEL_SUPPORT
         case MSG_CTL_PENOK:
         {

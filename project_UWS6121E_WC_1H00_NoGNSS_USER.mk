@@ -41,6 +41,7 @@ ZDT_MMI_USE_SMALL_FONT  = FALSE  			### 小字体支持 128x128可用
 ADD_TITLE_IN_ALL_SETTING_MENU = TRUE
 #UI界面宏义结束
 
+ZMT_USE_TWO_KEY_DEVICE = FALSE			###有两个实体按键//用于区分F20项目的不同机型
 #第三方应用开始
 ZDT_ZFB_SUPPORT = FALSE                                  ### 支付宝 需要开启 ZDT_HTTP_APP_SUPPORT
 TULING_AI_SUPPORT = TRUE				### 图灵AI						     

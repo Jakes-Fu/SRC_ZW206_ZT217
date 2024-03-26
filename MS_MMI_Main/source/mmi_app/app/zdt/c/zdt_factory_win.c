@@ -485,8 +485,11 @@ LOCAL void ZdtWatch_Factory_KEY_DrawTestKeyBG( void )
 	
     char s_test_key_text[][9] =
     {
-        {"RED"}, 
-	 {"GREEN"}, 
+       {"RED"}, 
+	{"GREEN"}, 
+#ifdef ZMT_USE_TWO_KEY_DEVICE
+	{"CALL"},
+#endif
     };
 	    
     LCD_FillRect(lcd_dev_info, draw_rect, MMI_WHITE_COLOR);
@@ -498,7 +501,7 @@ LOCAL void ZdtWatch_Factory_KEY_DrawTestKeyBG( void )
 	draw_rect.left = 20;
 	draw_rect.top = 10;
 	draw_rect.right = 108;
-	draw_rect.bottom = 60;
+	draw_rect.bottom = 40;
 	string.wstr_len = strlen(s_test_key_text[0]);
 	MMI_STRNTOWSTR(disp_text,ZDT_TEST_KEY_TEXT_MAX_LEN, (uint8*)s_test_key_text[0],string.wstr_len,string.wstr_len);
 	string.wstr_ptr = disp_text;
@@ -514,9 +517,9 @@ LOCAL void ZdtWatch_Factory_KEY_DrawTestKeyBG( void )
 	ZDT_TestEditWinDrawFocusRect(draw_rect, MMI_BLACK_COLOR);
 	
 	draw_rect.left = 20;
-	draw_rect.top = 70;
+	draw_rect.top = 50;
 	draw_rect.right = 108;
-	draw_rect.bottom = 120;
+	draw_rect.bottom = 80;
 	string.wstr_len = strlen(s_test_key_text[1]);
 	MMI_STRNTOWSTR(disp_text,ZDT_TEST_KEY_TEXT_MAX_LEN, (uint8*)s_test_key_text[1],string.wstr_len,string.wstr_len);
 	string.wstr_ptr = disp_text;
@@ -531,6 +534,26 @@ LOCAL void ZdtWatch_Factory_KEY_DrawTestKeyBG( void )
                 ); 
 	ZDT_TestEditWinDrawFocusRect(draw_rect, MMI_BLACK_COLOR);
 	
+#ifdef ZMT_USE_TWO_KEY_DEVICE
+	draw_rect.left = 20;
+	draw_rect.top = 90;
+	draw_rect.right = 108;
+	draw_rect.bottom = 120;
+	string.wstr_len = strlen(s_test_key_text[2]);
+	MMI_STRNTOWSTR(disp_text,ZDT_TEST_KEY_TEXT_MAX_LEN, (uint8*)s_test_key_text[2],string.wstr_len,string.wstr_len);
+	string.wstr_ptr = disp_text;
+	GUISTR_DrawTextToLCDInRect( 
+                (const GUI_LCD_DEV_INFO *)lcd_dev_info,
+                (const GUI_RECT_T      *)&draw_rect,       //the fixed display area
+                (const GUI_RECT_T      *)&draw_rect,       //用户要剪切的实际区域
+                (const MMI_STRING_T    *)&string,
+                &text_style,
+                state,
+                GUISTR_TEXT_DIR_AUTO
+                ); 
+	ZDT_TestEditWinDrawFocusRect(draw_rect, MMI_BLACK_COLOR);
+#endif
+
     /*for (y=0;y<1;y++)
     {
         for (x=0;x<2;x++)
@@ -596,7 +619,7 @@ LOCAL BOOLEAN ZDT_TestKeyboard(MMI_MESSAGE_ID_E key_msg_id)
 			draw_rect.left = 20;
 			draw_rect.top = 10;
 			draw_rect.right = 108;
-			draw_rect.bottom = 60;
+			draw_rect.bottom = 40;
 			LCD_FillRect(&lcd_dev_info, draw_rect, MMI_BLACK_COLOR);
 			break;
 		case MSG_APP_CANCEL:
@@ -604,11 +627,20 @@ LOCAL BOOLEAN ZDT_TestKeyboard(MMI_MESSAGE_ID_E key_msg_id)
 		case MSG_KEYUP_GREEN:
 		case MSG_KEYDOWN_UP:
 			draw_rect.left = 20;
-			draw_rect.top = 70;
+			draw_rect.top = 50;
+			draw_rect.right = 108;
+			draw_rect.bottom = 80;
+			LCD_FillRect(&lcd_dev_info, draw_rect, MMI_BLACK_COLOR);
+			break;
+	#ifdef ZMT_USE_TWO_KEY_DEVICE
+		case KEY_SHORTCUT:
+			draw_rect.left = 20;
+			draw_rect.top = 90;
 			draw_rect.right = 108;
 			draw_rect.bottom = 120;
 			LCD_FillRect(&lcd_dev_info, draw_rect, MMI_BLACK_COLOR);
 			break;
+	#endif
 		default:
 			break;
 	}
@@ -5799,7 +5831,9 @@ LOCAL MMI_RESULT_E  HandleZDT_WatchFactoryWinMsg(
 		break;
     case MSG_KEYDOWN_RED:
         break;
-        
+#ifdef ZMT_USE_TWO_KEY_DEVICE
+    case MSG_KEYDOWN_SHORTCUT:
+#endif
     case MSG_KEYUP_CANCEL:
     case MSG_KEYUP_RED:
              if(g_em_test_idx == EM_TEST_KEY)
