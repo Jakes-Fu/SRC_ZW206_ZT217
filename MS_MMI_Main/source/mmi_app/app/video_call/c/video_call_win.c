@@ -583,7 +583,15 @@ LOCAL MMI_RESULT_E HandleVideoDialingWin(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E m
         break;
     case MSG_TP_PRESS_UP:
         {
-            
+            GUI_RECT_T out_hangup_rect = VIDEO_CALL_OUT_HANGUP_RECT;
+		GUI_POINT_T   point = {0};
+        	point.x = MMK_GET_TP_X(param);
+        	point.y = MMK_GET_TP_Y(param);
+		if(GUI_PointIsInRect(point, out_hangup_rect))
+		{
+			Video_Call_Close(win_id);
+                	MMK_CloseWin(win_id);
+		}
         }
         break;
     case MSG_CLOSE_WINDOW:

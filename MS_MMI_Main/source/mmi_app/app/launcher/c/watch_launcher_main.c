@@ -687,18 +687,8 @@ PUBLIC MMI_RESULT_E WatchLAUNCHER_HandleCommonWinMsg(
 #endif
 		break;
 	case MSG_KEYUP_RED:
-            if(TRUE == MMIDEFAULT_IsBacklightOn())
-            {
-                MMIDEFAULT_TurnOffBackLight();
-                MMIDEFAULT_CloseAllLight_Watch();//close LCD
-            }else
-            {
-                MMIDEFAULT_TurnOnBackLight();
-            }
+		WatchSLIDEAGE_SetCurrentPageIndex(0);
 	     break;
-	case MSG_APP_CANCEL:
-            //WatchSLIDEAGE_SetCurrentPageIndex(0);
-            break;
         default:
             recode = MMI_RESULT_FALSE;
     }
