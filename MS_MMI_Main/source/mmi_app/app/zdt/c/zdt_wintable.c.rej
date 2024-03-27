@@ -1,0 +1,10 @@
+diff a/MS_MMI_Main/source/mmi_app/app/zdt/c/zdt_wintable.c b/MS_MMI_Main/source/mmi_app/app/zdt/c/zdt_wintable.c	(rejected hunks)
+@@ -2447,7 +2447,7 @@
+ 	//yangyu add
+ 	case MSG_KEYUP_CANCEL:
+ 	case MSG_APP_CANCEL:
+-		//GUIEDIT_ClearAllStr(edit_ctrl_id);
++		GUIEDIT_ClearAllStr(edit_ctrl_id);
+ 		MMK_CloseWin(win_id);
+ 		break;
+     case MSG_KEYDOWN_RED:
