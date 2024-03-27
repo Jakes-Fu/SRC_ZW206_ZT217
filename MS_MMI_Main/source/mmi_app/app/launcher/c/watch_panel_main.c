@@ -711,7 +711,7 @@ LOCAL void drawDigitalWatch2( )
 
 		
 	 TM_GetSysDate(&date);
-    point.x = WATCH_PANEL_SPACE_STATION_DATE_START_X+40 ;
+    point.x = WATCH_PANEL_SPACE_STATION_DATE_START_X+30 ;
     point.y = MMI_MAINSCREEN_HEIGHT/2;
     GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, IMG_DIGIT_CLOCK3_WHITE_NUM0+date.mon/10,&lcd_dev_info);
     point.x += WATCH_PANEL_SPACE_STATION_DATE_IMG_WIDTH;
@@ -728,7 +728,7 @@ LOCAL void drawDigitalWatch2( )
     point.y = MMI_MAINSCREEN_HEIGHT-23;
     GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, week_img_id_list[date.wday],&lcd_dev_info);
      TM_GetSysDate(&date);
-    point.x =WATCH_PANEL_SPACE_STATION_DATE_START_X+12;
+    point.x =WATCH_PANEL_SPACE_STATION_DATE_START_X+2;
 	point.y = MMI_MAINSCREEN_HEIGHT/2;
     GUIRES_DisplayImg(&point,PNULL,PNULL,WATCH_LAUNCHER_PANEL_WIN_ID, IMG_DIGIT_CLOCK3_WHITE_NUM0+date.year/1000,&lcd_dev_info);
     point.x += WATCH_PANEL_ASTRONAUT_DATE_IMG_WIDTH;

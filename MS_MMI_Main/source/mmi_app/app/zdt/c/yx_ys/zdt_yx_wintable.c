@@ -6551,15 +6551,15 @@ void MMIZDT_Schedule_ShowList(MMI_WIN_ID_T win_id,uint8 current_day)
 
     const uint16 height =40;//65;
 
-    GUI_RECT_T title0_rect = DP2PX_RECT( 90,  10,  195 , height);//text
-    GUI_RECT_T title1_rect = DP2PX_RECT(150,  10,  205 , height);//text
+    GUI_RECT_T title0_rect = DP2PX_RECT( 50,  10,  185 , height);//text
+    GUI_RECT_T title1_rect = DP2PX_RECT(80,  10,  185 , height);//text
 
     GUI_RECT_T content0_rect = DP2PX_RECT(35,  10,  175 , height);// ÉÏÎç 12:30
-    GUI_RECT_T content1_rect = DP2PX_RECT( 5,  10,  85 , height);// 1
+    GUI_RECT_T content1_rect = DP2PX_RECT( 5,  10,  115 , height);// 1
     GUI_RECT_T content2_rect = DP2PX_RECT(130,  10,  240 , height);// ÓïÎÄ
 
-    GUI_RECT_T none0_rect = DP2PX_RECT( 60,  10,  130 , 200);//text
-    GUI_RECT_T none1_rect = DP2PX_RECT(180,  10,  230 , 200);//text
+    GUI_RECT_T none0_rect = DP2PX_RECT( 60,  10,  160 , 200);//text
+    GUI_RECT_T none1_rect = DP2PX_RECT(180,  10,  240 , 200);//text
 
     SCI_DATE_T date = {0};
     MMI_STRING_T                week_string            = {0};
@@ -6613,14 +6613,14 @@ void MMIZDT_Schedule_ShowList(MMI_WIN_ID_T win_id,uint8 current_day)
 	MMIAPICOM_StrcatFromSTRINGToUCS2(content_text, &uint16_str_len, &week_string);
 	
 
-	title_style.height = title_style.height_focus = 40;
+	title_style.height = title_style.height_focus =  DP2PX_VALUE(40);
 	title_style.content[0].rect = title_style.content[0].rect_focus = title0_rect;
 	title_style.content[0].font= title_style.content[0].font_focus = DP_FONT_20;
 	title_style.content[0].state = GUIITEM_CONTENT_STATE_TEXT_M_ALIGN;
 	title_style.content[1].rect = title_style.content[1].rect_focus = title1_rect;
 	title_style.content[1].font= title_style.content[1].font_focus = DP_FONT_20;
 
-	content_style.height = content_style.height_focus =  40;
+	content_style.height = content_style.height_focus = DP2PX_VALUE(  40);
 	content_style.content[0].rect = content_style.content[0].rect_focus = content0_rect;
 	content_style.content[0].font= content_style.content[0].font_focus = DP_FONT_20;
 	content_style.content[0].state = 0;
@@ -6631,7 +6631,7 @@ void MMIZDT_Schedule_ShowList(MMI_WIN_ID_T win_id,uint8 current_day)
 	content_style.content[2].font= content_style.content[2].font_focus = DP_FONT_20;
 	content_style.content[2].state = GUIITEM_CONTENT_STATE_TEXT_M_ALIGN;
 
-	none_style.height = none_style.height_focus = 200;
+	none_style.height = none_style.height_focus = DP2PX_VALUE( 200);
 	none_style.content[0].rect = none_style.content[0].rect_focus = none0_rect;
 	none_style.content[0].font= none_style.content[0].font_focus = DP_FONT_20;
 	none_style.content[0].state = GUIITEM_CONTENT_STATE_TEXT_M_ALIGN;
