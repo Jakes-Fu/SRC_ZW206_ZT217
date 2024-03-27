@@ -1037,7 +1037,7 @@ void MMIZDT_TinyShowBottom(MMI_WIN_ID_T  win_id)
   
     LCD_FillRect(&lcd_dev_info, rect, MMI_BLACK_COLOR);
 
-    point.x = WECHART_RECORD_IMG_X;
+    point.x = WECHART_RECORD_IMG_X +5;
     point.y = WECHART_RECORD_IMG_Y;
 
     GUIRES_DisplayImg(&point, PNULL, PNULL, win_id, IMAGE_CHAT_NO_RECORD_BG, &lcd_dev_info); 
@@ -2700,15 +2700,7 @@ LOCAL void Chat_Contact_List_Item_LongClick(MMI_CTRL_ID_T ctrl_id)
         s_cur_gproup_select_index = current_index;
         GUILIST_GetItemData(ctrl_id, current_index, &pos_user_data);
         m_pCurGroupInfo = &m_vchat_all_group_info_arr[pos_user_data];
-        //MMIPUB_OpenQueryWinByTextId(TXT_DELETE_QUERY,IMAGE_PUBWIN_QUERY,&query_win_id,MMIZDT_ChatGroup_QueryDelete);
-	 MMIPUB_OpenAlertWinByTextIdEx(MMK_GetFirstAppletHandle(), PNULL, TXT_COMMON_CONFIRM_DELETE,TXT_NULL,NULL,NULL,PNULL,MMIPUB_SOFTKEY_OKCANCEL,MMIZDT_ChatGroup_QueryDelete, current_index);
-		/*{
-        	uint32 time_out = 0xffff;
-        	MMI_STRING_T prompt_str = {0};
-		MMI_WIN_PRIORITY_E win_priority = WIN_ONE_LEVEL;
-		MMIRES_GetText(TXT_DELETE_QUERY, query_win_id, &prompt_str);
-		MMIPUB_OpenAlertWinByTextPtr(&time_out,&prompt_str,PNULL,NULL,&query_win_id,&win_priority,MMIPUB_SOFTKEY_CUSTOMER,MMIZDT_ChatGroup_QueryDelete);
-	  }*/
+	 MMIPUB_OpenAlertWinByTextIdEx(MMK_GetFirstAppletHandle(), PNULL, TXT_COMMON_CONFIRM_DELETE,TXT_NULL,NULL,&query_win_id,PNULL,MMIPUB_SOFTKEY_OKCANCEL,MMIZDT_ChatGroup_QueryDelete, current_index);
 	}
 }
 
@@ -2771,7 +2763,7 @@ LOCAL MMI_RESULT_E  HandleZDT_ChatGroupWinMsg(
             break;
         
         case MSG_CTL_LIST_LONGOK:
-            //Chat_Contact_List_Item_LongClick(ctrl_id);
+            Chat_Contact_List_Item_LongClick(ctrl_id);
             break;
         
         case MSG_CTL_PENOK:
