@@ -736,3 +736,4 @@ ENGPC_W217 = FALSE                                   ### Switch ENGPC_W217 Suppo
 LCD_INSTALL_ANGLE = 0    #90
 
 TRACE_INFO_SUPPORT = FALSE
+FOTA_SUPPORT =CMIOT 

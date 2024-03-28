@@ -44,7 +44,7 @@
 #define SLIDE_PAGE_TPDRAP_INTERVAL 25
 
 /*the thres of horzional slide startup*/
-#define SLIDE_PAGE_TPDRAP_THRES DP2PX_VALUE(2)
+#define SLIDE_PAGE_TPDRAP_THRES DP2PX_VALUE(40)
 
 /*the step value of slide animation*/
 #define SLIDE_PAGE_AUTOSLIDE_THRES DP2PX_VALUE(5)

@@ -86,8 +86,8 @@ uint32 cmiot_get_download_index_max(){return 1000;}
 #define FOTA_UI_BG_COLOR  MMI_BLACK_COLOR
 #define FOTA_UI_FONT_COLOR  MMI_WHITE_COLOR
 
-#define FOTA_UI_BIG_FONT  SONG_FONT_26
-#define FOTA_UI_SMALL_FONT  SONG_FONT_20
+#define FOTA_UI_BIG_FONT  DP_FONT_26
+#define FOTA_UI_SMALL_FONT  DP_FONT_20
 
 #define FOTA_UI_TXT_TOP  40
 #define FOTA_UI_TXT_HIGHT  26
@@ -535,7 +535,7 @@ void FOTA_upgrade_Show(MMI_WIN_ID_T win_id)
     cur_rect.bottom = cur_rect.top + 26;
 
     text_style.align = ALIGN_HVMIDDLE;
-    text_style.font = SONG_FONT_18;
+    text_style.font = DP_FONT_22;
     text_style.font_color = MMI_WHITE_COLOR;
 
     MMIRES_GetText(TXT_SETTINGS_ABUP_FOTA_CHECK, PNULL, &cur_str_t);;
@@ -653,7 +653,7 @@ LOCAL MMI_RESULT_E UpdateWhitWinHandleMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E 
 		    cur_rect = rect;
 
 		    text_style.align = ALIGN_HVMIDDLE;
-		    text_style.font = SONG_FONT_22;
+		    text_style.font = DP_FONT_22;
 		    text_style.font_color = MMI_WHITE_COLOR;
 
 		    MMIRES_GetText(TXT_ABUP_FOTA_WAIT, PNULL, &cur_str_t);;

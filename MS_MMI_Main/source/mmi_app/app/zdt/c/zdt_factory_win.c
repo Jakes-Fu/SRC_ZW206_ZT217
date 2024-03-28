@@ -54,8 +54,8 @@ typedef struct
 
 #define SCALE  0.533
 
-#define FACTORY_BIG_FONT  SONG_FONT_24// SONG_FONT_20
-#define FACTORY_NORMAL_FONT SONG_FONT_20 // SONG_FONT_15
+#define FACTORY_BIG_FONT  DP_FONT_24// SONG_FONT_20
+#define FACTORY_NORMAL_FONT DP_FONT_20 // SONG_FONT_15
 
 PUBLIC BOOLEAN IsWatchListFactoryWinOpen();//yangyu add
 
@@ -1240,7 +1240,7 @@ void ZdtWatch_Factory_SIM_ShowData(void)
     uint16 charge_txt[20] = {0x5145, 0x7535, 0x4E2D, 0x0}; //充电中5145 7535 4E2D 
     uint16 charge_out_t[20] = {0x672A, 0x5145, 0x7535, 0x0}; //未充电672A 5145 7535 
     GUI_FONT_T f_big =FACTORY_BIG_FONT;
-    GUI_FONT_T f_mid =SONG_FONT_16;//FACTORY_NORMAL_FONT;
+    GUI_FONT_T f_mid =FACTORY_NORMAL_FONT;
     BOOLEAN is_charge = ZDT_GetIsCharge();
     CHGMNG_STATE_INFO_T* p_chgmng_info = CHGMNG_GetModuleState();
     
@@ -1911,7 +1911,7 @@ void ZdtWatch_Factory_TP_ShowPoint(mmi_pen_point_struct pt,uint8 type)
     GUI_RECT_T   rect        = {0}; 
     GUISTR_STYLE_T      text_style      = {0};  
     GUISTR_STATE_T      state =         GUISTR_STATE_ALIGN|GUISTR_STATE_WORDBREAK|GUISTR_STATE_SINGLE_LINE; 
-    GUI_FONT_T f_big =SONG_FONT_16;
+    GUI_FONT_T f_big =FACTORY_NORMAL_FONT;
 
     rect.left   = 0;
     rect.top    = 0; 
@@ -1997,7 +1997,7 @@ void ZdtWatch_Factory_TP_ShowData(void)
     GUISTR_STYLE_T      text_style      = {0};  
     GUISTR_STATE_T      state =         GUISTR_STATE_ALIGN|GUISTR_STATE_WORDBREAK|GUISTR_STATE_SINGLE_LINE; 
     uint16 tittle[10] = {0x89E6, 0x6478, 0x6D4B, 0x8BD5,0}; //触摸测试89E6 6478 6D4B 8BD5 
-    GUI_FONT_T f_big =SONG_FONT_16;
+    GUI_FONT_T f_big =FACTORY_NORMAL_FONT;
 
     rect.left   = 0;
     rect.top    = 0; 
@@ -2985,7 +2985,7 @@ void ZdtWatch_Factory_BEACON_ShowData(void)
     cur_rect.bottom = cur_rect.top + GSP_ITEM_HEIGHT/*WATCH_FACTORY_ITEM_HEIGHT*/;
 
     text_style.align = ALIGN_HVMIDDLE;
-    text_style.font = SONG_FONT_20;
+    text_style.font = DP_FONT_20;
     text_style.font_color = MMI_WHITE_COLOR;
     cur_str_t.wstr_len = MMIAPICOM_Wstrlen(tittle_beacon);
     cur_str_t.wstr_ptr = tittle_beacon;
@@ -3001,7 +3001,7 @@ void ZdtWatch_Factory_BEACON_ShowData(void)
         );
         
     text_style.align = ALIGN_HVMIDDLE;
-    text_style.font = SONG_FONT_20;
+    text_style.font = DP_FONT_20;
 
     if(is_hw_ok)
     {
@@ -3689,8 +3689,8 @@ void ZdtWatch_Factory_NFC_ShowData(void)
     uint16 hw_status_err[10] = {0x786C, 0x4EF6, 0x51FA, 0x9519, 0}; //硬件出错786C 4EF6 51FA 9519 
     uint16 nfc_sim_ok[20] = {0x8D85, 0x7EA7, 0x0053, 0x0049, 0x004D, 0x5361, 0x6B63, 0x5E38, 0x0}; // 超级SIM卡正常8D85 7EA7 0053 0049 004D 5361 6B63 5E38 
     uint16 nfc_sim_err[20] = {0x672A, 0x8BC6, 0x522B, 0x5230, 0x8D85, 0x7EA7, 0x0053, 0x0049, 0x004D, 0x5361, 0x0}; // 示识别到超级SIM卡 672A 8BC6 522B 5230 8D85 7EA7 0053 0049 004D 5361 
-    GUI_FONT_T f_big =SONG_FONT_24;//FACTORY_BIG_FONT;
-    GUI_FONT_T f_mid =SONG_FONT_20;//FACTORY_NORMAL_FONT;
+    GUI_FONT_T f_big =FACTORY_BIG_FONT;
+    GUI_FONT_T f_mid =FACTORY_NORMAL_FONT;
     uint8 nfc_uid_str[100] = {'U','I','D',':',0};
     uint16 nfc_uid_len = 0;
     BOOLEAN is_hw_ok = ZDT_NFC_HW_IsOK();
@@ -3856,8 +3856,8 @@ void ZdtWatch_Factory_WL_ShowData(void)
     uint16 wl_val[10] = {0x56F4, 0x680F, 0x7ECF, 0x7EAC, 0x5EA6, 0x003A, 0x0 }; //当前经纬度:5F53 524D 7ECF 7EAC 5EA6 003A 
     uint16 radius_str[10] = {0x534A, 0x5F84, 0x003A,0x0 }; //半径534A 5F84 
     uint16 distance_str[10] = {0x8DDD, 0x79BB, 0x003A,0x0 }; //距离8DDD 79BB 
-    GUI_FONT_T f_big =SONG_FONT_22;
-    GUI_FONT_T f_mid =SONG_FONT_18;
+    GUI_FONT_T f_big =DP_FONT_22;
+    GUI_FONT_T f_mid =DP_FONT_18;
     const uint16 GSP_ITEM_HEIGHT = 22;
     
     GPS_API_GetLastPos(&gps_data);
@@ -4319,7 +4319,7 @@ void ZdtWatch_Factory_WIFI_ShowData(uint8 is_scan)
     uint16 hw_status_ok[20] = {0x786C, 0x4EF6, 0x6B63, 0x5E38, 0}; //硬件正常786C 4EF6 6B63 5E38 
     uint16 hw_status_err[10] = {0x786C, 0x4EF6, 0x51FA, 0x9519, 0}; //硬件出错786C 4EF6 51FA 9519 
     uint16 txt_scaning[10] = {0x6B63, 0x5728, 0x626B, 0x63CF,0x002E,0x002E, 0x002E,0}; //正在扫描...6B63 5728 626B 63CF 002E 002E 002E 
-    GUI_FONT_T f_big = SONG_FONT_17;//FACTORY_BIG_FONT;//yangyu
+    GUI_FONT_T f_big = FACTORY_BIG_FONT;//yangyu
     GUI_FONT_T f_mid =FACTORY_NORMAL_FONT;
     BOOLEAN is_hw_ok = g_zdt_wifi_hw_is_ok;
     uint8 w_cnt = ZDT_WIFI_Get_DataNum();
@@ -6125,7 +6125,7 @@ LOCAL MMI_RESULT_E  HandleZDT_WatchListFactoryWinMsg(
             ZdtWatch_BackLight(TRUE);
             GUILIST_SetMaxItem(ctrl_id, 20, FALSE);
             GUILIST_SetRect(ctrl_id, &full_rect);
-            CTRLLIST_SetTextFont(ctrl_id, SONG_FONT_20, MMI_WHITE_COLOR);
+            CTRLLIST_SetTextFont(ctrl_id, DP_FONT_25, MMI_WHITE_COLOR);
             Watch_FactoryListInit();
             #if 0
             uint32 idx = 0;

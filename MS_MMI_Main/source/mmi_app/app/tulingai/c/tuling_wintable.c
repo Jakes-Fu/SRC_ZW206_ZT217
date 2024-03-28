@@ -1597,7 +1597,7 @@ LOCAL void DisplayAiChatRecordAnim(MMI_WIN_ID_T win_id)
     }
     point.x = AI_CHAT_RECORD_IMG_X;		
     point.y = AI_CHAT_RECORD_IMG_Y;
-
+	  LCD_FillRect(&lcd_dev_info, rect, MMI_BLACK_COLOR);
     GUIRES_DisplayImg(&point,PNULL,PNULL,win_id,IMAGE_AI_RECORDING_BG,&lcd_dev_info);
     
     text_style.align = ALIGN_LVMIDDLE;
@@ -1768,12 +1768,12 @@ LOCAL MMI_RESULT_E  Handle_AIChat_WinMsg(
         list_init.both_rect.v_rect.left = 0;
         list_init.both_rect.v_rect.right = MMI_MAINSCREEN_WIDTH;
         list_init.both_rect.v_rect.top = 0;
-        list_init.both_rect.v_rect.bottom = MMI_MAINSCREEN_HEIGHT-AI_CHAT_RECORD_IMG_MARGIN_BOTTOM-5;//185;//240;//180;
+        list_init.both_rect.v_rect.bottom = MMI_MAINSCREEN_HEIGHT-AI_CHAT_RECORD_IMG_MARGIN_BOTTOM;//185;//240;//180;
 
         list_init.both_rect.h_rect.left = 0;
         list_init.both_rect.h_rect.right = MMI_MAINSCREEN_HEIGHT-AI_CHAT_RECORD_IMG_MARGIN_BOTTOM;//240;//180;
         list_init.both_rect.h_rect.top = 0;
-        list_init.both_rect.h_rect.bottom = MMI_MAINSCREEN_HEIGHT-AI_CHAT_RECORD_IMG_MARGIN_BOTTOM-5;
+        list_init.both_rect.h_rect.bottom = MMI_MAINSCREEN_HEIGHT;
         
         list_init.type = GUILIST_TEXTLIST_E;
                     
@@ -1887,12 +1887,12 @@ LOCAL MMI_RESULT_E  Handle_AIChat_WinMsg(
         point.y = MMK_GET_TP_Y(param);
         if(ZDT_SIM_Exsit() == FALSE)
         {
-            MMIPUB_OpenAlertWinByTextId(PNULL,STR_SIM_NOT_SIM_EXT01,TXT_NULL,IMAGE_PUBWIN_FAIL,PNULL,PNULL,MMIPUB_SOFTKEY_ONE,MMIAI_NoSimHandleFunc);
+            MMIPUB_OpenAlertWinByTextId(PNULL,STR_SIM_NOT_SIM_EXT01,TXT_NULL,IMAGE_PUBWIN_FAIL,PNULL,PNULL,MMIPUB_SOFTKEY_ONE,PNULL);
             break;
         }
         if (MMIAPICONNECTION_isGPRSSwitchedOff())
         {
-            MMIPUB_OpenAlertWinByTextId(PNULL,TXT_YX_WCHAT_NEED_NET,TXT_NULL,IMAGE_PUBWIN_FAIL,PNULL,PNULL,MMIPUB_SOFTKEY_ONE,MMIAI_NoSimHandleFunc);
+            MMIPUB_OpenAlertWinByTextId(PNULL,TXT_YX_WCHAT_NEED_NET,TXT_NULL,IMAGE_PUBWIN_FAIL,PNULL,PNULL,MMIPUB_SOFTKEY_ONE,PNULL);
             break;
         }
 #ifdef ZDT_PLAT_YX_SUPPORT

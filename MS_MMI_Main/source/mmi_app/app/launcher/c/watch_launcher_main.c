@@ -200,9 +200,9 @@ const APP_LIST_ITEM_T  g_app_list_info[] =
     //MEUN_VOLUME,//音量
     //MEUN_SCREEN_TIMEOUT, //息屏时间
 #endif
-#ifdef FOTA_SUPPORT // bao add. wuxx add 20231031
-    MEUN_FOTA,
-#endif
+//#ifdef FOTA_SUPPORT // bao add. wuxx add 20231031
+//    MEUN_FOTA,
+//#endif
  //   MEUN_PEDOMETER,//计步
 };
 
