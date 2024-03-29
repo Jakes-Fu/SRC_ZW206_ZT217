@@ -1480,6 +1480,10 @@ PUBLIC void MMIZDT_TinyChatSendCallBack(BOOLEAN is_ok)
 #define CHAT_LEFT_RIGHT_STYLE
 LOCAL THEMELIST_ITEM_STYLE_T chat_left_style = {0};
 LOCAL THEMELIST_ITEM_STYLE_T chat_right_style = {0};
+//add by fys 2024/03/28
+LOCAL int zmt_msg_left[MAX_YX_VOC_SAVE_SIZE+1] = {-1};
+uint8 zmt_msg_left_num = 0;
+//add end
 
 #define MAX_REMAIN_SIZE  (18*1024) //10K
 LOCAL BOOLEAN ZDT_IsMemNearFull(BOOLEAN is_tf)
@@ -1525,6 +1529,7 @@ LOCAL void MMIZDT_TinyChatUpdateList()
     uint16 i = 0, j=0;
     uint16 position = 0;
     uint16 line_num = m_pCurGroupInfo->file_num;
+	uint16 left_num = 0;
 	MMI_WIN_ID_T        win_id = MMIZDT_TINY_CHAT_WIN_ID;
 	GUILIST_INIT_DATA_T list_init = {0};
 	MMI_CTRL_ID_T           ctrl_id = MMIZDT_TINY_CHAT_LIST_CTRL_ID;
@@ -1595,7 +1600,6 @@ LOCAL void MMIZDT_TinyChatUpdateList()
             item_data.item_content[1].is_custom_font_color = TRUE;
             item_data.item_content[1].custom_font_color = 0X043F;        
             item_data.item_content[1].custom_font_color_focus = 0X043F;                //左边蓝色字
-        
         }
         else
         {
@@ -1630,8 +1634,9 @@ LOCAL void MMIZDT_TinyChatUpdateList()
         item_data.item_content[2].item_data.image_id = isLeft ? IMAGE_TINYCHAT_HEAD_SERVER : IMAGE_TINYCHAT_HEAD;   //xiongkai   微聊头像左侧和右侧用不同的    IMAGE_TINYCHAT_HEAD;//isLeft ? IMAGE_TINYCHAT_AUDIO_LEFT : IMAGE_TINYCHAT_AUDIO_RIGHT;
         if(isLeft)
         {
-
-            if(m_pCurGroupInfo->status_arr[i] != 0x31)      //已知BUG LIST设置最大项后data不对应
+        	zmt_msg_left[left_num] = i;
+            //if(m_pCurGroupInfo->status_arr[i] != 0x31)      //已知BUG LIST设置最大项后data不对应
+            if(get_chat_is_unread(m_pCurGroupInfo->group_id, left_num) != 0x31)//edit by fys 2024/03/28
             {
                 item_data.item_content[3].item_data_type = GUIITEM_DATA_IMAGE_ID;       //未读
                 item_data.item_content[3].item_data.image_id = IMAGE_TINYCHAT_UNREAD;
@@ -1641,7 +1646,7 @@ LOCAL void MMIZDT_TinyChatUpdateList()
                 item_data.item_content[3].item_data_type = GUIITEM_DATA_NONE;
                 item_data.item_content[3].item_data.image_id = PNULL;
             }
-                   
+		left_num++; 
         }
         ret = GUILIST_AppendItem (ctrl_id, &item_t);
         ZDT_LOG("MMIZDT_TinyChatUpdateList ret = %d", ret);
@@ -1674,6 +1679,22 @@ LOCAL MMI_RESULT_E TinyChat_handleConfirmationDelete(MMI_WIN_ID_T win_id, MMI_ME
                  uint32 list_item_index = GUILIST_GetCurItemIndex(MMIZDT_TINY_CHAT_LIST_CTRL_ID);
                  ZDT_LOG("TinyChat_handleConfirmationDelete MSG_APP_OK = 0x%x list_item_index:%d", msg_id, list_item_index);
                  YX_VocFileRemoveOneItem(list_item_index);
+			 //add by fys 2024/03/28
+			{
+				BOOLEAN is_left = FALSE;
+		 		uint8 i,j = 0;
+		 		for(i = 0; i < MAX_YX_VOC_SAVE_SIZE+1;i++){
+					if(zmt_msg_left[i] == list_item_index){
+						is_left = TRUE;
+						break;
+					}
+					j++;
+		 		}
+				if(is_left){
+					delete_chat_unread_one_list_left_item(m_pCurGroupInfo->group_id, j);
+				}
+		 	}
+			 //add end
             }
             MMK_CloseWin(win_id);
             break;
@@ -2013,7 +2034,21 @@ LOCAL MMI_RESULT_E  HandleZDT_TinyChatWinMsg(
         GUILIST_GetItemData(ctrl_id, index, &pos_user_data);// user_data stand position
         MMIZDT_TinyChatStartPlayAudio(pos_user_data, index);
         ZDT_LOG("HandleZDT_TinyChatWinMsg MSG_CTL_MIDSK  index=%d, pos_user_data=%d" , index, pos_user_data);
-
+	 //add by fys 2024/03/28
+	 if(YX_VOC_IsRcvFile(m_pCurGroupInfo->file_arr[pos_user_data].fullname))
+	 {
+	 	uint8 i,j = 0;
+	 	for(i = 0; i < MAX_YX_VOC_SAVE_SIZE+1;i++){
+			if(zmt_msg_left[i] == index){
+				break;
+			}
+			j++;
+	 	}
+		if(get_chat_is_unread(m_pCurGroupInfo->group_id, j)  != 0x31){
+	 		update_chat_unread_number(m_pCurGroupInfo->group_id, FALSE, j);
+		}
+	 }
+	 //add end
         break;
                 
     case MSG_TIMER:
@@ -2581,7 +2616,8 @@ void  MMIZDT_ChatGroup_ShowList(MMI_WIN_ID_T win_id,uint8 * p_friend_id)
         wchar name_buff[GUILIST_STRING_MAX_NUM + 1] = {0};
         wchar number_buff[GUILIST_STRING_MAX_NUM + 1] = {0};
         YX_GROUP_INFO_DATA_T * pGroupInfo = &m_vchat_all_group_info_arr[i];
-        unread_num = YX_VCHAT_GetGroupUnread(pGroupInfo);
+	 //edit by fys 2024/03/28
+        unread_num = get_chat_unread_number(pGroupInfo->group_id);//YX_VCHAT_GetGroupUnread(pGroupInfo);
     #ifdef ZTE_WATCH
         item_t.item_style    = GUIITEM_STYLE_1ICON_1STR_1LINE_WITH_UNREAD_NUM;
     #else
