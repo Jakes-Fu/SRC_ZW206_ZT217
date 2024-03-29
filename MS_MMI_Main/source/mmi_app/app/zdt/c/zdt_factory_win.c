@@ -4908,13 +4908,27 @@ void ZdtWatch_Factory_RESTORE_ShowData(void)
         ); 
 
 
-    cur_rect.top += 40*SCALE;
-    cur_rect.bottom = MMI_MAINSCREEN_HEIGHT - 1;
+    cur_rect.top += 30;
+    cur_rect.bottom = cur_rect.top+60;
 
     cur_str_t.wstr_len = MMIAPICOM_Wstrlen(content);
     cur_str_t.wstr_ptr = content;
 
+	text_style.font = f_mid;
     GUISTR_DrawTextToLCDInRect( 
+        (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
+        (const GUI_RECT_T      *)&cur_rect,       
+        (const GUI_RECT_T      *)&cur_rect,     
+        (const MMI_STRING_T    *)&cur_str_t,
+        &text_style,
+        state2,
+        GUISTR_TEXT_DIR_AUTO
+        ); 
+
+	cur_rect.top = MMI_MAINSCREEN_HEIGHT - 40;
+	cur_rect.bottom = MMI_MAINSCREEN_HEIGHT;
+	MMIRES_GetText(TXT_FACTORY_OK, MMIZDT_WATCH_FACTORY_WIN_ID, &cur_str_t);
+	GUISTR_DrawTextToLCDInRect( 
         (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
         (const GUI_RECT_T      *)&cur_rect,       
         (const GUI_RECT_T      *)&cur_rect,     
