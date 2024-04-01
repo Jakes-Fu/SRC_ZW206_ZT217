@@ -4301,9 +4301,6 @@ int YX_Net_Receive_PPR(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen)
     ret = YX_Func_GetNextPara(&str, &len,(char *)friend_id,YX_DB_FRIEND_MAX_ID_SIZE);
     if(ret > 0)
     {
-    	 //add by fys 2024/03/28
-    	 delete_chat_unread_one_list(friend_id);
-	 //add end
         ZDT_Delete_CheckClose_Tiny_Chat_Win(friend_id);
         YX_DB_Friend_DeleteByFrinedID(friend_id);
         YX_VCHAT_DeleteGroupFile(friend_id);

@@ -16,22 +16,9 @@
 #define YX_VCHAT_DIR "D:\\vChat\\"
 #define YX_VCHAT_FILENAME "vchat_record.txt"
 #define YX_VCHAT_FILESTATUS "vchat_status.txt"
- //add by fys 2024/03/28
-#define ZMTCHAT_LIST_SAVE_DIR "D:\\VCHAT"
-#define ZMTCHAT_LIST_SAVE_UNREAD_FILE "D:\\VCHAT\\unread.json"
-//add end
 
 #define YX_VCHAT_DEFAULT_GROUP_ID "common"
 
-//add by fys 2024/03/28
-typedef struct chat_data_unread{
-	uint8 group_id[YX_DB_FRIEND_MAX_ID_SIZE+1];
-	uint8 mark_num;
-	uint8 left_num;
-	uint16 mark[MAX_YX_VOC_SAVE_SIZE+1];
-	struct chat_data_unread * next_chat_unread;
-}ZMT_CHAT_DATA_UNREAD_T;
-//add end
 
 typedef struct _YX_GROUP_FILENAME_DATA_t
 {
@@ -211,9 +198,3 @@ extern BOOLEAN YX_Voice_Allow_Receive(YX_APP_T * pMe);
 extern YX_GROUP_INFO_DATA_T * m_pCurGroupInfo;
 extern YX_GROUP_INFO_DATA_T * m_pCurRcvGroupInfo;
 #endif
-
-//add by fys 2024/03/28
-PUBLIC void load_unread_number(void);
-PUBLIC uint16 get_chat_is_unread(char * group_id, uint8 msg_index);
-PUBLIC void update_chat_unread_number(char * group_id,BOOLEAN is_new_msg, uint8 msg_index);
-//add end
