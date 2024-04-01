@@ -561,10 +561,13 @@ PUBLIC void YX_VocFileCheckAndRemoveOverItem(uint8 * full_filename)
     uint8 valid_line[(MAX_YX_VOC_SAVE_SIZE + 10)]= {0};
     uint16 valid_line_count = 0;
     uint16 line_index = 0;
-    uint32 i = 0, j = 0 ;
+    uint32 i = 0, j = 0, k=0;
     uint16 cr_index = 0;
     uint16 del_item_count = 0;
     char file_name[MMIFILE_FULL_PATH_MAX_LEN+1] = {0};
+    char status_file_name[MMIFILE_FULL_PATH_MAX_LEN+1] = {0};
+    char line_status[MAX_YX_VOC_SAVE_SIZE+1] = {0};
+    char valid_line_status[MAX_YX_VOC_SAVE_SIZE+1] = {0};
     uint16 file_len = 0;
     char* p;
 
@@ -583,7 +586,12 @@ PUBLIC void YX_VocFileCheckAndRemoveOverItem(uint8 * full_filename)
     file_len = p-full_filename+1;
     strncpy(file_name,full_filename,file_len);
     strcat(file_name,YX_VCHAT_FILENAME);
-
+    strncpy(status_file_name,full_filename,file_len);
+    strcat(status_file_name,YX_VCHAT_FILESTATUS);
+    if(ZDT_File_Read((const uint8*)status_file_name , line_status, (sizeof(char) * (MAX_YX_VOC_SAVE_SIZE+1)), &read_len))
+    {
+        ZDT_LOG("YX_VocFileCheckAndRemoveOverItem success");
+    }
     if(ZDT_File_Read((const uint8*)file_name , buffer, (MAX_YX_VOC_SAVE_SIZE + 10)*MAX_YX_VOC_GROUP_FULL_PATH_SIZE, &read_len))
     {
         ZDT_LOG("YX_VocFileCheckAndRemoveOverItem success buffer=%s", buffer);
@@ -636,6 +644,12 @@ PUBLIC void YX_VocFileCheckAndRemoveOverItem(uint8 * full_filename)
                  buffer2[j] = '\n'; //next line
                  j += 1;
             }
+            k = 0;
+            for(i = del_item_count; i < valid_line_count; i++)
+            {
+                valid_line_status[k++] = line_status[valid_line[i]];
+            }
+            YX_VocFileStatusWrite(valid_line_status);
             YX_VocFilePathSaveFullBufToTxt(full_filename,buffer2, j);
             YX_VCHAT_UpdateGroupInfoByFileName(full_filename,buffer2,j);
         }

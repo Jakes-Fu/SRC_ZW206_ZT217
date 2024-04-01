@@ -2091,6 +2091,7 @@ LOCAL MMI_RESULT_E  HandleZDT_TinyChatWinMsg(
         //YX_Net_Send_TK_VocFile_End(pMe,YX_VOCSEND_ERR_UNREG);
         tiny_chat_is_recording = 0;
         //ZdtTalk_BackLight(FALSE);     //BUG 微聊界面来视频时会关闭微聊,导致视频通话时会自动灭屏
+        YX_VocFileStatusWrite(m_pCurGroupInfo->status_arr);
 	 if(p_index != PNULL)
         {
             SCI_FREE(p_index);
