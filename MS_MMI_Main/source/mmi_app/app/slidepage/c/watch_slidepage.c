@@ -226,7 +226,7 @@ LOCAL void SlidePageDrapTimerOut(
 
     if (entity->is_draped)
     {
-#if 0
+#if 1
         if (abs(entity->tp_last_point.x - tp_point.x) < SLIDE_PAGE_TPDRAP_THRES)
         {
             TRACE_APP_SLIDEPAGE("lzk001. drap thres not exceed, do nothing.");
@@ -234,7 +234,7 @@ LOCAL void SlidePageDrapTimerOut(
         }
 #endif
         entity->tp_last_point = tp_point;
-        move_offset = tp_point.x - entity->tp_press_point.x-8;
+        move_offset = tp_point.x - entity->tp_press_point.x;
         entity->direction = tp_point.x> entity->tp_press_point.x ? WATCH_SLIDE_DIRECTION_RIGHT : WATCH_SLIDE_DIRECTION_LEFT;
 
         if (!entity->is_support_cycle)
