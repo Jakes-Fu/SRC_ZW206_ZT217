@@ -2521,9 +2521,9 @@ LOCAL void ZDT_InitDialEdit(MMI_WIN_ID_T win_id)
         {
             GUIEDIT_FONT_T  editfont ={0};
             editfont.is_valid = TRUE;
-            editfont.big_font = SONG_FONT_16;
-            editfont.mid_font = SONG_FONT_16;
-            editfont.small_font = SONG_FONT_16;
+            editfont.big_font = MMIZDT_DIAL_EDIT_FONT;
+            editfont.mid_font = MMIZDT_DIAL_EDIT_FONT;
+            editfont.small_font = MMIZDT_DIAL_EDIT_FONT;
             GUIEDIT_SetFontEx(MMK_GetCtrlHandleByWin(win_id, edit_ctrl_id), &editfont);
             GUIEDIT_SetDialEditAdaptive(MMK_GetCtrlHandleByWin(win_id, edit_ctrl_id), TRUE, TRUE);
         }
