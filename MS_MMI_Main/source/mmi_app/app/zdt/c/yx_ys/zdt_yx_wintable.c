@@ -4470,15 +4470,23 @@ PUBLIC void MMIVoice_ShowNewMsgPrompt(
                              )
 {
     MMIDEFAULT_TurnOnBackLight();
-    if (MMIZDT_IsInClassModeWin()
-#ifdef ZDT_PLAT_YX_SUPPORT_VOICE
-    || MMIZDT_IsInTinyChatWin()
-#endif
-	|| (g_is_inVideo == TRUE)
-    )
+    if (MMIZDT_IsInClassModeWin() || (g_is_inVideo == TRUE))
     {
         return;
     }
+#ifdef ZDT_PLAT_YX_SUPPORT_VOICE
+     if(MMIZDT_IsInTinyChatWin()){
+	 	MMIZDT_TinyChatRefreshWin();
+		//如果来消息时正在播放音频，
+		//则需要在来消息的时候把z_playing_index--
+		if(tinychat_playmedia_handle != 0){
+			if(z_playing_index > 0){
+				z_playing_index--;
+			}
+		}
+		return;
+     }
+#endif
 
 #ifdef BAIRUI_VIDEOCHAT_SUPPORT
     if(VideoChat_IsInCall())

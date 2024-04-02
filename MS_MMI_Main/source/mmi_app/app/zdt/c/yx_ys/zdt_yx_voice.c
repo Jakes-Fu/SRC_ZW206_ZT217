@@ -591,13 +591,11 @@ PUBLIC void YX_VocFileCheckAndRemoveOverItem(uint8 * full_filename)
     if(ZDT_File_Read((const uint8*)status_file_name , line_status, (sizeof(char) * (MAX_YX_VOC_SAVE_SIZE+1)), &read_len))
     {
         ZDT_LOG("YX_VocFileRemoveOneItem 000 valid_line_status=%s", valid_line_status);
-        ZDT_LOG("YX_VocFileCheckAndRemoveOverItem success");
     }
     if(ZDT_File_Read((const uint8*)file_name , buffer, (MAX_YX_VOC_SAVE_SIZE + 10)*MAX_YX_VOC_GROUP_FULL_PATH_SIZE, &read_len))
     {
         ZDT_LOG("YX_VocFileCheckAndRemoveOverItem success buffer=%s", buffer);
     }
-    ZDT_LOG("YX_VocFileRemoveOneItem 000 valid_line_status=%s", valid_line_status);
     if(buffer && SCI_STRLEN(buffer) > 0)
     {
         for(i = 0 ; i < SCI_STRLEN(buffer) ; i++)
@@ -648,10 +646,8 @@ PUBLIC void YX_VocFileCheckAndRemoveOverItem(uint8 * full_filename)
             k = 0;
             for(i = del_item_count; i < valid_line_count; i++)
             {
-                ZDT_LOG("YX_VocFileRemoveOneItem 111 valid_line_status=%s i:%d", valid_line_status,i);
                 valid_line_status[k++] = line_status[valid_line[i]];
             }
-            ZDT_LOG("YX_VocFileRemoveOneItem valid_line_status=%s", valid_line_status);
 			SCI_MEMCPY(m_pCurGroupInfo->status_arr,valid_line_status,MAX_YX_VOC_SAVE_SIZE+1);
             YX_VocFileStatusWrite(valid_line_status);
             YX_VocFilePathSaveFullBufToTxt(full_filename,buffer2, j);
