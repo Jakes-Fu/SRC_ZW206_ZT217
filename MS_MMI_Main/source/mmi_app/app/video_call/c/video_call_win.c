@@ -496,7 +496,7 @@ LOCAL void DrawCtrl_In_Video_Call(BOOLEAN show)
 //视频通话状态回调
 LOCAL void Video_Call_Status_Callback(avc_msg_t *p_msg)
 {
-    ZDT_LOG("[%s]recv msg. code=%d", __FUNCTION__, p_msg->code);
+    ZDT_LOG("[%s]recv msg. code=0x%x", __FUNCTION__, p_msg->code);
     switch (p_msg->code) {
         case AVC_MSG_JOIN_CHANNEL_SUCCESS: /* local本端成功加入channel消息 */
             //MMIVIDEO_OpenVideoWin();
@@ -1112,6 +1112,7 @@ LOCAL void Video_Call_Close(MMI_WIN_ID_T win_id)
     SCI_Sleep(1000);
     MMK_UpdateScreen();
     g_is_inVideo = FALSE;
+   g_is_video_call_show_hangup = FALSE;
 }
 
 //////////////////////////////////// incomming ///////////////////////////////////////
@@ -1124,7 +1125,7 @@ LOCAL MMI_RESULT_E HandleVideoIncommingWin(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E
     video_call_info = (VIDEO_CALL_INFO *) MMK_GetWinUserData(win_id);//wuxx add 20231111
 
     MMI_CheckAllocatedMemInfo();
-    ZDT_LOG("[%s] msg_id:%d", __FUNCTION__, msg_id);
+    ZDT_LOG("[%s] msg_id:0x%x", __FUNCTION__, msg_id);
 
     switch (msg_id)
     {
@@ -1156,6 +1157,7 @@ LOCAL MMI_RESULT_E HandleVideoIncommingWin(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E
                     ZDT_LOG("[%s] out video call", __FUNCTION__);
                     Video_Call_Display_video_type(win_id, lcd_dev_info,MMI_VIDEO_CALL_STATE_ACTIVE);
                     g_is_incomeing = TRUE;
+			g_is_video_call_show_hangup = TRUE;
                     video_call_start(video_call_info->appId, video_call_info->channel_name, Video_Call_Status_Callback);
                 }                
             }         
