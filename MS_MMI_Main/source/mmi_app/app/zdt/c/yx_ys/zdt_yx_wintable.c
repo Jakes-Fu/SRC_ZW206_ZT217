@@ -1356,6 +1356,7 @@ LOCAL int MMIZDT_TinyChatStartPlayAudio(uint16 index, uint16 list_index)
     if(m_pCurGroupInfo->status_arr[index] != 0x31) //0x31 49 ascii ×Ö·û1 É¶ÍæÒâ
     {
         m_pCurGroupInfo->status_arr[index] = 0x31; //ÒÑ¶Á
+        YX_VocFileStatusWrite(m_pCurGroupInfo->status_arr);
     }
     ZDT_LOG("MMIZDT_TinyChatStartPlayAudio 1 index=%d, file_name=%s",index, file_name);
     if(file_name == PNULL || !ZDT_File_Exsit(m_pCurGroupInfo->file_arr[index].fullname))
