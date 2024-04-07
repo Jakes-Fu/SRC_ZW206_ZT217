@@ -1619,7 +1619,9 @@ LOCAL void MMIZDT_TinyChatUpdateList()
         if(mp3_file_info.total_time == 0) 
         {
             mp3_file_info.total_time = 1;//for ui show 0 problem
-        }
+        }else if(mp3_file_info.total_time > 10){
+        	mp3_file_info.total_time = 10;
+	 }
         sprintf ( (char*) temp_wstr, "  %d\"", mp3_file_info.total_time);
         MMIAPICOM_StrToWstr (temp_wstr, time_wstr);
 
