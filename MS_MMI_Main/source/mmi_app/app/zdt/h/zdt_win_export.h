@@ -244,10 +244,10 @@ extern PUBLIC uint8 Video_Call_Incoming_Test();
         #define MEUN_ALIPAY  {1, TXT_ALIPAY, res_app_ic_alipay, MMIZFB_OpenMainWin} //支付宝
         #endif
         #ifdef TULING_AI_SUPPORT
-        #define MEUN_AI_CHAT   {0, TXT_AI_CHAT, res_app_ic_ai_chat, MMIAPIMENU_EnterAiChat}//图灵AI
+        #define MEUN_AI_CHAT   {1, TXT_AI_CHAT, res_app_ic_ai_chat, MMIAPIMENU_EnterAiChat}//图灵AI
         #endif
         #ifdef XIAODU_SUPPORT
-        #define MEUN_XIAODU   {0, TXT_XIAODU, res_app_ic_xiaodu, NULL}//小度
+        #define MEUN_XIAODU   {1, TXT_XIAODU, res_app_ic_xiaodu, NULL}//小度
         #endif
         #if defined(XYSDK_SUPPORT)|| defined(XYSDK_SRC_SUPPORT)
         #define MEUN_XMLY {1,TXT_XMLY, res_xmla_icon,LIBXMLYAPI_CreateXysdkMainWin}//喜马拉雅
@@ -272,7 +272,7 @@ extern PUBLIC uint8 Video_Call_Incoming_Test();
 		extern PUBLIC uint8 Video_Call_Incoming_Test();
 		#define MEUN_VIDEO_INCOMING_TEST {0,TXT_VIDEO_CALL,res_app_ic_video_call,Video_Call_Incoming_Test} //视频通话来电
         #endif
-        #define MEUN_SCHEDULE {0,STXT_TOOLS_SCHEDULE,res_app_ic_schedule,MMIZDT_OpenScheduleWin}//课程表
+        #define MEUN_SCHEDULE {1,STXT_TOOLS_SCHEDULE,res_app_ic_schedule,MMIZDT_OpenScheduleWin}//课程表
  //   #else
  //       #define MEUN_PHONEBOOK {1, res_app_ic_contact,  MMIZDT_OpenPBWin}
  //       #define MEUN_CAMERA {0, res_app_ic_camera,  MMIAPIDC_OpenPhotoWin} //相机
