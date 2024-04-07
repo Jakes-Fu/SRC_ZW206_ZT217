@@ -686,6 +686,13 @@ PUBLIC MMI_RESULT_E WatchLAUNCHER_HandleCommonWinMsg(
             SCI_TRACE_LOW("WatchLAUNCHER_HandleCommonWinMsg() msg_id = %d.", msg_id);
 #endif
 		break;
+	case MSG_APP_CANCEL:
+		{
+			if(win_id != WATCH_LAUNCHER_PANEL_WIN_ID){
+				WatchSLIDEAGE_SetCurrentPageIndex(0);
+			}
+		}
+		break;
 	case MSG_KEYUP_RED:
 		WatchSLIDEAGE_SetCurrentPageIndex(0);
 	     break;
