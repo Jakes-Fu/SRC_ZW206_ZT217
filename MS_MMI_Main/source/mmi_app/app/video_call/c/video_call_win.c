@@ -1275,6 +1275,7 @@ PUBLIC uint8 Video_Call_Incoming(VIDEO_CALL_INFO video_call_info)
     Video_Call_Close(WATCH_VIDEO_CALL_INCOMING_WIN_ID);
 #endif
 
+	WATCHCOM_CloseAudioOrVieo();
 
     if(!VideoChat_IsInCall())
     {

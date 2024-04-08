@@ -3175,6 +3175,9 @@ int YX_Net_Receive_FIND(YX_APP_T *pMe)
 {
     ZDT_LOG("YX_Net_Receive_FIND");
     YX_Net_TCPRespond(g_zdt_phone_imei,"FIND",4);
+	
+    WATCHCOM_CloseAudioOrVieo();
+	
     if(!Video_Call_Device_Idle_Check())
     {
         //yangyu add begin
