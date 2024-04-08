@@ -7854,15 +7854,17 @@ LOCAL void OpenAlarmAliveWin(
 #else
           {
               WATCH_SOFTKEY_TEXT_ID_T softkey = {0};
-              WatchCOM_QueryWin_2Btn_Enter(MMIALM_ALIVEWIN_ID,
-                                           &alarm_str[0],
-                                           PNULL,
-                                           PNULL,
-                                           res_aw_alarm_ic_snooze,
-                                           res_aw_alarm_ic_close,
-                                           softkey,
-                                           HandleEventAliveWinMsg);
-              WATCHCOM_CloseAudioOrVieo();
+              if(!MMIZDT_IsClassModeWinOpen()){
+	              WatchCOM_QueryWin_2Btn_Enter(MMIALM_ALIVEWIN_ID,
+	                                           &alarm_str[0],
+	                                           PNULL,
+	                                           PNULL,
+	                                           res_aw_alarm_ic_snooze,
+	                                           res_aw_alarm_ic_close,
+	                                           softkey,
+	                                           HandleEventAliveWinMsg);
+	              WATCHCOM_CloseAudioOrVieo();
+		  }
          }
 #endif
 
