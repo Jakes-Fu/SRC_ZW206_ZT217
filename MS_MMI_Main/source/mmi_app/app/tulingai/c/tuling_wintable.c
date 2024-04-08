@@ -103,6 +103,8 @@ static uint8 max_record_time_timer_id = 0;
 
 LOCAL uint32 ai_tips_timer_id =0;
 
+LOCAL BOOLEAN is_first_record = TRUE;
+
 #define AI_BOTTOM_HEIGHT DP2PX_VALUE(64) //52   // 58
 #define AI_LIST_BOTTON_POSITON  (MMI_MAINSCREEN_HEIGHT-AI_BOTTOM_HEIGHT)//160
 
@@ -1597,7 +1599,9 @@ LOCAL void DisplayAiChatRecordAnim(MMI_WIN_ID_T win_id)
     }
     point.x = AI_CHAT_RECORD_IMG_X;		
     point.y = AI_CHAT_RECORD_IMG_Y;
+	if(!is_first_record){
 	  LCD_FillRect(&lcd_dev_info, rect, MMI_BLACK_COLOR);
+	}
     GUIRES_DisplayImg(&point,PNULL,PNULL,win_id,IMAGE_AI_RECORDING_BG,&lcd_dev_info);
     
     text_style.align = ALIGN_LVMIDDLE;
@@ -1952,6 +1956,9 @@ LOCAL MMI_RESULT_E  Handle_AIChat_WinMsg(
             #endif
             //AI_TCPSendAIRecordFile(); // NOT really stop
      //   }   
+     		if(is_first_record){
+			is_first_record = FALSE;
+		}
 
     }        
     break;
@@ -1976,6 +1983,9 @@ LOCAL MMI_RESULT_E  Handle_AIChat_WinMsg(
             //StopRecordMaxTimeTimer(); 
             AI_API_Record_Stop();
             //AI_TCPSendAIRecordFile();
+            if(is_first_record){
+			is_first_record = FALSE;
+		}
         }
         else if(*(uint8*)param == ai_tips_timer_id)
         {
@@ -2023,6 +2033,7 @@ LOCAL MMI_RESULT_E  Handle_AIChat_WinMsg(
             SCI_FREE(p_index);
         }*/
         MMIAI_Net_Close();
+	 is_first_record = TRUE;
         break;
 
     default:
