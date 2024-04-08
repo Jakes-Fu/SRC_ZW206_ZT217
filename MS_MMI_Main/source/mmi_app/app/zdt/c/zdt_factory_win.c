@@ -1058,7 +1058,7 @@ void ZdtWatch_Factory_SWVER_ShowData(void)
 
     if(ZDT_SIM_Exsit() && MMIZDT_Net_IsInit())
     {
-        SCI_MEMSET(disp_str,0,sizeof(disp_str));
+        /*SCI_MEMSET(disp_str,0,sizeof(disp_str));
         SCI_MEMSET(disp_wstr,0,sizeof(disp_wstr));
         cur_rect.top    = cur_rect.bottom+2;//10*SCALE; 
         cur_rect.bottom = cur_rect.top + 24;
@@ -1090,7 +1090,7 @@ void ZdtWatch_Factory_SWVER_ShowData(void)
             &text_style,
             state,
             GUISTR_TEXT_DIR_AUTO
-            ); 
+            ); */
     }
 #endif
 #if 0//def ZDT_ZFB_SUPPORT
