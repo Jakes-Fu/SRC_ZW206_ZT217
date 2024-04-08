@@ -625,9 +625,9 @@ PUBLIC MMI_RESULT_E WatchLAUNCHER_HandleCommonWinMsg(
                 }
                 else if(b_drop_from_bottom)
                 {
-			if(win_id == WATCH_LAUNCHER_PANEL_WIN_ID){
+			/*if(win_id == WATCH_LAUNCHER_PANEL_WIN_ID){
                     	MMIZDT_DropUp_EnterWin(SLIDEWIN_STARTUPMODE_AUTO);
-			}
+			}*/
                     b_drop_from_bottom = FALSE;
                 }
             }
