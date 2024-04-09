@@ -568,6 +568,7 @@ PUBLIC MMI_RESULT_E MMIPHONE_ChargeHandlePsAndRefMsg(
             MMIDEFAULT_TurnOnBackLight();        
             // 该消息用于汇报设备处于充电状态。界面上的电池显示为动画方式。
             result = HandleChargeStartInd();
+		ZMT_BatteryChargeNeedUpdate();
         }
         break;
         
@@ -587,6 +588,7 @@ PUBLIC MMI_RESULT_E MMIPHONE_ChargeHandlePsAndRefMsg(
             }
             // 该消息用于汇报设备充电已经完成。
             result = HandleChargeEndInd(FALSE);
+		ZMT_BatteryChargeNeedUpdate();
         }
         break;
         
@@ -611,6 +613,7 @@ PUBLIC MMI_RESULT_E MMIPHONE_ChargeHandlePsAndRefMsg(
         SCI_TRACE_ID(TRACE_TOOL_CONVERT,MMIPHONE_CHARGE_480_112_2_18_2_45_19_193,(uint8*)"");
         // 该消息用于汇报此时充电已满。
         result = HandleChargeFinsh();
+	ZMT_BatteryChargeNeedUpdate();
         break;
         
     case CHR_MSG_CHARGE_DISCONNECT_IND:
@@ -630,6 +633,7 @@ PUBLIC MMI_RESULT_E MMIPHONE_ChargeHandlePsAndRefMsg(
             }
             // 该消息用于汇报此时充电被断开。
             result = HandleChargeEndInd(FALSE);
+		ZMT_BatteryChargeNeedUpdate();
         }
         break;
 

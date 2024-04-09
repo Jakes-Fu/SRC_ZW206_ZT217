@@ -391,6 +391,60 @@ PUBLIC void ZDT_UpdateSingal()
         MMK_SendMsg(MMIZDT_DROPDOWN_WIN_ID, MSG_FULL_PAINT,PNULL);
     }
 }
+
+BOOLEAN is_battery_need_anim = FALSE;
+uint32 battery_img_index = 0;
+uint8 battery_charge_timer_id = 0;
+LOCAL void ZMT_DispalyBatteryChargeImg(void)
+{
+	uint32 charge_icon_id[9] ={res_stat_battery_10, res_stat_battery_20, res_stat_battery_30,
+                                                     res_stat_battery_40, res_stat_battery_50,res_stat_battery_60,
+                                                     res_stat_battery_70,res_stat_battery_80,res_stat_battery_90,};
+	MMI_WIN_ID_T win_id = MMIZDT_DROPDOWN_WIN_ID;
+	GUI_LCD_DEV_INFO  lcd_dev_info = {0};
+	GUI_RECT_T bat_icon_rect = {100,1,126,18};
+	uint8 img_index = battery_img_index % 9;
+	MMI_IMAGE_ID_T bat_icon_id = charge_icon_id[img_index];
+	img_index++;
+	battery_img_index = img_index;
+	MMK_GetWinLcdDevInfo(win_id, &lcd_dev_info);
+	GUI_FillRect(&lcd_dev_info, bat_icon_rect, MMI_BLACK_COLOR);
+	GUIRES_DisplayImg(PNULL,&bat_icon_rect,PNULL,win_id,bat_icon_id, &lcd_dev_info);
+}
+
+LOCAL void ZMT_BatteryChargeTimerCallback(uint8  timer_id, uint32 param)
+{
+	if(timer_id == battery_charge_timer_id){
+		ZMT_DispalyBatteryChargeImg();
+	}
+}
+
+LOCAL void ZMT_BatteryChargeTimerStop(void)
+{
+	if(battery_charge_timer_id){
+		MMK_StopTimer(battery_charge_timer_id);
+		battery_charge_timer_id = 0;
+	}
+	battery_img_index = 0;
+}
+
+PUBLIC void ZMT_BatteryChargeTimerStart(void)
+{
+	if(battery_charge_timer_id == 0 && MMK_IsOpenWin(MMIZDT_DROPDOWN_WIN_ID))
+	{
+		battery_charge_timer_id = MMK_CreateTimerCallback(300, ZMT_BatteryChargeTimerCallback, PNULL, TRUE);
+		MMK_StartTimerCallback(battery_charge_timer_id, 300, ZMT_BatteryChargeTimerCallback, PNULL, TRUE);
+	}
+}
+
+PUBLIC void ZMT_BatteryChargeNeedUpdate(void)
+{
+	if (MMK_IsOpenWin(MMIZDT_DROPDOWN_WIN_ID) && MMK_IsFocusWin(MMIZDT_DROPDOWN_WIN_ID) && slide_end)
+	{
+		MMK_SendMsg(MMIZDT_DROPDOWN_WIN_ID, MSG_FULL_PAINT,PNULL);
+	}
+}
+
 PUBLIC void ZDT_DisplayBattery(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_dev_info)
 {
 
@@ -426,12 +480,12 @@ PUBLIC void ZDT_DisplayBattery(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_dev_inf
 	//battery_level=(battery_level+1)/2;
     is_charge = MMIIDLE_GetIdleWinInfo()->is_charge;
     bat_icon_id = charge_icon_id[battery_level];
-    SCI_TRACE_LOW("DisplayBattry: is_charge = %d", is_charge);
-    //is_charge = TRUE;
+    SCI_TRACE_LOW("DisplayBattry: is_charge = %d, battery_level = %d", is_charge, battery_level);
     if(!is_charge)
     {
         if(bat_icon_id != IMAGE_NULL)
         {
+        	ZMT_BatteryChargeTimerStop();
             GUIRES_DisplayImg(PNULL,&bat_icon_rect,PNULL,win_id,bat_icon_id, &lcd_dev_info);
         }
     }
@@ -441,12 +495,13 @@ PUBLIC void ZDT_DisplayBattery(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_dev_inf
         {
 			if(battery_level<10)
 			{
-
-			
-					 GUIRES_DisplayImg(PNULL,&bat_icon_rect,PNULL,win_id,res_stat_battery_charing, &lcd_dev_info);
-			 // GUIRES_DisplayImg( PNULL, &bat_icon_rect, PNULL, win_id, res_stat_battery_charing_s,&lcd_dev_info);
+				is_battery_need_anim = TRUE;
+				ZMT_BatteryChargeTimerStart();
+				//GUIRES_DisplayImg(PNULL,&bat_icon_rect,PNULL,win_id,res_stat_battery_charing, &lcd_dev_info);	
 			}
-			else{
+			else
+			{
+				ZMT_BatteryChargeTimerStop();
 				GUIRES_DisplayImg( PNULL, &bat_icon_rect, PNULL, win_id, res_stat_battery_charing_s,&lcd_dev_info);
 			}
 		}
@@ -874,6 +929,8 @@ LOCAL MMI_RESULT_E HandleDropDownWinMsg(
         case MSG_CLOSE_WINDOW:
         {
             slide_end = FALSE;
+		ZMT_BatteryChargeTimerStop();
+		is_battery_need_anim = FALSE;
             break;
         }
 
@@ -1077,11 +1134,15 @@ LOCAL MMI_RESULT_E HandleDropDownWinMsg(
         case MSG_SLIDEWIN_END:
         {
             slide_end = TRUE;
+			if(is_battery_need_anim){
+				ZMT_BatteryChargeTimerStart();
+			}
         }
         break;
         case MSG_SLIDEWIN_BEGIN:
         {
             slide_end = FALSE;
+			ZMT_BatteryChargeTimerStop();
         }
         break;
         case MSG_KEYDOWN_RED:
