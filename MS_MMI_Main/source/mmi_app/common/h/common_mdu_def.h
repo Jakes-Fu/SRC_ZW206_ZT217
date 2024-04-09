@@ -9563,8 +9563,13 @@ RES_ADD_IMG(res_stat_battery_70,"\\MMI_RES_##\\IMAG\\Launcher\\res_stat_battery_
 RES_ADD_IMG(res_stat_battery_80,"\\MMI_RES_##\\IMAG\\Launcher\\res_stat_battery_80.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(res_stat_battery_90,"\\MMI_RES_##\\IMAG\\Launcher\\res_stat_battery_90.png",IMG_CMP_PNG_ARGB_RLE,0)
 #if (!defined ADULT_WATCH_SUPPORT) && (defined SCREEN_SHAPE_CIRCULAR)
-
+RES_ADD_IMG(res_stat_battery_charing1,"\\MMI_RES_##\\IMAG\\Launcher\\res_stat_battery_charing1.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(res_stat_battery_charing2,"\\MMI_RES_##\\IMAG\\Launcher\\res_stat_battery_charing2.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(res_stat_battery_charing3,"\\MMI_RES_##\\IMAG\\Launcher\\res_stat_battery_charing3.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(res_stat_battery_charing4,"\\MMI_RES_##\\IMAG\\Launcher\\res_stat_battery_charing4.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(res_stat_battery_charing5,"\\MMI_RES_##\\IMAG\\Launcher\\res_stat_battery_charing5.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(res_stat_battery_charing,"\\MMI_RES_##\\IMAG\\Launcher\\res_stat_battery_charing.gif",IMG_CMP_GIF_SCI,0)
+RES_ADD_IMG(res_stat_battery_charing6,"\\MMI_RES_##\\IMAG\\Launcher\\res_stat_battery_charing6.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(res_stat_battery_charing_s,"\\MMI_RES_##\\IMAG\\Launcher\\res_stat_battery_charing7.png",IMG_CMP_PNG_ARGB_RLE,0)
 
 #endif

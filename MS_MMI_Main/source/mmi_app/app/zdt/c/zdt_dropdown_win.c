@@ -397,13 +397,16 @@ uint32 battery_img_index = 0;
 uint8 battery_charge_timer_id = 0;
 LOCAL void ZMT_DispalyBatteryChargeImg(void)
 {
-	uint32 charge_icon_id[9] ={res_stat_battery_10, res_stat_battery_20, res_stat_battery_30,
-                                                     res_stat_battery_40, res_stat_battery_50,res_stat_battery_60,
-                                                     res_stat_battery_70,res_stat_battery_80,res_stat_battery_90,};
+	uint32 charge_icon_id[6] ={ res_stat_battery_charing1,
+                                    res_stat_battery_charing2,
+                                    res_stat_battery_charing3,
+                                    res_stat_battery_charing4,
+                                    res_stat_battery_charing5,
+                                    res_stat_battery_charing6,};
 	MMI_WIN_ID_T win_id = MMIZDT_DROPDOWN_WIN_ID;
 	GUI_LCD_DEV_INFO  lcd_dev_info = {0};
 	GUI_RECT_T bat_icon_rect = {100,1,126,18};
-	uint8 img_index = battery_img_index % 9;
+	uint8 img_index = battery_img_index % 6;
 	MMI_IMAGE_ID_T bat_icon_id = charge_icon_id[img_index];
 	img_index++;
 	battery_img_index = img_index;
@@ -485,6 +488,7 @@ PUBLIC void ZDT_DisplayBattery(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_dev_inf
     {
         if(bat_icon_id != IMAGE_NULL)
         {
+			is_battery_need_anim =FALSE;
         	ZMT_BatteryChargeTimerStop();
             GUIRES_DisplayImg(PNULL,&bat_icon_rect,PNULL,win_id,bat_icon_id, &lcd_dev_info);
         }
@@ -501,6 +505,7 @@ PUBLIC void ZDT_DisplayBattery(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_dev_inf
 			}
 			else
 			{
+				is_battery_need_anim =FALSE;
 				ZMT_BatteryChargeTimerStop();
 				GUIRES_DisplayImg( PNULL, &bat_icon_rect, PNULL, win_id, res_stat_battery_charing_s,&lcd_dev_info);
 			}

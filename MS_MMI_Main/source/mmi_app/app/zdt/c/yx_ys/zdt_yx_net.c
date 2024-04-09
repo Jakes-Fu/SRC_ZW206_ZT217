@@ -342,7 +342,8 @@ static uint32 YX_CMD_CheckAll(uint8 * pData, int Data_len,uint8 **ppCmdBuf, uint
     uint8 * pTmp = PNULL;
     if(pData == PNULL || Data_len <= 0)
     {
-        return 0;
+        return 0;
+
     }
     end_len = YX_RCV_CMD_Check(pData,Data_len);
     if(end_len > 0)
@@ -504,7 +505,8 @@ static uint16 YX_Net_Get_AL_CDMA_AlertType(YX_APP_T *pMe,uint8 * pCont,uint16 Co
     uint16 type = YX_NET_ALERT_TYPE_NULL;
     ret = YX_Func_GetPosPara(&pContent, &content_len,buf,100,15);
     if(ret > 4)
-    {
+    {
+
         alert = YX_Func_HexCharToInt(buf[0]);
         alert = content_len<<4;
         alert += YX_Func_HexCharToInt(buf[1]);
@@ -954,7 +956,8 @@ BOOLEAN YX_LocReport_In_LK(uint16 num)
         cur_times = num%g_yx_loc_timer_lk_num;
         if(cur_times == 0)
         {
-            return TRUE;
+            return TRUE;
+
         }
     }
     return FALSE;
@@ -3377,7 +3380,8 @@ static BOOLEAN YX_Clock_SaveNV(uint16 idx,uint16 Hour,uint16 Minute,uint8 onoff,
     s_yx_current_event_info.event.event_fast_info.type = SMART_EVENT_ALARM;
     s_yx_current_event_info.event.event_fast_info.is_valid = TRUE;
     if(onoff)
-    {
+    {
+
         s_yx_current_event_info.event.event_fast_info.is_on = TRUE;
     }
     else
