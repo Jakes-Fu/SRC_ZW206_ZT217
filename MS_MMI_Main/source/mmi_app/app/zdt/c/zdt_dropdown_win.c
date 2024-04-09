@@ -392,9 +392,28 @@ PUBLIC void ZDT_UpdateSingal()
     }
 }
 
+GUI_LCD_DEV_INFO  battery_charge_layer = {0};
 BOOLEAN is_battery_need_anim = FALSE;
 uint32 battery_img_index = 0;
 uint8 battery_charge_timer_id = 0;
+LOCAL void ZMT_CreateBatteryChargeLayer(void)
+{
+	if (UILAYER_IsMultiLayerEnable())
+	{
+		MMI_WIN_ID_T win_id = MMIZDT_DROPDOWN_WIN_ID;
+		UILAYER_CREATE_T    create_info = {0};
+		GUI_LCD_DEV_INFO  battery_layer = {0};
+		create_info.lcd_id = MAIN_LCD_ID;
+		create_info.owner_handle = win_id;
+		create_info.offset_x = 100;
+		create_info.offset_y = 3;
+		create_info.width = 26;
+		create_info.height = 18;
+		create_info.is_bg_layer = FALSE;
+		create_info.is_static_layer = FALSE;   
+		UILAYER_CreateLayer(&create_info, &battery_charge_layer);
+	}
+}
 LOCAL void ZMT_DispalyBatteryChargeImg(void)
 {
 	uint32 charge_icon_id[6] ={ res_stat_battery_charing1,
@@ -405,14 +424,19 @@ LOCAL void ZMT_DispalyBatteryChargeImg(void)
                                     res_stat_battery_charing6,};
 	MMI_WIN_ID_T win_id = MMIZDT_DROPDOWN_WIN_ID;
 	GUI_LCD_DEV_INFO  lcd_dev_info = {0};
+	UILAYER_APPEND_BLT_T append_layer = {0};
 	GUI_RECT_T bat_icon_rect = {100,1,126,18};
 	uint8 img_index = battery_img_index % 6;
 	MMI_IMAGE_ID_T bat_icon_id = charge_icon_id[img_index];
 	img_index++;
 	battery_img_index = img_index;
 	MMK_GetWinLcdDevInfo(win_id, &lcd_dev_info);
-	GUI_FillRect(&lcd_dev_info, bat_icon_rect, MMI_BLACK_COLOR);
-	GUIRES_DisplayImg(PNULL,&bat_icon_rect,PNULL,win_id,bat_icon_id, &lcd_dev_info);
+	UILAYER_RemoveBltLayer(&battery_charge_layer);
+	ZMT_CreateBatteryChargeLayer();
+	append_layer.lcd_dev_info = battery_charge_layer;
+	append_layer.layer_level = UILAYER_LEVEL_NORMAL;
+	UILAYER_AppendBltLayer(&append_layer);
+	GUIRES_DisplayImg(PNULL,&bat_icon_rect,PNULL,win_id,bat_icon_id, &append_layer);
 }
 
 LOCAL void ZMT_BatteryChargeTimerCallback(uint8  timer_id, uint32 param)
@@ -429,6 +453,7 @@ LOCAL void ZMT_BatteryChargeTimerStop(void)
 		battery_charge_timer_id = 0;
 	}
 	battery_img_index = 0;
+	UILAYER_RemoveBltLayer(&battery_charge_layer);
 }
 
 PUBLIC void ZMT_BatteryChargeTimerStart(void)
