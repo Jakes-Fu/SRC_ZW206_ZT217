@@ -808,7 +808,7 @@ LOCAL void MMIZDT_ShowPlayAudioIcon(uint16 list_index, BOOLEAN isPlaying, BOOLEA
 
 
 #define TINY_CHAT_LIST_MAX_SIZE   MAX_YX_VOC_SAVE_SIZE
-#define TINYCHAT_RECORD_ANIM_DELAY 1000
+#define TINYCHAT_RECORD_ANIM_DELAY 250
 #define TINYCHAT_MAX_RECORD_TIME_MS 10000
 #define TINYCHAT_BOTTOM_HEIGHT  64    //52  //xiongkai 58//120
 #define TINYCHAT_LIS_BOX_BOTTOM (MMI_MAINSCREEN_HEIGHT -1- TINYCHAT_BOTTOM_HEIGHT)//(240-83)//180//160
@@ -1160,7 +1160,7 @@ LOCAL void MMIZDT_DisplayTinyChatRecordAnim(MMI_WIN_ID_T win_id)
     text_style.font = f_big;
     text_style.font_color = MMI_WHITE_COLOR;
 
-    cur_str_t.wstr_len = sprintf((char*)disp_str, (char*) "%d",((TINYCHAT_MAX_RECORD_TIME_MS/1000)-(tiny_chat_record_timer_index)));
+    cur_str_t.wstr_len = sprintf((char*)disp_str, (char*) "%d",((TINYCHAT_MAX_RECORD_TIME_MS/1000)-(tiny_chat_record_timer_index/4)));
     cur_str_t.wstr_ptr = disp_wstr;
     MMI_STRNTOWSTR(cur_str_t.wstr_ptr, cur_str_t.wstr_len, (uint8*)disp_str, cur_str_t.wstr_len, cur_str_t.wstr_len);
     GUISTR_DrawTextToLCDInRect( 
@@ -1619,9 +1619,7 @@ LOCAL void MMIZDT_TinyChatUpdateList()
         if(mp3_file_info.total_time == 0) 
         {
             mp3_file_info.total_time = 1;//for ui show 0 problem
-        }else if(mp3_file_info.total_time > 10){
-        	mp3_file_info.total_time = 10;
-	 }
+        }
         sprintf ( (char*) temp_wstr, "  %d\"", mp3_file_info.total_time);
         MMIAPICOM_StrToWstr (temp_wstr, time_wstr);
 
@@ -1967,7 +1965,8 @@ LOCAL MMI_RESULT_E  HandleZDT_TinyChatWinMsg(
         ZDT_LOG("HandleZDT_TinyChatWinMsg MSG_TIMER");
         if (*(uint8*)param == tiny_chat_record_anim_timer_id)
         {
-		if((TINYCHAT_MAX_RECORD_TIME_MS/1000) - tiny_chat_record_timer_index <= 0){
+		MMIZDT_DisplayTinyChatRecordAnim(win_id);
+		if((TINYCHAT_MAX_RECORD_TIME_MS/1000) - (tiny_chat_record_timer_index/4) <= 0){
 			tiny_chat_record_timer_index = 0;
 			tiny_chat_is_recording = 0;
 			if (MMK_IsFocusWin(win_id))
@@ -1976,10 +1975,8 @@ LOCAL MMI_RESULT_E  HandleZDT_TinyChatWinMsg(
 	             }
 			MMIZDT_StopRecordAnimTimer();
 			break;
-		}else{
-                	tiny_chat_record_timer_index++;
-            		MMIZDT_DisplayTinyChatRecordAnim(win_id);
 		}
+		tiny_chat_record_timer_index++;
            ZDT_LOG("HandleZDT_TinyChatWinMsg MSG_TIMER   tiny_chat_record_timer_index=%d",tiny_chat_record_timer_index);    
         }
         /*else if (*(uint8*)param == tiny_chat_max_record_timer_id)
@@ -2079,7 +2076,6 @@ PUBLIC void ZDT_Delete_CheckClose_Tiny_Chat_Win(uint8 * friend_id)
                  MMIZDT_StopRecordAnimTimer();
                  MMIZDT_ClearTinyChatRecordAnim(MMIZDT_TINY_CHAT_WIN_ID);
                  MMK_UpdateScreen();
-                 //MMIZDT_StopRecordMaxTimeTimer();
                  tiny_chat_is_recording = 0;	
             }
             MMK_CloseWin(MMIZDT_TINY_CHAT_WIN_ID);
