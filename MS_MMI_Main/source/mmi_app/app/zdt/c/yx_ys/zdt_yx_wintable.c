@@ -808,7 +808,7 @@ LOCAL void MMIZDT_ShowPlayAudioIcon(uint16 list_index, BOOLEAN isPlaying, BOOLEA
 
 
 #define TINY_CHAT_LIST_MAX_SIZE   MAX_YX_VOC_SAVE_SIZE
-#define TINYCHAT_RECORD_ANIM_DELAY 500
+#define TINYCHAT_RECORD_ANIM_DELAY 1000
 #define TINYCHAT_MAX_RECORD_TIME_MS 10000
 #define TINYCHAT_BOTTOM_HEIGHT  64    //52  //xiongkai 58//120
 #define TINYCHAT_LIS_BOX_BOTTOM (MMI_MAINSCREEN_HEIGHT -1- TINYCHAT_BOTTOM_HEIGHT)//(240-83)//180//160
@@ -1068,7 +1068,7 @@ LOCAL void MMIZDT_StartRecordAnimTimer()
         MMK_StopTimer(tiny_chat_record_anim_timer_id);
     }
     tiny_chat_record_anim_timer_id =  MMK_CreateWinTimer(MMIZDT_TINY_CHAT_WIN_ID, TINYCHAT_RECORD_ANIM_DELAY,TRUE);
-
+    YX_API_Record_Start();
 }
 
 LOCAL void MMIZDT_StopRecordAnimTimer()
@@ -1078,7 +1078,7 @@ LOCAL void MMIZDT_StopRecordAnimTimer()
         MMK_StopTimer(tiny_chat_record_anim_timer_id);
     }
     tiny_chat_record_anim_timer_id = 0;
-
+    YX_API_Record_Stop();
 }
 
 LOCAL void MMIZDT_StartRecordMaxTimeTimer()
@@ -1160,7 +1160,7 @@ LOCAL void MMIZDT_DisplayTinyChatRecordAnim(MMI_WIN_ID_T win_id)
     text_style.font = f_big;
     text_style.font_color = MMI_WHITE_COLOR;
 
-    cur_str_t.wstr_len = sprintf((char*)disp_str, (char*) "%d",((TINYCHAT_MAX_RECORD_TIME_MS/1000)-(tiny_chat_record_timer_index/2)));
+    cur_str_t.wstr_len = sprintf((char*)disp_str, (char*) "%d",((TINYCHAT_MAX_RECORD_TIME_MS/1000)-(tiny_chat_record_timer_index)));
     cur_str_t.wstr_ptr = disp_wstr;
     MMI_STRNTOWSTR(cur_str_t.wstr_ptr, cur_str_t.wstr_len, (uint8*)disp_str, cur_str_t.wstr_len, cur_str_t.wstr_len);
     GUISTR_DrawTextToLCDInRect( 
@@ -1754,8 +1754,6 @@ LOCAL MMI_RESULT_E  HandleZDT_TinyChatWinMsg(
                 MMIZDT_StopRecordAnimTimer();
                 MMIZDT_ClearTinyChatRecordAnim(win_id);
                 MMK_UpdateScreen();
-                MMIZDT_StopRecordMaxTimeTimer();
-                YX_API_Record_Stop();
                 tiny_chat_is_recording = 0;
 
            #if 1   //xiongkai    微聊界面冲突
@@ -1824,20 +1822,9 @@ LOCAL MMI_RESULT_E  HandleZDT_TinyChatWinMsg(
             point.y = MMK_GET_TP_Y(param);
             if(s_is_chat_tp_long)
             {
-                /*MMI_StopAiChatRecord();
-                
-                MMIZDT_StopRecordAnimTimer();
-                ZDT_LOG("ai_chat MMK_StopTimer");
-                MMIZDT_ClearTinyChatRecordAnim(win_id);
-                AiUpdateRecordListData (win_id, ctrl_id, MMIFMM_READ_TYPE_FILE_DIR, TXT_NULL, TRUE);
-                MMK_UpdateScreen();*/
                 MMIZDT_StopRecordAnimTimer();
                 MMIZDT_ClearTinyChatRecordAnim(win_id);
                 MMK_UpdateScreen();
-                MMIZDT_StopRecordMaxTimeTimer();
-                //AI_API_Record_Stop();
-                //AI_TCPSendAIRecordFile(); // NOT really stop
-                YX_API_Record_Stop();
                 tiny_chat_is_recording = 0;
             }
             
@@ -1897,14 +1884,7 @@ LOCAL MMI_RESULT_E  HandleZDT_TinyChatWinMsg(
                         break;
                     }
                     s_is_key_green_down = 1;
-                    /*record_result = StartAiChatRecord();
-                    if(record_result ==MMIRECORD_SRV_RESULT_SUCCESS )
-                    {
-                        tiny_chat_record_update_anim_index = 0;
-                        tiny_chat_record_anim_timer_id =  MMK_CreateWinTimer(win_id, TINYCHAT_RECORD_ANIM_DELAY,TRUE);
-                        MMIZDT_DisplayTinyChatRecordAnim(win_id);
-                        return record_result;   
-                    }   */
+
                     if(MMIZDT_Net_IsInit() && FALSE == YX_Net_Is_Land())
                     {
                         ZDT_LOG("win TINY_CHAT NET Reset");
@@ -1917,9 +1897,6 @@ LOCAL MMI_RESULT_E  HandleZDT_TinyChatWinMsg(
                     MMIZDT_TinyChatStopPlayAudio();
                     MMIZDT_StartRecordAnimTimer();
                     MMIZDT_DisplayTinyChatRecordAnim(win_id);
-                    MMIZDT_StartRecordMaxTimeTimer();
-                    //AI_API_Record_Start();
-                    YX_API_Record_Start();
                     tiny_chat_is_recording = 1;
                 }
             }
@@ -1954,25 +1931,6 @@ LOCAL MMI_RESULT_E  HandleZDT_TinyChatWinMsg(
         }
 
         s_is_key_green_down = 1;
-        /*record_result = StartAiChatRecord();
-        if(record_result ==MMIRECORD_SRV_RESULT_SUCCESS )
-        {
-            tiny_chat_record_update_anim_index = 0;
-            tiny_chat_record_anim_timer_id =  MMK_CreateWinTimer(win_id, TINYCHAT_RECORD_ANIM_DELAY,TRUE);
-            MMIZDT_DisplayTinyChatRecordAnim(win_id);
-            return record_result;   
-        }   */
-        ZDT_LOG("win TINY_CHAT_Record_Start");
-        tiny_chat_record_update_anim_index = 0;
-        tiny_chat_record_timer_index = 0;
-        s_is_chat_tp_long = TRUE;
-        MMIZDT_TinyChatStopPlayAudio();
-        MMIZDT_StartRecordAnimTimer();
-        MMIZDT_DisplayTinyChatRecordAnim(win_id);
-        MMIZDT_StartRecordMaxTimeTimer();
-        //AI_API_Record_Start();
-        YX_API_Record_Start();
-        tiny_chat_is_recording = 1;
     }
     break;
     
@@ -1981,20 +1939,9 @@ LOCAL MMI_RESULT_E  HandleZDT_TinyChatWinMsg(
             ZDT_LOG("MSG_KEYPRESSUP_WEB");
             if(s_is_key_green_down)
             {
-                /*MMI_StopAiChatRecord();
-                
-                MMIZDT_StopRecordAnimTimer();
-                ZDT_LOG("ai_chat MMK_StopTimer");
-                MMIZDT_ClearTinyChatRecordAnim(win_id);
-                AiUpdateRecordListData (win_id, ctrl_id, MMIFMM_READ_TYPE_FILE_DIR, TXT_NULL, TRUE);
-                MMK_UpdateScreen();*/
                 MMIZDT_StopRecordAnimTimer();
                 MMIZDT_ClearTinyChatRecordAnim(win_id);
                 MMK_UpdateScreen();
-                MMIZDT_StopRecordMaxTimeTimer();
-                //AI_API_Record_Stop();
-                //AI_TCPSendAIRecordFile(); // NOT really stop
-                YX_API_Record_Stop();
                 tiny_chat_is_recording = 0;
                 s_is_chat_tp_long = FALSE;
                 s_is_key_green_down = 0;
@@ -2020,26 +1967,25 @@ LOCAL MMI_RESULT_E  HandleZDT_TinyChatWinMsg(
         ZDT_LOG("HandleZDT_TinyChatWinMsg MSG_TIMER");
         if (*(uint8*)param == tiny_chat_record_anim_timer_id)
         {
-            if(tiny_chat_record_update_anim_index < TINYCHAT_RECORD_ANIMAL_TOTAL_FRAME_NUM)
-            {
-                tiny_chat_record_update_anim_index++;
-            }
-                else
-                {
-                    tiny_chat_record_update_anim_index = 0;
-                }
-                tiny_chat_record_timer_index++;
-            MMIZDT_DisplayTinyChatRecordAnim(win_id);
+		if((TINYCHAT_MAX_RECORD_TIME_MS/1000) - tiny_chat_record_timer_index <= 0){
+			tiny_chat_record_timer_index = 0;
+			tiny_chat_is_recording = 0;
+			if (MMK_IsFocusWin(win_id))
+	             {
+				MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
+	             }
+			MMIZDT_StopRecordAnimTimer();
+			break;
+		}else{
+                	tiny_chat_record_timer_index++;
+            		MMIZDT_DisplayTinyChatRecordAnim(win_id);
+		}
            ZDT_LOG("HandleZDT_TinyChatWinMsg MSG_TIMER   tiny_chat_record_timer_index=%d",tiny_chat_record_timer_index);    
         }
-        else if (*(uint8*)param == tiny_chat_max_record_timer_id)
+        /*else if (*(uint8*)param == tiny_chat_max_record_timer_id)
         {
             MMIZDT_StopRecordAnimTimer();
             MMIZDT_ClearTinyChatRecordAnim(win_id);
-            //MMIZDT_StopRecordMaxTimeTimer(); 
-            //AI_API_Record_Stop();
-            //AI_TCPSendAIRecordFile();
-            YX_API_Record_Stop();
           ZDT_LOG("HandleZDT_TinyChatWinMsg MSG_TIMER   param is tiny_chat_max_record_timer_id");    
 
          #if 1 //xiongkai      for bug 设备端微聊界面发送10s语音，未及时显示语音条记录；需要退出重进刷新；    
@@ -2049,11 +1995,7 @@ LOCAL MMI_RESULT_E  HandleZDT_TinyChatWinMsg(
                 MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
             }    
          #endif         
-        }
-        else
-        {
-            recode = MMI_RESULT_FALSE;
-        }
+        }*/
         break;
         
     case MSG_CTL_OK:
@@ -2084,16 +2026,12 @@ LOCAL MMI_RESULT_E  HandleZDT_TinyChatWinMsg(
 
     case MSG_CLOSE_WINDOW:
         MMISRVAUD_FreeVirtualHandle("TINY CHAT"); 
-        //MMIZDT_StopRecordAnimTimer();
-        //AI_Tcp_ForceCloseAll();//close tcp socket and thread
-        //AI_API_Rcv_Mp3_PlayStop();//stop play, clear buf list
+
         MMIZDT_StopRecordAnimTimer();
         MMIZDT_TinyChatStopPlayAudio();
 
-        YX_Voice_HandleStop(pMe);
-        //YX_Net_Send_TK_VocFile_End(pMe,YX_VOCSEND_ERR_UNREG);
         tiny_chat_is_recording = 0;
-        //ZdtTalk_BackLight(FALSE);     //BUG 微聊界面来视频时会关闭微聊,导致视频通话时会自动灭屏
+       //BUG 微聊界面来视频时会关闭微聊,导致视频通话时会自动灭屏
         YX_VocFileStatusWrite(m_pCurGroupInfo->status_arr);
 	 if(p_index != PNULL)
         {
@@ -2116,8 +2054,7 @@ PUBLIC void ZDT_Close_Tiny_Chat_Win()
          MMIZDT_StopRecordAnimTimer();
          MMIZDT_ClearTinyChatRecordAnim(MMIZDT_TINY_CHAT_WIN_ID);
          MMK_UpdateScreen();
-         MMIZDT_StopRecordMaxTimeTimer();
-         YX_API_Record_Stop();
+         //MMIZDT_StopRecordMaxTimeTimer();
          tiny_chat_is_recording = 0;    
      }
      
@@ -2142,8 +2079,7 @@ PUBLIC void ZDT_Delete_CheckClose_Tiny_Chat_Win(uint8 * friend_id)
                  MMIZDT_StopRecordAnimTimer();
                  MMIZDT_ClearTinyChatRecordAnim(MMIZDT_TINY_CHAT_WIN_ID);
                  MMK_UpdateScreen();
-                 MMIZDT_StopRecordMaxTimeTimer();
-                 YX_API_Record_Stop();
+                 //MMIZDT_StopRecordMaxTimeTimer();
                  tiny_chat_is_recording = 0;	
             }
             MMK_CloseWin(MMIZDT_TINY_CHAT_WIN_ID);
