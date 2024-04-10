@@ -868,7 +868,7 @@ LOCAL void  CC_OpenWatchMoCallWin(void)
     {
         MMICC_StartCCApplet();
     }
-
+    WATCHCOM_CloseAudioOrVieo();	
     MMICC_GetWantCallNumStr(telNum, &telNumLen);
 
 #ifdef _SW_ZDT_PRODUCT_
@@ -916,7 +916,7 @@ LOCAL void CC_OpenWatchMtCallWin(void)
     {
         MMICC_StartCCApplet();
     }
-
+    WATCHCOM_CloseAudioOrVieo();
     MMICC_GetCallNumStrByIndex(telNum, &telNumLen, MMICC_GetCurrentCallIndex());
     //get info for display
     dispInfo.tel_num_len = telNumLen;
