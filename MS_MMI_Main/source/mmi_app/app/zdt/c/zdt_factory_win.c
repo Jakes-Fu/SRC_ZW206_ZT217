@@ -1056,42 +1056,42 @@ void ZdtWatch_Factory_SWVER_ShowData(void)
         GUISTR_TEXT_DIR_AUTO
         ); 
 
-    if(ZDT_SIM_Exsit() && MMIZDT_Net_IsInit())
-    {
-        /*SCI_MEMSET(disp_str,0,sizeof(disp_str));
-        SCI_MEMSET(disp_wstr,0,sizeof(disp_wstr));
-        cur_rect.top    = cur_rect.bottom+2;//10*SCALE; 
-        cur_rect.bottom = cur_rect.top + 24;
-        cur_str_t.wstr_len = sprintf((char*)disp_str, (char*) "IMSI:%s",g_zdt_sim_imsi);
-        cur_str_t.wstr_ptr = disp_wstr;
-        MMI_STRNTOWSTR(cur_str_t.wstr_ptr, cur_str_t.wstr_len, (uint8*)disp_str, cur_str_t.wstr_len, cur_str_t.wstr_len);
-        GUISTR_DrawTextToLCDInRect( 
-            (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
-            (const GUI_RECT_T      *)&cur_rect,       
-            (const GUI_RECT_T      *)&cur_rect,     
-            (const MMI_STRING_T    *)&cur_str_t,
-            &text_style,
-            state,
-            GUISTR_TEXT_DIR_AUTO
-            ); 
-        
-        SCI_MEMSET(disp_str,0,sizeof(disp_str));
-        SCI_MEMSET(disp_wstr,0,sizeof(disp_wstr));
-        cur_rect.top    = cur_rect.bottom+0;//10*SCALE; 
-        cur_rect.bottom = cur_rect.top + 24;
-        cur_str_t.wstr_len = sprintf((char*)disp_str, (char*) "ICCID:%s",g_zdt_sim_iccid);
-        cur_str_t.wstr_ptr = disp_wstr;
-        MMI_STRNTOWSTR(cur_str_t.wstr_ptr, cur_str_t.wstr_len, (uint8*)disp_str, cur_str_t.wstr_len, cur_str_t.wstr_len);
-        GUISTR_DrawTextToLCDInRect( 
-            (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
-            (const GUI_RECT_T      *)&cur_rect,       
-            (const GUI_RECT_T      *)&cur_rect,     
-            (const MMI_STRING_T    *)&cur_str_t,
-            &text_style,
-            state,
-            GUISTR_TEXT_DIR_AUTO
-            ); */
-    }
+    //if(ZDT_SIM_Exsit() && MMIZDT_Net_IsInit())
+    //{
+    //    SCI_MEMSET(disp_str,0,sizeof(disp_str));
+    //    SCI_MEMSET(disp_wstr,0,sizeof(disp_wstr));
+    //    cur_rect.top    = cur_rect.bottom+2;//10*SCALE; 
+    //    cur_rect.bottom = cur_rect.top + 24;
+    //    cur_str_t.wstr_len = sprintf((char*)disp_str, (char*) "IMSI:%s",g_zdt_sim_imsi);
+    //    cur_str_t.wstr_ptr = disp_wstr;
+    //    MMI_STRNTOWSTR(cur_str_t.wstr_ptr, cur_str_t.wstr_len, (uint8*)disp_str, cur_str_t.wstr_len, cur_str_t.wstr_len);
+    //    GUISTR_DrawTextToLCDInRect( 
+    //        (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
+    //        (const GUI_RECT_T      *)&cur_rect,       
+    //        (const GUI_RECT_T      *)&cur_rect,     
+    //        (const MMI_STRING_T    *)&cur_str_t,
+    //        &text_style,
+    //        state,
+    //        GUISTR_TEXT_DIR_AUTO
+    //        ); 
+    //    
+    //    SCI_MEMSET(disp_str,0,sizeof(disp_str));
+    //    SCI_MEMSET(disp_wstr,0,sizeof(disp_wstr));
+    //    cur_rect.top    = cur_rect.bottom+0;//10*SCALE; 
+    //    cur_rect.bottom = cur_rect.top + 24;
+    //    cur_str_t.wstr_len = sprintf((char*)disp_str, (char*) "ICCID:%s",g_zdt_sim_iccid);
+    //    cur_str_t.wstr_ptr = disp_wstr;
+    //    MMI_STRNTOWSTR(cur_str_t.wstr_ptr, cur_str_t.wstr_len, (uint8*)disp_str, cur_str_t.wstr_len, cur_str_t.wstr_len);
+    //    GUISTR_DrawTextToLCDInRect( 
+    //        (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
+    //        (const GUI_RECT_T      *)&cur_rect,       
+    //        (const GUI_RECT_T      *)&cur_rect,     
+    //        (const MMI_STRING_T    *)&cur_str_t,
+    //        &text_style,
+    //        state,
+    //        GUISTR_TEXT_DIR_AUTO
+    //        ); 
+    //}
 #endif
 #if 0//def ZDT_ZFB_SUPPORT
     SCI_MEMSET(disp_str,0,sizeof(disp_str));
@@ -1161,8 +1161,9 @@ void ZdtWatch_Factory_SWVER_ShowData(void)
         cur_str_t.wstr_len = MMIAPICOM_Wstrlen(cal_fail);
         cur_str_t.wstr_ptr = cal_fail;
     }
-    cur_rect.top    = cur_rect.bottom+13;//26*SCALE; 
-    cur_rect.bottom = cur_rect.top + 24;
+	cur_rect.left= rect.right/2-15;
+    cur_rect.top    = cur_rect.bottom/2+30;//26*SCALE; 
+    cur_rect.bottom = cur_rect.top+24;
     GUISTR_DrawTextToLCDInRect( 
         (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
         (const GUI_RECT_T      *)&cur_rect,       
