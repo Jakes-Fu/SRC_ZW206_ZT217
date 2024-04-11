@@ -811,7 +811,7 @@ LOCAL void MMIZDT_ShowPlayAudioIcon(uint16 list_index, BOOLEAN isPlaying, BOOLEA
 #define TINYCHAT_RECORD_ANIM_DELAY 250
 #define TINYCHAT_MAX_RECORD_TIME_MS 10000
 #define TINYCHAT_BOTTOM_HEIGHT  64    //52  //xiongkai 58//120
-#define TINYCHAT_LIS_BOX_BOTTOM (MMI_MAINSCREEN_HEIGHT -1- TINYCHAT_BOTTOM_HEIGHT)//(240-83)//180//160
+#define TINYCHAT_LIS_BOX_BOTTOM (MMI_MAINSCREEN_HEIGHT -1-  DP2PX_VALUE( TINYCHAT_BOTTOM_HEIGHT))//(240-83)//180//160
 
 #define  TINYCHAT_RECORD_ANIMAL_TOTAL_FRAME_NUM  4
 
@@ -1031,13 +1031,13 @@ void MMIZDT_TinyShowBottom(MMI_WIN_ID_T  win_id)
     GUI_RECT_T   record_text_rect = WECHART_RECORD_TEXT_RECT;
     
     rect.left = 0;
-    rect.top= TINYCHAT_LIS_BOX_BOTTOM+30;
+    rect.top= TINYCHAT_LIS_BOX_BOTTOM;
     rect.right= (MMI_MAINSCREEN_WIDTH -1);
     rect.bottom = (MMI_MAINSCREEN_HEIGHT-1); 
   
     LCD_FillRect(&lcd_dev_info, rect, MMI_BLACK_COLOR);
 
-    point.x = WECHART_RECORD_IMG_X +5;
+    point.x = WECHART_RECORD_IMG_X;
     point.y = WECHART_RECORD_IMG_Y;
 
     GUIRES_DisplayImg(&point, PNULL, PNULL, win_id, IMAGE_CHAT_NO_RECORD_BG, &lcd_dev_info); 
@@ -1140,7 +1140,7 @@ LOCAL void MMIZDT_DisplayTinyChatRecordAnim(MMI_WIN_ID_T win_id)
     GUI_RECT_T   countdown_rect = WECHART_RECORD_COUNTDOWN_TEXT_RECT;
 
     rect.left = 0;
-    rect.top= TINYCHAT_LIS_BOX_BOTTOM+30;
+    rect.top= TINYCHAT_LIS_BOX_BOTTOM;
     rect.right= MMI_MAINSCREEN_WIDTH-1;
     rect.bottom = MMI_MAINSCREEN_HEIGHT-1; 
     
@@ -1540,7 +1540,7 @@ LOCAL void MMIZDT_TinyChatUpdateList()
 	if(line_num == 0){		
         	GUILIST_SetRect(ctrl_id,&rect);
 		MMK_GetWinRect(win_id, &rect);
-		rect.bottom = (TINYCHAT_LIS_BOX_BOTTOM -1) + 30;
+		rect.bottom = (TINYCHAT_LIS_BOX_BOTTOM -1) ;
 		LCD_FillRect(&lcd_dev_info, rect, MMI_BLACK_COLOR);
 		WATCHCOM_DisplayTips(win_id,TXT_NONE_WECHAT_LIST);
 		return;
@@ -1548,12 +1548,12 @@ LOCAL void MMIZDT_TinyChatUpdateList()
 	 list_init.both_rect.v_rect.left = 0;//0;//mic icon width is 52
         list_init.both_rect.v_rect.right = (MMI_MAINSCREEN_WIDTH -1);
         list_init.both_rect.v_rect.top = 0;
-        list_init.both_rect.v_rect.bottom = TINYCHAT_LIS_BOX_BOTTOM-1+30;//185;//240;//180;
+        list_init.both_rect.v_rect.bottom = TINYCHAT_LIS_BOX_BOTTOM-1;//185;//240;//180;
 
         list_init.both_rect.h_rect.left = 0;
         list_init.both_rect.h_rect.right = (MMI_MAINSCREEN_WIDTH -1);//185;//240;//180;
         list_init.both_rect.h_rect.top = 0;
-        list_init.both_rect.h_rect.bottom =(TINYCHAT_LIS_BOX_BOTTOM -1)+30; //240;
+        list_init.both_rect.h_rect.bottom =(TINYCHAT_LIS_BOX_BOTTOM -1); //240;
         
         list_init.type = GUILIST_TEXTLIST_E;
                     
@@ -1567,7 +1567,7 @@ LOCAL void MMIZDT_TinyChatUpdateList()
         CTRLLIST_SetTextFont(ctrl_id, DP_FONT_24, MMI_CYAN_COLOR);
         GUILIST_SetMaxItem(ctrl_id, TINY_CHAT_LIST_MAX_SIZE, FALSE);
 	 MMK_GetWinRect(win_id, &rect);
-	 rect.bottom = (TINYCHAT_LIS_BOX_BOTTOM -1) + 30;
+	 rect.bottom = (TINYCHAT_LIS_BOX_BOTTOM -1);
 	 LCD_FillRect(&lcd_dev_info, rect, MMI_BLACK_COLOR);
     for(i = 0 ; i < line_num ; i++)
     {        
@@ -1619,7 +1619,9 @@ LOCAL void MMIZDT_TinyChatUpdateList()
         if(mp3_file_info.total_time == 0) 
         {
             mp3_file_info.total_time = 1;//for ui show 0 problem
-        }
+        }else if(mp3_file_info.total_time > 10&&isLeft==IMAGE_TINYCHAT_VOICE_RIGHT_BG){
+        	mp3_file_info.total_time = 10;
+	 }
         sprintf ( (char*) temp_wstr, "  %d\"", mp3_file_info.total_time);
         MMIAPICOM_StrToWstr (temp_wstr, time_wstr);
 
@@ -6492,7 +6494,7 @@ void MMIZDT_Schedule_ShowList(MMI_WIN_ID_T win_id,uint8 current_day)
 
     const uint16 height =40;//65;
 
-    GUI_RECT_T title0_rect = DP2PX_RECT( 50,  10,  185 , height);//text
+    GUI_RECT_T title0_rect = DP2PX_RECT( 0,  10,  205 , height);//text
     GUI_RECT_T title1_rect = DP2PX_RECT(80,  10,  185 , height);//text
 
     GUI_RECT_T content0_rect = DP2PX_RECT(10,  10,  130 , height);// ÉÏÎç 12:30
@@ -6770,17 +6772,17 @@ LOCAL MMI_RESULT_E  HandleZDT_WatchScheduleWinMsg(
 		case MSG_OPEN_WINDOW:
 		{
 			
-			GUI_RECT_T listrect = {0,0,(MMI_MAINSCREEN_WIDTH -1),(MMI_MAINSCREEN_HEIGHT-1)};
+			GUI_RECT_T listrect = {0,0,(180 -1),(MMI_MAINSCREEN_HEIGHT-1)};
 
 			list_init.both_rect.v_rect.left = 0;
-			list_init.both_rect.v_rect.right = (MMI_MAINSCREEN_WIDTH -1);
+			list_init.both_rect.v_rect.right = (240 -1);
 			list_init.both_rect.v_rect.top = 0;
 			list_init.both_rect.v_rect.bottom = (MMI_MAINSCREEN_HEIGHT -1) ;//240;//180;
 
 			list_init.both_rect.h_rect.left = 0;
-			list_init.both_rect.h_rect.right = (MMI_MAINSCREEN_HEIGHT -1);//240;//180;
+			list_init.both_rect.h_rect.right = (MMI_MAINSCREEN_WIDTH -1);//240;//180;
 			list_init.both_rect.h_rect.top = 0;
-			list_init.both_rect.h_rect.bottom = (MMI_MAINSCREEN_WIDTH -1);
+			list_init.both_rect.h_rect.bottom = (MMI_MAINSCREEN_HEIGHT -1);
 			
 			list_init.type = GUILIST_TEXTLIST_E;
 			GUILIST_CreateListBox(win_id, 0, ctrl_id, &list_init);	

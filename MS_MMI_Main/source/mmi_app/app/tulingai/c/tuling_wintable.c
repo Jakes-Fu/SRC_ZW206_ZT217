@@ -1595,13 +1595,33 @@ LOCAL void DisplayAiChatRecordAnim(MMI_WIN_ID_T win_id)
 
     if(ai_chat_status == AI_CHAT_CHAT)
     {
+		rect.left=0;
+		rect.right=128;
+		rect.top=0;
+		rect.bottom=128;
+
         LCD_FillRect(&lcd_dev_info, rect, MMI_BLACK_COLOR);
     }
     point.x = AI_CHAT_RECORD_IMG_X;		
     point.y = AI_CHAT_RECORD_IMG_Y;
 	if(!is_first_record){
+		rect.left=0;
+		rect.right=128;
+		rect.top=0;
+		rect.bottom=128;
 	  LCD_FillRect(&lcd_dev_info, rect, MMI_BLACK_COLOR);
 	}
+	if(is_first_record){
+		rect.left=0;
+		rect.right=128;
+		rect.top=0;
+		rect.bottom=128;
+	  LCD_FillRect(&lcd_dev_info, rect, MMI_BLACK_COLOR);
+
+
+	}
+	  point.x = AI_CHAT_RECORD_IMG_X;		
+    point.y = AI_CHAT_RECORD_IMG_Y;
     GUIRES_DisplayImg(&point,PNULL,PNULL,win_id,IMAGE_AI_RECORDING_BG,&lcd_dev_info);
     
     text_style.align = ALIGN_LVMIDDLE;
@@ -1876,7 +1896,10 @@ LOCAL MMI_RESULT_E  Handle_AIChat_WinMsg(
             DisplayAiChatRecordAnim(win_id);
             StartRecordMaxTimeTimer();
             AI_API_Record_Start();*/
-            
+             ClearAiChatRecordAnim(win_id);
+            MMK_UpdateScreen(); 
+			//DisplayAiChatRecordAnim(win_id);
+            StopRecordMaxTimeTimer();
         }
         ClearAiChatRecordAnim(win_id);
     }
