@@ -4423,7 +4423,7 @@ PUBLIC void MMIVoice_ShowNewMsgPrompt(
 		return;
      }
 #endif
-	if((TRUE == MMICC_IsExistActiveCall()) || (TRUE == MMICC_IsExistHoldCall())
+	if((TRUE == MMICC_IsExistActiveCall()) || (TRUE == MMICC_IsExistHoldCall()))
 	{
 		return;
 	}
