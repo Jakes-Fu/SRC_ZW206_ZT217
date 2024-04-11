@@ -3180,6 +3180,11 @@ int YX_Net_Receive_FIND(YX_APP_T *pMe)
     YX_Net_TCPRespond(g_zdt_phone_imei,"FIND",4);
 	
     WATCHCOM_CloseAudioOrVieo();
+	if((TRUE == MMICC_IsExistActiveCall()) || (TRUE == MMICC_IsExistHoldCall())
+		|| VideoChat_IsInCall())
+	{
+		return -1;
+	}
 	
     if(!Video_Call_Device_Idle_Check())
     {

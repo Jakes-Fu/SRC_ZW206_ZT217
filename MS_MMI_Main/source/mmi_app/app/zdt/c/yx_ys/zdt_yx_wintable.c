@@ -4423,14 +4423,20 @@ PUBLIC void MMIVoice_ShowNewMsgPrompt(
 		return;
      }
 #endif
-
+	if((TRUE == MMICC_IsExistActiveCall()) || (TRUE == MMICC_IsExistHoldCall())
+	{
+		return;
+	}
 #ifdef BAIRUI_VIDEOCHAT_SUPPORT
     if(VideoChat_IsInCall())
     {
         isVideoChatOverDialog = TRUE;
         return;
     }
-
+#ifdef TULING_AI_SUPPORT
+	AI_API_ForceToStopPlay();
+	MMIAI_CloseChatWin();
+#endif
 #endif
 #ifndef WIN32    
 #ifdef LEBAO_MUSIC_SUPPORT
