@@ -7854,9 +7854,10 @@ LOCAL void OpenAlarmAliveWin(
 #else
           {
               WATCH_SOFTKEY_TEXT_ID_T softkey = {0};
+		 extern BOOLEAN g_is_inVideo;
               if(!MMIZDT_IsClassModeWinOpen() 
-			  && !VideoChat_IsInCall() 
-			  && !(TRUE == MMICC_IsExistActiveCall()) || (TRUE == MMICC_IsExistHoldCall()))
+			  && !g_is_inVideo
+			  && !(TRUE == MMICC_IsExistActiveCall() || TRUE == MMICC_IsExistHoldCall()))
 		{
 	              WatchCOM_QueryWin_2Btn_Enter(MMIALM_ALIVEWIN_ID,
 	                                           &alarm_str[0],

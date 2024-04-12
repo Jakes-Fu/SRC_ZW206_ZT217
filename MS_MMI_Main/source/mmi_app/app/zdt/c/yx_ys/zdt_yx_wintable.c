@@ -4423,7 +4423,7 @@ PUBLIC void MMIVoice_ShowNewMsgPrompt(
 		return;
      }
 #endif
-	if((TRUE == MMICC_IsExistActiveCall()) || (TRUE == MMICC_IsExistHoldCall()))
+	if((TRUE == MMICC_IsExistActiveCall() || TRUE == MMICC_IsExistHoldCall()))
 	{
 		return;
 	}
@@ -4433,10 +4433,11 @@ PUBLIC void MMIVoice_ShowNewMsgPrompt(
         isVideoChatOverDialog = TRUE;
         return;
     }
+#endif
 #ifdef TULING_AI_SUPPORT
+	AI_API_ForceToStopAI();
 	AI_API_ForceToStopPlay();
 	MMIAI_CloseChatWin();
-#endif
 #endif
 #ifndef WIN32    
 #ifdef LEBAO_MUSIC_SUPPORT

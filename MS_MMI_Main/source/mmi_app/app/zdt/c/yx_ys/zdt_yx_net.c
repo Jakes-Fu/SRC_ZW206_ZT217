@@ -3176,12 +3176,13 @@ PUBLIC void YX_SMS_Receive_Find(YX_APP_T *pMe)
 
 int YX_Net_Receive_FIND(YX_APP_T *pMe)
 {
+    extern BOOLEAN g_is_inVideo;
     ZDT_LOG("YX_Net_Receive_FIND");
     YX_Net_TCPRespond(g_zdt_phone_imei,"FIND",4);
 	
     WATCHCOM_CloseAudioOrVieo();
-	if((TRUE == MMICC_IsExistActiveCall()) || (TRUE == MMICC_IsExistHoldCall())
-		|| VideoChat_IsInCall())
+	if((TRUE == MMICC_IsExistActiveCall() || TRUE == MMICC_IsExistHoldCall())
+		|| g_is_inVideo)
 	{
 		return -1;
 	}
