@@ -4138,8 +4138,8 @@ LOCAL MMI_RESULT_E  HandleZDT_ChargingWinMsg(
         case MSG_LOSE_FOCUS:
         case MSG_CLOSE_WINDOW:
         { 
-            MMIZDT_StopChargingTimer();
-            anim_total_count = 0;
+            //MMIZDT_StopChargingTimer();
+            //anim_total_count = 0;
         }
         
         break;
