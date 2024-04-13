@@ -702,11 +702,13 @@ LOCAL void DisplayBottomButton(MMI_WIN_ID_T win_id)
     GUI_RECT_T tools_rect = DROPDOWN_TOOLS_RECT;
     GUI_RECT_T sound_rect = DROPDOWN_SOUND_RECT;
     GUI_RECT_T settings_rect = DROPDOWN_SETTINGS_RECT;
-
+	 GUI_RECT_T torch_rect=DROPDOWN_TORCH_RECT;
     MMK_GetWinLcdDevInfo(win_id, &lcd_dev_info);
     GUIRES_DisplayImg(PNULL,&tools_rect,PNULL,win_id, IMAGE_DROPDOWN_TOOL,&lcd_dev_info);
     GUIRES_DisplayImg(PNULL,&sound_rect,PNULL,win_id, IMAGE_DROPDOWN_SOUND_OPEN,&lcd_dev_info);
     GUIRES_DisplayImg(PNULL,&settings_rect,PNULL,win_id, IMAGE_DROPDOWN_SETTINGS,&lcd_dev_info);
+	 GUIRES_DisplayImg(PNULL,&torch_rect,PNULL,win_id, IMAGE_SETTINGS_TORCH_ICON,&lcd_dev_info);
+
 	
 }
 
@@ -867,6 +869,7 @@ LOCAL void CheckTouchUp(GUI_POINT_T point)
     GUI_RECT_T tools_rect = DROPDOWN_TOOLS_RECT;
     GUI_RECT_T sound_rect = DROPDOWN_SOUND_RECT;
     GUI_RECT_T settings_rect = DROPDOWN_SETTINGS_RECT;
+	  GUI_RECT_T torch_rect=DROPDOWN_TORCH_RECT; 
     if (GUI_PointIsInRect(point, tools_rect))
     {
         MMIAPISET_ZdtBrightnessWin();
@@ -878,6 +881,10 @@ LOCAL void CheckTouchUp(GUI_POINT_T point)
     else if(GUI_PointIsInRect(point, settings_rect))
     {
         WatchSET_MainWin_Enter();
+    }
+	 else if(GUI_PointIsInRect(point, torch_rect))
+    {
+        MMIACC_OpenFlashlighWin();
     }
 }
 
