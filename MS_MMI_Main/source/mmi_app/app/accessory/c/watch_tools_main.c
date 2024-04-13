@@ -14,7 +14,7 @@
 /**--------------------------------------------------------------------------*
 **                         Include Files                                     *
 **---------------------------------------------------------------------------*/
-
+#include "mmi_font.h"
 #include "guilistbox.h"
 #include "watch_common_list.h"
 #include "os_api.h"
@@ -79,7 +79,7 @@ extern PUBLIC void MMIAPICALC_OpenMainWin(void);
 
 extern PUBLIC void MMIZDT_OpenWeatherWin(void);
 
-extern PUBLIC void WatchStopWatch_MainWin_Enter(void);
+extern PUBLIC void ZTE_STOPWATCH_OpenMainWin(void);
 
 extern PUBLIC void MMIZDT_OpenPedometerWin(void);
 
@@ -155,7 +155,7 @@ LOCAL WATCHCOM_LIST_ITEM__ST s_watch_tools_main_text_list_data[] =
 
 	{ WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR, &list_item_alarm_clock, WatchAlarm_MainWin_Enter},
 
-	{ WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR, &list_item_stopwatch, WatchStopWatch_MainWin_Enter},
+	{ WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR, &list_item_stopwatch, ZTE_STOPWATCH_OpenMainWin},
 
 	{ WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR, &list_item_pedometer, MMIZDT_OpenPedometerWin},
 
@@ -239,7 +239,7 @@ LOCAL void WatchTools_Main_OPEN_WINDOW(MMI_WIN_ID_T win_id)
 #endif
 	GUISTR_STYLE_T      text_style      = {0};/*lint !e64*/
 	GUI_RECT_T          rect         = MMITHEME_GetFullScreenRectEx(win_id);
-	GUI_RECT_T          text_rect={42,0,240,MMI_SPECIAL_TITLE_HEIGHT};
+	GUI_RECT_T          text_rect={MMI_MAINSCREEN_WIDTH/3,0,MMI_MAINSCREEN_WIDTH,MMI_SPECIAL_TITLE_HEIGHT};
 	GUI_LCD_DEV_INFO    lcd_dev_info = {GUI_MAIN_LCD_ID,GUI_BLOCK_MAIN};
 	MMI_STRING_T        string = {0};
 	GUISTR_STATE_T      state =         GUISTR_STATE_ALIGN|GUISTR_STATE_WORDBREAK|GUISTR_STATE_SINGLE_LINE;
@@ -262,7 +262,7 @@ LOCAL void WatchTools_Main_OPEN_WINDOW(MMI_WIN_ID_T win_id)
 
 		///////draw title
 		text_style.align = ALIGN_LVMIDDLE;
-		text_style.font = SONG_FONT_28;
+		text_style.font =  DP_FONT_28;
 		text_style.font_color = MMI_WHITE_COLOR;
 		text_style.char_space = 0;
 	
@@ -281,14 +281,14 @@ LOCAL void WatchTools_Main_OPEN_WINDOW(MMI_WIN_ID_T win_id)
     MMI_MENU_GROUP_ID_T         group_id        =   0;
     MMI_MENU_ID_T               menu_id         =   0;
 #if defined(ADD_TITLE_IN_ALL_SETTING_MENU)		
-    GUI_RECT_T          content_rect={0,MMI_SPECIAL_TITLE_HEIGHT,240,240}; ////xiongkai ADD_TITLE_IN_ALL_SETTING_MENU	
-    GUI_RECT_T          title_rect={0,0,240,MMI_SPECIAL_TITLE_HEIGHT}; 	
+    GUI_RECT_T          content_rect={0,MMI_SPECIAL_TITLE_HEIGHT,MMI_MAINSCREEN_WIDTH,MMI_MAINSCREEN_HEIGHT}; ////xiongkai ADD_TITLE_IN_ALL_SETTING_MENU	
+    GUI_RECT_T          title_rect={0,0,MMI_MAINSCREEN_WIDTH,MMI_SPECIAL_TITLE_HEIGHT}; 	
     GUI_LCD_DEV_INFO    lcd_dev_info = {GUI_MAIN_LCD_ID,GUI_BLOCK_MAIN};
     GUI_RECT_T          rect         = MMITHEME_GetFullScreenRectEx(win_id);	
     GUISTR_STYLE_T      text_style      = {0};/*lint !e64*/
     GUISTR_STATE_T      state =         GUISTR_STATE_ALIGN|GUISTR_STATE_WORDBREAK|GUISTR_STATE_SINGLE_LINE; 
     MMI_STRING_T        string = {0};	
-    GUI_RECT_T          text_rect={42,0,240,MMI_SPECIAL_TITLE_HEIGHT}; 
+    GUI_RECT_T          text_rect={MMI_MAINSCREEN_WIDTH/3,0,MMI_MAINSCREEN_WIDTH,MMI_SPECIAL_TITLE_HEIGHT}; 
 #endif
 
     #if defined(ADD_TITLE_IN_ALL_SETTING_MENU)		
@@ -302,7 +302,7 @@ LOCAL void WatchTools_Main_OPEN_WINDOW(MMI_WIN_ID_T win_id)
 
 		///////draw title
 		text_style.align = ALIGN_LVMIDDLE;
-		text_style.font = SONG_FONT_28;
+		text_style.font =  DP_FONT_28;
 		text_style.font_color = MMI_WHITE_COLOR;
 		text_style.char_space = 0;
 	
@@ -356,14 +356,14 @@ LOCAL MMI_RESULT_E  HandleWatchToolsMainWindow(
             MMI_MENU_GROUP_ID_T         group_id        =   0;
 		    MMI_MENU_ID_T               menu_id         =   0;
            #if defined(ADD_TITLE_IN_ALL_SETTING_MENU)		
-		    GUI_RECT_T          content_rect={0,MMI_SPECIAL_TITLE_HEIGHT,240,240}; ////xiongkai ADD_TITLE_IN_ALL_SETTING_MENU	
-		    GUI_RECT_T          title_rect={0,0,240,MMI_SPECIAL_TITLE_HEIGHT}; 	
+		    GUI_RECT_T          content_rect={0,MMI_SPECIAL_TITLE_HEIGHT,MMI_MAINSCREEN_WIDTH,MMI_MAINSCREEN_HEIGHT};  ////xiongkai ADD_TITLE_IN_ALL_SETTING_MENU	
+		    GUI_RECT_T          title_rect={0,0,MMI_MAINSCREEN_WIDTH,MMI_SPECIAL_TITLE_HEIGHT}; 	
 		    GUI_LCD_DEV_INFO    lcd_dev_info = {GUI_MAIN_LCD_ID,GUI_BLOCK_MAIN};
 		    GUI_RECT_T          rect         = MMITHEME_GetFullScreenRectEx(win_id);	
 		    GUISTR_STYLE_T      text_style      = {0};/*lint !e64*/
 		    GUISTR_STATE_T      state =         GUISTR_STATE_ALIGN|GUISTR_STATE_WORDBREAK|GUISTR_STATE_SINGLE_LINE; 
 		    MMI_STRING_T        string = {0};	
-		    GUI_RECT_T          text_rect={42,0,240,MMI_SPECIAL_TITLE_HEIGHT}; 
+		    GUI_RECT_T           text_rect={MMI_MAINSCREEN_WIDTH/3,0,MMI_MAINSCREEN_WIDTH,MMI_SPECIAL_TITLE_HEIGHT}; 
             #endif
             WATCHCOM_DisplayBackground(win_id);
 			
@@ -379,7 +379,7 @@ LOCAL MMI_RESULT_E  HandleWatchToolsMainWindow(
 
 				///////draw title
 				text_style.align = ALIGN_LVMIDDLE;
-				text_style.font = SONG_FONT_28;
+				text_style.font =  DP_FONT_28;
 				text_style.font_color = MMI_WHITE_COLOR;
 				text_style.char_space = 0;
 			
