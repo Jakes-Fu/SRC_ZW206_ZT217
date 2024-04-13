@@ -6100,9 +6100,9 @@ const GUI_RECT_T ADULT_SHUTDOWN_OFF_BTN_RECT = DP2PX_RECT(144, 96, 144+48+2, 96+
 const GUI_RECT_T ADULT_SHUTDOWN_CANCEL_TEXT_RECT = DP2PX_RECT(36, 168, 36+168, 168+48);
 #endif
 #ifdef SCREEN_SHAPE_CIRCULAR
-const GUI_RECT_T SHUTDOWN_OFF_BG_RECT = DP2PX_RECT(40, 30, 40+160, 30+60);
-const GUI_RECT_T SHUTDOWN_OFF_BG_TEXT_RECT = DP2PX_RECT(96, 50, 96+88, 70);
-const GUI_RECT_T SHUTDOWN_OFF_BTN_RECT = DP2PX_RECT(56, 42, 92, 78);
+const GUI_RECT_T SHUTDOWN_OFF_BG_RECT = DP2PX_RECT(40, 50, 40+160, 50+60);
+const GUI_RECT_T SHUTDOWN_OFF_BG_TEXT_RECT = DP2PX_RECT(116, 70, 106+88, 90);
+const GUI_RECT_T SHUTDOWN_OFF_BTN_RECT = DP2PX_RECT(56, 62, 92, 98);
 const GUI_RECT_T SHUTDOWN_RESET_BG_RECT = DP2PX_RECT(40, 30+60, 40+160, 30+60+60);
 const GUI_RECT_T SHUTDOWN_RESET_BG_TEXT_RECT = DP2PX_RECT(96, 110, 96+88, 130);
 const GUI_RECT_T SHUTDOWN_RESET_BTN_RECT = DP2PX_RECT(56, 102, 92, 138);
@@ -6110,13 +6110,13 @@ const GUI_RECT_T SHUTDOWN_FLYMODE_BG_RECT = DP2PX_RECT(40, 30+60+60, 40+160, 240
 const GUI_RECT_T SHUTDOWN_FLYMODE_BG_TEXT_RECT = DP2PX_RECT(96, 170, 96+88, 190);
 const GUI_RECT_T SHUTDOWN_FLYMODE_BTN_RECT = DP2PX_RECT(56, 162, 92, 198);
 
-const GUI_RECT_T SHUTDOWN_SOS_BG_RECT = DP2PX_RECT(40, 30+60+60, 40+170, 240-30);
-const GUI_RECT_T SHUTDOWN_SOS_BG_TEXT_RECT = DP2PX_RECT(100, 170, 96+120, 190);
-const GUI_RECT_T SHUTDOWN_SOS_BTN_RECT = DP2PX_RECT(45, 162, 92, 198);
+const GUI_RECT_T SHUTDOWN_SOS_BG_RECT = DP2PX_RECT(40, 30+60+40, 40+160, 240-50);
+const GUI_RECT_T SHUTDOWN_SOS_BG_TEXT_RECT = DP2PX_RECT(116, 150, 96+88, 170);
+const GUI_RECT_T SHUTDOWN_SOS_BTN_RECT = DP2PX_RECT(40, 142, 92, 178);
 #else
-const GUI_RECT_T SHUTDOWN_OFF_BG_RECT = {28, 36, 28+184, 36+64};
-const GUI_RECT_T SHUTDOWN_OFF_BG_TEXT_RECT = {40, 36, 40+184, 36+64};
-const GUI_RECT_T SHUTDOWN_OFF_BTN_RECT = {28, 36, 28+64+2, 36+64};
+const GUI_RECT_T SHUTDOWN_OFF_BG_RECT = {28, 56, 28+184, 56+64};
+const GUI_RECT_T SHUTDOWN_OFF_BG_TEXT_RECT = {40, 56, 40+184, 56+64};
+const GUI_RECT_T SHUTDOWN_OFF_BTN_RECT = {28, 56, 48+64+2, 56+64};
 const GUI_RECT_T SHUTDOWN_RESET_BTN_RECT = {28, 140, 28+64+2, 140+64};
 const GUI_RECT_T SHUTDOWN_FLYMODE_BTN_RECT = {148, 140, 148+64+2, 140+64};
 #endif
@@ -6126,7 +6126,7 @@ LOCAL void SetFlyMode(void)
       BOOLEAN is_fly_mode_on = MMIAPISET_GetFlyMode();
 #ifdef SCREEN_SHAPE_CIRCULAR
       GUI_RECT_T ctrl_rect = {0};
-      GUI_FONT_T font = DP_FONT_20;
+      GUI_FONT_T font = DP_FONT_22;
       MMI_STRING_T text = {0};
 
       MMI_GetLabelTextByLang(TXT_SHUTDOWN_FLYMODE, &text);
@@ -6221,7 +6221,7 @@ LOCAL void HandleNotifyPenokMsg(MMI_NOTIFY_T notify)
         MMIPHONE_PowerOff();
     }
 #ifdef SCREEN_SHAPE_CIRCULAR
-    else if (notify.src_id == WATCH_SHUTDOWN_RESET_BG_CTRL_ID
+   /* else if (notify.src_id == WATCH_SHUTDOWN_RESET_BG_CTRL_ID
         || notify.src_id == WATCH_SHUTDOWN_RESET_CTRL_ID
         || notify.src_id == WATCH_SHUTDOWN_RESET_TIP_CTRL_ID)
     {
@@ -6232,7 +6232,7 @@ LOCAL void HandleNotifyPenokMsg(MMI_NOTIFY_T notify)
         || notify.src_id == WATCH_SHUTDOWN_FLYMODE_TIP_CTRL_ID)
     {
         SetFlyMode();
-    }
+    }*/
 #else
     else if (notify.src_id == WATCH_SHUTDOWN_RESET_CTRL_ID)
     {
@@ -6291,11 +6291,11 @@ LOCAL MMI_RESULT_E HandleShutDownWinMsg(
             GUILABEL_SetText(ADULT_WATCH_SHUTDOWN_EMERG_TXT_CTRL_ID, &text, TRUE);
             GUILABEL_SetFont(ADULT_WATCH_SHUTDOWN_EMERG_TXT_CTRL_ID, DP_FONT_26, MMI_WHITE_COLOR);
 
-            //reset
-            ctrl_rect = ADULT_SHUTDOWN_RESET_BTN_RECT;
-            ctrl_rect = MMI_ConvertWinRect(MMICOM_WINPOS_WIN2DISP, win_id, ctrl_rect);
-            GUILABEL_SetRect(ADULT_WATCH_SHUTDOWN_RESET_BTN_CTRL_ID, &ctrl_rect, TRUE);
-            GUILABEL_SetIcon(ADULT_WATCH_SHUTDOWN_RESET_BTN_CTRL_ID, res_sys_btn_restart);
+            ////reset
+            //ctrl_rect = ADULT_SHUTDOWN_RESET_BTN_RECT;
+            //ctrl_rect = MMI_ConvertWinRect(MMICOM_WINPOS_WIN2DISP, win_id, ctrl_rect);
+            //GUILABEL_SetRect(ADULT_WATCH_SHUTDOWN_RESET_BTN_CTRL_ID, &ctrl_rect, TRUE);
+            //GUILABEL_SetIcon(ADULT_WATCH_SHUTDOWN_RESET_BTN_CTRL_ID, res_sys_btn_restart);
 
             //off
             ctrl_rect = ADULT_SHUTDOWN_OFF_BTN_RECT;
@@ -6336,10 +6336,10 @@ LOCAL MMI_RESULT_E HandleShutDownWinMsg(
                 }
                 WatchAPICC_DialNumber((uint8*)"112", 3);
             }
-            else if(notify.src_id == ADULT_WATCH_SHUTDOWN_RESET_BTN_CTRL_ID)
-            {
-                MMIAPIPHONE_PowerReset();//reset
-            }
+            //else if(notify.src_id == ADULT_WATCH_SHUTDOWN_RESET_BTN_CTRL_ID)
+            //{
+            //    MMIAPIPHONE_PowerReset();//reset
+            //}
             else if(notify.src_id == ADULT_WATCH_SHUTDOWN_OFF_BTN_CTRL_ID)
             {
                 MMIPHONE_PowerOff();//off
@@ -6414,7 +6414,7 @@ LOCAL MMI_RESULT_E HandleShutDownWinMsg(
 
             MMI_GetLabelTextByLang(TXT_SHUT_DOWN, &text);
 
-            /*ctrl_rect = SHUTDOWN_OFF_BG_RECT;
+            ctrl_rect = SHUTDOWN_OFF_BG_RECT;
             ctrl_rect = MMI_ConvertWinRect(MMICOM_WINPOS_WIN2DISP, win_id, ctrl_rect);
             GUILABEL_SetRect(WATCH_SHUTDOWN_BG_CTRL_ID, &ctrl_rect, TRUE);
             GUILABEL_SetIcon(WATCH_SHUTDOWN_BG_CTRL_ID, res_sys_bg_shutdown_off);
@@ -6429,23 +6429,23 @@ LOCAL MMI_RESULT_E HandleShutDownWinMsg(
             ctrl_rect = MMI_ConvertWinRect(MMICOM_WINPOS_WIN2DISP, win_id, ctrl_rect);
             GUILABEL_SetRect(WATCH_SHUTDOWN_OFF_BTN_CTRL_ID, &ctrl_rect, TRUE);
             GUILABEL_SetIcon(WATCH_SHUTDOWN_OFF_BTN_CTRL_ID, res_sys_btn_shutdown);
-#ifdef SCREEN_SHAPE_CIRCULAR
-            MMI_GetLabelTextByLang(TXT_SHUTDOWN_RESET, &text);
-            ctrl_rect = SHUTDOWN_RESET_BG_RECT;
-            ctrl_rect = MMI_ConvertWinRect(MMICOM_WINPOS_WIN2DISP, win_id, ctrl_rect);
-            GUILABEL_SetRect(WATCH_SHUTDOWN_RESET_BG_CTRL_ID, &ctrl_rect, TRUE);
-            GUILABEL_SetIcon(WATCH_SHUTDOWN_RESET_BG_CTRL_ID, res_sys_bg_restart);
-
-            ctrl_rect = SHUTDOWN_RESET_BG_TEXT_RECT;
-            ctrl_rect = MMI_ConvertWinRect(MMICOM_WINPOS_WIN2DISP, win_id, ctrl_rect);
-            GUILABEL_SetRect(WATCH_SHUTDOWN_RESET_TIP_CTRL_ID, &ctrl_rect, TRUE);
-            GUILABEL_SetText(WATCH_SHUTDOWN_RESET_TIP_CTRL_ID, &text, TRUE);
-            GUILABEL_SetFont(WATCH_SHUTDOWN_RESET_TIP_CTRL_ID, font, MMI_WHITE_COLOR);
-#endif
-            ctrl_rect = SHUTDOWN_RESET_BTN_RECT;
-            ctrl_rect = MMI_ConvertWinRect(MMICOM_WINPOS_WIN2DISP, win_id, ctrl_rect);
-            GUILABEL_SetRect(WATCH_SHUTDOWN_RESET_CTRL_ID, &ctrl_rect, TRUE);
-            GUILABEL_SetIcon(WATCH_SHUTDOWN_RESET_CTRL_ID, res_sys_btn_restart);
+//#ifdef SCREEN_SHAPE_CIRCULAR
+//            MMI_GetLabelTextByLang(TXT_SHUTDOWN_RESET, &text);
+//            ctrl_rect = SHUTDOWN_RESET_BG_RECT;
+//            ctrl_rect = MMI_ConvertWinRect(MMICOM_WINPOS_WIN2DISP, win_id, ctrl_rect);
+//            GUILABEL_SetRect(WATCH_SHUTDOWN_RESET_BG_CTRL_ID, &ctrl_rect, TRUE);
+//            GUILABEL_SetIcon(WATCH_SHUTDOWN_RESET_BG_CTRL_ID, res_sys_bg_restart);
+//
+//            ctrl_rect = SHUTDOWN_RESET_BG_TEXT_RECT;
+//            ctrl_rect = MMI_ConvertWinRect(MMICOM_WINPOS_WIN2DISP, win_id, ctrl_rect);
+//            GUILABEL_SetRect(WATCH_SHUTDOWN_RESET_TIP_CTRL_ID, &ctrl_rect, TRUE);
+//            GUILABEL_SetText(WATCH_SHUTDOWN_RESET_TIP_CTRL_ID, &text, TRUE);
+//            GUILABEL_SetFont(WATCH_SHUTDOWN_RESET_TIP_CTRL_ID, font, MMI_WHITE_COLOR);
+//#endif
+//            ctrl_rect = SHUTDOWN_RESET_BTN_RECT;
+//            ctrl_rect = MMI_ConvertWinRect(MMICOM_WINPOS_WIN2DISP, win_id, ctrl_rect);
+//            GUILABEL_SetRect(WATCH_SHUTDOWN_RESET_CTRL_ID, &ctrl_rect, TRUE);
+//            GUILABEL_SetIcon(WATCH_SHUTDOWN_RESET_CTRL_ID, res_sys_btn_restart);
 //#ifdef SCREEN_SHAPE_CIRCULAR
 //            MMI_GetLabelTextByLang(TXT_SHUTDOWN_FLYMODE, &text);
 //            ctrl_rect = SHUTDOWN_FLYMODE_BG_RECT;
@@ -6476,21 +6476,20 @@ LOCAL MMI_RESULT_E HandleShutDownWinMsg(
 //                GUILABEL_SetIcon(WATCH_SHUTDOWN_FLYMODE_CTRL_ID, res_sys_btn_fly_off);
 //            }
 //            MMK_SetActiveCtrl(WATCH_SHUTDOWN_FLYMODE_CTRL_ID, FALSE);
-*/
+
             MMI_GetLabelTextByLang(TXT_SOS, &text);
-            ctrl_rect = SHUTDOWN_RESET_BG_RECT;//SHUTDOWN_SOS_BG_RECT;
+            ctrl_rect = SHUTDOWN_SOS_BG_RECT;
             ctrl_rect = MMI_ConvertWinRect(MMICOM_WINPOS_WIN2DISP, win_id, ctrl_rect);
             GUILABEL_SetRect(WATCH_SHUTDOWN_SOS_BG_CTRL_ID, &ctrl_rect, TRUE);
             GUILABEL_SetIcon(WATCH_SHUTDOWN_SOS_BG_CTRL_ID, res_sys_bg_sos);
 
-            ctrl_rect = SHUTDOWN_RESET_BG_TEXT_RECT;//SHUTDOWN_SOS_BG_TEXT_RECT;
+            ctrl_rect = SHUTDOWN_SOS_BG_TEXT_RECT;
             ctrl_rect = MMI_ConvertWinRect(MMICOM_WINPOS_WIN2DISP, win_id, ctrl_rect);
             GUILABEL_SetRect(WATCH_SHUTDOWN_SOS_TIP_CTRL_ID, &ctrl_rect, TRUE);
             GUILABEL_SetText(WATCH_SHUTDOWN_SOS_TIP_CTRL_ID, &text, TRUE);
             GUILABEL_SetFont(WATCH_SHUTDOWN_SOS_TIP_CTRL_ID, font, MMI_WHITE_COLOR);
 
-            ctrl_rect = SHUTDOWN_RESET_BTN_RECT;//SHUTDOWN_SOS_BTN_RECT;
-            ctrl_rect.left = SHUTDOWN_SOS_BTN_RECT.left;
+            ctrl_rect = SHUTDOWN_SOS_BTN_RECT;
             ctrl_rect = MMI_ConvertWinRect(MMICOM_WINPOS_WIN2DISP, win_id, ctrl_rect);
             GUILABEL_SetRect(WATCH_SHUTDOWN_SOS_CTRL_ID, &ctrl_rect, TRUE);
             GUILABEL_SetIcon(WATCH_SHUTDOWN_SOS_CTRL_ID, res_sys_btn_sos);
@@ -6568,18 +6567,18 @@ WINDOW_TABLE(WATCH_SHUTDOWN_WINTAB) =
     WIN_ID(WATCH_SHUTDOWN_WIN_ID ),
     WIN_STYLE(WS_DISPATCH_TO_CHILDWIN),
     WIN_MOVE_STYLE(MOVE_FORBIDDEN),
-    /*CREATE_LABEL_CTRL(GUILABEL_ALIGN_MIDDLE, WATCH_SHUTDOWN_BG_CTRL_ID),
+    CREATE_LABEL_CTRL(GUILABEL_ALIGN_MIDDLE, WATCH_SHUTDOWN_BG_CTRL_ID),
     CREATE_LABEL_CTRL(GUILABEL_ALIGN_MIDDLE, WATCH_SHUTDOWN_OFF_BTN_CTRL_ID),
 #ifdef SCREEN_SHAPE_CIRCULAR
     CREATE_LABEL_CTRL(GUILABEL_ALIGN_LEFT, WATCH_SHUTDOWN_OFF_TIP_CTRL_ID),
-    CREATE_LABEL_CTRL(GUILABEL_ALIGN_MIDDLE, WATCH_SHUTDOWN_RESET_BG_CTRL_ID),
-    CREATE_LABEL_CTRL(GUILABEL_ALIGN_LEFT, WATCH_SHUTDOWN_RESET_TIP_CTRL_ID),
+   // CREATE_LABEL_CTRL(GUILABEL_ALIGN_MIDDLE, WATCH_SHUTDOWN_RESET_BG_CTRL_ID),
+  //  CREATE_LABEL_CTRL(GUILABEL_ALIGN_LEFT, WATCH_SHUTDOWN_RESET_TIP_CTRL_ID),
 //    CREATE_LABEL_CTRL(GUILABEL_ALIGN_MIDDLE, WATCH_SHUTDOWN_FLYMODE_BG_CTRL_ID),
 //    CREATE_LABEL_CTRL(GUILABEL_ALIGN_LEFT, WATCH_SHUTDOWN_FLYMODE_TIP_CTRL_ID),
 #else
     CREATE_LABEL_CTRL(GUILABEL_ALIGN_MIDDLE, WATCH_SHUTDOWN_OFF_TIP_CTRL_ID),
 #endif
-    CREATE_LABEL_CTRL(GUILABEL_ALIGN_MIDDLE, WATCH_SHUTDOWN_RESET_CTRL_ID),*/
+   // CREATE_LABEL_CTRL(GUILABEL_ALIGN_MIDDLE, WATCH_SHUTDOWN_RESET_CTRL_ID),
 //    CREATE_LABEL_CTRL(GUILABEL_ALIGN_MIDDLE, WATCH_SHUTDOWN_FLYMODE_CTRL_ID),
     CREATE_LABEL_CTRL(GUILABEL_ALIGN_MIDDLE, WATCH_SHUTDOWN_SOS_BG_CTRL_ID),
     CREATE_LABEL_CTRL(GUILABEL_ALIGN_LEFT, WATCH_SHUTDOWN_SOS_TIP_CTRL_ID),
