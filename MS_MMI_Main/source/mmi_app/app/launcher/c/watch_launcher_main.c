@@ -142,6 +142,10 @@ typedef struct
     MMI_TEXT_ID_T   text_id;//the title of the item
 #endif
     MMI_IMAGE_ID_T  img_id;//the image of the item
+#ifdef APP_MENU_STYLE_USE_MORE
+    MMI_IMAGE_ID_T  img_id_1;
+    MMI_IMAGE_ID_T  img_id_2;
+#endif
     STARTAPPHANDLE start_handle;
 }APP_LIST_ITEM_T;
 
@@ -206,7 +210,47 @@ const APP_LIST_ITEM_T  g_app_list_info[] =
  //   MEUN_PEDOMETER,//计步
 };
 
+#ifdef APP_MENU_STYLE_USE_MORE
+const APP_LIST_ITEM_T  g_app_list_3_info[] = 
+{
+    MEUN_DIAL,//拨号
+    MEUN_PHONEBOOK,//通讯录
+#if defined(ZDT_VIDEOCHAT_SUPPORT) && defined(VIDEO_CALL_AGORA_SUPPORT) //声网视频通话
+    #ifndef WIN32//视频通话
+    MEUN_VIDEO_CALL,
+    #else
+    MEUN_VIDEO_INCOMING_TEST,
+    #endif
+#endif
+    MEUN_WECHART,//微聊
+#ifdef TULING_AI_SUPPORT
+    MEUN_AI_CHAT,//图灵AI
+#endif
+    MEUN_CAMERA,//相机
+    MEUN_GALLERY,//相册
+    MEUN_SETTINGS, //设置
+#ifdef ZDT_TOOLS_MENU_SUPPORT
+    MEUN_WATCH_TOOLS,
+#endif
+    MEUN_QRCODE,
+    MEUN_CALLLOG,
+    MEUN_FIND_FRIEND,// 交友
+#if defined(XYSDK_SUPPORT)|| defined(XYSDK_SRC_SUPPORT)
+#ifndef WIN32
+    MEUN_XMLY,//喜马拉雅
+#endif
+#endif
+#ifdef LEBAO_MUSIC_SUPPORT
+    MEUN_MUSIC,//咪咕音乐
+#endif
+};
+#endif
+
+#ifdef APP_MENU_STYLE_USE_MORE
+LOCAL uint8 APP_MENU_SIZE = sizeof(g_app_list_3_info)/sizeof(APP_LIST_ITEM_T);
+#else
 LOCAL uint8 APP_MENU_SIZE = sizeof(g_app_list_info)/sizeof(APP_LIST_ITEM_T);
+#endif
 
 LOCAL uint16 app_menu_img_width = 0; 
 LOCAL uint16 app_menu_img_height = 0; 
@@ -226,6 +270,7 @@ LOCAL void DisplayWinPanelFgBase(MMI_WIN_ID_T win_id,
                                                MMI_TEXT_ID_T title_id,
                                                GUI_RECT_T title_rect);
 
+LOCAL void Launcher_FourApp_page();
 LOCAL void Launcher_App_Start(GUI_POINT_T click_point, MMI_WIN_ID_T win_id);
 
 //handle clock win message
@@ -1017,6 +1062,25 @@ LOCAL MMI_RESULT_E HandleLauncherClockWinMsg(
 }
 #endif
 
+#ifdef APP_MENU_STYLE_USE_MORE
+PUBLIC void  WatchLauncher_UpdateMenuImgSize(MMI_WIN_ID_T win_id)
+{
+	uint8 menu_style = WatchSET_GetMenuStyle(); 
+	 if(menu_style < 2){
+	 	if(menu_style == 1){
+        		GUIRES_GetImgWidthHeight(&app_menu_img_width, &app_menu_img_height, g_app_list_info[0].img_id_1, win_id);
+	 	}else{
+	 		GUIRES_GetImgWidthHeight(&app_menu_img_width, &app_menu_img_height, g_app_list_info[0].img_id, win_id);
+		}
+		APP_MENU_SIZE = sizeof(g_app_list_info)/sizeof(APP_LIST_ITEM_T);
+	 }else{
+        	GUIRES_GetImgWidthHeight(&app_menu_img_width, &app_menu_img_height, g_app_list_3_info[0].img_id_2, win_id);
+		APP_MENU_SIZE = sizeof(g_app_list_3_info)/sizeof(APP_LIST_ITEM_T);
+	 }
+	 Launcher_FourApp_page();
+}
+#endif
+
 LOCAL void DisplayLauncherIndicator(MMI_WIN_ID_T win_id)
 {
     MMI_IMAGE_ID_T img_id = 0;
@@ -1055,37 +1119,74 @@ LOCAL void DisplayLauncherPage(MMI_WIN_ID_T win_id)
     GUISTR_STYLE_T text_style = {0};
 	GUISTR_STATE_T text_state = GUISTR_STATE_ALIGN|GUISTR_STATE_EFFECT|GUISTR_STATE_ELLIPSIS;
     GUI_RECT_T text_rect = {0};
+	uint8 menu_style = 0;
+#ifdef APP_MENU_STYLE_USE_MORE
+	menu_style = WatchSET_GetMenuStyle(); 
+#endif
     page_index = win_id - WATCH_LAUNCHER_APP_PAGE_START_WIN_ID - 1;
     if(page_index >= 0)
     {
         MMK_GetWinRect(win_id, &win_rect);
-        win_rect.bottom = 128;
+        win_rect.bottom = MMI_MAINSCREEN_HEIGHT;
         MMK_GetWinLcdDevInfo(win_id,&lcd_dev_info);
         if(app_menu_img_width == 0 || app_menu_img_height == 0)
         {
-            GUIRES_GetImgWidthHeight(&app_menu_img_width, &app_menu_img_height, g_app_list_info[0].img_id, win_id);
+        	 if(menu_style == 1){
+        		GUIRES_GetImgWidthHeight(&app_menu_img_width, &app_menu_img_height, g_app_list_info[0].img_id_1, win_id);
+		}else if(menu_style == 2){
+        		GUIRES_GetImgWidthHeight(&app_menu_img_width, &app_menu_img_height, g_app_list_3_info[0].img_id_2, win_id);
+		}else{
+            		GUIRES_GetImgWidthHeight(&app_menu_img_width, &app_menu_img_height, g_app_list_info[0].img_id, win_id);
+		}
         }
-        horizontal_space = ((win_rect.right - win_rect.left) - app_menu_img_width*2)/4;
-        vertical_space = ((win_rect.bottom - win_rect.top) - app_menu_img_height*2)/4;
-        text_style.font_color = MMI_WHITE_COLOR;
-        text_style.align = ALIGN_HVMIDDLE;
-        text_style.font = DP_FONT_22;
-        for(; i < 4; i++)
-        {
-            if((page_index*4+i) < APP_MENU_SIZE)
-            {
-                MMI_STRING_T text  = {0};
-                point.x = win_rect.left + horizontal_space + (2*horizontal_space + app_menu_img_width)*(i%2);
-                point.y = win_rect.top + vertical_space  + (1.5f*vertical_space + app_menu_img_height)*(i/2);
-                GUIRES_DisplayImg(&point,PNULL,PNULL,win_id,g_app_list_info[page_index*4+i].img_id,&lcd_dev_info);
-                MMI_GetLabelTextByLang(g_app_list_info[page_index*4+i].text_id, &text);
-                text_rect.left = point.x;
-                text_rect.top = point.y + app_menu_img_height;
-                text_rect.right = text_rect.left + app_menu_img_width;
-                text_rect.bottom = text_rect.top + 1.5f*vertical_space;
-                GUISTR_DrawTextToLCDInRect(&lcd_dev_info,(const GUI_RECT_T *)&text_rect, (const GUI_RECT_T *)&text_rect,(const MMI_STRING_T *)&text, &text_style, text_state, GUISTR_TEXT_DIR_AUTO);
-            }
-        }
+	SCI_TRACE_LOW("%s: APP_MENU_SIZE = %d", __FUNCTION__, APP_MENU_SIZE);
+	text_style.font_color = MMI_WHITE_COLOR;
+	text_style.align = ALIGN_HVMIDDLE;
+	text_style.font = DP_FONT_22;
+	 if(menu_style < 2)
+	 {
+	        horizontal_space = ((win_rect.right - win_rect.left) - app_menu_img_width*2)/4;
+	        vertical_space = ((win_rect.bottom - win_rect.top) - app_menu_img_height*2)/4;
+	        for(; i < 4; i++)
+	        {
+	            if((page_index*4+i) < APP_MENU_SIZE)
+	            {
+	                MMI_STRING_T text  = {0};
+	                point.x = win_rect.left + horizontal_space + (2*horizontal_space + app_menu_img_width)*(i%2);
+	                point.y = win_rect.top + vertical_space  + (1.5f*vertical_space + app_menu_img_height)*(i/2);
+			   if(menu_style == 1){
+			   	if(i % 4 < 2){
+					point.y -= 5;
+				}
+	                	GUIRES_DisplayImg(&point,PNULL,PNULL,win_id,g_app_list_info[page_index*4+i].img_id_1,&lcd_dev_info);
+			   }else{
+			   	GUIRES_DisplayImg(&point,PNULL,PNULL,win_id,g_app_list_info[page_index*4+i].img_id,&lcd_dev_info);
+			   }
+	                MMI_GetLabelTextByLang(g_app_list_info[page_index*4+i].text_id, &text);
+	                text_rect.left = point.x;
+	                text_rect.top = point.y + app_menu_img_height;
+	                text_rect.right = text_rect.left + app_menu_img_width;
+	                text_rect.bottom = text_rect.top + 1.5f*vertical_space;
+	                GUISTR_DrawTextToLCDInRect(&lcd_dev_info,(const GUI_RECT_T *)&text_rect, (const GUI_RECT_T *)&text_rect,(const MMI_STRING_T *)&text, &text_style, text_state, GUISTR_TEXT_DIR_AUTO);
+	            }
+	        }
+	 }
+	 else
+	 {	
+	 	MMI_STRING_T text  = {0};
+		text_style.font = DP_FONT_26;
+		horizontal_space = ((win_rect.right - win_rect.left) - app_menu_img_width)/2;
+	       vertical_space = ((win_rect.bottom - win_rect.top) - app_menu_img_height)/2;
+	       point.x = win_rect.left + horizontal_space;
+	       point.y = win_rect.top + vertical_space;
+	 	GUIRES_DisplayImg(&point,PNULL,PNULL,win_id,g_app_list_3_info[page_index].img_id_2,&lcd_dev_info);
+		MMI_GetLabelTextByLang(g_app_list_3_info[page_index].text_id, &text);
+	       text_rect.left = point.x;
+	       text_rect.top = point.y + app_menu_img_height;
+	       text_rect.right = text_rect.left + app_menu_img_width;
+	       text_rect.bottom = MMI_MAINSCREEN_HEIGHT;
+	       GUISTR_DrawTextToLCDInRect(&lcd_dev_info,(const GUI_RECT_T *)&text_rect, (const GUI_RECT_T *)&text_rect,(const MMI_STRING_T *)&text, &text_style, text_state, GUISTR_TEXT_DIR_AUTO);
+	 }
     }
 }
 
@@ -1134,17 +1235,17 @@ LOCAL MMI_RESULT_E HandleLauncherPageWinMsg(
 
 LOCAL void WatchLauncher_CreateWin(const MMI_WIN_ID_T win_id)
 {
-    uint32 win_table_create[10] = 
-    {
-        MMK_HIDE_STATUSBAR,
-        MMK_WINFUNC, HandleLauncherPageWinMsg,
-        MMK_WINID, 0,
-        MMK_WINDOW_STYLE, (WS_DISPATCH_TO_CHILDWIN |WS_DISABLE_RETURN_WIN),
-        MMK_WINDOW_ANIM_MOVE_SYTLE, (MOVE_FORBIDDEN),
-        MMK_END_WIN,
-    };
-    win_table_create[4] = win_id;
-    MMK_CreateWin(win_table_create, NULL);
+	uint32 win_table_create[10] = 
+	{
+		MMK_HIDE_STATUSBAR,
+		MMK_WINFUNC, HandleLauncherPageWinMsg,
+		MMK_WINID, 0,
+		MMK_WINDOW_STYLE, (WS_DISPATCH_TO_CHILDWIN |WS_DISABLE_RETURN_WIN),
+		MMK_WINDOW_ANIM_MOVE_SYTLE, (MOVE_FORBIDDEN),
+		MMK_END_WIN,
+	};
+	win_table_create[4] = win_id;
+	MMK_CreateWin(win_table_create, NULL);	
 }
 
 #ifdef LAUNCHER_ONE_APP_IN_PAGE
@@ -2441,46 +2542,76 @@ LOCAL void Launcher_App_Start(GUI_POINT_T click_point, MMI_WIN_ID_T win_id)
     uint8 horizontal_space = 0;
     uint8 vertical_space = 0;
     GUI_RECT_T win_rect = {0};
+    uint8 menu_style = 0;
+#ifdef APP_MENU_STYLE_USE_MORE
+	menu_style = WatchSET_GetMenuStyle(); 
+#endif
     MMK_GetWinRect(win_id, &win_rect);
-    horizontal_space = ((win_rect.right - win_rect.left) - app_menu_img_width*2)/4;
-    vertical_space = ((win_rect.bottom - win_rect.top) - app_menu_img_height*2)/4;
     page_index = win_id - WATCH_LAUNCHER_APP_PAGE_START_WIN_ID - 1;
     if(page_index >=0)
     {
-        i = page_index*4;
-        for(;i<i+4;i++)
-        {
-            if(g_app_list_info[i].start_handle == NULL || i >= APP_MENU_SIZE)
-            {
-                TRACE_APP_LAUNCHER("there is not app rect");
-                return;
-            }
-
-		//TRACE_APP_LAUNCHER("click_point.x = %d, click_point.y=%d, i = %d", click_point.x, click_point.y, i);
-            rect.left = win_rect.left + (horizontal_space + app_menu_img_width)*((i%4)%2) ;
-            rect.top = win_rect.top + (vertical_space + app_menu_img_height)*((i%4)/2);
-            rect.right = rect.left + app_menu_img_width + horizontal_space;
-	     rect.bottom = rect.top + app_menu_img_height + vertical_space;	
-		 //TRACE_APP_LAUNCHER("rect.top = %d, rect.bottom = %d", rect.top, rect.bottom);
-            if(click_point.y > 60 && rect.bottom < click_point.y && i%4 > 1){
-            		rect.bottom = rect.top + app_menu_img_height + vertical_space + 50;
-		}
-		
-            if(GUI_PointIsInRect(click_point,rect))
-            {
-                if(g_app_list_info[i].check_sim == 1 && MMIAPIPHONE_GetSimStatus(MN_DUAL_SYS_1) != SIM_STATUS_OK)
-                {
-                    MMIZDT_OpenNoSimOrDataWin();
-                    //MMIPUB_OpenAlertWarningWin(TXT_NO_SIM_OR_DATA);
-                }
-                else
-                {
-                    g_app_list_info[i].start_handle();
-                }
-                return;
-            }	
-        }
-    }
+	 	if(menu_style < 2){
+	        i = page_index*4;
+	        for(;i<i+4;i++)
+	        {
+	            if(g_app_list_info[i].start_handle == NULL || i >= APP_MENU_SIZE)
+	            {
+	                TRACE_APP_LAUNCHER("there is not app rect");
+	                return;
+	            }
+			horizontal_space = ((win_rect.right - win_rect.left) - app_menu_img_width*2)/4;
+    			vertical_space = ((win_rect.bottom - win_rect.top) - app_menu_img_height*2)/4;
+			//TRACE_APP_LAUNCHER("click_point.x = %d, click_point.y=%d, i = %d", click_point.x, click_point.y, i);
+	            rect.left = win_rect.left + (horizontal_space + app_menu_img_width)*((i%4)%2) ;
+	            rect.top = win_rect.top + (vertical_space + app_menu_img_height)*((i%4)/2);
+	            rect.right = rect.left + app_menu_img_width + horizontal_space;
+		     rect.bottom = rect.top + app_menu_img_height + vertical_space;	
+			 //TRACE_APP_LAUNCHER("rect.top = %d, rect.bottom = %d", rect.top, rect.bottom);
+	            if(click_point.y > 60 && rect.bottom < click_point.y && i%4 > 1){
+	            		rect.bottom = rect.top + app_menu_img_height + vertical_space + 50;
+			}
+			
+	            if(GUI_PointIsInRect(click_point,rect))
+	            {
+	                if(g_app_list_info[i].check_sim == 1 && MMIAPIPHONE_GetSimStatus(MN_DUAL_SYS_1) != SIM_STATUS_OK)
+	                {
+	                    MMIZDT_OpenNoSimOrDataWin();
+	                }
+	                else
+	                {
+	                    g_app_list_info[i].start_handle();
+	                }
+	                return;
+	            }	
+	        }
+	    }
+	    else
+	    {
+	    		if(g_app_list_3_info[page_index].start_handle == NULL || page_index >= APP_MENU_SIZE)
+	            {
+	                TRACE_APP_LAUNCHER("there is not app rect");
+	                return;
+	            }
+			horizontal_space = ((win_rect.right - win_rect.left) - app_menu_img_width)/2;
+    			vertical_space = ((win_rect.bottom - win_rect.top) - app_menu_img_height)/2;	
+			rect.left = win_rect.left + horizontal_space ;
+	            	rect.top = win_rect.top + vertical_space;
+	            	rect.right = rect.left + app_menu_img_width;
+		     	rect.bottom = rect.top + app_menu_img_height;
+			if(GUI_PointIsInRect(click_point,rect))
+	             {
+	                if(g_app_list_3_info[page_index].check_sim == 1 && MMIAPIPHONE_GetSimStatus(MN_DUAL_SYS_1) != SIM_STATUS_OK)
+	                {
+	                    MMIZDT_OpenNoSimOrDataWin();
+	                }
+	                else
+	                {
+	                    g_app_list_3_info[page_index].start_handle();
+	                }
+	                return;
+	             }	
+	    }
+     }
 }
 
 PUBLIC MMI_RESULT_E WatchLAUNCHER_FourApp_HandleCb(
@@ -2528,7 +2659,20 @@ LOCAL void Launcher_FourApp_page()
     tWatchSlidePageItem elem[LAUNCHER_ELEM_COUNT] = {0};
     MMI_HANDLE_T handle;
     uint8 i = 0;
-    uint8 page_size = APP_MENU_SIZE%4 == 0?APP_MENU_SIZE/4:(APP_MENU_SIZE/4+1);
+    uint8 page_size = 0;
+    uint8 menu_style = 0;
+   
+#ifdef APP_MENU_STYLE_USE_MORE
+    WatchSET_InitMenuStyle();
+    menu_style = WatchSET_GetMenuStyle();
+#endif
+	 SCI_TRACE_LOW("LAUNCHER_ELEM_COUNT = %d, menu_style = %d", LAUNCHER_ELEM_COUNT, menu_style);
+    if(menu_style < 2){
+	APP_MENU_SIZE = sizeof(g_app_list_info)/sizeof(APP_LIST_ITEM_T);
+    	page_size = APP_MENU_SIZE%4 == 0?APP_MENU_SIZE/4:(APP_MENU_SIZE/4+1);
+    }else{
+	page_size = APP_MENU_SIZE;
+    }
     if(s_handle != NULL)
     {
         WatchSLIDEPAGE_DestoryHandle(s_handle);

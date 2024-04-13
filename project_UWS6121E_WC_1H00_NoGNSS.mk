@@ -725,4 +725,9 @@ ENGPC_W217 = FALSE                                   ### Switch ENGPC_W217 Suppo
                                                      # Option2:FALSE	
 													 
 LCD_INSTALL_ANGLE = 0    #90
-FOTA_SUPPORT =CMIOT
+
+#FOTA_SUPPORT =CMIOT
+
+MATH_COUNT_SUPPORT = FALSE 		#口算达人
+
+APP_MENU_STYLE_USE_MORE = TRUE  #菜单使用多种风格

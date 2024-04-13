@@ -66,7 +66,11 @@
 #if defined(JAVASCRIPT_ECO_ENVIRONMENT_SUPPORT) || defined(APP_STORE_SUPPORT) || defined(DYNAMIC_WATCHFACE_SUPPORT)
 #define LAUNCHER_ELEM_COUNT 10 //新增了一个extralauncher用于js,appstore,watchface
 #else
+#ifdef APP_MENU_STYLE_USE_MORE
+#define LAUNCHER_ELEM_COUNT 15
+#else
 #define LAUNCHER_ELEM_COUNT 9
+#endif
 #endif
 #endif
 

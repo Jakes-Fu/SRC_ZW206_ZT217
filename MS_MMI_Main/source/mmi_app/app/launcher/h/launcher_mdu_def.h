@@ -32,6 +32,59 @@ RES_ADD_IMG(res_xmla_icon,"\\MMI_RES_##\\IMAG\\zte\\res_app_ic_xmla.png",IMG_CMP
 RES_ADD_IMG(res_app_ic_xiaodu,"\\MMI_RES_##\\IMAG\\zte\\res_app_ic_xiaodu.png",IMG_CMP_PNG_ARGB_RLE,0)
 #endif	
 #else
+	
+#ifdef APP_MENU_STYLE_USE_MORE
+	 RES_ADD_IMG(res_app_ic_contact_1,"\\MMI_RES_##\\IMAG\\style_1\\res_contact_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
+        RES_ADD_IMG(res_app_ic_camera_1,"\\MMI_RES_##\\IMAG\\style_1\\res_camera_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
+        RES_ADD_IMG(res_app_ic_wechat_1,"\\MMI_RES_##\\IMAG\\style_1\\res_wechat_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
+        RES_ADD_IMG(res_app_ic_gallery_1,"\\MMI_RES_##\\IMAG\\style_1\\res_gallery_iocn.png",IMG_CMP_PNG_ARGB_RLE,0)
+        RES_ADD_IMG(res_app_ic_settings_1,"\\MMI_RES_##\\IMAG\\style_1\\res_settings_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
+        RES_ADD_IMG(res_app_ic_stopwatch_1,"\\MMI_RES_##\\IMAG\\style_1\\res_stopwatch_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
+        RES_ADD_IMG(res_app_ic_qrcode_1,"\\MMI_RES_##\\IMAG\\style_1\\res_bind_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
+        RES_ADD_IMG(res_app_ic_alarm_1,"\\MMI_RES_##\\IMAG\\style_1\\res_alarm_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
+        RES_ADD_IMG(res_app_ic_dailer_1,"\\MMI_RES_##\\IMAG\\style_1\\res_dialer_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
+        RES_ADD_IMG(res_app_ic_find_friend_1,"\\MMI_RES_##\\IMAG\\style_1\\res_make_friend_iocn.png",IMG_CMP_PNG_ARGB_RLE,0)
+        RES_ADD_IMG(res_app_ic_video_call_1,"\\MMI_RES_##\\IMAG\\style_1\\res_video_call_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
+        RES_ADD_IMG(res_app_ic_weather_1,"\\MMI_RES_##\\IMAG\\style_1\\res_weather_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
+        RES_ADD_IMG(res_app_ic_schedule_1,"\\MMI_RES_##\\IMAG\\style_1\\res_schedule_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
+        RES_ADD_IMG(res_app_ic_calllog_1,"\\MMI_RES_##\\IMAG\\style_1\\res_app_ic_calllog.png",IMG_CMP_PNG_ARGB_RLE,0)
+        RES_ADD_IMG(res_app_ic_calculator_1,"\\MMI_RES_##\\IMAG\\style_1\\res_app_ic_calculator.png",IMG_CMP_PNG_ARGB_RLE,0)
+        #ifdef TULING_AI_SUPPORT
+        RES_ADD_IMG(res_app_ic_ai_chat_1,"\\MMI_RES_##\\IMAG\\style_1\\res_ai_chat_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
+        #endif
+        #ifdef LEBAO_MUSIC_SUPPORT
+        RES_ADD_IMG(res_music_icon_1,"\\MMI_RES_##\\IMAG\\style_1\\res_music_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
+        #endif
+        #if defined(XYSDK_SUPPORT)|| defined(XYSDK_SRC_SUPPORT)
+        RES_ADD_IMG(res_xmla_icon_1,"\\MMI_RES_##\\IMAG\\style_1\\res_xmla_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
+        #endif
+		
+	 RES_ADD_IMG(res_app_ic_contact_2,"\\MMI_RES_##\\IMAG\\style_2\\res_contact_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
+        RES_ADD_IMG(res_app_ic_camera_2,"\\MMI_RES_##\\IMAG\\style_2\\res_camera_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
+        RES_ADD_IMG(res_app_ic_wechat_2,"\\MMI_RES_##\\IMAG\\style_2\\res_wechat_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
+        RES_ADD_IMG(res_app_ic_gallery_2,"\\MMI_RES_##\\IMAG\\style_2\\res_gallery_iocn.png",IMG_CMP_PNG_ARGB_RLE,0)
+        RES_ADD_IMG(res_app_ic_settings_2,"\\MMI_RES_##\\IMAG\\style_2\\res_settings_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
+        RES_ADD_IMG(res_app_ic_stopwatch_2,"\\MMI_RES_##\\IMAG\\style_2\\res_stopwatch_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
+        RES_ADD_IMG(res_app_ic_qrcode_2,"\\MMI_RES_##\\IMAG\\style_2\\res_bind_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
+        RES_ADD_IMG(res_app_ic_alarm_2,"\\MMI_RES_##\\IMAG\\style_2\\res_alarm_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
+        RES_ADD_IMG(res_app_ic_dailer_2,"\\MMI_RES_##\\IMAG\\style_2\\res_dialer_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
+        RES_ADD_IMG(res_app_ic_find_friend_2,"\\MMI_RES_##\\IMAG\\style_2\\res_make_friend_iocn.png",IMG_CMP_PNG_ARGB_RLE,0)
+        RES_ADD_IMG(res_app_ic_video_call_2,"\\MMI_RES_##\\IMAG\\style_2\\res_video_call_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
+        RES_ADD_IMG(res_app_ic_weather_2,"\\MMI_RES_##\\IMAG\\style_2\\res_weather_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
+        RES_ADD_IMG(res_app_ic_schedule_2,"\\MMI_RES_##\\IMAG\\style_2\\res_schedule_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
+        RES_ADD_IMG(res_app_ic_calllog_2,"\\MMI_RES_##\\IMAG\\style_2\\res_app_ic_calllog.png",IMG_CMP_PNG_ARGB_RLE,0)
+        RES_ADD_IMG(res_app_ic_calculator_2,"\\MMI_RES_##\\IMAG\\style_2\\res_app_ic_calculator.png",IMG_CMP_PNG_ARGB_RLE,0)
+        #ifdef TULING_AI_SUPPORT
+        RES_ADD_IMG(res_app_ic_ai_chat_2,"\\MMI_RES_##\\IMAG\\style_2\\res_ai_chat_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
+        #endif
+        #ifdef LEBAO_MUSIC_SUPPORT
+        RES_ADD_IMG(res_music_icon_2,"\\MMI_RES_##\\IMAG\\style_2\\res_music_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
+        #endif
+        #if defined(XYSDK_SUPPORT)|| defined(XYSDK_SRC_SUPPORT)
+        RES_ADD_IMG(res_xmla_icon_2,"\\MMI_RES_##\\IMAG\\style_2\\res_xmla_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
+        #endif
+	 RES_ADD_IMG(res_tools_icon_2,"\\MMI_RES_##\\IMAG\\style_2\\res_tools_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
+#endif
     #ifdef APP_COLUMNS_3
         RES_ADD_IMG(res_app_ic_contact,"\\MMI_RES_##\\IMAG\\three_columns\\res_contact_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
         RES_ADD_IMG(res_app_ic_camera,"\\MMI_RES_##\\IMAG\\three_columns\\res_camera_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
@@ -165,3 +218,6 @@ RES_ADD_STRING(TXT_XMLY,"xmly")
 #ifdef XIAODU_SUPPORT
 RES_ADD_STRING(TXT_XIAODU,"Xiao du")
 #endif	
+#if defined(ZDT_TOOLS_MENU_SUPPORT)
+RES_ADD_STRING(TXT_TOOLS,"π§æﬂœ‰")
+#endif

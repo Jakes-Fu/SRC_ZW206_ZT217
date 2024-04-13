@@ -86,7 +86,7 @@ extern PUBLIC void MMIAPISET_RingToneVolumeWin(void);
 extern PUBLIC void Settings_NoteTypeSelectWin_Enter( void );
 PUBLIC void Watch_LongRangeMode_switch( void );
 PUBLIC void WatchSET_DisPlaySetting_Enter( void );
-#ifdef MAINMENU_STYLE_SUPPORT
+#if defined(MAINMENU_STYLE_SUPPORT) || defined(APP_MENU_STYLE_USE_MORE)
  PUBLIC void WatchSET_MenuStyle_Enter( void );
 #endif
 #ifdef FOTA_SUPPORT
@@ -95,6 +95,11 @@ PUBLIC void MMIAPISET_EnterFotaWin( void );
 
 #if defined(TORCH_SUPPORT) // wuxx add
 extern PUBLIC BOOLEAN MMIACC_OpenFlashlighWin(void);
+#endif
+
+#ifdef APP_MENU_STYLE_USE_MORE
+PUBLIC void WatchSET_SetMenuStyle(uint8 menu_style);
+PUBLIC uint8 WatchSET_GetMenuStyle(void);
 #endif
 
 /**--------------------------------------------------------------------------*
@@ -162,9 +167,11 @@ LOCAL WATCHCOM_LIST_ITEM_STYLE_1ICON_1STR_ST   list_item_poweroff     = { IMAGE_
 LOCAL WATCHCOM_LIST_ITEM_STYLE_1ICON_1STR_ST   list_item_restart     = { IMAGE_RESTART_ICON,          text_setting_powerrestart};
 
 LOCAL WATCHCOM_LIST_ITEM_STYLE_1ICON_1STR_ST   list_item_watch        = {IMAGE_WATCH_SWITCH_SET_ICON, TXT_SET_LIST_WATCH };
-#ifdef MAINMENU_STYLE_SUPPORT
+
+#if defined(MAINMENU_STYLE_SUPPORT) || defined(APP_MENU_STYLE_USE_MORE)
 LOCAL WATCHCOM_LIST_ITEM_STYLE_1ICON_1STR_ST   list_item_menustyle        = {IMAGE_SCENE_MODE_SET_ICON, TXT_MAINMENU_STYLE_SET };
 #endif
+
 #ifdef FOTA_SUPPORT
 LOCAL WATCHCOM_LIST_ITEM_STYLE_1ICON_1STR_ST   list_item_fota          = { IMAGE_ABUP_FOTA_SET_ICON,TXT_SETTINGS_ABUP_FOTA_CHECK  };
 #endif
@@ -213,9 +220,10 @@ LOCAL WATCHCOM_LIST_ITEM__ST s_settings_main_text_list_data[] =
     { WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR, &list_item_brightness, MMIAPISET_ZdtBrightnessWin/*Settings_BrightnessWin_Enter*/ },
     { WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR, &list_item_sound,      MMIAPISET_ZdtVolumeWin/*Settings_SoundWin_Enter*/},
   
-#ifdef MAINMENU_STYLE_SUPPORT
+#if defined(MAINMENU_STYLE_SUPPORT) || defined(APP_MENU_STYLE_USE_MORE)
 	{ WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR, &list_item_menustyle,       WatchSET_MenuStyle_Enter },
 #endif
+
 	{ WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR, &list_item_watch,       WatchOpen_Panel_SelectWin },
     { WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR, &list_item_restore,       MMIAPISET_ZdtPowerRestoreWin },
     { WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR, &list_item_poweroff,       MMIAPISET_ZdtPowerOffWin },
@@ -241,6 +249,7 @@ LOCAL WATCHCOM_LIST_ITEM__ST s_settings_main_text_list_data[] =
 
 
 #endif
+#if defined(MAINMENU_STYLE_SUPPORT) || defined(APP_MENU_STYLE_USE_MORE)
 #ifdef MAINMENU_STYLE_SUPPORT
 LOCAL WATCHCOM_LIST_ITEM_STYLE_1STR_RADIO_ST s_mainmenu_matrix_style  = { TXT_SET_MAINMENU_MATRIX };
 LOCAL WATCHCOM_LIST_ITEM_STYLE_1STR_RADIO_ST s_mainmenu_rotate_style  = { TXT_SET_MAINMENU_ROTATE };
@@ -249,6 +258,17 @@ LOCAL WATCHCOM_LIST_ITEM__ST s_mainmenu_style_list[] =
     { WatchCOM_List_Item_Visible_Default,   GUIITEM_STYLE_1STR_RADIO,   &s_mainmenu_matrix_style,    PNULL },
     { WatchCOM_List_Item_Visible_Default,   GUIITEM_STYLE_1STR_RADIO,   &s_mainmenu_rotate_style, PNULL },
 };
+#else
+LOCAL WATCHCOM_LIST_ITEM_STYLE_1STR_RADIO_ST s_mainmenu_style_1  = { TXT_SET_MAINMENU_STYLE_1 };
+LOCAL WATCHCOM_LIST_ITEM_STYLE_1STR_RADIO_ST s_mainmenu_style_2  = { TXT_SET_MAINMENU_STYLE_2 };
+LOCAL WATCHCOM_LIST_ITEM_STYLE_1STR_RADIO_ST s_mainmenu_style_3  = { TXT_SET_MAINMENU_STYLE_3 };
+LOCAL WATCHCOM_LIST_ITEM__ST s_mainmenu_style_list[] =
+{
+    { WatchCOM_List_Item_Visible_Default,   GUIITEM_STYLE_1STR_RADIO, &s_mainmenu_style_1, PNULL},
+    { WatchCOM_List_Item_Visible_Default,   GUIITEM_STYLE_1STR_RADIO, &s_mainmenu_style_2, PNULL},
+    { WatchCOM_List_Item_Visible_Default,   GUIITEM_STYLE_1STR_RADIO, &s_mainmenu_style_3, PNULL},
+};
+#endif
 #endif
 
 
@@ -393,7 +413,8 @@ LOCAL MMI_RESULT_E  HandleSettingsMainWindow(
 
     return recode;
 }
-#ifdef MAINMENU_STYLE_SUPPORT
+#if defined(MAINMENU_STYLE_SUPPORT) || defined(APP_MENU_STYLE_USE_MORE)
+#if defined(MAINMENU_STYLE_SUPPORT)
 PUBLIC void MMISET_SetWatchMenuStyle(uint8 style)
 {
     uint8 temp_style = style;
@@ -427,7 +448,7 @@ PUBLIC void MMISET_SetWatchMenuStyle_default(void)
 #endif
     MMINV_WRITE(MMINV_SET_WATCH_MENU_STYLE, &temp_style);
 }
-
+#endif
 
 LOCAL MMI_RESULT_E HandleSelectSceneModeWindow( MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E msg_id, DPARAM param )
 {
@@ -445,7 +466,11 @@ LOCAL MMI_RESULT_E HandleSelectSceneModeWindow( MMI_WIN_ID_T win_id, MMI_MESSAGE
 		GUILIST_SetRect(MMISET_SCENE_MODE_SELECT_CTRL_ID,&list_rect);
 		listNum = sizeof(s_mainmenu_style_list)/sizeof(WATCHCOM_LIST_ITEM__ST);
 		WatchCOM_RadioList_Create(s_mainmenu_style_list,listNum,MMISET_SCENE_MODE_SELECT_CTRL_ID);
+	#ifdef APP_MENU_STYLE_USE_MORE
+		mainmenustyle_id = WatchSET_GetMenuStyle( );
+	#else
 		mainmenustyle_id = MMISET_GetWatchMenuStyle( );
+	#endif
 		 //set selected item
 		GUILIST_SetSelectedItem(MMISET_SCENE_MODE_SELECT_CTRL_ID, mainmenustyle_id, TRUE);
 
@@ -458,13 +483,12 @@ LOCAL MMI_RESULT_E HandleSelectSceneModeWindow( MMI_WIN_ID_T win_id, MMI_MESSAGE
         case MSG_NOTIFY_LIST_SET_SELECT:
         {
             uint16 curIdx = GUILIST_GetCurItemIndex( MMISET_SCENE_MODE_SELECT_CTRL_ID );
-           
-
-           /*if( SETTINGS_SOUND_NOTE_TYPE_RING == curIdx )
-            {
-			MMISET_SetWatchMenuStyle(curIdx)
-            }*/
+             #ifdef APP_MENU_STYLE_USE_MORE
+		  WatchSET_SetMenuStyle(curIdx);
+		  WatchLauncher_UpdateMenuImgSize(win_id);
+		#else
 		  MMISET_SetWatchMenuStyle(curIdx);
+		#endif
 		MMK_CloseWin(win_id);
             break;
         }
@@ -496,7 +520,7 @@ LOCAL MMI_RESULT_E HandleSelectSceneModeWindow( MMI_WIN_ID_T win_id, MMI_MESSAGE
 		GUISTR_STYLE_T      text_style      = {0};/*lint !e64*/
 		GUISTR_STATE_T      state =         GUISTR_STATE_ALIGN|GUISTR_STATE_WORDBREAK|GUISTR_STATE_SINGLE_LINE; 
 		MMI_STRING_T        string = {0};	
-		GUI_RECT_T        text_rect={MMI_MAINSCREEN_WIDTH/3+10,0,MMI_MAINSCREEN_WIDTH,MMI_SPECIAL_TITLE_HEIGHT}; 
+		GUI_RECT_T        text_rect={MMI_MAINSCREEN_WIDTH/3,0,MMI_MAINSCREEN_WIDTH,MMI_SPECIAL_TITLE_HEIGHT}; 
 #endif
 		WATCHCOM_DisplayBackground(win_id);
 
@@ -951,8 +975,7 @@ WINDOW_TABLE( MMISET_LONGRANGEMODE_WIN_TAB ) =
     END_WIN
 };
 #endif
-
-#ifdef MAINMENU_STYLE_SUPPORT
+#if defined(MAINMENU_STYLE_SUPPORT) || defined(APP_MENU_STYLE_USE_MORE)
 
 WINDOW_TABLE( MMISET_SCENE_MODE_WIN_TAB ) =
 {
@@ -1003,7 +1026,7 @@ PUBLIC void Watch_LongRangeMode_switch( void )
 }
 #endif
 
-#if MAINMENU_STYLE_SUPPORT
+#if defined(MAINMENU_STYLE_SUPPORT) || defined(APP_MENU_STYLE_USE_MORE)
  PUBLIC void WatchSET_MenuStyle_Enter( void )
 {
     MMI_HANDLE_T win_handle = MMK_CreateWin((uint32*)MMISET_SCENE_MODE_WIN_TAB,PNULL);
@@ -1024,3 +1047,23 @@ PUBLIC void WatchSET_MainWin_Enter( void )
 	if(win_handle != NULL)
 		MMK_SetWinRect(win_handle, &rect);
 }
+
+#ifdef APP_MENU_STYLE_USE_MORE
+uint8 watch_menu_style = 0;
+
+PUBLIC void WatchSET_SetMenuStyle(uint8 menu_style)
+{
+	MMI_WriteNVItem(MMINV_SET_WATCH_MENU_USE_STYLE, &menu_style);
+	watch_menu_style = menu_style;
+}
+
+PUBLIC uint8 WatchSET_InitMenuStyle(void)
+{
+	MMI_ReadNVItem(MMINV_SET_WATCH_MENU_USE_STYLE, &watch_menu_style);
+}
+
+PUBLIC uint8 WatchSET_GetMenuStyle(void)
+{
+	return watch_menu_style;
+}
+#endif

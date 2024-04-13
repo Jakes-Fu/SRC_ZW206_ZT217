@@ -265,6 +265,9 @@ const uint16 set_nv_len[] =
 #ifdef MAINMENU_STYLE_SUPPORT
     sizeof(uint8),
 #endif
+#ifdef APP_MENU_STYLE_USE_MORE
+	sizeof(uint8),
+#endif
 };
 
 /*****************************************************************************/

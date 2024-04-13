@@ -22,10 +22,18 @@
 #include "mmi_position.h"
 
 /*define the max count of slidepage entity*/
+#ifdef APP_MENU_STYLE_USE_MORE
+#define SLIDE_PAGE_ENTITY_MAX 15
+#else
 #define SLIDE_PAGE_ENTITY_MAX 4
+#endif
 
 /*define max page count in slidepage*/
+#ifdef APP_MENU_STYLE_USE_MORE
+#define SLIDE_PAGE_MAXNUM 15
+#else
 #define SLIDE_PAGE_MAXNUM 10
+#endif
 
 /*define active page number in slidepage. there is 3 items, include previous/current/next*/
 #define SLIDE_PAGE_NUM  3
