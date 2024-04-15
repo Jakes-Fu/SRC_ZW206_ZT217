@@ -350,8 +350,7 @@ LOCAL MMI_RESULT_E HandleFlashlightWinMsg(
         MMIACC_SwtichTorch(MMIACC_FLASHLIGHT_MODE_SWITCH);
         MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
         break;
-    case MSG_APP_CANCEL:
-    case MSG_CTL_CANCEL:
+    case MSG_KEYUP_CANCEL:
         MMK_CloseWin(win_id);
         break;
     case MSG_CLOSE_WINDOW:

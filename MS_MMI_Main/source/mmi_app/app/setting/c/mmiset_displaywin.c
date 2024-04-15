@@ -3068,8 +3068,7 @@ LOCAL MMI_RESULT_E HandleCallVolumeSetWindow(
 		 }
 		 break;
 #endif
-	case MSG_CTL_CANCEL:
-	case MSG_APP_CANCEL:
+	case MSG_KEYUP_CANCEL:
 	    MMK_CloseWin(win_id);
 	    break;
     case MSG_KEYDOWN_RED:
@@ -3536,8 +3535,7 @@ LOCAL MMI_RESULT_E HandleRingVolumeSetWindow(
 		        }
 		break;
 #endif
-	case MSG_CTL_CANCEL:
-	case MSG_APP_CANCEL:
+	case MSG_KEYUP_CANCEL:
 	    MMK_CloseWin(win_id);
 	    break;
     case MSG_KEYDOWN_RED:
