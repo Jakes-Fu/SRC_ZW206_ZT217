@@ -5863,7 +5863,7 @@ LOCAL MMI_RESULT_E  HandleZDT_WatchFactoryWinMsg(
              }
              else
              {
-    		    //watch_factory_key_power_hdlr();
+    		    MMK_CloseWin(win_id);
              }
         break;
         
@@ -6103,7 +6103,10 @@ LOCAL void Watch_FactoryListInit()
         }
         
     }
-
+	//不需要分割线
+        GUILIST_SetListState( MMIZDT_FACTORY_LIST_CTRL_ID, GUILIST_STATE_SPLIT_LINE, FALSE );
+        //不画高亮条
+        GUILIST_SetListState( MMIZDT_FACTORY_LIST_CTRL_ID, GUILIST_STATE_NEED_HIGHTBAR, FALSE );
 
 }
 
@@ -6127,7 +6130,7 @@ LOCAL MMI_RESULT_E  HandleZDT_WatchListFactoryWinMsg(
     uint8 * p_index = PNULL;
     
     MMI_CTRL_ID_T ctrl_id = MMIZDT_FACTORY_LIST_CTRL_ID;
-    GUI_RECT_T full_rect = MMITHEME_GetFullScreenRect();
+    GUI_RECT_T full_rect = {0, 0 , MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT};
     GUI_LCD_DEV_INFO    lcd_dev_info = {GUI_MAIN_LCD_ID, GUI_BLOCK_MAIN};
 
     p_index = (uint8 *) MMK_GetWinAddDataPtr(win_id);
@@ -6184,15 +6187,13 @@ LOCAL MMI_RESULT_E  HandleZDT_WatchListFactoryWinMsg(
         break;
 
     case MSG_KEYDOWN_RED:
-        break;
-        
-    case MSG_KEYUP_RED:
-			//watch_factory_key_power_hdlr();                    
-        break;
-        
-    case MSG_KEYDOWN_CANCEL:
-    case MSG_CTL_CANCEL:
+        break;        
     case MSG_KEYUP_CANCEL:
+    case MSG_KEYUP_RED:
+    case MSG_APP_CANCEL:
+		MMK_CloseWin(win_id);
+	 break;
+    case MSG_CTL_CANCEL:
             //watch_factory_key_enter_hdlr(); 
             //MMK_CloseWin(win_id);
         break;
