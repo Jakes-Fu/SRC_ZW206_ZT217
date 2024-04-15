@@ -2038,8 +2038,6 @@ LOCAL MMI_RESULT_E  Handle_AIChat_WinMsg(
     case MSG_KEYDOWN_RED:
         break;
     case MSG_KEYUP_CANCEL:
-    case MSG_CTL_CANCEL:
-    case MSG_APP_CANCEL:
     case MSG_KEYUP_RED:
         MMIAPISET_StopRing(MMISET_RING_TYPE_OTHER);
         MMISRVAUD_FreeVirtualHandle("FIX CALL SELECT RING"); 

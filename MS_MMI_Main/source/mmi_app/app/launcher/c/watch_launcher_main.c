@@ -732,7 +732,6 @@ PUBLIC MMI_RESULT_E WatchLAUNCHER_HandleCommonWinMsg(
 #endif
 		break;
     	case MSG_KEYUP_CANCEL:
-	case MSG_APP_CANCEL:
 		{
 			if(win_id != WATCH_LAUNCHER_PANEL_WIN_ID){
 				WatchSLIDEAGE_SetCurrentPageIndex(0);

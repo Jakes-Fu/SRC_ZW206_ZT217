@@ -411,8 +411,6 @@ LOCAL MMI_RESULT_E  HandleWatchToolsMainWindow(
             break;
     	 case MSG_KEYUP_CANCEL:
         case MSG_KEYUP_RED:
-        case MSG_CTL_CANCEL:
-        case MSG_APP_CANCEL:
         {
             WatchTools_Main_APP_CANCEL();
             break;

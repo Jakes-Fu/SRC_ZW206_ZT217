@@ -574,8 +574,6 @@ LOCAL MMI_RESULT_E _Callback_CallRingSelectWin( MMI_WIN_ID_T win_id, MMI_MESSAGE
             break;
         }
     	 case MSG_KEYUP_CANCEL:
-        case MSG_CTL_CANCEL:
-        case MSG_APP_CANCEL:
         {
             MMK_CloseWin( win_id );
             break;

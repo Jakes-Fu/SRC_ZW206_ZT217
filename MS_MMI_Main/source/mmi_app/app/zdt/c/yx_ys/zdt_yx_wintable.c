@@ -2008,8 +2008,6 @@ LOCAL MMI_RESULT_E  HandleZDT_TinyChatWinMsg(
         break;
         
     case MSG_KEYUP_CANCEL:
-    case MSG_CTL_CANCEL:
-    case MSG_APP_CANCEL:
         ZDT_LOG("HandleZDT_TinyChatWinMsg MSG_APP_CANCEL");
         //MMIAPISET_StopRing(MMISET_RING_TYPE_OTHER);
         
@@ -2715,8 +2713,6 @@ LOCAL MMI_RESULT_E  HandleZDT_ChatGroupWinMsg(
             break;
     	 case MSG_KEYUP_CANCEL:
         case MSG_KEYUP_RED:
-        case MSG_CTL_CANCEL:
-        case MSG_APP_CANCEL:
             MMK_CloseWin(win_id);
             break;
 
@@ -3908,8 +3904,6 @@ LOCAL MMI_RESULT_E  HandleZDT_2VMWinMsg(
                 //MAIN_SetIdleRoamingState(MN_DUAL_SYS_1,FALSE);
             break;
     	 case MSG_KEYUP_CANCEL:            
-        case MSG_CTL_CANCEL:
-        case MSG_APP_CANCEL:
             unbind_click_count = 0;
             MMK_CloseWin(win_id);         
             break;
@@ -4045,8 +4039,6 @@ LOCAL MMI_RESULT_E  HandleZDT_Watch2VMSelectWinMsg(
         MMK_CloseWin(win_id);
         break;
     case MSG_KEYUP_CANCEL:
-    case MSG_CTL_CANCEL:
-    case MSG_APP_CANCEL:
         MMK_CloseWin(win_id);
         break;
 
@@ -4291,8 +4283,6 @@ PUBLIC MMI_RESULT_E MMIVoice_HandleNewMsgWin(
         break;
 
     case MSG_KEYUP_CANCEL:
-    case MSG_CTL_CANCEL:
-    case MSG_APP_CANCEL:
         MMK_CloseWin( win_id );
         break;
 
@@ -5741,8 +5731,6 @@ LOCAL MMI_RESULT_E  HandleZDT_NewPbWinMsg(
 
         break;
     case MSG_KEYUP_CANCEL:
-    case MSG_CTL_CANCEL:
-    case MSG_APP_CANCEL:
         MMK_CloseWin(win_id);
         break;
     
@@ -6258,7 +6246,6 @@ LOCAL MMI_RESULT_E  HandleZDT_WeatherWinMsg(
             break;
     	 case MSG_KEYUP_CANCEL:
         case MSG_KEYUP_RED:        //BUG 天气界面按红键去菜单了
-        case MSG_CTL_CANCEL:
             MMK_CloseWin(win_id);
             break;
 
@@ -6958,7 +6945,6 @@ LOCAL MMI_RESULT_E  HandleZDT_WatchScheduleWinMsg(
 		break;
 		
 		
-	case MSG_APP_CANCEL:
 	case MSG_KEYUP_CANCEL:	//下键 
 			MMK_CloseWin(win_id);
 		break;
@@ -7350,8 +7336,6 @@ LOCAL MMI_RESULT_E  HandleZDT_FriendPPWinMsg(
         break;
 
     	case MSG_KEYUP_CANCEL:
-	case MSG_CTL_CANCEL:
-	case MSG_APP_CANCEL:
 		MMK_CloseWin(win_id);
 		break;
     case MSG_KEYDOWN_RED:

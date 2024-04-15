@@ -2252,8 +2252,6 @@ MMI_IMAGE_ID_T         res_progress_bg = IMAGE_ZTE_CONTROL_PROGRESS_BG;
 		 break;
 #endif
     	case MSG_KEYUP_CANCEL:
-	case MSG_CTL_CANCEL:
-	case MSG_APP_CANCEL:
 	    MMK_CloseWin(win_id);
 	    break;
     case MSG_KEYDOWN_RED:
@@ -2413,8 +2411,6 @@ LOCAL MMI_RESULT_E HandleVolumeWindow(
 		#endif
 	    break;
     	case MSG_KEYUP_CANCEL:		 
-	case MSG_CTL_CANCEL:
-	case MSG_APP_CANCEL:
 	    MMK_CloseWin(win_id);
 	    break;
      case MSG_KEYDOWN_RED:
@@ -3925,8 +3921,6 @@ LOCAL MMI_RESULT_E HandlePowerRestartSelectWindow(
 	    	}*/
          	break;
     	case MSG_KEYUP_CANCEL:		 
-	case MSG_CTL_CANCEL:
-	case MSG_APP_CANCEL:
 	    MMK_CloseWin(win_id);
 	    break;
     case MSG_KEYDOWN_RED:

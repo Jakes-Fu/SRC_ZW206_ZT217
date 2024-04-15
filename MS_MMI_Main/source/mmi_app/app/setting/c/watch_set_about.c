@@ -456,8 +456,6 @@ LOCAL MMI_RESULT_E  HandleSettingsRegardWindow(
             break;
 #endif
     	 case MSG_KEYUP_CANCEL:
-        case MSG_CTL_CANCEL:
-        case MSG_APP_CANCEL:
         {
             Settings_About_APP_CANCEL( win_id );
             break;

@@ -6190,7 +6190,6 @@ LOCAL MMI_RESULT_E  HandleZDT_WatchListFactoryWinMsg(
         break;        
     case MSG_KEYUP_CANCEL:
     case MSG_KEYUP_RED:
-    case MSG_APP_CANCEL:
 		MMK_CloseWin(win_id);
 	 break;
     case MSG_CTL_CANCEL:
