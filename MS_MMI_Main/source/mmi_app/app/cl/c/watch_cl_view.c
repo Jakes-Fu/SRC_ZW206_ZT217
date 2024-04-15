@@ -585,6 +585,7 @@ LOCAL MMI_RESULT_E   HandleClListWinMsg(
         }
         case MSG_KEYDOWN_RED:
             break;
+	 case MSG_KEYUP_CANCEL:
         case MSG_KEYUP_RED:
         case MSG_APP_CANCEL:
         case MSG_CTL_CANCEL:

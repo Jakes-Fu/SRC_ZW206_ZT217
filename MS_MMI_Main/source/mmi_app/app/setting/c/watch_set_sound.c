@@ -573,6 +573,7 @@ LOCAL MMI_RESULT_E _Callback_CallRingSelectWin( MMI_WIN_ID_T win_id, MMI_MESSAGE
             WATCHCOM_DisplayBackground(win_id);
             break;
         }
+    	 case MSG_KEYUP_CANCEL:
         case MSG_CTL_CANCEL:
         case MSG_APP_CANCEL:
         {

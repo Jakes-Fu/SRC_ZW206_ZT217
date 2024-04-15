@@ -319,6 +319,7 @@ LOCAL MMI_RESULT_E HandleSettingsBacklightWindow(
 #endif
         case MSG_KEYDOWN_RED:
             break;
+    	 case MSG_KEYUP_CANCEL:
         case MSG_KEYUP_RED:
         case MSG_CTL_CANCEL:
         case MSG_APP_CANCEL:

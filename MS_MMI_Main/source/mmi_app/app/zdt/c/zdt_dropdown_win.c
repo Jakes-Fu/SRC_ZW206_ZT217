@@ -1184,6 +1184,7 @@ LOCAL MMI_RESULT_E HandleDropDownWinMsg(
         break;
         case MSG_KEYDOWN_RED:
             break;      
+    	 case MSG_KEYUP_CANCEL:
         case MSG_KEYUP_RED:
         case MSG_KEYDOWN_WEB:
         case MSG_KEYDOWN_CANCEL:
@@ -1272,8 +1273,9 @@ LOCAL MMI_RESULT_E HandleFlashlightWinMsg(
 			GUI_FillRect(&lcd_dev_info, win_rect, MMI_WHITE_COLOR);
         }
 		break;
-		case MSG_APP_CANCEL:
-		case MSG_CTL_CANCEL:
+    	case MSG_KEYUP_CANCEL:
+	case MSG_APP_CANCEL:
+	case MSG_CTL_CANCEL:
         case MSG_KEYUP_RED:
 		{
 			MMK_CloseWin(win_id);

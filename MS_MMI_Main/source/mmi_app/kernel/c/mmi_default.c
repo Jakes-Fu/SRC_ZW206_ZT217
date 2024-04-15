@@ -4871,11 +4871,11 @@ PUBLIC BOOLEAN MMK_DefaultMSGKtp(
         MMIDEFAULT_StartAutoKeylockTimer();
 
         MMIDEFAULT_StartScreenSaverTimer();
-        if(ZDT_Device_Disable()) //上课禁用充电禁用
+        /*if(ZDT_Device_Disable()) //上课禁用充电禁用
         {
             SCI_TRACE_LOW("[%s] tp up",__FUNCTION__);
             is_handle_tp_press = FALSE;
-        }
+        }*/
         break;
 #endif //TOUCH_PANEL_SUPPORT //IGNORE9527
 

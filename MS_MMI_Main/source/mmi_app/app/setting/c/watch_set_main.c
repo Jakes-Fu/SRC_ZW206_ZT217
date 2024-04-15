@@ -395,6 +395,7 @@ LOCAL MMI_RESULT_E  HandleSettingsMainWindow(
 		}
 		break;
 	}
+    	 case MSG_KEYUP_CANCEL:
         case MSG_CTL_CANCEL:
         case MSG_APP_CANCEL:
         {
@@ -592,6 +593,7 @@ LOCAL MMI_RESULT_E HandleSelectSceneModeWindow( MMI_WIN_ID_T win_id, MMI_MESSAGE
 		MMK_CloseWin(win_id);
             break;
         }
+    	 case MSG_KEYUP_CANCEL:
         case MSG_CTL_CANCEL:
         case MSG_APP_CANCEL:
         {

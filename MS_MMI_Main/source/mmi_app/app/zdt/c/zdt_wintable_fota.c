@@ -1119,6 +1119,7 @@ LOCAL MMI_RESULT_E CheckUpdateWinHandleMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E
 
              break;
          }
+    	  case MSG_KEYUP_CANCEL:
          case MSG_KEYDOWN_CANCEL:
 		 case MSG_CTL_CANCEL:
          {

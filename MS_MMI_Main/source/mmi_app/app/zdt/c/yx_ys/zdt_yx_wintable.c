@@ -2007,7 +2007,7 @@ LOCAL MMI_RESULT_E  HandleZDT_TinyChatWinMsg(
         //}
         break;
         
-    //case MSG_KEYUP_CANCEL:
+    case MSG_KEYUP_CANCEL:
     case MSG_CTL_CANCEL:
     case MSG_APP_CANCEL:
         ZDT_LOG("HandleZDT_TinyChatWinMsg MSG_APP_CANCEL");
@@ -2713,7 +2713,7 @@ LOCAL MMI_RESULT_E  HandleZDT_ChatGroupWinMsg(
         case MSG_CLOSE_WINDOW:
         case MSG_KEYDOWN_RED:
             break;
-
+    	 case MSG_KEYUP_CANCEL:
         case MSG_KEYUP_RED:
         case MSG_CTL_CANCEL:
         case MSG_APP_CANCEL:
@@ -3907,7 +3907,7 @@ LOCAL MMI_RESULT_E  HandleZDT_2VMWinMsg(
                 //ZDT_SetIdleWifiIcon(FALSE);
                 //MAIN_SetIdleRoamingState(MN_DUAL_SYS_1,FALSE);
             break;
-            
+    	 case MSG_KEYUP_CANCEL:            
         case MSG_CTL_CANCEL:
         case MSG_APP_CANCEL:
             unbind_click_count = 0;
@@ -4044,7 +4044,7 @@ LOCAL MMI_RESULT_E  HandleZDT_Watch2VMSelectWinMsg(
     case MSG_KEYUP_RED:
         MMK_CloseWin(win_id);
         break;
-       
+    case MSG_KEYUP_CANCEL:
     case MSG_CTL_CANCEL:
     case MSG_APP_CANCEL:
         MMK_CloseWin(win_id);
@@ -5740,6 +5740,7 @@ LOCAL MMI_RESULT_E  HandleZDT_NewPbWinMsg(
     case MSG_KEYDOWN_RIGHT:
 
         break;
+    case MSG_KEYUP_CANCEL:
     case MSG_CTL_CANCEL:
     case MSG_APP_CANCEL:
         MMK_CloseWin(win_id);
@@ -6255,10 +6256,9 @@ LOCAL MMI_RESULT_E  HandleZDT_WeatherWinMsg(
 
         case MSG_KEYDOWN_RED:
             break;
-
+    	 case MSG_KEYUP_CANCEL:
         case MSG_KEYUP_RED:        //BUG 天气界面按红键去菜单了
         case MSG_CTL_CANCEL:
-        case MSG_APP_CANCEL:
             MMK_CloseWin(win_id);
             break;
 
@@ -7349,7 +7349,7 @@ LOCAL MMI_RESULT_E  HandleZDT_FriendPPWinMsg(
         ZdtTalk_BackLight(FALSE);
         break;
 
-
+    	case MSG_KEYUP_CANCEL:
 	case MSG_CTL_CANCEL:
 	case MSG_APP_CANCEL:
 		MMK_CloseWin(win_id);

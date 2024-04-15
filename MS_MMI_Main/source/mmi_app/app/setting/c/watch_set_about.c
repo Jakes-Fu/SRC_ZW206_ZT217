@@ -455,6 +455,7 @@ LOCAL MMI_RESULT_E  HandleSettingsRegardWindow(
             Settings_About_FullPaint( win_id );
             break;
 #endif
+    	 case MSG_KEYUP_CANCEL:
         case MSG_CTL_CANCEL:
         case MSG_APP_CANCEL:
         {

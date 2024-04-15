@@ -7841,6 +7841,7 @@ LOCAL MMI_RESULT_E Watch_HandleCameraWinMsg(
             }
             break;
         }
+        case MSG_KEYUP_CANCEL:
         case MSG_APP_CANCEL:
         {
             TRACE_APP_CAMERA("[MMIDC]: Watch_HandleCameraWinMsg  MSG_APP_CANCEL");

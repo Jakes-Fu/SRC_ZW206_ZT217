@@ -419,7 +419,7 @@ LOCAL MMI_RESULT_E HandleMsgStopWatchWindow( MMI_WIN_ID_T win_id, MMI_MESSAGE_ID
 
         case MSG_KEYDOWN_RED:
             break;
-
+    	 case MSG_KEYUP_CANCEL:
         case MSG_KEYUP_RED:
         {
             SCI_TRACE_LOW("[HandleMsgStopWatchWindow]:receive MSG_KEYDOWN_RED");
