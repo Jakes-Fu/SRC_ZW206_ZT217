@@ -259,12 +259,13 @@ LOCAL WATCHCOM_LIST_ITEM__ST s_mainmenu_style_list[] =
     { WatchCOM_List_Item_Visible_Default,   GUIITEM_STYLE_1STR_RADIO,   &s_mainmenu_rotate_style, PNULL },
 };
 #else
-LOCAL WATCHCOM_LIST_ITEM_STYLE_1STR_RADIO_ST s_mainmenu_style_1  = { TXT_SET_MAINMENU_STYLE_1 };
+
+//LOCAL WATCHCOM_LIST_ITEM_STYLE_1STR_RADIO_ST s_mainmenu_style_1  = { TXT_SET_MAINMENU_STYLE_1 };
 LOCAL WATCHCOM_LIST_ITEM_STYLE_1STR_RADIO_ST s_mainmenu_style_2  = { TXT_SET_MAINMENU_STYLE_2 };
 LOCAL WATCHCOM_LIST_ITEM_STYLE_1STR_RADIO_ST s_mainmenu_style_3  = { TXT_SET_MAINMENU_STYLE_3 };
 LOCAL WATCHCOM_LIST_ITEM__ST s_mainmenu_style_list[] =
 {
-    { WatchCOM_List_Item_Visible_Default,   GUIITEM_STYLE_1STR_RADIO, &s_mainmenu_style_1, PNULL},
+ /*   { WatchCOM_List_Item_Visible_Default,   GUIITEM_STYLE_1STR_RADIO, &s_mainmenu_style_1, PNULL},*/
     { WatchCOM_List_Item_Visible_Default,   GUIITEM_STYLE_1STR_RADIO, &s_mainmenu_style_2, PNULL},
     { WatchCOM_List_Item_Visible_Default,   GUIITEM_STYLE_1STR_RADIO, &s_mainmenu_style_3, PNULL},
 };
@@ -422,7 +423,7 @@ PUBLIC void MMISET_SetWatchMenuStyle(uint8 style)
 PUBLIC uint8 MMISET_GetWatchMenuStyle(void)
 {
 
-    uint8 temp_style = 0;
+    uint8 temp_style = 1;
 
     MN_RETURN_RESULT_E  return_value    =   MN_RETURN_FAILURE;
 
@@ -441,7 +442,7 @@ PUBLIC uint8 MMISET_GetWatchMenuStyle(void)
 //设置默认主菜单样式
 PUBLIC void MMISET_SetWatchMenuStyle_default(void)
 {
-    uint8 temp_style = 0;
+    uint8 temp_style = 1;
 #if defined(MAINMENU_STYLE_DEFAULT_ROUND_CIRCULAR)// 主菜单 默认圆弧UI
     temp_style = 1;
 #endif
@@ -470,6 +471,7 @@ LOCAL MMI_RESULT_E HandleSelectSceneModeWindow( MMI_WIN_ID_T win_id, MMI_MESSAGE
 	#else
 		mainmenustyle_id = MMISET_GetWatchMenuStyle( );
 	#endif
+
 		 //set selected item
 		GUILIST_SetSelectedItem(MMISET_SCENE_MODE_SELECT_CTRL_ID, mainmenustyle_id, TRUE);
 
@@ -483,6 +485,7 @@ LOCAL MMI_RESULT_E HandleSelectSceneModeWindow( MMI_WIN_ID_T win_id, MMI_MESSAGE
         {
             uint16 curIdx = GUILIST_GetCurItemIndex( MMISET_SCENE_MODE_SELECT_CTRL_ID );
              #ifdef APP_MENU_STYLE_USE_MORE
+			curIdx++;
 		  WatchSET_SetMenuStyle(curIdx);
 		  WatchLauncher_UpdateMenuImgSize(win_id);
 		#else
@@ -1058,6 +1061,7 @@ PUBLIC void WatchSET_SetMenuStyle(uint8 menu_style)
 PUBLIC uint8 WatchSET_InitMenuStyle(void)
 {
 	MMI_ReadNVItem(MMINV_SET_WATCH_MENU_USE_STYLE, &watch_menu_style);
+	
 }
 
 PUBLIC uint8 WatchSET_GetMenuStyle(void)

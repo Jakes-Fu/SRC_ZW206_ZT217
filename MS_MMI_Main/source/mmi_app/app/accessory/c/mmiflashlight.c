@@ -353,6 +353,11 @@ LOCAL MMI_RESULT_E HandleFlashlightWinMsg(
     case MSG_KEYUP_CANCEL:
         MMK_CloseWin(win_id);
         break;
+		 case MSG_KEYDOWN_RED:
+		
+        break;
+		 case MSG_KEYUP_RED:
+        MMK_CloseWin(win_id);
     case MSG_CLOSE_WINDOW:
         break;
     default:
