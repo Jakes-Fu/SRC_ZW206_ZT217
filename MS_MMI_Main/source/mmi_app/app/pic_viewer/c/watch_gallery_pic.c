@@ -387,8 +387,9 @@ PUBLIC MMI_RESULT_E Gallery_Pic_HandleMsg(
              }*/
         }
         break;
-        case MSG_APP_CANCEL:
+   //     case MSG_APP_CANCEL:
         case MSG_KEYUP_RED:
+		case MSG_KEYUP_CANCEL:
         {
             
             GUICTRL_STATE_T state = 0;
