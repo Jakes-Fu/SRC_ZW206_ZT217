@@ -260,13 +260,14 @@ LOCAL WATCHCOM_LIST_ITEM__ST s_mainmenu_style_list[] =
 };
 #else
 
+LOCAL WATCHCOM_LIST_ITEM_STYLE_1STR_RADIO_ST s_mainmenu_style_1  = { TXT_SET_MAINMENU_STYLE_1 };
 LOCAL WATCHCOM_LIST_ITEM_STYLE_1STR_RADIO_ST s_mainmenu_style_2  = { TXT_SET_MAINMENU_STYLE_2 };
 LOCAL WATCHCOM_LIST_ITEM_STYLE_1STR_RADIO_ST s_mainmenu_style_3  = { TXT_SET_MAINMENU_STYLE_3 };
 LOCAL WATCHCOM_LIST_ITEM__ST s_mainmenu_style_list[] =
 {
-   
+    { WatchCOM_List_Item_Visible_Default,   GUIITEM_STYLE_1STR_RADIO, &s_mainmenu_style_1, PNULL},
    { WatchCOM_List_Item_Visible_Default,   GUIITEM_STYLE_1STR_RADIO, &s_mainmenu_style_2, PNULL},
-    { WatchCOM_List_Item_Visible_Default,   GUIITEM_STYLE_1STR_RADIO, &s_mainmenu_style_3, PNULL},
+    //{ WatchCOM_List_Item_Visible_Default,   GUIITEM_STYLE_1STR_RADIO, &s_mainmenu_style_3, PNULL},
 };
 #endif
 #endif
@@ -467,6 +468,7 @@ LOCAL MMI_RESULT_E HandleSelectSceneModeWindow( MMI_WIN_ID_T win_id, MMI_MESSAGE
 		WatchCOM_RadioList_Create(s_mainmenu_style_list,listNum,MMISET_SCENE_MODE_SELECT_CTRL_ID);
 	#ifdef APP_MENU_STYLE_USE_MORE
 		mainmenustyle_id = WatchSET_GetMenuStyle( );
+            mainmenustyle_id--;
 	#else
 		mainmenustyle_id = MMISET_GetWatchMenuStyle( );
 	#endif
@@ -486,8 +488,8 @@ LOCAL MMI_RESULT_E HandleSelectSceneModeWindow( MMI_WIN_ID_T win_id, MMI_MESSAGE
      //   if(curIdx==0)curIdx=1;
 #ifdef APP_MENU_STYLE_USE_MORE
 	
-		/*	curIdx++;
-			if(curIdx>2)curIdx=1;*/
+			curIdx++;
+			SCI_TRACE_LOW("%s: curIdx = %d", __FUNCTION__, curIdx);
 			
 		  WatchSET_SetMenuStyle(curIdx);
 		  WatchLauncher_UpdateMenuImgSize(win_id);
@@ -1064,13 +1066,13 @@ PUBLIC void WatchSET_SetMenuStyle(uint8 menu_style)
 PUBLIC uint8 WatchSET_InitMenuStyle(void)
 {
 	MMI_ReadNVItem(MMINV_SET_WATCH_MENU_USE_STYLE, &watch_menu_style);
-	
+    if(watch_menu_style == 0){
+        watch_menu_style = 1;
+    }
 }
 
 PUBLIC uint8 WatchSET_GetMenuStyle(void)
 {
-	////if(1==watch_menu_style)watch_menu_style=2;
-	if(watch_menu_style>=2)watch_menu_style=0;
 	return watch_menu_style;
 }
 #endif
