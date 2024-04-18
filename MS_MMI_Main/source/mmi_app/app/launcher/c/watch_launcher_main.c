@@ -1066,8 +1066,8 @@ LOCAL MMI_RESULT_E HandleLauncherClockWinMsg(
 PUBLIC void  WatchLauncher_UpdateMenuImgSize(MMI_WIN_ID_T win_id)
 {
 	uint8 menu_style = WatchSET_GetMenuStyle(); 
-	 if(menu_style < 2){
-	 	if(menu_style == 1){
+	 if(menu_style < 1){
+	 	if(menu_style == 0){
         		GUIRES_GetImgWidthHeight(&app_menu_img_width, &app_menu_img_height, g_app_list_info[0].img_id_1, win_id);
 	 	}else{
 	 		GUIRES_GetImgWidthHeight(&app_menu_img_width, &app_menu_img_height, g_app_list_info[0].img_id, win_id);
@@ -1131,9 +1131,9 @@ LOCAL void DisplayLauncherPage(MMI_WIN_ID_T win_id)
         MMK_GetWinLcdDevInfo(win_id,&lcd_dev_info);
         if(app_menu_img_width == 0 || app_menu_img_height == 0)
         {
-        	 if(menu_style == 1){
+        	 if(menu_style == 0){
         		GUIRES_GetImgWidthHeight(&app_menu_img_width, &app_menu_img_height, g_app_list_info[0].img_id_1, win_id);
-		}else if(menu_style == 2){
+		}else if(menu_style == 1){
         		GUIRES_GetImgWidthHeight(&app_menu_img_width, &app_menu_img_height, g_app_list_3_info[0].img_id_2, win_id);
 		}else{
             		GUIRES_GetImgWidthHeight(&app_menu_img_width, &app_menu_img_height, g_app_list_info[0].img_id, win_id);
@@ -1142,8 +1142,8 @@ LOCAL void DisplayLauncherPage(MMI_WIN_ID_T win_id)
 	SCI_TRACE_LOW("%s: APP_MENU_SIZE = %d", __FUNCTION__, APP_MENU_SIZE);
 	text_style.font_color = MMI_WHITE_COLOR;
 	text_style.align = ALIGN_HVMIDDLE;
-	text_style.font = DP_FONT_22;
-	 if(menu_style < 2)
+	text_style.font = DP_FONT_26;
+	 if(menu_style<1)
 	 {
 	        horizontal_space = ((win_rect.right - win_rect.left) - app_menu_img_width*2)/4;
 	        vertical_space = ((win_rect.bottom - win_rect.top) - app_menu_img_height*2)/4;
@@ -1154,9 +1154,9 @@ LOCAL void DisplayLauncherPage(MMI_WIN_ID_T win_id)
 	                MMI_STRING_T text  = {0};
 	                point.x = win_rect.left + horizontal_space + (2*horizontal_space + app_menu_img_width)*(i%2);
 	                point.y = win_rect.top + vertical_space  + (1.5f*vertical_space + app_menu_img_height)*(i/2);
-			   if(menu_style == 1){
+			   if(menu_style == 0){
 			   	if(i % 4 < 2){
-					point.y -= 5;
+					point.y -= 10;
 				}
 	                	GUIRES_DisplayImg(&point,PNULL,PNULL,win_id,g_app_list_info[page_index*4+i].img_id_1,&lcd_dev_info);
 			   }else{
@@ -1167,18 +1167,20 @@ LOCAL void DisplayLauncherPage(MMI_WIN_ID_T win_id)
 	                text_rect.top = point.y + app_menu_img_height;
 	                text_rect.right = text_rect.left + app_menu_img_width;
 	                text_rect.bottom = text_rect.top + 1.5f*vertical_space;
+	
 	                GUISTR_DrawTextToLCDInRect(&lcd_dev_info,(const GUI_RECT_T *)&text_rect, (const GUI_RECT_T *)&text_rect,(const MMI_STRING_T *)&text, &text_style, text_state, GUISTR_TEXT_DIR_AUTO);
-	            }
+				
+				}
 	        }
 	 }
-	 else
+	 else 
 	 {	
 	 	MMI_STRING_T text  = {0};
-		text_style.font = DP_FONT_26;
+		text_style.font = DP_FONT_40;
 		horizontal_space = ((win_rect.right - win_rect.left) - app_menu_img_width)/2;
 	       vertical_space = ((win_rect.bottom - win_rect.top) - app_menu_img_height)/2;
 	       point.x = win_rect.left + horizontal_space;
-	       point.y = win_rect.top + vertical_space;
+	       point.y = win_rect.top + vertical_space-17;
 	 	GUIRES_DisplayImg(&point,PNULL,PNULL,win_id,g_app_list_3_info[page_index].img_id_2,&lcd_dev_info);
 		MMI_GetLabelTextByLang(g_app_list_3_info[page_index].text_id, &text);
 	       text_rect.left = point.x;
@@ -2550,7 +2552,7 @@ LOCAL void Launcher_App_Start(GUI_POINT_T click_point, MMI_WIN_ID_T win_id)
     page_index = win_id - WATCH_LAUNCHER_APP_PAGE_START_WIN_ID - 1;
     if(page_index >=0)
     {
-	 	if(menu_style < 2){
+	 	if(menu_style < 1){
 	        i = page_index*4;
 	        for(;i<i+4;i++)
 	        {
@@ -2667,7 +2669,7 @@ LOCAL void Launcher_FourApp_page()
     menu_style = WatchSET_GetMenuStyle();
 #endif
 	 SCI_TRACE_LOW("LAUNCHER_ELEM_COUNT = %d, menu_style = %d", LAUNCHER_ELEM_COUNT, menu_style);
-    if(menu_style < 2){
+    if(menu_style < 1){
 	APP_MENU_SIZE = sizeof(g_app_list_info)/sizeof(APP_LIST_ITEM_T);
     	page_size = APP_MENU_SIZE%4 == 0?APP_MENU_SIZE/4:(APP_MENU_SIZE/4+1);
     }else{

@@ -260,13 +260,12 @@ LOCAL WATCHCOM_LIST_ITEM__ST s_mainmenu_style_list[] =
 };
 #else
 
-//LOCAL WATCHCOM_LIST_ITEM_STYLE_1STR_RADIO_ST s_mainmenu_style_1  = { TXT_SET_MAINMENU_STYLE_1 };
 LOCAL WATCHCOM_LIST_ITEM_STYLE_1STR_RADIO_ST s_mainmenu_style_2  = { TXT_SET_MAINMENU_STYLE_2 };
 LOCAL WATCHCOM_LIST_ITEM_STYLE_1STR_RADIO_ST s_mainmenu_style_3  = { TXT_SET_MAINMENU_STYLE_3 };
 LOCAL WATCHCOM_LIST_ITEM__ST s_mainmenu_style_list[] =
 {
- /*   { WatchCOM_List_Item_Visible_Default,   GUIITEM_STYLE_1STR_RADIO, &s_mainmenu_style_1, PNULL},*/
-    { WatchCOM_List_Item_Visible_Default,   GUIITEM_STYLE_1STR_RADIO, &s_mainmenu_style_2, PNULL},
+   
+   { WatchCOM_List_Item_Visible_Default,   GUIITEM_STYLE_1STR_RADIO, &s_mainmenu_style_2, PNULL},
     { WatchCOM_List_Item_Visible_Default,   GUIITEM_STYLE_1STR_RADIO, &s_mainmenu_style_3, PNULL},
 };
 #endif
@@ -442,9 +441,9 @@ PUBLIC uint8 MMISET_GetWatchMenuStyle(void)
 //设置默认主菜单样式
 PUBLIC void MMISET_SetWatchMenuStyle_default(void)
 {
-    uint8 temp_style = 1;
+    uint8 temp_style = 0;
 #if defined(MAINMENU_STYLE_DEFAULT_ROUND_CIRCULAR)// 主菜单 默认圆弧UI
-    temp_style = 1;
+    temp_style = 0;
 #endif
     MMINV_WRITE(MMINV_SET_WATCH_MENU_STYLE, &temp_style);
 }
@@ -484,8 +483,12 @@ LOCAL MMI_RESULT_E HandleSelectSceneModeWindow( MMI_WIN_ID_T win_id, MMI_MESSAGE
         case MSG_NOTIFY_LIST_SET_SELECT:
         {
             uint16 curIdx = GUILIST_GetCurItemIndex( MMISET_SCENE_MODE_SELECT_CTRL_ID );
-             #ifdef APP_MENU_STYLE_USE_MORE
-			curIdx++;
+     //   if(curIdx==0)curIdx=1;
+#ifdef APP_MENU_STYLE_USE_MORE
+	
+		/*	curIdx++;
+			if(curIdx>2)curIdx=1;*/
+			
 		  WatchSET_SetMenuStyle(curIdx);
 		  WatchLauncher_UpdateMenuImgSize(win_id);
 		#else
@@ -1066,6 +1069,8 @@ PUBLIC uint8 WatchSET_InitMenuStyle(void)
 
 PUBLIC uint8 WatchSET_GetMenuStyle(void)
 {
+	////if(1==watch_menu_style)watch_menu_style=2;
+	if(watch_menu_style>=2)watch_menu_style=0;
 	return watch_menu_style;
 }
 #endif
