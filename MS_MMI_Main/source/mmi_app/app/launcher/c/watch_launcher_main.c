@@ -113,6 +113,7 @@ extern void MMIZFB_OpenMainWin(void);
 #define WATCH_LAUNCHER_INDICATOR_OFFSET DP2PX_VALUE(18)
 #define WATCH_LAUNCHER_INDICATOR_START_POINT DP2PX_POINT(30,6)
 
+#define WATCH_LAUNCHER_APP_NUM_MAX 20
 /**--------------------------------------------------------------------------*
 **                         LOCAL VARIABLES                                   *
 **---------------------------------------------------------------------------*/
@@ -133,6 +134,16 @@ LOCAL uint8 s_eng_tp_down_count = 0;
 LOCAL GUI_LCD_DEV_INFO s_indi_layer = {0};
 
 LOCAL uint8 s_current_menu_style = 0;
+typedef struct 
+{
+    uint8 timer_id;
+    uint32 start_index;
+    MMI_TEXT_ID_T slide_text_id;
+    MMI_WIN_ID_T win_id;
+    MMI_TEXT_ID_T text_id[WATCH_LAUNCHER_APP_NUM_MAX];
+    GUI_RECT_T text_rect[WATCH_LAUNCHER_APP_NUM_MAX];   
+}LAUNCHER_TEXT_SCROLL_T;
+LAUNCHER_TEXT_SCROLL_T launcher_text_scroll = {0};
 
 typedef void(*STARTAPPHANDLE)(void);
 typedef struct 
@@ -1066,8 +1077,8 @@ LOCAL MMI_RESULT_E HandleLauncherClockWinMsg(
 PUBLIC void  WatchLauncher_UpdateMenuImgSize(MMI_WIN_ID_T win_id)
 {
 	uint8 menu_style = WatchSET_GetMenuStyle(); 
-	 if(menu_style < 1){
-	 	if(menu_style == 0){
+	 if(menu_style < 2){
+	 	if(menu_style == 1){
         		GUIRES_GetImgWidthHeight(&app_menu_img_width, &app_menu_img_height, g_app_list_info[0].img_id_1, win_id);
 	 	}else{
 	 		GUIRES_GetImgWidthHeight(&app_menu_img_width, &app_menu_img_height, g_app_list_info[0].img_id, win_id);
@@ -1107,9 +1118,20 @@ LOCAL void DisplayLauncherIndicator(MMI_WIN_ID_T win_id)
 
 }
 
+LOCAL BOOLEAN Launcher_isHaveThisTextId(MMI_TEXT_ID_T text_id)
+{
+    uint8 i = 0;
+    for(i = 0;i < WATCH_LAUNCHER_APP_NUM_MAX;i++){
+        if(launcher_text_scroll.text_id[i] == text_id){
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
 LOCAL void DisplayLauncherPage(MMI_WIN_ID_T win_id)
 {
     uint8 i = 0;
+    uint8 j = 0;
     uint page_index = 0;
     uint8 horizontal_space = 0;
     uint8 vertical_space = 0;
@@ -1117,12 +1139,13 @@ LOCAL void DisplayLauncherPage(MMI_WIN_ID_T win_id)
     GUI_RECT_T win_rect = {0};
     GUI_LCD_DEV_INFO lcd_dev_info = {0};
     GUISTR_STYLE_T text_style = {0};
-	GUISTR_STATE_T text_state = GUISTR_STATE_ALIGN|GUISTR_STATE_EFFECT|GUISTR_STATE_ELLIPSIS;
+    GUISTR_STATE_T text_state = GUISTR_STATE_ALIGN|GUISTR_STATE_EFFECT|GUISTR_STATE_ELLIPSIS;
     GUI_RECT_T text_rect = {0};
 	uint8 menu_style = 0;
 #ifdef APP_MENU_STYLE_USE_MORE
 	menu_style = WatchSET_GetMenuStyle(); 
 #endif
+    SCI_TRACE_LOW("%s: menu_style = %d", __FUNCTION__, menu_style);
     page_index = win_id - WATCH_LAUNCHER_APP_PAGE_START_WIN_ID - 1;
     if(page_index >= 0)
     {
@@ -1131,20 +1154,27 @@ LOCAL void DisplayLauncherPage(MMI_WIN_ID_T win_id)
         MMK_GetWinLcdDevInfo(win_id,&lcd_dev_info);
         if(app_menu_img_width == 0 || app_menu_img_height == 0)
         {
-        	 if(menu_style == 0){
+        	 if(menu_style == 1){
         		GUIRES_GetImgWidthHeight(&app_menu_img_width, &app_menu_img_height, g_app_list_info[0].img_id_1, win_id);
-		}else if(menu_style == 1){
+		}else if(menu_style == 2){
         		GUIRES_GetImgWidthHeight(&app_menu_img_width, &app_menu_img_height, g_app_list_3_info[0].img_id_2, win_id);
 		}else{
             		GUIRES_GetImgWidthHeight(&app_menu_img_width, &app_menu_img_height, g_app_list_info[0].img_id, win_id);
 		}
         }
-	SCI_TRACE_LOW("%s: APP_MENU_SIZE = %d", __FUNCTION__, APP_MENU_SIZE);
+	//SCI_TRACE_LOW("%s: page_index = %d, APP_MENU_SIZE = %d", __FUNCTION__, page_index, APP_MENU_SIZE);
 	text_style.font_color = MMI_WHITE_COLOR;
 	text_style.align = ALIGN_HVMIDDLE;
 	text_style.font = DP_FONT_26;
-	 if(menu_style<1)
+	 if(menu_style < 2)
 	 {
+	        MMI_TEXT_ID_T tem_text_id = 0;
+	        if(launcher_text_scroll.timer_id){
+                    MMK_StopTimer(launcher_text_scroll.timer_id);
+               }
+                tem_text_id = launcher_text_scroll.slide_text_id;
+                memset(&launcher_text_scroll, 0, sizeof(LAUNCHER_TEXT_SCROLL_T));
+                launcher_text_scroll.slide_text_id = tem_text_id;
 	        horizontal_space = ((win_rect.right - win_rect.left) - app_menu_img_width*2)/4;
 	        vertical_space = ((win_rect.bottom - win_rect.top) - app_menu_img_height*2)/4;
 	        for(; i < 4; i++)
@@ -1152,26 +1182,41 @@ LOCAL void DisplayLauncherPage(MMI_WIN_ID_T win_id)
 	            if((page_index*4+i) < APP_MENU_SIZE)
 	            {
 	                MMI_STRING_T text  = {0};
+                    uint16 str_width = 0;
+                    uint16 display_width = 0;
 	                point.x = win_rect.left + horizontal_space + (2*horizontal_space + app_menu_img_width)*(i%2);
 	                point.y = win_rect.top + vertical_space  + (1.5f*vertical_space + app_menu_img_height)*(i/2);
-			   if(menu_style == 0){
+			   if(menu_style == 1){
 			   	if(i % 4 < 2){
-					point.y -= 10;
+					point.y -= 5;
 				}
 	                	GUIRES_DisplayImg(&point,PNULL,PNULL,win_id,g_app_list_info[page_index*4+i].img_id_1,&lcd_dev_info);
 			   }else{
 			   	GUIRES_DisplayImg(&point,PNULL,PNULL,win_id,g_app_list_info[page_index*4+i].img_id,&lcd_dev_info);
 			   }
+                       //SCI_TRACE_LOW("%s: page_index*4+i = %d", __FUNCTION__, page_index*4+i); 
 	                MMI_GetLabelTextByLang(g_app_list_info[page_index*4+i].text_id, &text);
-	                text_rect.left = point.x;
-	                text_rect.top = point.y + app_menu_img_height;
-	                text_rect.right = text_rect.left + app_menu_img_width;
-	                text_rect.bottom = text_rect.top + 1.5f*vertical_space;
-	
+	                text_rect.left = point.x - horizontal_space;
+	                text_rect.top = point.y + app_menu_img_height+2;
+	                text_rect.right = text_rect.left + app_menu_img_width + 2*horizontal_space;
+	                text_rect.bottom = text_rect.top + 1.2f*vertical_space;
 	                GUISTR_DrawTextToLCDInRect(&lcd_dev_info,(const GUI_RECT_T *)&text_rect, (const GUI_RECT_T *)&text_rect,(const MMI_STRING_T *)&text, &text_style, text_state, GUISTR_TEXT_DIR_AUTO);
 				
+                    display_width = text_rect.right - text_rect.left + 1;
+                    str_width = GUI_CalculateStringPiexlNum (text.wstr_ptr, text.wstr_len, text_style.font, 2);
+                    if(str_width > display_width && j < WATCH_LAUNCHER_APP_NUM_MAX-1)
+                    {
+                        launcher_text_scroll.win_id = win_id;
+                        launcher_text_scroll.text_rect[j] = text_rect;
+                        launcher_text_scroll.text_id[j] = g_app_list_info[page_index*4+i].text_id;
+                        j++;
 				}
+	            }
 	        }
+                if(j > 0){
+                    launcher_text_scroll.timer_id = MMK_CreateWinTimer(win_id, 500, TRUE);
+                    MMK_StartWinTimer(win_id, launcher_text_scroll.timer_id, 500, TRUE);
+                }
 	 }
 	 else 
 	 {	
@@ -1188,6 +1233,36 @@ LOCAL void DisplayLauncherPage(MMI_WIN_ID_T win_id)
 	       text_rect.right = text_rect.left + app_menu_img_width;
 	       text_rect.bottom = MMI_MAINSCREEN_HEIGHT;
 	       GUISTR_DrawTextToLCDInRect(&lcd_dev_info,(const GUI_RECT_T *)&text_rect, (const GUI_RECT_T *)&text_rect,(const MMI_STRING_T *)&text, &text_style, text_state, GUISTR_TEXT_DIR_AUTO);
+        }
+    }
+}
+LOCAL void Launcher_DisplayScrollText(MMI_WIN_ID_T win_id)
+{
+    uint8 i = 0;
+    uint16 str_width = 0;
+    uint16 display_width = 0;
+    GUI_LCD_DEV_INFO lcd_dev_info = {0};
+    MMI_STRING_T text  = {0};
+    GUISTR_STYLE_T text_style = {0};
+    GUISTR_STATE_T text_state = GUISTR_STATE_ALIGN;
+    text_style.font_color = MMI_WHITE_COLOR;
+    text_style.align = ALIGN_HVMIDDLE;
+    text_style.font = DP_FONT_26;
+    for(i = 0;i < WATCH_LAUNCHER_APP_NUM_MAX;i++){
+        if(win_id == launcher_text_scroll.win_id && launcher_text_scroll.text_rect[i].right != 0
+            /*&& launcher_text_scroll.slide_text_id == launcher_text_scroll.text_id[i]*/)
+        {
+            display_width = launcher_text_scroll.text_rect[i].right - launcher_text_scroll.text_rect[i].left + 1;
+            MMI_GetLabelTextByLang(launcher_text_scroll.text_id[i], &text);
+            str_width = GUI_CalculateStringPiexlNum (text.wstr_ptr, text.wstr_len, text_style.font, 2);
+            if((str_width - 1 - launcher_text_scroll.start_index) > display_width){
+                launcher_text_scroll.start_index += 5;
+            }else{
+                 launcher_text_scroll.start_index = 0;
+            }
+            MMK_GetWinLcdDevInfo(win_id,&lcd_dev_info);
+            GUI_FillRect(&lcd_dev_info, launcher_text_scroll.text_rect[i], MMI_BLACK_COLOR);
+            GUISTR_DrawTextToLCDByOffset(&lcd_dev_info, &launcher_text_scroll.text_rect[i], PNULL, launcher_text_scroll.start_index, 0, &text, &text_style, text_state);
 	 }
     }
 }
@@ -1213,12 +1288,22 @@ LOCAL MMI_RESULT_E HandleLauncherPageWinMsg(
             break;
         }
 
+        case MSG_TIMER:
+        {
+            if(launcher_text_scroll.timer_id == *(uint8 *)param)
+            {
+                if(!MMK_IsFocusWin(win_id)){
+                    break;
+                }
+                Launcher_DisplayScrollText(win_id);
+            }
+            break;
+        }
         case MSG_APP_WEB:
         {
             GUI_POINT_T *point = (GUI_POINT_T*)param;
-            if(point != PNULL)
-            {
-                Launcher_App_Start(*point,win_id);
+            if(point != PNULL){
+                Launcher_App_Start(*point, win_id);
             }
             break;
         }
@@ -2552,7 +2637,7 @@ LOCAL void Launcher_App_Start(GUI_POINT_T click_point, MMI_WIN_ID_T win_id)
     page_index = win_id - WATCH_LAUNCHER_APP_PAGE_START_WIN_ID - 1;
     if(page_index >=0)
     {
-	 	if(menu_style < 1){
+	 	if(menu_style < 2){
 	        i = page_index*4;
 	        for(;i<i+4;i++)
 	        {
@@ -2563,7 +2648,7 @@ LOCAL void Launcher_App_Start(GUI_POINT_T click_point, MMI_WIN_ID_T win_id)
 	            }
 			horizontal_space = ((win_rect.right - win_rect.left) - app_menu_img_width*2)/4;
     			vertical_space = ((win_rect.bottom - win_rect.top) - app_menu_img_height*2)/4;
-			//TRACE_APP_LAUNCHER("click_point.x = %d, click_point.y=%d, i = %d", click_point.x, click_point.y, i);
+			TRACE_APP_LAUNCHER("click_point.x = %d, click_point.y=%d, i = %d", click_point.x, click_point.y, i);
 	            rect.left = win_rect.left + (horizontal_space + app_menu_img_width)*((i%4)%2) ;
 	            rect.top = win_rect.top + (vertical_space + app_menu_img_height)*((i%4)/2);
 	            rect.right = rect.left + app_menu_img_width + horizontal_space;
@@ -2572,6 +2657,8 @@ LOCAL void Launcher_App_Start(GUI_POINT_T click_point, MMI_WIN_ID_T win_id)
 	            if(click_point.y > 60 && rect.bottom < click_point.y && i%4 > 1){
 	            		rect.bottom = rect.top + app_menu_img_height + vertical_space + 50;
 			}
+				TRACE_APP_LAUNCHER("rect.left = %d, rect.right = %d,rect.top = %d, rect.bottom = %d", 
+                                    rect.left, rect.right, rect.top, rect.bottom);
 			
 	            if(GUI_PointIsInRect(click_point,rect))
 	            {
@@ -2582,7 +2669,7 @@ LOCAL void Launcher_App_Start(GUI_POINT_T click_point, MMI_WIN_ID_T win_id)
 	                else
 	                {
 	                    g_app_list_info[i].start_handle();
-	                }
+        	                }
 	                return;
 	            }	
 	        }
@@ -2669,12 +2756,16 @@ LOCAL void Launcher_FourApp_page()
     menu_style = WatchSET_GetMenuStyle();
 #endif
 	 SCI_TRACE_LOW("LAUNCHER_ELEM_COUNT = %d, menu_style = %d", LAUNCHER_ELEM_COUNT, menu_style);
-    if(menu_style < 1){
+    if(menu_style < 2){
 	APP_MENU_SIZE = sizeof(g_app_list_info)/sizeof(APP_LIST_ITEM_T);
     	page_size = APP_MENU_SIZE%4 == 0?APP_MENU_SIZE/4:(APP_MENU_SIZE/4+1);
     }else{
 	page_size = APP_MENU_SIZE;
     }
+    if(launcher_text_scroll.timer_id){
+        MMK_StopTimer(launcher_text_scroll.timer_id);
+    }
+    memset(&launcher_text_scroll, 0, sizeof(LAUNCHER_TEXT_SCROLL_T));
     if(s_handle != NULL)
     {
         WatchSLIDEPAGE_DestoryHandle(s_handle);
