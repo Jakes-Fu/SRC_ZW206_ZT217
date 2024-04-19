@@ -3464,12 +3464,12 @@ LOCAL MMI_RESULT_E  HandleZDT_2VMWinMsg(
             {
                 dec_src.file_name_ptr = QRCODE_MANUAL_FILE_NAME;
                 //yangyu add later, for manual qrcode ,just use res image,not generate
-               /* GUIRES_DisplayImg(&dis_point,
+                GUIRES_DisplayImg(&dis_point,
                 &bg_rect,
                 PNULL,
                 win_id,
                 IMAGE_QRCODE_MANUAL,
-                &lcd_dev_info);*/
+                &lcd_dev_info);
                 break;
                 //yangyu end
 
@@ -3629,12 +3629,12 @@ LOCAL MMI_RESULT_E  HandleZDT_2VMWinMsg(
                     {
                         dec_src.file_name_ptr = QRCODE_MANUAL_FILE_NAME;
                         //yangyu add later, for manual qrcode ,just use res image,not generate
-                       /* GUIRES_DisplayImg(&dis_point,
+                        GUIRES_DisplayImg(&dis_point,
                         &bg_rect,
                         PNULL,
                         win_id,
                         IMAGE_QRCODE_MANUAL,
-                        &lcd_dev_info);*/
+                        &lcd_dev_info);
                         break;
                         //yangyu end
         
@@ -4283,6 +4283,8 @@ PUBLIC MMI_RESULT_E MMIVoice_HandleNewMsgWin(
         break;
 
     case MSG_KEYUP_CANCEL:
+    case MSG_CTL_CANCEL:
+    case MSG_APP_CANCEL:
         MMK_CloseWin( win_id );
         break;
 
