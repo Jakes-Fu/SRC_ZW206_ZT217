@@ -1095,9 +1095,18 @@ LOCAL void Video_Call_Accept_And_Hangup(GUI_POINT_T tp_up, MMI_WIN_ID_T win_id)
 
 LOCAL void Video_Call_Close(MMI_WIN_ID_T win_id)
 {
+	GUI_LCD_DEV_INFO    lcd_dev_info = {GUI_MAIN_LCD_ID, GUI_BLOCK_MAIN};
+		GUI_RECT_T   rect   ={0};
     VIDEO_CALL_INFO *video_call_info = NULL;
     g_is_incomeing = FALSE;
     video_call_stop();
+		rect.left=0;
+		rect.right=MMI_MAINSCREEN_WIDTH;
+		rect.top=0;
+		rect.bottom=MMI_MAINSCREEN_HEIGHT;
+		
+	  LCD_FillRect(&lcd_dev_info, rect, MMI_BLACK_COLOR);
+	SCI_Sleep(1000);
     video_call_info = (VIDEO_CALL_INFO *) MMK_GetWinUserData(win_id);
     if(video_call_info != NULL)
     {
