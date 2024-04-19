@@ -134,6 +134,7 @@ LOCAL uint8 s_eng_tp_down_count = 0;
 LOCAL GUI_LCD_DEV_INFO s_indi_layer = {0};
 
 LOCAL uint8 s_current_menu_style = 0;
+
 typedef struct 
 {
     uint8 timer_id;
@@ -282,7 +283,7 @@ LOCAL void DisplayWinPanelFgBase(MMI_WIN_ID_T win_id,
                                                GUI_RECT_T title_rect);
 
 LOCAL void Launcher_FourApp_page();
-LOCAL void Launcher_App_Start(GUI_POINT_T click_point, MMI_WIN_ID_T win_id);
+LOCAL void Launcher_App_Start(GUI_POINT_T click_point, MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E msg_id);
 
 //handle clock win message
 LOCAL MMI_RESULT_E HandleLauncherClockWinMsg(
@@ -1299,15 +1300,15 @@ LOCAL MMI_RESULT_E HandleLauncherPageWinMsg(
             }
             break;
         }
-        case MSG_APP_WEB:
+        case MSG_TP_PRESS_DOWN:
+        case MSG_TP_PRESS_UP:
         {
-            GUI_POINT_T *point = (GUI_POINT_T*)param;
-            if(point != PNULL){
-                Launcher_App_Start(*point, win_id);
-            }
-            break;
+	     GUI_POINT_T point = {0};
+            point.x = MMK_GET_TP_X(param);
+            point.y = MMK_GET_TP_Y(param);
+            Launcher_App_Start(point, win_id, msg_id);
         }
-
+        break;
         default:
             recode = MMI_RESULT_FALSE;
             break;
@@ -2621,7 +2622,7 @@ PUBLIC MMI_RESULT_E WatchLAUNCHER_FourAppHandleCommonWinMsg(
     return recode;
 }
 
-LOCAL void Launcher_App_Start(GUI_POINT_T click_point, MMI_WIN_ID_T win_id)
+LOCAL void Launcher_App_Start(GUI_POINT_T click_point, MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E msg_id)
 {
     GUI_RECT_T rect = {0};
     uint page_index = 0;
@@ -2662,14 +2663,18 @@ LOCAL void Launcher_App_Start(GUI_POINT_T click_point, MMI_WIN_ID_T win_id)
 			
 	            if(GUI_PointIsInRect(click_point,rect))
 	            {
-	                if(g_app_list_info[i].check_sim == 1 && MMIAPIPHONE_GetSimStatus(MN_DUAL_SYS_1) != SIM_STATUS_OK)
-	                {
-	                    MMIZDT_OpenNoSimOrDataWin();
-	                }
-	                else
-	                {
-	                    g_app_list_info[i].start_handle();
+	                if(msg_id == MSG_TP_PRESS_UP){
+        	                if(g_app_list_info[i].check_sim == 1 && MMIAPIPHONE_GetSimStatus(MN_DUAL_SYS_1) != SIM_STATUS_OK)
+        	                {
+        	                    MMIZDT_OpenNoSimOrDataWin();
         	                }
+        	                else
+        	                {
+        	                    g_app_list_info[i].start_handle();
+                	          }
+	                }else{
+	                      launcher_text_scroll.slide_text_id = g_app_list_info[i].text_id;
+                       }
 	                return;
 	            }	
 	        }
@@ -2689,13 +2694,15 @@ LOCAL void Launcher_App_Start(GUI_POINT_T click_point, MMI_WIN_ID_T win_id)
 		     	rect.bottom = rect.top + app_menu_img_height;
 			if(GUI_PointIsInRect(click_point,rect))
 	             {
-	                if(g_app_list_3_info[page_index].check_sim == 1 && MMIAPIPHONE_GetSimStatus(MN_DUAL_SYS_1) != SIM_STATUS_OK)
-	                {
-	                    MMIZDT_OpenNoSimOrDataWin();
-	                }
-	                else
-	                {
-	                    g_app_list_3_info[page_index].start_handle();
+	                if(msg_id == MSG_TP_PRESS_UP){
+        	                if(g_app_list_3_info[page_index].check_sim == 1 && MMIAPIPHONE_GetSimStatus(MN_DUAL_SYS_1) != SIM_STATUS_OK)
+        	                {
+        	                    MMIZDT_OpenNoSimOrDataWin();
+        	                }
+        	                else
+        	                {
+        	                    g_app_list_3_info[page_index].start_handle();
+        	                }
 	                }
 	                return;
 	             }	
