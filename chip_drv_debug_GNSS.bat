@@ -1,0 +1,1 @@
+make p=UWS6121E_WC_1H00 m=chip_drv update job=32

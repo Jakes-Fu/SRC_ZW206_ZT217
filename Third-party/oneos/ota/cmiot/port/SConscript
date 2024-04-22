@@ -1,0 +1,10 @@
+from building import *
+
+pwd = GetCurrentDir()
+
+src = Glob('oneos/*.c')
+CPPPATH = [pwd]
+
+group = DefineGroup('cmiot', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
