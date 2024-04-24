@@ -1,2 +1,2 @@
 cls
-run_simulator.bat UWS6121E_WC_1H00
+make p=UWS6121E_WC_1H00 m=simulator_main VS2010=1
