@@ -596,3 +596,9 @@ ENGPC_W217 = TRUE                                    ### Switch ENGPC_W217 Suppo
 LCD_INSTALL_ANGLE = 0    #90
 
 TRACE_INFO_SUPPORT = FALSE
+
+MATH_COUNT_SUPPORT = TRUE 			#口算达人
+
+LISTENING_PRATICE_SUPPORT = TRUE	#听力练习
+
+WORD_CARD_SUPPORT = TRUE			#单词卡

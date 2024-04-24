@@ -1397,3 +1397,7 @@ RES_ADD_MODULE(MMI_MODULE_VIDEO_CALL,"\\video_call\\video_call_mdu_def.h")
 #endif
 
 //UAL_TODO:MMI_MODULE_PDP         (0x03 << 16)
+
+#ifdef  MATH_COUNT_SUPPORT
+RES_ADD_MODULE(MMI_MODULE_MATH_COUNT,"\\math_count\\math_count_mdu_def.h")
+#endif

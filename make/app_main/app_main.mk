@@ -2569,3 +2569,8 @@ MSRCPATH += MS_MMI_Main/source/mmi_app/app/accessory/c
 SOURCES += watch_tools_main.c
 endif
 
+ifeq ($(strip $(MATH_COUNT_SUPPORT)), TRUE)
+MINCPATH		+=  MS_MMI_Main/source/mmi_app/app/math_count/h
+MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/math_count/c
+SOURCES			+=  math_count_win.c
+endif
