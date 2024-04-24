@@ -139,6 +139,13 @@ PUBLIC void LIBXMLYAPI_CreateXysdkMainWin(void);
 #endif
 #endif
 
+#ifdef MATH_COUNT_SUPPORT
+PUBLIC void MMIZMT_CreateMathCountWin(void);
+#endif
+
+#ifdef LISTENING_PRATICE_SUPPORT
+PUBLIC void MMIREADBOY_CreateListeningLocalWin(void);
+#endif
 #ifdef MAINMENU_STYLE_SUPPORT
 PUBLIC void WatchSET_MenuStyle_Enter( void );//²Ëµ¥ÇÐ»»
 #endif

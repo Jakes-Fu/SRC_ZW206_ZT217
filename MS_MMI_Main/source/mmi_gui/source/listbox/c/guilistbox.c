@@ -287,7 +287,10 @@ LOCAL BOOLEAN SetItemStyle(
     case GUIITEM_STYLE_ONE_LINE_TEXT_FACTORY:
     case GUIITEM_STYLE_LF_ONE_LINE_BGICON_WITH_TOP_TEXT_MS:
 #endif
-        //do nothing...
+#ifdef LISTENING_PRATICE_SUPPORT 
+    case GUIITEM_STYLE_TWO_ICON_AND_ONE_TEXT_MS:    
+    case GUIITEM_STYLE_ONE_ICON_AND_ONE_TEXT_MS:
+#endif
         break;
         
     default:

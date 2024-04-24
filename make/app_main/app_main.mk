@@ -2574,3 +2574,10 @@ MINCPATH		+=  MS_MMI_Main/source/mmi_app/app/math_count/h
 MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/math_count/c
 SOURCES			+=  math_count_win.c
 endif
+
+ifeq ($(strip $(LISTENING_PRATICE_SUPPORT)), TRUE)
+MINCPATH		+=  MS_MMI_Main/source/mmi_app/app/dsl_listening/h
+MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/dsl_listening/c
+SOURCES			+=  dsl_listening_win.c dsl_listening_http.c dsl_listening_parse.c dsl_listening_player.c
+SOURCES			+=  dsl_listening_download.c dsl_listening_local.c dsl_listening_nv.c dsl_main_file.c corepush_md5.c
+endif

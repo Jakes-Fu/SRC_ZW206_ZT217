@@ -517,6 +517,11 @@ ifeq ($(strip $(MATH_COUNT_SUPPORT)), TRUE)
 SOURCES	 += math_count_mdu_def.h 
 SRCPATH += $(MMI_DIR)/source/mmi_app/app/math_count/h
 endif
+
+ifeq ($(strip $(LISTENING_PRATICE_SUPPORT)), TRUE)
+SOURCES	 += dsl_listening_mdu_def.h 
+SRCPATH += $(MMI_DIR)/source/mmi_app/app/dsl_listening/h
+endif
  
 #
 #  make process ,don't modify

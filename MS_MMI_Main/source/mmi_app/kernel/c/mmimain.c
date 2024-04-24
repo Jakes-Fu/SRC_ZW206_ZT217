@@ -389,6 +389,10 @@
 // baidu add end
 #endif
 
+#ifdef LISTENING_PRATICE_SUPPORT
+#include "dsl_listening_nv.h"
+#endif
+
 /**--------------------------------------------------------------------------*
  **                         MACRO DEFINITION                                 *
  **--------------------------------------------------------------------------*/
@@ -2243,6 +2247,10 @@ LOCAL void InitMMIModule(void)
 
 #ifdef ZDT_HTTP_APP_SUPPORT
     MMIZDTHTTP_InitModule();
+#endif
+
+#ifdef LISTENING_PRATICE_SUPPORT
+    MMI_RegDslListeningNv();
 #endif
 
 #ifdef HERO_ENGINE_SUPPORT

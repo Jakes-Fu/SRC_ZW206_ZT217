@@ -65,7 +65,9 @@
 #include "mmisms_image.h"
 #include "mmicc_image.h"
 #include "mmi_position_listitem.h"
-
+#ifdef LISTENING_PRATICE_SUPPORT
+#include "dsl_listening_export.h"
+#endif
 /**---------------------------------------------------------------------------*
  **                         Macro Declaration                                 *
  **---------------------------------------------------------------------------*/
@@ -5704,6 +5706,79 @@ LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_1_text_eng =
 
     0, MMILIST_INVALID_ITEM_INDEX
 };
+
+#ifdef LISTENING_PRATICE_SUPPORT
+//|---------------------------|
+//|       icon      text     icon           |
+//|---------------------------|
+//GUIITEM_STYLE_TWO_ICON_AND_ONE_TEXT_MS,
+LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_2_icon_and_1_text_ms =
+{
+    2*LISTEN_LINE_HIGHT, 2*LISTEN_LINE_HIGHT,
+
+    {        
+            //icon
+            {
+            0,
+            {5, 0, LISTEN_LINE_WIDTH, 2*LISTEN_LINE_HIGHT},
+            {5, 0, LISTEN_LINE_WIDTH, 2*LISTEN_LINE_HIGHT},
+            0, 0
+        },
+            //name
+            {
+                    0,
+                    {LISTEN_LINE_WIDTH,  0,  MMI_MAINSCREEN_WIDTH-LISTEN_LINE_WIDTH, 2*LISTEN_LINE_HIGHT},
+                    {LISTEN_LINE_WIDTH,  0,  MMI_MAINSCREEN_WIDTH-LISTEN_LINE_WIDTH, 2*LISTEN_LINE_HIGHT},
+                    SONG_FONT_16, SONG_FONT_16,
+                    0, 0
+            },
+            //icon
+            {
+            0,
+            {MMI_MAINSCREEN_WIDTH-LISTEN_LINE_WIDTH, 0,  MMI_MAINSCREEN_WIDTH, 2*LISTEN_LINE_HIGHT},
+            {MMI_MAINSCREEN_WIDTH-LISTEN_LINE_WIDTH, 0,  MMI_MAINSCREEN_WIDTH, 2*LISTEN_LINE_HIGHT},
+            0, 0
+        },
+     {0},
+        {0},
+        {0},
+    },
+
+    0, MMILIST_INVALID_ITEM_INDEX
+};
+
+//|---------------------------|
+//|       icon      text                     |
+//|---------------------------|
+//GUIITEM_STYLE_ONE_ICON_AND_ONE_TEXT_MS,
+LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_1_icon_and_1_text_ms =
+{
+    2*LISTEN_LINE_HIGHT-5, 2*LISTEN_LINE_HIGHT-5,
+    {        
+            //name
+            {
+                    0,
+                    {10,  0,  MMI_MAINSCREEN_WIDTH-LISTEN_LINE_WIDTH, 2*LISTEN_LINE_HIGHT-5},
+                    {10,  0,  MMI_MAINSCREEN_WIDTH-LISTEN_LINE_WIDTH, 2*LISTEN_LINE_HIGHT-5},
+                    SONG_FONT_16, SONG_FONT_16,
+                    0, 0
+            },
+            //icon
+            {
+            0,
+            {MMI_MAINSCREEN_WIDTH-LISTEN_LINE_WIDTH, 0,  MMI_MAINSCREEN_WIDTH, 2*LISTEN_LINE_HIGHT-5},
+            {MMI_MAINSCREEN_WIDTH-LISTEN_LINE_WIDTH, 0,  MMI_MAINSCREEN_WIDTH, 2*LISTEN_LINE_HIGHT-5},
+            0, 0
+        },
+     {0},
+     {0},
+        {0},
+        {0},
+    },
+
+    0, MMILIST_INVALID_ITEM_INDEX
+};
+#endif
 //============================================================================//
 //                                  End For engineer mode                     //
 //============================================================================//
@@ -5991,6 +6066,10 @@ LOCAL THEMELIST_STYLE_TABLE_T const s_style_table[] =
     {GUIITEM_STYLE_LF_ONE_LINE_BGICON_WITH_TOP_TEXT_MS, &s_item_style_lf_1_bgicon_with_top_text_ms},
 #endif
 
+#ifdef LISTENING_PRATICE_SUPPORT
+    {GUIITEM_STYLE_TWO_ICON_AND_ONE_TEXT_MS, &s_item_style_2_icon_and_1_text_ms},
+    {GUIITEM_STYLE_ONE_ICON_AND_ONE_TEXT_MS, &s_item_style_1_icon_and_1_text_ms},
+#endif    
 //============================================================================//
 //                                   For watch                                //
 //============================================================================//

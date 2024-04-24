@@ -1058,6 +1058,17 @@ ADULTWATCH
     //| text    ¡Ì                |
     //|---------------------------|
     GUIITEM_STYLE_1CHECK_ENG,//for engineer mode
+#ifdef LISTENING_PRATICE_SUPPORT    
+    //|---------------------------|
+    //|       icon      text     icon                |
+    //|---------------------------|
+    GUIITEM_STYLE_TWO_ICON_AND_ONE_TEXT_MS,
+
+    //|---------------------------|
+    //|       icon      text                       |
+    //|---------------------------|
+    GUIITEM_STYLE_ONE_ICON_AND_ONE_TEXT_MS,
+#endif
 //============================================================================//
 //                                   For watch                                //
 //============================================================================//

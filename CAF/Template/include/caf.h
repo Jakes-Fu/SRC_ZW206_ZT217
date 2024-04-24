@@ -1074,6 +1074,9 @@ struct CAF_VTBL_T( _iname_ )
 #define MSG_SLIDEWIN_END                                 MSG_USER_START+9
 #define MSG_SLIDEWIN_BEGIN                               MSG_USER_START+0x0a
 
+#define MSG_LIST_PRE_PAGE                   (MSG_USER_START + 0x010)
+#define MSG_LIST_NEXT_PAGE                  (MSG_USER_START + 0x011)
+
 ////
 /*Ã½Ìå×´Ì¬*/
 typedef enum
