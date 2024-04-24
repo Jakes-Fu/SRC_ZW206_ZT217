@@ -291,6 +291,10 @@ LOCAL BOOLEAN SetItemStyle(
     case GUIITEM_STYLE_TWO_ICON_AND_ONE_TEXT_MS:    
     case GUIITEM_STYLE_ONE_ICON_AND_ONE_TEXT_MS:
 #endif
+#ifdef WORD_CARD_SUPPORT
+    case GUIITEM_SYTLE_DSL_ENGLISH_BOOK:
+    case GUIITEM_SYTLE_DSL_CHECK:
+#endif        
         break;
         
     default:

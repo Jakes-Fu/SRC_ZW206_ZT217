@@ -1405,3 +1405,7 @@ RES_ADD_MODULE(MMI_MODULE_MATH_COUNT,"\\math_count\\math_count_mdu_def.h")
 #ifdef  LISTENING_PRATICE_SUPPORT
 RES_ADD_MODULE(MMI_MODULE_DSL_LISTENING,"\\dsl_listening\\dsl_listening_mdu_def.h")
 #endif
+
+#ifdef  WORD_CARD_SUPPORT
+RES_ADD_MODULE(MMI_MODULE_DSL_WORD,"\\dsl_word\\dsl_word_mdu_def.h")
+#endif

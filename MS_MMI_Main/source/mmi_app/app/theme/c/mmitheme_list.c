@@ -68,6 +68,9 @@
 #ifdef LISTENING_PRATICE_SUPPORT
 #include "dsl_listening_export.h"
 #endif
+#ifdef WORD_CARD_SUPPORT
+#include "dsl_word_main.h"
+#endif
 /**---------------------------------------------------------------------------*
  **                         Macro Declaration                                 *
  **---------------------------------------------------------------------------*/
@@ -5779,6 +5782,81 @@ LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_1_icon_and_1_text_ms =
     0, MMILIST_INVALID_ITEM_INDEX
 };
 #endif
+
+#ifdef WORD_CARD_SUPPORT
+//|---------------------------|
+//|       icon      text     text                |
+//|                   text                     |
+//|---------------------------|
+//GUIITEM_SYTLE_DSL_ENGLISH_BOOK,
+LOCAL THEMELIST_ITEM_STYLE_T const dsl_english_book_item =
+{
+    2*WORD_CARD_LINE_HIGHT, 2*WORD_CARD_LINE_HIGHT,
+    {
+        {
+            0,
+            { 2, 0.5*WORD_CARD_LINE_HIGHT, WORD_CARD_LINE_WIDTH, 1.5*WORD_CARD_LINE_HIGHT},
+            { 2, 0.5*WORD_CARD_LINE_HIGHT, WORD_CARD_LINE_WIDTH, 1.5*WORD_CARD_LINE_HIGHT},
+            0, 0,
+            0, 0
+        },
+        {
+            GUIITEM_CONTENT_STATE_NONE,
+            {20,  0.8*WORD_CARD_LINE_HIGHT,  36, 1.5*WORD_CARD_LINE_HIGHT},
+            {20,  0.8*WORD_CARD_LINE_HIGHT,  36, 1.5*WORD_CARD_LINE_HIGHT},
+            SONG_FONT_16, SONG_FONT_16,
+            0, 100
+        },
+        {
+            GUIITEM_CONTENT_STATE_NONE,
+            {42, 10,  MMI_MAINSCREEN_WIDTH, WORD_CARD_LINE_HIGHT+10},
+            {42, 10,  MMI_MAINSCREEN_WIDTH, WORD_CARD_LINE_HIGHT+10},
+            SONG_FONT_16, SONG_FONT_16,
+            0, 100
+        },
+     {
+            GUIITEM_CONTENT_STATE_NONE,
+            {42, WORD_CARD_LINE_HIGHT+11, MMI_MAINSCREEN_WIDTH, 2*WORD_CARD_LINE_HIGHT-10},
+            {42, WORD_CARD_LINE_HIGHT+11, MMI_MAINSCREEN_WIDTH, 2*WORD_CARD_LINE_HIGHT-10},
+            SONG_FONT_20, SONG_FONT_20,
+            0, 0
+        },     
+        {0},
+        {0},
+    },
+
+    0, 1
+};
+
+//|---------------------------|
+//|       icon      text                     |
+//|---------------------------|
+//GUIITEM_SYTLE_DSL_CHECK,
+LOCAL THEMELIST_ITEM_STYLE_T const dsl_check_list =
+{
+    WORD_CARD_LINE_HIGHT, WORD_CARD_LINE_HIGHT,
+    {
+        {
+            0,
+            { 5, 0,  MMI_MAINSCREEN_WIDTH-WORD_CARD_LINE_WIDTH, WORD_CARD_LINE_HIGHT },       /* 2 */
+            { 5, 0,  MMI_MAINSCREEN_WIDTH-WORD_CARD_LINE_WIDTH, WORD_CARD_LINE_HIGHT },       /* 2 */
+            SONG_FONT_16, SONG_FONT_16,
+            0, 100
+        },
+     {
+            0,
+            { MMI_MAINSCREEN_WIDTH-WORD_CARD_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH, WORD_CARD_LINE_HIGHT},     /* 2 */
+            { MMI_MAINSCREEN_WIDTH-WORD_CARD_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH, WORD_CARD_LINE_HIGHT},     /* 2 */
+            0, 0,
+            0, 100
+        },
+        {0},
+        {0},
+        {0},
+        {0},
+    },
+};
+#endif
 //============================================================================//
 //                                  End For engineer mode                     //
 //============================================================================//
@@ -6065,11 +6143,14 @@ LOCAL THEMELIST_STYLE_TABLE_T const s_style_table[] =
     {GUIITEM_STYLE_ONE_LINE_TEXT_FACTORY, &s_item_style_1_text_factory},
     {GUIITEM_STYLE_LF_ONE_LINE_BGICON_WITH_TOP_TEXT_MS, &s_item_style_lf_1_bgicon_with_top_text_ms},
 #endif
-
 #ifdef LISTENING_PRATICE_SUPPORT
     {GUIITEM_STYLE_TWO_ICON_AND_ONE_TEXT_MS, &s_item_style_2_icon_and_1_text_ms},
     {GUIITEM_STYLE_ONE_ICON_AND_ONE_TEXT_MS, &s_item_style_1_icon_and_1_text_ms},
 #endif    
+#ifdef WORD_CARD_SUPPORT   
+    {GUIITEM_SYTLE_DSL_ENGLISH_BOOK,&dsl_english_book_item},
+    {GUIITEM_SYTLE_DSL_CHECK,&dsl_check_list},
+#endif
 //============================================================================//
 //                                   For watch                                //
 //============================================================================//

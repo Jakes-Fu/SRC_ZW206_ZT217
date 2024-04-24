@@ -146,6 +146,11 @@ PUBLIC void MMIZMT_CreateMathCountWin(void);
 #ifdef LISTENING_PRATICE_SUPPORT
 PUBLIC void MMIREADBOY_CreateListeningLocalWin(void);
 #endif
+
+#ifdef WORD_CARD_SUPPORT
+PUBLIC void MMI_CreateWordWin(void);
+#endif
+
 #ifdef MAINMENU_STYLE_SUPPORT
 PUBLIC void WatchSET_MenuStyle_Enter( void );//²Ëµ¥ÇÐ»»
 #endif

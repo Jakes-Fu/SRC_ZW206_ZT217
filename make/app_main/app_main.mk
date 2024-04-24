@@ -2581,3 +2581,10 @@ MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/dsl_listening/c
 SOURCES			+=  dsl_listening_win.c dsl_listening_http.c dsl_listening_parse.c dsl_listening_player.c
 SOURCES			+=  dsl_listening_download.c dsl_listening_local.c dsl_listening_nv.c dsl_main_file.c corepush_md5.c
 endif
+
+ifeq ($(strip $(WORD_CARD_SUPPORT)), TRUE)
+MINCPATH		+=  MS_MMI_Main/source/mmi_app/app/dsl_word/h
+MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/dsl_word/c
+SOURCES			+=  dsl_word_main.c dsl_word_id.c
+endif
+

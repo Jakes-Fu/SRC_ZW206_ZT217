@@ -522,6 +522,12 @@ ifeq ($(strip $(LISTENING_PRATICE_SUPPORT)), TRUE)
 SOURCES	 += dsl_listening_mdu_def.h 
 SRCPATH += $(MMI_DIR)/source/mmi_app/app/dsl_listening/h
 endif
+
+ifeq ($(strip $(WORD_CARD_SUPPORT)), TRUE)
+SOURCES	 += dsl_word_mdu_def.h 
+SRCPATH += $(MMI_DIR)/source/mmi_app/app/dsl_word/h
+endif
+
  
 #
 #  make process ,don't modify
