@@ -166,7 +166,7 @@ LOCAL uint8 GetCanntClick(uint is_click)
 	// return 1;
 }
 
-LOCAL uint8 is_record=0;//0没有 1有 2加载
+LOCAL uint8 is_record = 0;//0没有 1有 2加载
 
 LOCAL OpenWordRecordTips();
 
@@ -188,7 +188,7 @@ LOCAL uint8 loadRecord(void)
 	int data_size;
 	if(dsl_file_exist("E:/Word/userdata"))
 	{
-		data=dsl_file_data_read("E:/Word/userdata",&data_size);
+		data = dsl_file_data_read("E:/Word/userdata",&data_size);
 		if(data_size>0){
 			cJSON *root = cJSON_Parse(data);
 			cJSON *bookid = cJSON_GetObjectItem(root, "bookid");
@@ -266,93 +266,95 @@ WINDOW_TABLE(MMI_WORD_CARD_WIN_TAB) = {
 /****************************************************************/
 LOCAL void AppendDSLListItemByTextId(MMI_CTRL_ID_T ctrl_id, MMI_IMAGE_ID_T image_id, int index) 
 {
-  GUILIST_ITEM_T item_t = {0};
-  GUILIST_ITEM_DATA_T item_data = {0};
-  GUI_COLOR_T list_color = {0};
+	GUILIST_ITEM_T item_t = {0};
+	GUILIST_ITEM_DATA_T item_data = {0};
+	GUI_COLOR_T list_color = {0};
 
-  char tmp[10]={0};
-  MMI_STRING_T text0 = {0};
-  uint16 wstr0[10] = {0};
+	char tmp[10]={0};
+	MMI_STRING_T text0 = {0};
+	uint16 wstr0[10] = {0};
 
-  MMI_STRING_T text = {0};
-  uint16 wstr[24] = {0};
+	MMI_STRING_T text = {0};
+	uint16 wstr[24] = {0};
 
-  MMI_STRING_T text1 = {0};
-  uint16 wstr1[24] = {0};
+	MMI_STRING_T text1 = {0};
+	uint16 wstr1[24] = {0};
   
  
-  item_t.item_style = GUIITEM_SYTLE_DSL_ENGLISH_BOOK;
-  item_t.item_data_ptr = &item_data;
+	item_t.item_style = GUIITEM_SYTLE_DSL_ENGLISH_BOOK;
+	item_t.item_data_ptr = &item_data;
 
-  item_data.item_content[0].item_data_type = GUIITEM_DATA_IMAGE_ID;
-  item_data.item_content[0].item_data.image_id = image_id;
+	item_data.item_content[0].item_data_type = GUIITEM_DATA_IMAGE_ID;
+	item_data.item_content[0].item_data.image_id = image_id;
 
-  itoa(index-dsl_word_main_display_idx*DSL_WORD_MAIN_DISPLAY_NUM+1,tmp, 10);
-  GUI_UTF8ToWstr(wstr0,10,tmp, strlen(tmp)+1);
-  text0.wstr_len = MMIAPICOM_Wstrlen(wstr0);
-  text0.wstr_ptr = wstr0;
-  item_data.item_content[1].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
-  item_data.item_content[1].item_data.text_buffer = text0;
+	itoa(index-dsl_word_main_display_idx*DSL_WORD_MAIN_DISPLAY_NUM+1,tmp, 10);
+	GUI_UTF8ToWstr(wstr0,10,tmp, strlen(tmp)+1);
+	text0.wstr_len = MMIAPICOM_Wstrlen(wstr0);
+	text0.wstr_ptr = wstr0;
+	item_data.item_content[1].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
+	item_data.item_content[1].item_data.text_buffer = text0;
 
-  GUI_UTF8ToWstr(wstr1,24,books[index]->name, strlen(books[index]->name)+1);
-  text1.wstr_len = MMIAPICOM_Wstrlen(wstr1);
-  text1.wstr_ptr = wstr1;
-  item_data.item_content[2].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
-  item_data.item_content[2].item_data.text_buffer = text1;
+	GUI_UTF8ToWstr(wstr1,24,books[index]->name, strlen(books[index]->name)+1);
+	text1.wstr_len = MMIAPICOM_Wstrlen(wstr1);
+	text1.wstr_ptr = wstr1;
+	item_data.item_content[2].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
+	item_data.item_content[2].item_data.text_buffer = text1;
 
-  GUI_UTF8ToWstr(wstr,24,books[index]->editionName, strlen(books[index]->editionName)+1);
-  text.wstr_len = MMIAPICOM_Wstrlen(wstr);
-  text.wstr_ptr = wstr;
-  item_data.item_content[3].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
-  item_data.item_content[3].item_data.text_buffer = text;
+	GUI_UTF8ToWstr(wstr,24,books[index]->editionName, strlen(books[index]->editionName)+1);
+	text.wstr_len = MMIAPICOM_Wstrlen(wstr);
+	text.wstr_ptr = wstr;
+	item_data.item_content[3].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
+	item_data.item_content[3].item_data.text_buffer = text;
 
-  GUILIST_AppendItem(ctrl_id, &item_t);
+	GUILIST_AppendItem(ctrl_id, &item_t);
 }
-LOCAL void appendCHItem(MMI_CTRL_ID_T ctrl_id, char *data,MMI_IMAGE_ID_T image_id) {
-  GUILIST_ITEM_T item_t = {0};
-  GUILIST_ITEM_DATA_T item_data = {0};
-  GUI_COLOR_T list_color = {0};
+LOCAL void appendCHItem(MMI_CTRL_ID_T ctrl_id, char *data,MMI_IMAGE_ID_T image_id)
+{
+	GUILIST_ITEM_T item_t = {0};
+	GUILIST_ITEM_DATA_T item_data = {0};
+	GUI_COLOR_T list_color = {0};
 
-  MMI_STRING_T text = {0};
-  uint16 wstr[100] = {0};
-  GUI_UTF8ToWstr(wstr,30, data, strlen(data)+1);
-  text.wstr_len = MMIAPICOM_Wstrlen(wstr);
-  text.wstr_ptr = wstr;
+	MMI_STRING_T text = {0};
+	uint16 wstr[100] = {0};
+	GUI_UTF8ToWstr(wstr,30, data, strlen(data)+1);
+	text.wstr_len = MMIAPICOM_Wstrlen(wstr);
+	text.wstr_ptr = wstr;
 
-  item_t.item_style = GUIITEM_SYTLE_DSL_CHECK;
+	item_t.item_style = GUIITEM_SYTLE_DSL_CHECK;
 
-  item_t.item_data_ptr = &item_data;
-  item_data.item_content[0].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
-  item_data.item_content[0].item_data.text_buffer = text;
+	item_t.item_data_ptr = &item_data;
+	item_data.item_content[0].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
+	item_data.item_content[0].item_data.text_buffer = text;
 
-  item_data.item_content[1].item_data_type = GUIITEM_DATA_IMAGE_ID;
-  item_data.item_content[1].item_data.image_id = image_id;
+	item_data.item_content[1].item_data_type = GUIITEM_DATA_IMAGE_ID;
+	item_data.item_content[1].item_data.image_id = image_id;
 
-  GUILIST_AppendItem(ctrl_id, &item_t);
+	GUILIST_AppendItem(ctrl_id, &item_t);
 }
-LOCAL void LayoutItem(MMI_CTRL_ID_T ctrl_id, int16 left, int16 right, int16 top,
-                      int16 bottom) {
-  GUI_BOTH_RECT_T both_rect = {0};
-  both_rect.h_rect.right = right;
-  both_rect.h_rect.left = left;
-  both_rect.h_rect.top = top;
-  both_rect.h_rect.bottom = bottom;
+LOCAL void LayoutItem(MMI_CTRL_ID_T ctrl_id, int16 left, int16 right, int16 top,int16 bottom) 
+{
+	GUI_BOTH_RECT_T both_rect = {0};
+	both_rect.h_rect.right = right;
+	both_rect.h_rect.left = left;
+	both_rect.h_rect.top = top;
+	both_rect.h_rect.bottom = bottom;
 
-  both_rect.v_rect.right = right;
-  both_rect.v_rect.left = left;
-  both_rect.v_rect.top = top;
-  both_rect.v_rect.bottom = bottom;
-  GUIAPICTRL_SetBothRect(ctrl_id, &both_rect);
+	both_rect.v_rect.right = right;
+	both_rect.v_rect.left = left;
+	both_rect.v_rect.top = top;
+	both_rect.v_rect.bottom = bottom;
+	GUIAPICTRL_SetBothRect(ctrl_id, &both_rect);
 
-  return;
+	return;
 }
-LOCAL void InitButton(MMI_CTRL_ID_T ctrl_id) {
-  GUI_FONT_ALL_T font = {0};
-  GUI_BORDER_T btn_border = {1, MMI_BLACK_COLOR, GUI_BORDER_SOLID};
-  font.font = SONG_FONT_16;
-  font.color = MMI_BLACK_COLOR;
-  GUIBUTTON_SetBorder(ctrl_id, &btn_border, FALSE);
-  GUIBUTTON_SetFont(ctrl_id, &font);
+LOCAL void InitButton(MMI_CTRL_ID_T ctrl_id)
+{
+	GUI_FONT_ALL_T font = {0};
+	GUI_BORDER_T btn_border = {1, MMI_BLACK_COLOR, GUI_BORDER_SOLID};
+	font.font = SONG_FONT_16;
+	font.color = MMI_BLACK_COLOR;
+	GUIBUTTON_SetBorder(ctrl_id, &btn_border, FALSE);
+	GUIBUTTON_SetFont(ctrl_id, &font);
 }
 
 LOCAL void loadLocalBookCH(char * path,char *basepath)
@@ -366,7 +368,7 @@ LOCAL void loadLocalBookCH(char * path,char *basepath)
 	dsl_chapter_display_idx=0;
 	releaseChapters();
 
-	data=dsl_file_data_read(path,&data_size);
+	data = dsl_file_data_read(path,&data_size);
 	if(data_size>0){
 		cJSON *root = cJSON_Parse(data);
 		cJSON *chList = cJSON_GetObjectItem(root, "F_list");
@@ -415,7 +417,7 @@ LOCAL void requestWordCh(){
 		sprintf(url, "v1/card/book/chapterList?F_book_id=%s&F_filter_word=1",books[pageInfo->bookIdx+dsl_word_main_display_idx*DSL_WORD_MAIN_DISPLAY_NUM]->id);
 		SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
 		request_http_win_ch_idx++;
-            MMIZDT_HTTP_AppSend(TRUE, BASE_URL_PATH, url, strlen(url), 1000, 0, 0, 0, 0, 0, parseChapterResponse);
+		MMIZDT_HTTP_AppSend(TRUE, BASE_URL_PATH, url, strlen(url), 1000, 0, 0, 0, 0, 0, parseChapterResponse);
 	}
 }
 
@@ -586,14 +588,16 @@ LOCAL void autodisplay_loading_tip(uint type)
 	MMK_StartTimerCallback(autodisplay_tip_timer, 2000, autodisplay_loading_tip_timeout, (uint32)0, FALSE);
 }
 
-LOCAL MMI_RESULT_E clickAutoPlay() {
+LOCAL MMI_RESULT_E clickAutoPlay()
+{
 	MMI_RESULT_E result = MMI_RESULT_TRUE;
 	is_autoplay=1;
 	autodisplay_loading_tip(1);
 	MMK_SendMsg(MMI_WORD_CH_WIN_ID, MSG_FULL_PAINT, PNULL);
 	return result;
 }
-LOCAL MMI_RESULT_E clickDisAutoPlay() {
+LOCAL MMI_RESULT_E clickDisAutoPlay()
+{
 	MMI_RESULT_E result = MMI_RESULT_TRUE;
 	is_autoplay=0;
 	autodisplay_loading_tip(2);
@@ -607,9 +611,10 @@ LOCAL MMI_RESULT_E HandleWordCHWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_i
 {
   MMI_RESULT_E recode = MMI_RESULT_TRUE;
   switch (msg_id) {
-    case MSG_OPEN_WINDOW: {
-             GUI_RECT_T list_rect = {0, 25, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT};
-             GUI_RECT_T title_rect = {0};
+    case MSG_OPEN_WINDOW: 
+	{
+		GUI_RECT_T list_rect = {0, 25, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT};
+		GUI_RECT_T title_rect = {0};
 		GUI_BORDER_T btn_border = {1, MMI_BLACK_COLOR, GUI_BORDER_SOLID};
 		GUI_FONT_ALL_T font = {0};
 		font.font = SONG_FONT_16;
@@ -623,8 +628,8 @@ LOCAL MMI_RESULT_E HandleWordCHWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_i
 		GUIBUTTON_SetFont(MMI_DSL_WORD_CH_LABEL_BACK, &font);
 		GUIBUTTON_SetTextAlign(MMI_DSL_WORD_CH_LABEL_BACK,ALIGN_LVMIDDLE);
 
-            list_rect = word_list_rect;
-            list_rect.bottom -= WORD_CARD_LINE_HIGHT;
+		list_rect = word_list_rect;
+		list_rect.bottom -= WORD_CARD_LINE_HIGHT;
 		GUILIST_SetRect(MMI_DSL_WORD_CH_LIST_CONTENT, &list_rect);
 		GUILIST_SetListState(MMI_DSL_WORD_CH_LIST_CONTENT,GUILIST_STATE_SPLIT_LINE, TRUE);
 		GUILIST_SetListState(MMI_DSL_WORD_CH_LIST_CONTENT, GUILIST_STATE_FOCUS,TRUE);
@@ -851,7 +856,7 @@ LOCAL void openNextCh()
 		return;
 	}
 	if(newWords!=PNULL){
-             char url[200] = {0};
+		char url[200] = {0};
 		char json[350]={0};
 		if(newWords_ex!=PNULL)
 		{
@@ -863,8 +868,8 @@ LOCAL void openNextCh()
 		newWords=PNULL;
 		sprintf(json,"{\"cardId\":\"%s\",\"bookId\":\"%s\",\"sectionId\":\"%s\",\"word\":\"%s\"}",
 					BASE_DEVICE_IMEI,books[pageInfo->bookIdx+dsl_word_main_display_idx*DSL_WORD_MAIN_DISPLAY_NUM]->id, chapters[pageInfo->chapterIdx]->id,newWords_ex);
-            sprintf(url, "%s%s", BASE_URL_PATH, "v1/card/word/collect");
-            MMIZDT_HTTP_AppSend(FALSE, url, json, strlen(json), 1000, 0, 0, 0, 0, 0, parseNewWordResponse);
+		sprintf(url, "%s%s", BASE_URL_PATH, "v1/card/word/collect");
+		MMIZDT_HTTP_AppSend(FALSE, url, json, strlen(json), 1000, 0, 0, 0, 0, 0, parseNewWordResponse);
 	}
 	pageInfo->chapterIdx++;
 	pageInfo->total = 0;
@@ -908,7 +913,7 @@ LOCAL void loadLocalWordMp3(int position)
 	strcat(path,LOCAL_BOOK_DIR);
 	strcat(path,path_h);
 
-	data=dsl_file_data_read(path,&data_size);
+	data = dsl_file_data_read(path,&data_size);
 	if(data_size>0&&data!=PNULL)
 	{
 		words[position]->uk_audio_data_len=data_size;
@@ -936,7 +941,6 @@ LOCAL void loadLocalWordMp3(int position)
 	{
 		words[position]->uk_audio_data_len=-2;
 	}
-	
 }
 
 LOCAL void LoadWordInfo(int position) {
@@ -978,9 +982,9 @@ LOCAL void LoadWordInfo(int position) {
 			GUIBUTTON_SetVisible(MMI_DSL_WORD_MSG_SP1_BTN_ID,FALSE,FALSE);
 		}else{
 			GUIBUTTON_SetVisible(MMI_DSL_WORD_MSG_SP1_BTN_ID,TRUE,FALSE);
-                    uk_rect.left = text_width_piex + 10;
-                    uk_rect.right = uk_rect.left + 20;
-                    GUIBUTTON_SetRect(MMI_DSL_WORD_MSG_SP1_BTN_ID, &uk_rect);
+			uk_rect.left = text_width_piex + 10;
+			uk_rect.right = uk_rect.left + 20;
+			GUIBUTTON_SetRect(MMI_DSL_WORD_MSG_SP1_BTN_ID, &uk_rect);
 			//LayoutItem(MMI_DSL_WORD_MSG_SP1_BTN_ID,  text_width_piex+30,  text_width_piex+70, 62, 106);
 			GUIBUTTON_SetCallBackFunc(MMI_DSL_WORD_MSG_SP1_BTN_ID,PlayWordUkSound);
 		}
@@ -992,8 +996,8 @@ LOCAL void LoadWordInfo(int position) {
 		GUIBUTTON_SetVisible(MMI_DSL_WORD_MSG_SP1_BTN_ID,TRUE,FALSE);
 		//LayoutItem(MMI_DSL_WORD_MSG_SP1_BTN_ID,  text_width_piex+24,  text_width_piex+64, 94, 134);
 		uk_rect.left = text_width_piex + 10;
-             uk_rect.right = uk_rect.left + 20;
-             GUIBUTTON_SetRect(MMI_DSL_WORD_MSG_SP1_BTN_ID, &uk_rect);
+		uk_rect.right = uk_rect.left + 20;
+		GUIBUTTON_SetRect(MMI_DSL_WORD_MSG_SP1_BTN_ID, &uk_rect);
 		GUIBUTTON_SetCallBackFunc(MMI_DSL_WORD_MSG_SP1_BTN_ID,PlayWordUkSound);
 		LCD_DrawHLine(&lcd_dev_info, word_uk_rect.left, uk_rect.bottom+5, word_uk_rect.right, MMI_BLACK_COLOR);
 	}
@@ -1042,7 +1046,7 @@ LOCAL MMI_RESULT_E HandleWordCardWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg
 		case MSG_OPEN_WINDOW: 
 		{
 			GUI_FONT_ALL_T font = {0};
-                    GUI_RECT_T title_rect = {0, 0, MMI_MAINSCREEN_WIDTH-40, WORD_CARD_LINE_HIGHT};
+			GUI_RECT_T title_rect = {0, 0, MMI_MAINSCREEN_WIDTH-40, WORD_CARD_LINE_HIGHT};
 			GUI_FONT_T text_font = SONG_FONT_16;
 			GUI_COLOR_T text_color = MMI_BLACK_COLOR;
             
@@ -1054,11 +1058,11 @@ LOCAL MMI_RESULT_E HandleWordCardWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg
 			GUIBUTTON_SetTextAlign(MMI_DSL_WORD_LABEL_TITLE_ID,ALIGN_LVMIDDLE);
 			GUIBUTTON_SetCallBackFunc(MMI_DSL_WORD_LABEL_TITLE_ID,closeWordCardWin);
 
-                    GUILABEL_SetRect(MMI_DSL_WORD_LABEL_MESSAGE_ID, &word_msg_rect, FALSE);
+			GUILABEL_SetRect(MMI_DSL_WORD_LABEL_MESSAGE_ID, &word_msg_rect, FALSE);
 
-                    title_rect.left = word_title_rect.right;
-                    title_rect.right = MMI_MAINSCREEN_WIDTH;
-                    GUILABEL_SetRect(MMI_DSL_WORD_LABEL_NUM_ID, &title_rect, FALSE);
+			title_rect.left = word_title_rect.right;
+			title_rect.right = MMI_MAINSCREEN_WIDTH;
+			GUILABEL_SetRect(MMI_DSL_WORD_LABEL_NUM_ID, &title_rect, FALSE);
 			GUILABEL_SetFont(MMI_DSL_WORD_LABEL_NUM_ID, SONG_FONT_16,MMI_BLACK_COLOR);
 			GUILABEL_SetFont(MMI_DSL_WORD_MSG_SP1_ID, SONG_FONT_16,MMI_BLACK_COLOR);
 			GUILABEL_SetFont(MMI_DSL_WORD_MSG_LABEL_ID, SONG_FONT_20,MMI_BLACK_COLOR);
@@ -1305,7 +1309,7 @@ LOCAL MMI_RESULT_E HandleWordCardWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg
 		{
 		}
 		break;
-             case MSG_KEYUP_RED:
+		case MSG_KEYUP_RED:
 		case MSG_KEYUP_CANCEL:
 			closeWordCardWin();
 		break;
@@ -1336,12 +1340,12 @@ LOCAL BOOLEAN word_PlayMp3Notify(MMISRV_HANDLE_T handle, MMISRVMGR_NOTIFY_PARAM_
 				case MMISRVAUD_REPORT_END:
 					{
 						if (MMISRVAUD_REPORT_RESULT_STOP != report_ptr->data1)
-	                    			{
-	                        			if (MMISRVAUD_REPORT_RESULT_SUCESS != report_ptr->data1)
-	                        			{
-	                            			result = FALSE;
-	                        			}
-	                    			}
+						{
+							if (MMISRVAUD_REPORT_RESULT_SUCESS != report_ptr->data1)
+							{
+								result = FALSE;
+							}
+						}
 					}
 					break;
 				default:
@@ -1360,55 +1364,55 @@ LOCAL BOOLEAN word_RequestHandle(
                         )
 {
 	MMISRVMGR_SERVICE_REQ_T req = {0};
-    	MMISRVAUD_TYPE_T audio_srv = {0};
+    MMISRVAUD_TYPE_T audio_srv = {0};
     
-    	req.notify = notify;
-    	req.pri = MMISRVAUD_PRI_NORMAL;
+    req.notify = notify;
+    req.pri = MMISRVAUD_PRI_NORMAL;
 
-    	audio_srv.duation = 0;
-    	audio_srv.eq_mode = 0;
-    	audio_srv.is_mixing_enable = FALSE;
-    	audio_srv.play_times = 1;
-    	audio_srv.all_support_route = route;
-    	audio_srv.volume = MMIAPISET_GetMultimVolume();
+    audio_srv.duation = 0;
+    audio_srv.eq_mode = 0;
+    audio_srv.is_mixing_enable = FALSE;
+    audio_srv.play_times = 1;
+    audio_srv.all_support_route = route;
+    audio_srv.volume = MMIAPISET_GetMultimVolume();
 
-      	audio_srv.info.record_file.type = audio_data->type;        
-       audio_srv.info.record_file.fmt  = audio_data->record_file.fmt;
-       audio_srv.info.record_file.name = audio_data->record_file.name;
-       audio_srv.info.record_file.name_len = audio_data->record_file.name_len;    
-       audio_srv.info.record_file.source   = audio_data->record_file.source;
-       audio_srv.info.record_file.frame_len= audio_data->record_file.frame_len;
-       audio_srv.volume = AUD_MAX_SPEAKER_VOLUME;
+	audio_srv.info.record_file.type = audio_data->type;        
+	audio_srv.info.record_file.fmt  = audio_data->record_file.fmt;
+	audio_srv.info.record_file.name = audio_data->record_file.name;
+	audio_srv.info.record_file.name_len = audio_data->record_file.name_len;    
+	audio_srv.info.record_file.source   = audio_data->record_file.source;
+	audio_srv.info.record_file.frame_len= audio_data->record_file.frame_len;
+	audio_srv.volume = AUD_MAX_SPEAKER_VOLUME;
 
-    	*audio_handle = MMISRVMGR_Request(STR_SRV_AUD_NAME, &req, &audio_srv);
+	*audio_handle = MMISRVMGR_Request(STR_SRV_AUD_NAME, &req, &audio_srv);
 
-    	if(*audio_handle > 0)
-    	{
-        	return TRUE;
-    	}
-    	else
-    	{
-        	return FALSE;
-    	}
+	if(*audio_handle > 0)
+	{
+		return TRUE;
+	}
+	else
+	{
+		return FALSE;
+	}
 }
 
 PUBLIC void word_playMp3Data(char* file_name)
 {
 	uint8 ret = 0;
 	BOOLEAN result = FALSE;
-    	MMIRECORD_SRV_RESULT_E srv_result = MMIRECORD_SRV_RESULT_SUCCESS;
-    	MMISRV_HANDLE_T audio_handle = PNULL;
-    	uint16      full_path[255] = {0};
-    	uint16      full_path_len = 0;
-    	MMISRVAUD_TYPE_U    audio_data  = {0};
+	MMIRECORD_SRV_RESULT_E srv_result = MMIRECORD_SRV_RESULT_SUCCESS;
+	MMISRV_HANDLE_T audio_handle = PNULL;
+	uint16 full_path[255] = {0};
+	uint16 full_path_len = 0;
+	MMISRVAUD_TYPE_U audio_data  = {0};
 
 	ChatStopMp3Data();
 
 	full_path_len = GUI_GBToWstr(full_path, (const uint8*)file_name, SCI_STRLEN(file_name));
-    	audio_data.ring_file.type = MMISRVAUD_TYPE_RING_FILE;
-    	audio_data.ring_file.name = full_path;
-    	audio_data.ring_file.name_len = full_path_len;
-    	audio_data.ring_file.fmt  = (MMISRVAUD_RING_FMT_E)MMIAPICOM_GetMusicType(audio_data.ring_file.name, audio_data.ring_file.name_len);
+	audio_data.ring_file.type = MMISRVAUD_TYPE_RING_FILE;
+	audio_data.ring_file.name = full_path;
+	audio_data.ring_file.name_len = full_path_len;
+	audio_data.ring_file.fmt  = (MMISRVAUD_RING_FMT_E)MMIAPICOM_GetMusicType(audio_data.ring_file.name, audio_data.ring_file.name_len);
 
 	if(listening_total_count > 0){
 		result = word_RequestHandle(&audio_handle, MMISRVAUD_ROUTE_NONE, &audio_data, ChatPlayAudioDataNotify);
@@ -1416,22 +1420,22 @@ PUBLIC void word_playMp3Data(char* file_name)
 		result = word_RequestHandle(&audio_handle, MMISRVAUD_ROUTE_NONE, &audio_data, word_PlayMp3Notify);
 	}
    	if(result)
-    	{
-        	mp3_player_handle = audio_handle;
+	{
+		mp3_player_handle = audio_handle;
 		MMISRVAUD_SetVolume(audio_handle, MMIAPISET_GetMultimVolume());
-        	if(!MMISRVAUD_Play(audio_handle, 0))
-        	{     
-            		SCI_TRACE_LOW("%s: MMISRVAUD_Play failed", __FUNCTION__);
-            		MMISRVMGR_Free(mp3_player_handle);
-            		mp3_player_handle = 0;
-            		ret = 1;
-        	}
-    	}
+		if(!MMISRVAUD_Play(audio_handle, 0))
+		{     
+			SCI_TRACE_LOW("%s: MMISRVAUD_Play failed", __FUNCTION__);
+			MMISRVMGR_Free(mp3_player_handle);
+			mp3_player_handle = 0;
+			ret = 1;
+		}
+	}
 	SCI_TRACE_LOW("%s: ret = %d", __FUNCTION__, ret);
-    	if (ret != 0)
-    	{
-       	mp3_player_handle = NULL;
-    	}
+	if (ret != 0)
+	{
+		mp3_player_handle = NULL;
+	}
 }
 
 LOCAL BOOLEAN ChatPlayMp3DataNotify(MMISRV_HANDLE_T handle, MMISRVMGR_NOTIFY_PARAM_T *param)
@@ -1716,7 +1720,7 @@ LOCAL void requestBookInfo() {
 	sprintf(url, "v1/card/bookList?F_card_id=%s", BASE_DEVICE_IMEI);
 	SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
 	request_http_win_main_idx++;
-       MMIZDT_HTTP_AppSend(TRUE, BASE_URL_PATH, url, strlen(url), 1000, 0, 0, 0, 0, 0, parseBookResponse);
+	MMIZDT_HTTP_AppSend(TRUE, BASE_URL_PATH, url, strlen(url), 1000, 0, 0, 0, 0, 0, parseBookResponse);
 }
 
 LOCAL void parseBookResponse(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id) 
@@ -1920,14 +1924,14 @@ LOCAL void parseWordResponse(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 er
 }
 
 LOCAL MMI_RESULT_E closeWordCardWin() {
-  MMI_RESULT_E result = MMI_RESULT_TRUE;
+	MMI_RESULT_E result = MMI_RESULT_TRUE;
 	if(GetCanntClick(0))
 	{
 		SCI_TRACE_LOW("%s can not click", __FUNCTION__);
 		return result;
 	}
 	if(newWords!=PNULL){
-             char url[200] = {0};
+		char url[200] = {0};
 		char json[350]={0};
 		if(newWords_ex!=PNULL)
 		{
@@ -1939,17 +1943,17 @@ LOCAL MMI_RESULT_E closeWordCardWin() {
 		newWords=PNULL;
 		sprintf(json,"{\"cardId\":\"%s\",\"bookId\":\"%s\",\"sectionId\":\"%s\",\"word\":\"%s\"}",
 				BASE_DEVICE_IMEI,books[pageInfo->bookIdx+dsl_word_main_display_idx*DSL_WORD_MAIN_DISPLAY_NUM]->id, chapters[pageInfo->chapterIdx]->id,newWords_ex);
-             sprintf(url, "%s%s", BASE_URL_PATH, "v1/card/word/collect");
-             MMIZDT_HTTP_AppSend(FALSE, url, json, strlen(json), 1000, 0, 0, 0, 0, 0, parseNewWordResponse);
+		sprintf(url, "%s%s", BASE_URL_PATH, "v1/card/word/collect");
+		MMIZDT_HTTP_AppSend(FALSE, url, json, strlen(json), 1000, 0, 0, 0, 0, 0, parseNewWordResponse);
 	}
 
-  MMK_CloseWin(MMI_WORD_CARD_WIN_ID);
-  pageInfo->total = 0;
-  pageInfo->realIdx = 0;
-  pageInfo->curPage = 0;
-  pageInfo->curPageNum = 0;
-  pageInfo->curIdx = -1;
-  releaseWords();
+	MMK_CloseWin(MMI_WORD_CARD_WIN_ID);
+	pageInfo->total = 0;
+	pageInfo->realIdx = 0;
+	pageInfo->curPage = 0;
+	pageInfo->curPageNum = 0;
+	pageInfo->curIdx = -1;
+	releaseWords();
 }
 
 LOCAL MMI_RESULT_E wordMainRefresh(){
@@ -1964,7 +1968,6 @@ LOCAL MMI_RESULT_E wordMainRefresh(){
 	MMK_PostMsg(MMI_WORD_WIN_ID, MSG_FULL_PAINT, PNULL, 0);
 	return result;
 }
-
 
 LOCAL MMI_RESULT_E wordChRefresh(){
 	MMI_RESULT_E result = MMI_RESULT_TRUE;
@@ -2155,13 +2158,13 @@ LOCAL void parseNewWordResponse(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32
 	{
 		if(newWords_ex!=PNULL&&newWordsReNum<3)
 		{
-		       char url[200] = {0};
+			char url[200] = {0};
 			char json[350]={0};
 			newWordsReNum++;
 			sprintf(json,"{\"cardId\":\"%s\",\"bookId\":\"%s\",\"sectionId\":\"%s\",\"word\":\"%s\"}",
 						BASE_DEVICE_IMEI,books[pageInfo->bookIdx+dsl_word_main_display_idx*DSL_WORD_MAIN_DISPLAY_NUM]->id, chapters[pageInfo->chapterIdx]->id,newWords_ex);
-                    sprintf(url, "%s%s", BASE_URL_PATH, "v1/card/word/collect");
-                    MMIZDT_HTTP_AppSend(FALSE, url, json, strlen(json), 1000, 0, 0, 0, 0, 0, parseNewWordResponse);
+			sprintf(url, "%s%s", BASE_URL_PATH, "v1/card/word/collect");
+			MMIZDT_HTTP_AppSend(FALSE, url, json, strlen(json), 1000, 0, 0, 0, 0, 0, parseNewWordResponse);
 		}
 	}
 }
@@ -2192,7 +2195,7 @@ LOCAL MMI_RESULT_E setWordToNew() {
 	{
 		if(newWords==PNULL)
 		{
-			newWords=SCI_ALLOCA(256);
+			newWords = SCI_ALLOCA(256);
 			SCI_MEMSET(newWords,0,256);
 		}
 		strcat(newWords,words[pageInfo->curIdx]->word);
@@ -2200,7 +2203,7 @@ LOCAL MMI_RESULT_E setWordToNew() {
              SCI_TRACE_LOW("%s: strlen(newWords) = %d", __FUNCTION__, strlen(newWords));
 		if(strlen(newWords)>100)
 		{
-		       char url[200] = {0};
+			char url[200] = {0};
 			char json[350]={0};
 			if(newWords_ex!=PNULL)
 			{
@@ -2212,10 +2215,10 @@ LOCAL MMI_RESULT_E setWordToNew() {
 			newWords=PNULL;
 			sprintf(json,"{\"cardId\":\"%s\",\"bookId\":\"%s\",\"sectionId\":\"%s\",\"word\":\"%s\"}",
 						BASE_DEVICE_IMEI,books[pageInfo->bookIdx+dsl_word_main_display_idx*DSL_WORD_MAIN_DISPLAY_NUM]->id, chapters[pageInfo->chapterIdx]->id,newWords_ex);
-                    sprintf(url, "%s%s", BASE_URL_PATH, "v1/card/word/collect");
-                    SCI_TRACE_LOW("%s: json = %s", __FUNCTION__, json);
-                    SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
-                    MMIZDT_HTTP_AppSend(FALSE, url, json, strlen(json), 1000, 0, 0, 0 ,0, 0, parseNewWordResponse);
+			sprintf(url, "%s%s", BASE_URL_PATH, "v1/card/word/collect");
+			SCI_TRACE_LOW("%s: json = %s", __FUNCTION__, json);
+			SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
+			MMIZDT_HTTP_AppSend(FALSE, url, json, strlen(json), 1000, 0, 0, 0 ,0, 0, parseNewWordResponse);
 		}
 	}
 	pageInfo->realIdx++;
@@ -2285,7 +2288,7 @@ LOCAL void parseNewWordDeleteResponse(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,
 
 LOCAL MMI_RESULT_E deleteNewWordCard() {
 	MMI_RESULT_E result = MMI_RESULT_TRUE;
-       char url[200] = {0};
+	char url[200] = {0};
 	char json[255]={0};
 	if(is_display_tip==3)
 	{
@@ -2307,8 +2310,8 @@ LOCAL MMI_RESULT_E deleteNewWordCard() {
 
 	sprintf(json,"{\"cardId\":\"%s\",\"bookId\":\"%s\",\"sectionId\":\"%s\",\"word\":\"%s\"}",
 				BASE_DEVICE_IMEI,books[pageInfo->bookIdx+dsl_word_main_display_idx*DSL_WORD_MAIN_DISPLAY_NUM]->id, chapters[pageInfo->chapterIdx]->id,words[pageInfo->curIdx]->word);
-       sprintf(url, "%s%s", BASE_URL_PATH, "v1/card/word/collect/delete");
-       MMIZDT_HTTP_AppSend(FALSE, url, json, strlen(json), 1000, 0, 0, 0, 0, 0, parseNewWordDeleteResponse);
+	sprintf(url, "%s%s", BASE_URL_PATH, "v1/card/word/collect/delete");
+	MMIZDT_HTTP_AppSend(FALSE, url, json, strlen(json), 1000, 0, 0, 0, 0, 0, parseNewWordDeleteResponse);
 
 	return result;
 }
@@ -2379,25 +2382,25 @@ LOCAL MMI_RESULT_E openNextCard() {
 	return result;
 }
 LOCAL MMI_RESULT_E closeWordWin() {
-  MMI_RESULT_E result = MMI_RESULT_TRUE;
+	MMI_RESULT_E result = MMI_RESULT_TRUE;
   	if(GetCanntClick(0))
 	{
 		SCI_TRACE_LOW("%s can not click", __FUNCTION__);
 		return result;
 	}
 	releaseBooks();
-  MMK_CloseWin(MMI_WORD_WIN_ID);
-  return result;
+	MMK_CloseWin(MMI_WORD_WIN_ID);
+	return result;
 }
 LOCAL MMI_RESULT_E openCHWin() {
-  MMI_RESULT_E result = MMI_RESULT_TRUE;
-  if(GetCanntClick(1))
+	MMI_RESULT_E result = MMI_RESULT_TRUE;
+	if(GetCanntClick(1))
 	{
 		SCI_TRACE_LOW("%s can not click", __FUNCTION__);
 		return result;
 	}
-  MMK_CreateWin(MMI_WORD_CH_WIN_TAB, PNULL);
-  return result;
+	MMK_CreateWin(MMI_WORD_CH_WIN_TAB, PNULL);
+	return result;
 }
 LOCAL MMI_RESULT_E closeWordCHWin() {
 	MMI_RESULT_E result = MMI_RESULT_TRUE;
@@ -2589,7 +2592,8 @@ LOCAL parseMp3Response(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id)
 				break;
 			}
 		}
-		else{
+		else
+		{
 			break;
 		}
 	}
@@ -2833,8 +2837,6 @@ PUBLIC void MMI_CreateWordWin(void) {
 	MMK_CreateWin((uint32 *)MMI_WORD_WIN_TAB, PNULL);
 }
 
-
-
 //===============================弹窗=========================================
 LOCAL MMI_RESULT_E HandlePopupWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E msg_id, DPARAM param)
 {
@@ -2866,7 +2868,6 @@ LOCAL MMI_RESULT_E HandlePopupWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E msg_i
 				tip_rect.top =  tip_top+30;
 				tip_rect.bottom = tip_top+50;
 
-
 				MMI_GetLabelTextByLang(WORD_TIPS,&tipstr);
 
 				border.width = 2;
@@ -2876,7 +2877,6 @@ LOCAL MMI_RESULT_E HandlePopupWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E msg_i
 				text_style.align = ALIGN_HVMIDDLE;
 				text_style.font = SONG_FONT_16;
 				text_style.font_color = MMI_BLACK_COLOR;
-
 			
 				GUI_FillRect(&lcd_dev_info,rect,MMI_WHITE_COLOR);
 				rect.top=tip_top;
@@ -2886,13 +2886,13 @@ LOCAL MMI_RESULT_E HandlePopupWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E msg_i
 				border.type =  GUI_BORDER_SOLID;
 
 				GUISTR_DrawTextToLCDInRect(
-				(const GUI_LCD_DEV_INFO *)&lcd_dev_info,
-				&tip_rect,
-				&tip_rect,
-				&tipstr,
-				&text_style,
-				GUISTR_STATE_ALIGN,
-				GUISTR_TEXT_DIR_AUTO
+					(const GUI_LCD_DEV_INFO *)&lcd_dev_info,
+					&tip_rect,
+					&tip_rect,
+					&tipstr,
+					&text_style,
+					GUISTR_STATE_ALIGN,
+					GUISTR_TEXT_DIR_AUTO
 				);
 
 				GUI_DisplayBorder(rect_left_small,rect_left_small,&border,&lcd_dev_info);
@@ -2963,7 +2963,6 @@ WINDOW_TABLE(MMIAPI_WORD_TIPS_TAB) = {
 	WIN_HIDE_STATUS,
     END_WIN
 };
-
 
 LOCAL OpenWordRecordTips()
 {

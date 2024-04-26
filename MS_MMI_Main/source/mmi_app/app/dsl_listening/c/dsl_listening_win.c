@@ -162,7 +162,7 @@ LOCAL void ListeningAudioWin_DisplayAudioList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T
 
 		list_color = MMI_WHITE_COLOR;
 		GUILIST_SetBgColor(ctrl_id,list_color);
-             GUILIST_SetTextFont(ctrl_id, SONG_FONT_16, MMI_BLACK_COLOR);
+		GUILIST_SetTextFont(ctrl_id, SONG_FONT_16, MMI_BLACK_COLOR);
 
 		GUILIST_AppendItem(ctrl_id, &item_t);
 	}
@@ -378,7 +378,7 @@ LOCAL MMI_RESULT_E HandleListeningAudioWinMsg(
 			break;
 		case MSG_CLOSE_WINDOW:
 			{
-                           listening_info->item_cur_page = 0;
+				listening_info->item_cur_page = 0;
 				MMIZDT_HTTP_Close();
 			}
 			break;
@@ -487,7 +487,7 @@ LOCAL void ListeningWin_DisplayAlbumList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl
 
 		list_color = MMI_WHITE_COLOR;
 		GUILIST_SetBgColor(ctrl_id,list_color);
-             GUILIST_SetTextFont(ctrl_id, SONG_FONT_16, MMI_BLACK_COLOR);
+		GUILIST_SetTextFont(ctrl_id, SONG_FONT_16, MMI_BLACK_COLOR);
 
 		GUILIST_AppendItem(ctrl_id, &item_t);
 	}
@@ -509,23 +509,23 @@ PUBLIC void ListeningWin_DisplaySecletedClass(MMI_WIN_ID_T win_id, GUI_LCD_DEV_I
 	MMI_CTRL_ID_T ctrl_id_2 = LISTENING_BUTTON_JUR_CTRL_ID;
 	GUI_FONT_ALL_T font_all = {0};
     
-        line4_rect = button_class4_rect;
-        line4_rect.left += 2;
-        line4_rect.right -= 2;
-        line4_rect.top = button_class4_rect.bottom;
-        line4_rect.bottom = line4_rect.top + 1;
+	line4_rect = button_class4_rect;
+	line4_rect.left += 2;
+	line4_rect.right -= 2;
+	line4_rect.top = button_class4_rect.bottom;
+	line4_rect.bottom = line4_rect.top + 1;
 
-        line1_rect = button_class1_rect;
-        line1_rect.left += 2;
-        line1_rect.right -= 2;
-        line1_rect.top = button_class1_rect.bottom;
-        line1_rect.bottom = line1_rect.top + 1;
+	line1_rect = button_class1_rect;
+	line1_rect.left += 2;
+	line1_rect.right -= 2;
+	line1_rect.top = button_class1_rect.bottom;
+	line1_rect.bottom = line1_rect.top + 1;
 
-        line2_rect = button_class2_rect;
-        line2_rect.left += 2;
-        line2_rect.right -= 2;
-        line2_rect.top = button_class2_rect.bottom;
-        line2_rect.bottom = line2_rect.top + 1;
+	line2_rect = button_class2_rect;
+	line2_rect.left += 2;
+	line2_rect.right -= 2;
+	line2_rect.top = button_class2_rect.bottom;
+	line2_rect.bottom = line2_rect.top + 1;
 
 	text_style.align = ALIGN_HVMIDDLE;
 	text_style.font = SONG_FONT_24;	
@@ -698,7 +698,7 @@ LOCAL MMI_RESULT_E HandleListeningWinMsg(
 
 				ListeningWin_DisplaySecletedClass(win_id, lcd_dev_info);
                 win_rect = listen_win_rect;
-                           win_rect.top += 40;
+				win_rect.top += 40;
 				if(listening_info->select_cur_class != SELECT_MODULE_LOCAL)
 				{
 					SCI_TRACE_LOW("listening_load_win: = %d", listening_load_win);
@@ -807,11 +807,11 @@ LOCAL MMI_RESULT_E HandleListeningWinMsg(
 				{
 					SCI_FREE(album_info);
 				}
-                           if(MMK_IsOpenWin(LISTENING_LOCAL_ALBUM_WIN_ID))
+				if(MMK_IsOpenWin(LISTENING_LOCAL_ALBUM_WIN_ID))
 				{
 					MMK_CloseWin(LISTENING_LOCAL_ALBUM_WIN_ID);
 				}
-                           MMIZDT_HTTP_Close();
+				MMIZDT_HTTP_Close();
 			}
 			break;
 		default:
@@ -869,8 +869,8 @@ LOCAL MMI_RESULT_E HandleListeningTipWinMsg(
 			break;
 		case MSG_FULL_PAINT:
 			{
-				GUI_RECT_T win_rect = {30, 30, MMI_MAINSCREEN_WIDTH-30, MMI_MAINSCREEN_HEIGHT-30};
-				GUI_RECT_T ok_rect  = {MMI_MAINSCREEN_WIDTH-90, MMI_MAINSCREEN_HEIGHT-50, MMI_MAINSCREEN_WIDTH-60, MMI_MAINSCREEN_HEIGHT-30};
+				GUI_RECT_T win_rect = {LISTEN_LINE_WIDTH, 3*LISTEN_LINE_HIGHT, 5*LISTEN_LINE_WIDTH, 7*LISTEN_LINE_HIGHT};
+				GUI_RECT_T ok_rect  = {2*LISTEN_LINE_WIDTH, 5.5*LISTEN_LINE_HIGHT, 4*LISTEN_LINE_WIDTH, 7*LISTEN_LINE_HIGHT-10};
 				GUISTR_STATE_T text_state = GUISTR_STATE_ALIGN;
 				GUISTR_STYLE_T text_style = {0};
 				MMI_STRING_T text_string = {0};
@@ -934,7 +934,7 @@ LOCAL MMI_RESULT_E HandleListeningTipWinMsg(
 			break;
 		case MSG_TP_PRESS_UP:
 			{
-                           GUI_RECT_T ok_rect  = {MMI_MAINSCREEN_WIDTH-90, MMI_MAINSCREEN_HEIGHT-50, MMI_MAINSCREEN_WIDTH-60, MMI_MAINSCREEN_HEIGHT-30};
+				GUI_RECT_T ok_rect  = {2*LISTEN_LINE_WIDTH, 5.5*LISTEN_LINE_HIGHT, 4*LISTEN_LINE_WIDTH, 7*LISTEN_LINE_HIGHT-10};
 				GUI_POINT_T point = {0};
 				point.x = MMK_GET_TP_X(param);
 				point.y = MMK_GET_TP_Y(param);

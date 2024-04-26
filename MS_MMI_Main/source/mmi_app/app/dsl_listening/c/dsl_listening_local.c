@@ -188,11 +188,11 @@ LOCAL void ListeningLocalAudioWin_DisplayLocalAudioList(MMI_WIN_ID_T win_id, MMI
 	char name_str[50] = {0};
 	uint8 length = 0;
 
-       local_info = Listening_GetLocalDataInfo();
+	local_info = Listening_GetLocalDataInfo();
 	SCI_TRACE_LOW("%s: audio_count = %d", __FUNCTION__, local_info->module_info[id_index].album_info[0].audio_count);
-       if(local_info->module_info[id_index].album_info[0].audio_count <= 0){
-            return;
-       }
+	if(local_info->module_info[id_index].album_info[0].audio_count <= 0){
+		return;
+	}
 
 	list_init.both_rect.v_rect = listen_list_rect;
 	list_init.both_rect.v_rect.top -= LISTEN_LINE_HIGHT;
@@ -214,8 +214,8 @@ LOCAL void ListeningLocalAudioWin_DisplayLocalAudioList(MMI_WIN_ID_T win_id, MMI
 			__FUNCTION__, length, local_info->module_info[id_index].album_info[0].audio_info[index].audio_name);
 		if(length == 0) continue;
 		Listening_GetFileName(file_str, local_info->module_info[id_index].module_id, 
-			local_info->module_info[id_index].album_info[0].album_id, 
-			local_info->module_info[id_index].album_info[0].audio_info[index].audio_id);
+		local_info->module_info[id_index].album_info[0].album_id, 
+		local_info->module_info[id_index].album_info[0].audio_info[index].audio_id);
 		//if(!dsl_file_exist(file_str))continue;
 		length += 1;
 		item_t.item_style = GUIITEM_STYLE_ONE_ICON_AND_ONE_TEXT_MS;
@@ -268,7 +268,7 @@ LOCAL void ListeningLocalAudioWin_DisplayLocalAudioList(MMI_WIN_ID_T win_id, MMI
 
 		list_color = MMI_WHITE_COLOR;
 		GUILIST_SetBgColor(ctrl_id,list_color);
-             GUILIST_SetTextFont(ctrl_id, SONG_FONT_16, MMI_BLACK_COLOR);
+		GUILIST_SetTextFont(ctrl_id, SONG_FONT_16, MMI_BLACK_COLOR);
 
 		GUILIST_AppendItem(ctrl_id, &item_t);
 	}
@@ -392,7 +392,7 @@ LOCAL MMI_RESULT_E HandleListeningLocalAudioWinMsg(
 
 				total_page = listening_info->local_audio_total / AUDIO_LIST_SHOW_ITEM_MAX;
 				if(listening_info->local_audio_total % AUDIO_LIST_SHOW_ITEM_MAX != 0)
-				{
+				{
 					total_page++;
 				}
 				sprintf(num_buf, "%d/%d", listening_info->local_audio_cur + 1, total_page);
@@ -423,12 +423,12 @@ LOCAL MMI_RESULT_E HandleListeningLocalAudioWinMsg(
 				if(!delete_info.is_select_delete)
 				{
 					listening_info->local_audio_cur = 0;
-                                 if(1){
-                                        //use for simulator test
-                                        MMIREADBOY_TestToOpenPlayerWin();
-                                 }else{
-					       ListeningLocalAudioWin_SelectOpenAudio(id_index, index);
-                                 }
+					if(1){
+						//use for simulator test
+						MMIREADBOY_TestToOpenPlayerWin();
+					}else{
+						ListeningLocalAudioWin_SelectOpenAudio(id_index, index);
+					}
 				}
 				else
 				{
@@ -468,7 +468,7 @@ LOCAL MMI_RESULT_E HandleListeningLocalAudioWinMsg(
 				GUI_POINT_T point = {0};
 				point.x = MMK_GET_TP_X(param);
 				point.y = MMK_GET_TP_Y(param);
-                           if(GUI_PointIsInRect(point, listen_del_all_rect) && !delete_info.is_select_delete)
+				if(GUI_PointIsInRect(point, listen_del_all_rect) && !delete_info.is_select_delete)
 				{
 					delete_info.is_select_delete = TRUE;
 					MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
@@ -609,7 +609,7 @@ PUBLIC void ListeningLocalWin_DisplayLocalAlbumList(MMI_WIN_ID_T win_id, MMI_CTR
 	wchar name_wchar[50] = {0};
 	char name_str[50] = {0};
 	uint8 length = 0;
-      MMI_STRING_T text_string = {0};
+	MMI_STRING_T text_string = {0};
 
 	list_init.both_rect.v_rect = listen_list_rect;
 	list_init.type = GUILIST_TEXTLIST_E;
@@ -680,7 +680,7 @@ PUBLIC void ListeningLocalWin_DisplayLocalAlbumList(MMI_WIN_ID_T win_id, MMI_CTR
 
 		list_color = MMI_WHITE_COLOR;
 		GUILIST_SetBgColor(ctrl_id,list_color);
-             GUILIST_SetTextFont(ctrl_id, SONG_FONT_24, MMI_BLACK_COLOR);
+		GUILIST_SetTextFont(ctrl_id, SONG_FONT_24, MMI_BLACK_COLOR);
 
 		GUILIST_AppendItem(ctrl_id, &item_t);
 	}
@@ -709,7 +709,7 @@ PUBLIC void ListeningLocalWin_DisplayListAndDir(MMI_WIN_ID_T win_id)
 	SCI_TRACE_LOW("%s: listening_info->local_album_total = %d", __FUNCTION__, listening_info->local_album_total);
 	if(listening_info->local_album_total == 0 || listening_info->local_album_total > 12)
 	{
-             win_rect.top += 40;
+		win_rect.top += 40;
 		MMIRES_GetText(READBOY_TXT_NO_LOCAL, win_id, &text_string);
 		GUISTR_DrawTextToLCDInRect(
 			(const GUI_LCD_DEV_INFO *)&lcd_dev_info,

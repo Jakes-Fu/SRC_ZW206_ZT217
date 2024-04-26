@@ -70,7 +70,6 @@ LOCAL GUI_RECT_T listening_rect_decrese = {10, 8*LISTEN_LINE_HIGHT+5, 2*LISTEN_L
 LOCAL GUI_RECT_T listening_rect_volume = {LISTEN_LINE_WIDTH, 8*LISTEN_LINE_HIGHT, 1.5*LISTEN_LINE_WIDTH, 9*LISTEN_LINE_HIGHT};
 LOCAL GUI_RECT_T listening_rect_increse = {5*LISTEN_LINE_WIDTH+5, 8*LISTEN_LINE_HIGHT+5, MMI_MAINSCREEN_WIDTH, 9*LISTEN_LINE_HIGHT+5};
 
-
 LOCAL void ListeningPlayer_InitPlayerInfo(void);
 LOCAL void ListeningPlayer_ButtonPreCallback(void);
 LOCAL void ListeningPlayer_ButtonNextCallback(void);
@@ -79,7 +78,7 @@ LOCAL void ListeningPlayerTimerCallback(uint8 timer_id, uint32 * param);
 LOCAL void Listening_PlayMp3Notify(MMISRV_HANDLE_T handle, MMISRVMGR_NOTIFY_PARAM_T *param)
 {
 	MMISRVAUD_REPORT_T *report_ptr = PNULL;
-	BOOLEAN       result = TRUE;
+	BOOLEAN result = TRUE;
 	if(param != PNULL && handle > 0)
 	{
 		report_ptr = (MMISRVAUD_REPORT_T *)param->data;
@@ -87,25 +86,25 @@ LOCAL void Listening_PlayMp3Notify(MMISRV_HANDLE_T handle, MMISRVMGR_NOTIFY_PARA
 		{
 			SCI_TRACE_LOW("%s: report_ptr->report = %d", __FUNCTION__, report_ptr->report);
 			switch(report_ptr->report)
-				{
-            			case MMISRVAUD_REPORT_END:
+			{
+				case MMISRVAUD_REPORT_END:
 				{ 
-                    			if (MMISRVAUD_REPORT_RESULT_STOP != report_ptr->data1)
-                    			{
-                        			if (MMISRVAUD_REPORT_RESULT_SUCESS != report_ptr->data1)
-                        			{
-                            			result = FALSE;
-                        			}
-                    			}
+                    if (MMISRVAUD_REPORT_RESULT_STOP != report_ptr->data1)
+                    {
+                        if (MMISRVAUD_REPORT_RESULT_SUCESS != report_ptr->data1)
+                        {
+                            result = FALSE;
+                        }
+                    }
 					if(result)
 					{
 						Listening_StopPlayMp3();
-                   				ListeningPlayer_ButtonNextCallback();
+						ListeningPlayer_ButtonNextCallback();
 					}
-            			}
-                    		break;
+            	}
+				break;
                	default:
-                    		break;
+				break;
             }
         }
     }
@@ -120,36 +119,36 @@ LOCAL BOOLEAN Listening_Play_RequestHandle(
                         )
 {
 	MMISRVMGR_SERVICE_REQ_T req = {0};
-    	MMISRVAUD_TYPE_T audio_srv = {0};
+    MMISRVAUD_TYPE_T audio_srv = {0};
     
-    	req.notify = notify;
-    	req.pri = MMISRVAUD_PRI_NORMAL;
+    req.notify = notify;
+   	req.pri = MMISRVAUD_PRI_NORMAL;
 
-    	audio_srv.duation = 0;
-    	audio_srv.eq_mode = 0;
-    	audio_srv.is_mixing_enable = FALSE;
-    	audio_srv.play_times = 1;
-    	audio_srv.all_support_route = route;
-    	audio_srv.volume = 1;//MMIAPISET_GetMultimVolume();
+    audio_srv.duation = 0;
+    audio_srv.eq_mode = 0;
+    audio_srv.is_mixing_enable = FALSE;
+    audio_srv.play_times = 1;
+    audio_srv.all_support_route = route;
+    audio_srv.volume = 1;//MMIAPISET_GetMultimVolume();
 
-      	audio_srv.info.record_file.type = audio_data->type;        
-       audio_srv.info.record_file.fmt  = audio_data->record_file.fmt;
-       audio_srv.info.record_file.name = audio_data->record_file.name;
-       audio_srv.info.record_file.name_len = audio_data->record_file.name_len;    
-       audio_srv.info.record_file.source   = audio_data->record_file.source;
-       audio_srv.info.record_file.frame_len= audio_data->record_file.frame_len;
-       audio_srv.volume = AUD_MAX_SPEAKER_VOLUME;
+	audio_srv.info.record_file.type = audio_data->type;        
+	audio_srv.info.record_file.fmt  = audio_data->record_file.fmt;
+	audio_srv.info.record_file.name = audio_data->record_file.name;
+	audio_srv.info.record_file.name_len = audio_data->record_file.name_len;    
+	audio_srv.info.record_file.source   = audio_data->record_file.source;
+	audio_srv.info.record_file.frame_len= audio_data->record_file.frame_len;
+	audio_srv.volume = AUD_MAX_SPEAKER_VOLUME;
 
-    	*audio_handle = MMISRVMGR_Request(STR_SRV_AUD_NAME, &req, &audio_srv);
+    *audio_handle = MMISRVMGR_Request(STR_SRV_AUD_NAME, &req, &audio_srv);
 
-    	if(*audio_handle > 0)
-    	{
-        	return TRUE;
-    	}
-    	else
-    	{
-        	return FALSE;
-    	}
+    if(*audio_handle > 0)
+    {
+       	return TRUE;
+    }
+    else
+    {
+       	return FALSE;
+    }
 }
 
 PUBLIC void Listening_StopPlayMp3(void)
@@ -195,50 +194,50 @@ PUBLIC void Listening_ResumePlayMp3(void)
 
 PUBLIC uint8 Listening_StartPlayMp3(char* file_name)
 {
-    	uint8 ret = 0;
-    	MMIRECORD_SRV_RESULT_E srv_result = MMIRECORD_SRV_RESULT_SUCCESS;
-    	MMISRV_HANDLE_T audio_handle = PNULL;
-    	uint16      full_path[LIST_ITEM_PATH_SIZE_MAX] = {0};
-    	uint16      full_path_len = 0;
-    	MMISRVAUD_TYPE_U    audio_data  = {0};
+    uint8 ret = 0;
+   	MMIRECORD_SRV_RESULT_E srv_result = MMIRECORD_SRV_RESULT_SUCCESS;
+   	MMISRV_HANDLE_T audio_handle = PNULL;
+   	uint16      full_path[LIST_ITEM_PATH_SIZE_MAX] = {0};
+   	uint16      full_path_len = 0;
+    MMISRVAUD_TYPE_U    audio_data  = {0};
 
-    	if(listening_player_handle)
-    	{
-        	MMISRVAUD_Stop(listening_player_handle);
-        	MMISRVMGR_Free(listening_player_handle);
-        	listening_player_handle = PNULL;
-    	}
+    if(listening_player_handle)
+    {
+        MMISRVAUD_Stop(listening_player_handle);
+       	MMISRVMGR_Free(listening_player_handle);
+       	listening_player_handle = PNULL;
+   	}
 
-    	full_path_len = GUI_GBToWstr(full_path, (const uint8*)file_name, SCI_STRLEN(file_name));
-    	audio_data.ring_file.type = MMISRVAUD_TYPE_RING_FILE;
-    	audio_data.ring_file.name = full_path;
-    	audio_data.ring_file.name_len = full_path_len;
-    	audio_data.ring_file.fmt  = (MMISRVAUD_RING_FMT_E)MMIAPICOM_GetMusicType(audio_data.ring_file.name, audio_data.ring_file.name_len);
+    full_path_len = GUI_GBToWstr(full_path, (const uint8*)file_name, SCI_STRLEN(file_name));
+    audio_data.ring_file.type = MMISRVAUD_TYPE_RING_FILE;
+    audio_data.ring_file.name = full_path;
+    audio_data.ring_file.name_len = full_path_len;
+    audio_data.ring_file.fmt  = (MMISRVAUD_RING_FMT_E)MMIAPICOM_GetMusicType(audio_data.ring_file.name, audio_data.ring_file.name_len);
 
    	if(Listening_Play_RequestHandle(&audio_handle, MMISRVAUD_ROUTE_NONE, &audio_data, Listening_PlayMp3Notify))
-    	{
-    		ListeningPlayer_InitPlayerInfo();
-        	listening_player_handle = audio_handle;
+    {
+    	ListeningPlayer_InitPlayerInfo();
+        listening_player_handle = audio_handle;
 		MMISRVAUD_SetVolume(audio_handle, player_play_info.volume);
-        	if(!MMISRVAUD_Play(audio_handle, 0))
-        	{     
-            		SCI_TRACE_LOW("%s: MMISRVAUD_Play failed", __FUNCTION__);
-            		MMISRVMGR_Free(listening_player_handle);
-            		listening_player_handle = 0;
-            		ret = 1;
-        	}
-    	}
-    	else
-    	{        
-        	ret = 2;
-    	}
+        if(!MMISRVAUD_Play(audio_handle, 0))
+        {     
+            SCI_TRACE_LOW("%s: MMISRVAUD_Play failed", __FUNCTION__);
+            MMISRVMGR_Free(listening_player_handle);
+            listening_player_handle = 0;
+           	ret = 1;
+       }
+    }
+    else
+    {        
+       	ret = 2;
+    }
 	SCI_TRACE_LOW("%s: ret = %d", __FUNCTION__, ret);
-    	if (ret != 0)
-    	{
-       	listening_player_handle = NULL;
-        	return ret;
-    	}
-    	return ret;
+    if (ret != 0)
+    {
+		listening_player_handle = NULL;
+        return ret;
+    }
+    return ret;
 }
 
 PUBLIC BOOLEAN Listening_PlayMp3(int module_id, int album_id, int audio_id)
@@ -307,7 +306,8 @@ LOCAL void ListeningPlayerWin_DisplayPlayDuration(MMI_WIN_ID_T win_id, GUI_LCD_D
 	if(MMISRVAUD_GetPlayingInfo(listening_player_handle, &playing_info) == TRUE)
 	{
 		duration = playing_info.total_time;
-	}else
+	}
+	else
 	{
 		duration = 0;
 	}
@@ -443,13 +443,13 @@ LOCAL void ListeningPlayerWin_DisplayPlayBottom(MMI_WIN_ID_T win_id, GUI_LCD_DEV
 	{
 		uint count = 0;
 		uint8 i = 0;
-             uint8 volume_item = 0;
-             GUI_RECT_T rect_volume = {0};
+		uint8 volume_item = 0;
+		GUI_RECT_T rect_volume = {0};
 		GUIRES_DisplayImg(PNULL, &listening_rect_decrese, PNULL, win_id, DSL_LISTEN_DECRESE, &lcd_dev_info);
 		GUIRES_DisplayImg(PNULL, &listening_rect_increse, PNULL, win_id, DSL_LISTEN_INCRESE, &lcd_dev_info);
 		count = player_play_info.volume / 2 + player_play_info.volume % 2;
-             SCI_TRACE_LOW("%s: listening_player_volume = %d, count = %d", __FUNCTION__, player_play_info.volume, count);
-             rect_volume = listening_rect_volume;
+		SCI_TRACE_LOW("%s: listening_player_volume = %d, count = %d", __FUNCTION__, player_play_info.volume, count);
+		rect_volume = listening_rect_volume;
 		for(i = 0; i < count && i < 5; i++)
 		{
 			LCD_FillRect(&lcd_dev_info, rect_volume, MMI_BLACK_COLOR);
@@ -783,7 +783,7 @@ LOCAL void ListeningPlayer_ButtonNextCallback(void)
 LOCAL void ListeningPlayerWin_HandleTpPressUp(MMI_WIN_ID_T win_id, GUI_POINT_T point)
 {
 	GUI_LCD_DEV_INFO lcd_dev_info = {GUI_MAIN_LCD_ID, GUI_BLOCK_MAIN};
-       SCI_TRACE_LOW("%s: player_play_info.bottom_type = %d", __FUNCTION__, player_play_info.bottom_type);
+	SCI_TRACE_LOW("%s: player_play_info.bottom_type = %d", __FUNCTION__, player_play_info.bottom_type);
 	//bottom type
 	if(GUI_PointIsInRect(point, listening_play_style_rect))
 	{
@@ -863,7 +863,6 @@ LOCAL void ListeningPlayerWin_HandleTpPressUp(MMI_WIN_ID_T win_id, GUI_POINT_T p
 			player_bottom_show_times = 9;
 		}
 	}
-
 	ListeningPlayerWin_DisplayPlayChoose(win_id, lcd_dev_info);
 	ListeningPlayerWin_DisplayPlayBottom(win_id, lcd_dev_info);
 }
@@ -941,7 +940,7 @@ LOCAL MMI_RESULT_E HandleListeningPlayerWinMsg(
 				GUI_POINT_T point = {0};
 				point.x = MMK_GET_TP_X(param);
 				point.y = MMK_GET_TP_Y(param);
-                           if(GUI_PointIsInRect(point, listening_lrc_rect))
+				if(GUI_PointIsInRect(point, listening_lrc_rect))
 				{
 					LISTENING_PLAYER_INFO * player_infos = NULL;
 					player_info = (LISTENING_PLAYER_INFO *) MMK_GetWinAddDataPtr(win_id);
@@ -1256,7 +1255,6 @@ LOCAL MMI_RESULT_E HandleListeningPlayerLrcWinMsg(
 				SCI_TRACE_LOW("%s: player_play_info.lrc_ready = %d", __FUNCTION__, player_play_info.lrc_ready);
 				if(player_play_info.lrc_ready == 0)
 				{
-
 					text_style.align = ALIGN_HVMIDDLE;
 					MMIRES_GetText(READBOY_TXT_LOADING, win_id, &text_string);
 					GUISTR_DrawTextToLCDInRect(
