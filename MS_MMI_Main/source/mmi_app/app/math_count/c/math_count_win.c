@@ -464,17 +464,15 @@ LOCAL void MathCount_ShowKeyboard(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_dev_
 	uint8 i,j,k = 0;
 	uint8 num_str[MATCH_COUNT_KEYBOARD_VER_NUM][MATCH_COUNT_KEYBOARD_HOR_NUM] = {"1230","456X","789"};
 	
-	LCD_DrawRect(&lcd_dev_info, hor_line_rect, MMI_BLACK_COLOR);
-	for(i = 0;i < MATCH_COUNT_KEYBOARD_VER_NUM;i++){
+	for(i = 0;i < MATCH_COUNT_KEYBOARD_VER_NUM + 1;i++){
+		LCD_DrawRect(&lcd_dev_info, hor_line_rect, MMI_BLACK_COLOR);
 		hor_line_rect.top += 2*MATCH_COUNT_KEYBOARD_HIGHT;
 		hor_line_rect.bottom = hor_line_rect.top + 1;
-		LCD_DrawRect(&lcd_dev_info, hor_line_rect, MMI_BLACK_COLOR);
 	}
-	LCD_DrawRect(&lcd_dev_info, ver_line_rect, MMI_BLACK_COLOR);
-	for(i = 0;i < MATCH_COUNT_KEYBOARD_HOR_NUM;i++){
+	for(i = 0;i < MATCH_COUNT_KEYBOARD_HOR_NUM + 1;i++){
+		LCD_DrawRect(&lcd_dev_info, ver_line_rect, MMI_BLACK_COLOR);
 		ver_line_rect.left+= 2*MATCH_COUNT_KEYBOARD_WIDTH;
 		ver_line_rect.right= ver_line_rect.left + 1;
-		LCD_DrawRect(&lcd_dev_info, ver_line_rect, MMI_BLACK_COLOR);
 	}
 	hor_line_rect.top = 5*MATCH_COUNT_KEYBOARD_HIGHT;
 	hor_line_rect.bottom = 5*MATCH_COUNT_KEYBOARD_HIGHT+1;
