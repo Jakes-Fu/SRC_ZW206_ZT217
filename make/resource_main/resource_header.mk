@@ -528,6 +528,11 @@ SOURCES	 += dsl_word_mdu_def.h
 SRCPATH += $(MMI_DIR)/source/mmi_app/app/dsl_word/h
 endif
 
+ifeq ($(strip $(POETRY_LISTEN_SUPPORT)), TRUE)
+SOURCES	 += dsl_poetry_mdu_def.h 
+SRCPATH += $(MMI_DIR)/source/mmi_app/app/dsl_poetry/h
+endif
+
  
 #
 #  make process ,don't modify

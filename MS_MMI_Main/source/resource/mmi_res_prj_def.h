@@ -1409,3 +1409,7 @@ RES_ADD_MODULE(MMI_MODULE_DSL_LISTENING,"\\dsl_listening\\dsl_listening_mdu_def.
 #ifdef  WORD_CARD_SUPPORT
 RES_ADD_MODULE(MMI_MODULE_DSL_WORD,"\\dsl_word\\dsl_word_mdu_def.h")
 #endif
+
+#ifdef  POETRY_LISTEN_SUPPORT
+RES_ADD_MODULE(MMI_MODULE_DSL_POETRY,"\\dsl_poetry\\dsl_poetry_mdu_def.h")
+#endif

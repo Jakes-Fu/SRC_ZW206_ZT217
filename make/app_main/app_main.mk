@@ -2588,3 +2588,9 @@ MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/dsl_word/c
 SOURCES			+=  dsl_word_main.c dsl_word_id.c
 endif
 
+ifeq ($(strip $(POETRY_LISTEN_SUPPORT)), TRUE)
+MINCPATH		+=  MS_MMI_Main/source/mmi_app/app/dsl_poetry/h
+MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/dsl_poetry/c
+SOURCES			+=  dsl_poetry_win.c
+endif
+

@@ -151,6 +151,10 @@ PUBLIC void MMIREADBOY_CreateListeningLocalWin(void);
 PUBLIC void MMI_CreateWordWin(void);
 #endif
 
+#ifdef POETRY_LISTEN_SUPPORT
+PUBLIC void MMIREADBOY_CreatePoetryWin(void);
+#endif
+
 #ifdef MAINMENU_STYLE_SUPPORT
 PUBLIC void WatchSET_MenuStyle_Enter( void );//²Ëµ¥ÇÐ»»
 #endif
