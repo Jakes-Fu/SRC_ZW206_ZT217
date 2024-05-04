@@ -533,6 +533,11 @@ SOURCES	 += dsl_poetry_mdu_def.h
 SRCPATH += $(MMI_DIR)/source/mmi_app/app/dsl_poetry/h
 endif
 
+ifeq ($(strip $(HANZI_CARD_SUPPORT)), TRUE)
+SOURCES	 += dsl_hanzi_mdu_def.h 
+SRCPATH += $(MMI_DIR)/source/mmi_app/app/dsl_hanzi/h
+endif
+
  
 #
 #  make process ,don't modify

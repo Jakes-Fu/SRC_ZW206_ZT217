@@ -2594,3 +2594,8 @@ MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/dsl_poetry/c
 SOURCES			+=  dsl_poetry_win.c
 endif
 
+ifeq ($(strip $(HANZI_CARD_SUPPORT)), TRUE)
+MINCPATH		+=  MS_MMI_Main/source/mmi_app/app/dsl_hanzi/h
+MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/dsl_hanzi/c
+SOURCES			+=  dsl_hanzi_main.c dsl_hanzi_data.c 
+endif

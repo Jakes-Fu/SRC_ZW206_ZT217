@@ -71,6 +71,9 @@
 #ifdef WORD_CARD_SUPPORT
 #include "dsl_word_main.h"
 #endif
+#ifdef HANZI_CARD_SUPPORT
+#include "dsl_hanzi_main.h"
+#endif
 /**---------------------------------------------------------------------------*
  **                         Macro Declaration                                 *
  **---------------------------------------------------------------------------*/
@@ -5857,6 +5860,27 @@ LOCAL THEMELIST_ITEM_STYLE_T const dsl_check_list =
     },
 };
 #endif
+
+#ifdef HANZI_CARD_SUPPORT
+LOCAL THEMELIST_ITEM_STYLE_T const dsl_hanzi_book_list =
+{
+    1.5*HANZI_CARD_LINE_HIGHT, 1.5*HANZI_CARD_LINE_HIGHT,
+    {
+        {
+            0,
+            { 10, 0,  MMI_MAINSCREEN_WIDTH-10, 1.5*HANZI_CARD_LINE_HIGHT },
+            { 10, 0,  MMI_MAINSCREEN_WIDTH-10, 1.5*HANZI_CARD_LINE_HIGHT },
+            SONG_FONT_16, SONG_FONT_16,
+            0, 100
+        },
+        {0},
+        {0},
+        {0},
+        {0},
+        {0},
+    },
+};
+#endif
 //============================================================================//
 //                                  End For engineer mode                     //
 //============================================================================//
@@ -6148,8 +6172,9 @@ LOCAL THEMELIST_STYLE_TABLE_T const s_style_table[] =
     {GUIITEM_STYLE_ONE_ICON_AND_ONE_TEXT_MS, &s_item_style_1_icon_and_1_text_ms},
 #endif    
 #ifdef WORD_CARD_SUPPORT   
-    {GUIITEM_SYTLE_DSL_ENGLISH_BOOK,&dsl_english_book_item},
-    {GUIITEM_SYTLE_DSL_CHECK,&dsl_check_list},
+    {GUIITEM_SYTLE_DSL_ENGLISH_BOOK, &dsl_english_book_item},
+    {GUIITEM_SYTLE_DSL_CHECK, &dsl_check_list},
+    {GUIITEM_DSL_HANZI_BOOK, &dsl_hanzi_book_list},
 #endif
 //============================================================================//
 //                                   For watch                                //

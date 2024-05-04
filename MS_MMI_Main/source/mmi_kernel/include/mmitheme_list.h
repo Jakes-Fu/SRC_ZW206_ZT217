@@ -1060,7 +1060,7 @@ ADULTWATCH
     GUIITEM_STYLE_1CHECK_ENG,//for engineer mode
 #ifdef LISTENING_PRATICE_SUPPORT    
     //|---------------------------|
-    //|       icon      text     icon                |
+    //|       icon      text     icon           |
     //|---------------------------|
     GUIITEM_STYLE_TWO_ICON_AND_ONE_TEXT_MS,
 
@@ -1071,7 +1071,7 @@ ADULTWATCH
 #endif
 #ifdef WORD_CARD_SUPPORT
     //|---------------------------|
-    //|       icon      text     text                |
+    //|       icon      text     text           |
     //|                   text                     |
     //|---------------------------|
     GUIITEM_SYTLE_DSL_ENGLISH_BOOK,
@@ -1080,7 +1080,13 @@ ADULTWATCH
     //|       icon      text                     |
     //|---------------------------|
     GUIITEM_SYTLE_DSL_CHECK,
-#endif    
+#endif
+#ifdef HANZI_CARD_SUPPORT
+    //|---------------------------|
+    //|       text                                 |
+    //|---------------------------|
+    GUIITEM_DSL_HANZI_BOOK,
+#endif
 //============================================================================//
 //                                   For watch                                //
 //============================================================================//

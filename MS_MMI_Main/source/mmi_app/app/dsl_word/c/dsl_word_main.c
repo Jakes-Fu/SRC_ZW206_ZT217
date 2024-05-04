@@ -23,7 +23,9 @@
 #include "window_parse.h"
 #include "mmk_timer.h"
 #include "mmisrvrecord_export.h"
+#ifdef LISTENING_PRATICE_SUPPORT
 #include "dsl_main_file.h"
+#endif
 /*****************************************************************/
 // Description : open hello sprd windows
 // Global resource dependence :

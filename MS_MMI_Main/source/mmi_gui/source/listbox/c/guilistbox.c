@@ -294,7 +294,10 @@ LOCAL BOOLEAN SetItemStyle(
 #ifdef WORD_CARD_SUPPORT
     case GUIITEM_SYTLE_DSL_ENGLISH_BOOK:
     case GUIITEM_SYTLE_DSL_CHECK:
-#endif        
+#endif
+#ifdef HANZI_CARD_SUPPORT
+    case GUIITEM_DSL_HANZI_BOOK:
+#endif
         break;
         
     default:

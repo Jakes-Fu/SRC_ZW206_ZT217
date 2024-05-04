@@ -155,6 +155,10 @@ PUBLIC void MMI_CreateWordWin(void);
 PUBLIC void MMIREADBOY_CreatePoetryWin(void);
 #endif
 
+#ifdef HANZI_CARD_SUPPORT
+PUBLIC void MMI_CreateHanziWin(void);
+#endif
+
 #ifdef MAINMENU_STYLE_SUPPORT
 PUBLIC void WatchSET_MenuStyle_Enter( void );//²Ëµ¥ÇÐ»»
 #endif
