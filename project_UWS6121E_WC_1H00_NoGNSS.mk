@@ -168,7 +168,7 @@ endif
 
 ZDT_VIBRATE_SUPPORT = FALSE					### 振动
 
-ZDT_AUTO_SHUTDOWN_WHEN_NO_SIM_NO_ACTION_15_MINUTES = FALSE	### 没插卡，15分钟没操作则自动关机。
+ZDT_AUTO_SHUTDOWN_WHEN_NO_SIM_NO_ACTION_15_MINUTES = TRUE	### 没插卡，15分钟没操作则自动关机。
 
 ZDT_PICLIST_SAVE_ONLY_NUM = TRUE		### 限制拍照的总张数
 
@@ -726,7 +726,7 @@ ENGPC_W217 = FALSE                                   ### Switch ENGPC_W217 Suppo
 													 
 LCD_INSTALL_ANGLE = 0    #90
 
-#FOTA_SUPPORT =CMIOT
+FOTA_SUPPORT = NONE
 
 MATH_COUNT_SUPPORT = FALSE 		#口算达人
 

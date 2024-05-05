@@ -811,7 +811,148 @@ LOCAL BOOLEAN IsKeyResponseWhenSlideClose(
 }
 #endif
 
+#if defined(ZDT_AUTO_SHUTDOWN_WHEN_NO_SIM_NO_ACTION_15_MINUTES)
+LOCAL SCI_TIMER_PTR g_auto_poweroff_timer=SCI_NULL;
+LOCAL SCI_TIMER_PTR g_poweroff_gap_timer=SCI_NULL;
 
+#define AUTO_POWEROFF_TIME   10*60*1000
+
+PUBLIC void mmi_resume_auto_shutdown_timer()
+{
+	if(g_auto_poweroff_timer != 0)
+	{
+		MMK_StopTimer(g_auto_poweroff_timer);
+	       g_auto_poweroff_timer=0;		
+	}
+}
+
+LOCAL int mmi_convert_to_wstring(const char * text, const int charsetType, wchar*  buffer, const int bufLen)
+{
+	uint16			w_len = 0;
+	uint16			len = strlen((text == NULL) ? "" : text);
+
+	if (len <= 0 || buffer == NULL || bufLen <= 0)
+		return 0;
+
+	len = len > bufLen ? bufLen : len;
+
+	// charsetType: 0 GBk, 1 utf8
+	if (charsetType == 1)
+		w_len = GUI_UTF8ToWstr(buffer, bufLen, (const uint8*)text, len);
+	else
+		w_len = GUI_GBToWstr(buffer, (const uint8*)text, len);
+
+	return w_len;
+}
+
+LOCAL void mmi_auto_shutdown_create_msgbox(const int textId, const char* title, const int ms, const int charsetType)
+{
+	if (textId != 0) 
+	{
+		MMIPUB_OpenAlertWinByTextId(
+			&ms, 
+			textId, 
+			NULL, PNULL, NULL, NULL, MMIPUB_SOFTKEY_NONE, NULL);
+	}
+	else 
+	{
+		MMI_STRING_T	text_buffer = { 0 };
+		wchar			w_text[255 + 1] = { 0 };
+
+		text_buffer.wstr_ptr = w_text;
+		text_buffer.wstr_len = mmi_convert_to_wstring(title, charsetType, w_text, 255);
+		MMIPUB_OpenAlertWinByTextPtr(
+			&ms,
+			&text_buffer,
+			NULL, PNULL, NULL, NULL, MMIPUB_SOFTKEY_NONE, NULL);
+	}
+}
+
+LOCAL void mmi_auto_shutdown_close_msgbox()
+{
+	MMIPUB_CloseWaitWin(MMIPUB_WAITING_WIN_ID);
+	MMIPUB_CloseAlertWin();
+}
+
+LOCAL void mmi_create_msgbox_id(const int textId, const int ms)
+{
+	mmi_auto_shutdown_close_msgbox();
+	mmi_auto_shutdown_create_msgbox(textId, NULL, ms, 0);
+}
+
+LOCAL void mmi_auto_shutdown_poweroff_action()
+{
+    MMIDEFAULT_TurnOnBackLight();
+    MMIPHONE_PowerOff();
+}
+
+LOCAL void mmi_auto_shutdown_after_1_min()
+{
+      SCI_TRACE_LOW("%s: in charge return", __FUNCTION__);
+      if(g_poweroff_gap_timer != 0)
+      {
+            MMK_StopTimer(g_poweroff_gap_timer);
+      }
+	g_poweroff_gap_timer = MMK_CreateTimerCallback(60*1000,mmi_auto_shutdown_poweroff_action,PNULL,FALSE);
+}
+
+LOCAL BOOLEAN mmi_autoshutdown_entry_countdown()
+{
+      if(g_poweroff_gap_timer !=0)	  
+      {
+	  SCI_TRACE_LOW("%s: is in countdown", __FUNCTION__);      
+	  return TRUE;
+      	}
+
+      SCI_TRACE_LOW("%s: not in countdown", __FUNCTION__);      	  
+      return FALSE;	  
+}
+
+LOCAL void mmi_notify_auto_shutdown_screen()
+{
+	mmi_resume_auto_shutdown_timer();
+	MMIDEFAULT_TurnOnBackLight();
+	mmi_create_msgbox_id(TXT_AUTO_POWEROFF_NOTIFY,6000);
+	mmi_auto_shutdown_after_1_min();
+}
+
+LOCAL BOOLEAN mmi_check_if_need_start_auto_shutdown_timer()
+{
+	if(MMIAPIPHONE_GetSimExistedStatus(MN_DUAL_SYS_1)==FALSE)
+	{
+	   SCI_TRACE_LOW("%s: no sim ", __FUNCTION__);
+	   return TRUE;
+	}
+
+	SCI_TRACE_LOW("%s: have sim ", __FUNCTION__);
+	return FALSE;
+}
+
+PUBLIC void mmi_start_auto_shutdown_timer()
+{
+	SCI_TRACE_LOW("%s: start", __FUNCTION__);
+
+       mmi_resume_auto_shutdown_timer();
+
+       if(mmi_autoshutdown_entry_countdown())   //开始关机前的60s倒计时了，亮灭屏就无法重新开始15min的重新计时。
+           return;	
+       if((STARTUP_NORMAL == MMIAPIPHONE_GetStartUpCondition())
+#ifdef ZDT_APP_SUPPORT
+			&& ZDT_GetIsCharge()
+#endif
+		)
+       {
+           SCI_TRACE_LOW("%s:  in charge return", __FUNCTION__);
+           return;
+       }
+	   
+       if(mmi_check_if_need_start_auto_shutdown_timer())
+       {
+	    g_auto_poweroff_timer = MMK_CreateTimerCallback(AUTO_POWEROFF_TIME,mmi_notify_auto_shutdown_screen,PNULL,FALSE);
+       }
+}
+
+#endif
 
 /*==============================================================================
 Description: 一些按键在全部窗口的默认处理

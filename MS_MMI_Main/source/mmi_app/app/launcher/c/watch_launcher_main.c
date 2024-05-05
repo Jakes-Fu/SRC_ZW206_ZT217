@@ -3339,6 +3339,9 @@ PUBLIC void WatchOpen_IdleWin(void)
         WatchLAUNCHER_AllAppPage_Enter();
     #endif
 #endif
+#if defined(ZDT_AUTO_SHUTDOWN_WHEN_NO_SIM_NO_ACTION_15_MINUTES)
+    mmi_start_auto_shutdown_timer();
+#endif
 #ifdef SETUP_WIZARD_SUPPORT
     //MMIZDT_NV_SetFirstPWON(0);
 #endif
