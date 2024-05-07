@@ -1,0 +1,10 @@
+diff a/MS_MMI_Main/source/mmi_app/app/setting/c/watch_set_main.c b/MS_MMI_Main/source/mmi_app/app/setting/c/watch_set_main.c	(rejected hunks)
+@@ -441,7 +441,7 @@
+ //����Ĭ�����˵���ʽ
+ PUBLIC void MMISET_SetWatchMenuStyle_default(void)
+ {
+-    uint8 temp_style = 0;
++    uint8 temp_style = 1;
+ #if defined(MAINMENU_STYLE_DEFAULT_ROUND_CIRCULAR)// ���˵� Ĭ��Բ��UI
+     temp_style = 1;
+ #endif

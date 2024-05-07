@@ -1,0 +1,10 @@
+diff a/MS_MMI_Main/source/mmi_app/app/video_call/c/video_call_win.c b/MS_MMI_Main/source/mmi_app/app/video_call/c/video_call_win.c	(rejected hunks)
+@@ -1031,7 +1031,7 @@
+                 MMK_CloseWin(win_id);
+                 #else
+                 video_call_stop();
+-                ////SCI_Sleep(1000);//�ӳ�һ�£�Ҫ�����ܴ��ڹر���,��Ƶ����ûˢ��
++                SCI_Sleep(1000);//�ӳ�һ�£�Ҫ�����ܴ��ڹر���,��Ƶ����ûˢ��
+                 MMK_CloseWin(win_id);
+                 #endif
+             
