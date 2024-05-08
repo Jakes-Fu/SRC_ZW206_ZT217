@@ -1483,7 +1483,7 @@ LOCAL THEMELIST_ITEM_STYLE_T chat_left_style = {0};
 LOCAL THEMELIST_ITEM_STYLE_T chat_right_style = {0};
 
 #define MAX_REMAIN_SIZE  (18*1024) //10K
-LOCAL BOOLEAN ZDT_IsMemNearFull(BOOLEAN is_tf)
+PUBLIC BOOLEAN ZDT_IsMemNearFull(BOOLEAN is_tf)
 {
     uint32          free_space_high     = 0;
     uint32          free_space_low      = MAX_REMAIN_SIZE;//102400;
