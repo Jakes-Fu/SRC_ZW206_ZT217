@@ -12,6 +12,11 @@
 #include "graphics_draw.h"
 #include "zdt_app.h"
 #include "zdt_win_export.h"
+#if ZMT_DIAL_STORE_SUPPORT
+#include "zmt_dial.h"
+#include "zmt_dial_image.h"
+#include "zmt_dial_text.h"
+#endif
 
 #define MAXPAGENUM 1// xiongkai only two analog clock 3
 #define doubThres 0.00001
@@ -1256,6 +1261,37 @@ LOCAL void drawDigitalWatch3()
 }
 #endif
 //=====================Ì«¿ÕÕ¾Óîº½Ô±±íÅÌend ============================
+#ifdef ZMT_DIAL_STORE_SUPPORT
+int32 zmt_watch_last_index = -1;
+uint8 * zmt_watch_name = NULL;
+LOCAL void ZMT_DisplayDial(MMI_WIN_ID_T win_id, PANEL_INDEX_E index)
+{
+    uint8 idx = 0;
+    uint8 size = 0;
+    ZMT_DIAL_LIST_INFO_T * dail_list = NULL;
+
+    idx = index - ZMT_DIAL_INDEX_0;
+    //SCI_TRACE_LOW("%s: zmt_watch_last_index = %d, index = %d", __FUNCTION__, zmt_watch_last_index, index);
+    if(zmt_watch_last_index != index){
+        zmt_watch_last_index = index;
+        dail_list = ZmtWatch_GetPanelList();
+        if(dail_list != NULL){
+            if(zmt_watch_name != NULL){
+                SCI_FREE(zmt_watch_name);
+                zmt_watch_name = NULL;
+            }
+            size = strlen(dail_list->info[idx]->name);
+            zmt_watch_name = SCI_ALLOC_APPZ(size + 1);
+            memset(zmt_watch_name, 0, size + 1);
+            SCI_MEMCPY(zmt_watch_name, dail_list->info[idx]->name, size);            
+            ZmtDial_ReleaseDialList(dail_list);
+        }
+    }
+    if(zmt_watch_name != NULL){
+        ZMT_DialPanelShow(win_id, zmt_watch_name);
+    }
+}
+#endif
 
 LOCAL void draw_watch_panel(PANEL_INDEX_E watch_index)
 {
@@ -1293,6 +1329,22 @@ LOCAL void draw_watch_panel(PANEL_INDEX_E watch_index)
             ZTE_Draw_Cat_Panel(WATCH_LAUNCHER_PANEL_WIN_ID);
             break;
     #endif
+#ifdef ZMT_DIAL_STORE_SUPPORT
+        case ZMT_DIAL_INDEX_0:
+        case ZMT_DIAL_INDEX_1:
+        case ZMT_DIAL_INDEX_2:
+        case ZMT_DIAL_INDEX_3:
+        case ZMT_DIAL_INDEX_4:
+        case ZMT_DIAL_INDEX_5:
+        case ZMT_DIAL_INDEX_6:
+        case ZMT_DIAL_INDEX_7:
+        case ZMT_DIAL_INDEX_8:
+        case ZMT_DIAL_INDEX_9:
+            {
+                ZMT_DisplayDial(WATCH_LAUNCHER_PANEL_WIN_ID, watch_index);
+            }
+            break;
+#endif
         default:
             setDefaultPanel();
             break;
@@ -1409,8 +1461,8 @@ LOCAL MMI_RESULT_E MMIWatchPanel_HandleWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_I
                 {
                     SCI_TRACE_LOW("MMIWatchIdle_HandleWinMsg. draw clock begin index:%d", style.watch_index);
                     updateClock(style.watch_index);
-                    ZDT_DisplayBattery(win_id);
-                    ZDT_DisplaySingal(win_id);
+                    //ZDT_DisplayBattery(win_id);
+                    //ZDT_DisplaySingal(win_id);
 
                     SCI_TRACE_LOW("MMIWatchIdle_HandleWinMsg. draw clock end.");
                 }
@@ -2703,6 +2755,11 @@ typedef struct
 
 }PANEL_SELECT_INFO;
 
+typedef struct
+{
+    PANEL_INDEX_E index_id;
+}PANEL_INDEX_ID_INFO;
+
 LOCAL MMI_HANDLE_T s_panel_select_handle;
 
 LOCAL PANEL_SELECT_INFO panel_select_page_list[] = 
@@ -2759,35 +2816,58 @@ LOCAL void setDefaultPanel()
 
 LOCAL void updateClock(PANEL_INDEX_E index)
 {
-    if(index == PANEL_PANDA)
+    switch(index)
     {
-        #ifdef WATCH_PANEL_PANDA_SUPPORT //ÐÜÃ¨
-        DrawAClock();
-        #endif
-    }
-    else if(index == PANEL_BLACK_GREEN)
-    {
-        #ifdef WATCH_PANEL_BLACK_GREEN_SUPPORT //ºÚÂÌÉ«Ä£ÄâÊ±ÖÓ
-        DrawAClock1();
-        #endif
-    }
-    else if(index == PANEL_DEER)
-    {
+        case PANEL_PANDA:
+            {
+            #ifdef WATCH_PANEL_PANDA_SUPPORT //ÐÜÃ¨
+                DrawAClock();
+            #endif
+            }
+            break;
+        case PANEL_BLACK_GREEN:
+            {
+            #ifdef WATCH_PANEL_BLACK_GREEN_SUPPORT //ºÚÂÌÉ«Ä£ÄâÊ±ÖÓ
+                DrawAClock1();
+            #endif
+            }
+            break;
+        case PANEL_DEER:
+            {
         #ifdef WATCH_PANEL_DEER_SUPPORT    //Ð¡Â¹
             #ifdef MAINLCD_DEV_SIZE_240X284
-            DrawAClock2();
+                DrawAClock2();
             #endif
         #endif
+            }
+            break;
+#ifdef ZMT_DIAL_STORE_SUPPORT
+        case ZMT_DIAL_INDEX_0:
+        case ZMT_DIAL_INDEX_1:
+        case ZMT_DIAL_INDEX_2:
+        case ZMT_DIAL_INDEX_3:
+        case ZMT_DIAL_INDEX_4:
+        case ZMT_DIAL_INDEX_5:
+        case ZMT_DIAL_INDEX_6:
+        case ZMT_DIAL_INDEX_7:
+        case ZMT_DIAL_INDEX_8:
+        case ZMT_DIAL_INDEX_9:
+            {
+                ZMT_DisplayDial(WATCH_LAUNCHER_PANEL_WIN_ID, index);
+            }
+            break;
+#endif
+        default:
+            {
+                setDefaultPanel();
+            }
+            break;
     }
-    else
-    {
-        setDefaultPanel();
-    }
-    
 }
 
 LOCAL void DisplayPanelPage(MMI_WIN_ID_T win_id)
 {
+    BOOLEAN is_get = FALSE;
     uint8 i = 0;
     GUI_RECT_T win_rect = {0};
     GUI_LCD_DEV_INFO lcd_dev_info = {0};
@@ -2804,13 +2884,90 @@ LOCAL void DisplayPanelPage(MMI_WIN_ID_T win_id)
         {
             GUI_FillRect(&lcd_dev_info, win_rect, MMI_BLACK_COLOR);
             GUIRES_DisplayImg(NULL,&img_rect,NULL,win_id,panel_select_page_list[i].img_id,&lcd_dev_info);
+            is_get = TRUE;
             break;
         }
     }
+    SCI_TRACE_LOW("%s: is_get = %d", __FUNCTION__, is_get);
+    if(is_get){
+        return;
+    }
+    SCI_TRACE_LOW("%s: PANEL_SIZE = %d, i = %d, win_id = %d", __FUNCTION__, PANEL_SIZE, i, win_id);
+#ifdef ZMT_DIAL_STORE_SUPPORT
+    {
+        MMI_CTRL_ID_T ctrl_id = 0;
+        GUI_RECT_T anim_rect = {0};
+        char img_str[80] = {0};
+        wchar img_path[80] = {0};
+        ZMT_DIAL_LIST_INFO_T * dail_list = ZmtWatch_GetPanelList();
+        if(dail_list != NULL)
+        {
+            SCI_TRACE_LOW("%s: WATCH_LAUNCHER_PANEL_ZMT_0_WIN_ID = %d", __FUNCTION__, WATCH_LAUNCHER_PANEL_ZMT_0_WIN_ID);
+            for(i = 0;i < dail_list->count && i < PANEL_SIZE_MAX - PANEL_SIZE;i++)
+            {
+                if(win_id == WATCH_LAUNCHER_PANEL_ZMT_0_WIN_ID + i)
+                {
+                    GUIIMG_INFO_T img_info = {0};
+                    GUI_FillRect(&lcd_dev_info, win_rect, MMI_BLACK_COLOR);
+                    ctrl_id = LAUNCHER_SELECET_PANEL_0_CTRL_ID + i;
+                    sprintf(img_str, "%s\\%s\\%s", ZMT_DIAL_DIR_BASE_PATH, dail_list->info[i]->name, dail_list->info[i]->preview);
+                    SCI_TRACE_LOW("%s: img_str = %d", __FUNCTION__, img_str);
+                    if(dsl_file_exist(img_str)){
+                        MMIAPICOM_StrToWstr(&img_str, &img_path);
+                        ZMT_GetImgInfoByPath(&img_path, &img_info);
+                        memset(&img_rect, 0, sizeof(GUI_RECT_T));
+                        img_rect.left = (MMI_MAINSCREEN_WIDTH - img_info.image_width) / 2;
+                        img_rect.top = (MMI_MAINSCREEN_HEIGHT - img_info.image_height) / 2;
+                        img_rect.right = img_info.image_width + img_rect.left;
+                        img_rect.bottom = img_info.image_height + img_rect.top;
+                        ZMT_CreateAnimImg(win_id, ctrl_id, &img_rect, img_path, 1, &lcd_dev_info);
+                    }
+                    break;
+                }
+            }
+            ZmtDial_ReleaseDialList(dail_list);
+        }
+    }
+#endif
 }
+
+#ifdef ZMT_DIAL_STORE_SUPPORT
+LOCAL void ZMT_DisplayStorePanel(MMI_WIN_ID_T win_id)
+{   
+    GUI_LCD_DEV_INFO lcd_dev_info = {0};
+    GUI_RECT_T win_rect = {0};
+    GUI_RECT_T title_rect = {0, 0, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT/10};
+    GUI_RECT_T img_rect = WATCH_PANEL_PREVIEW_IMG_RECT;
+    GUISTR_STATE_T text_state = GUISTR_STATE_ALIGN | GUISTR_STATE_ELLIPSIS_EX;
+    GUISTR_STYLE_T text_style = {0};
+    MMI_STRING_T text_string = {0};
+
+    MMK_GetWinRect(win_id, &win_rect);
+    MMK_GetWinLcdDevInfo(win_id,&lcd_dev_info);
+
+    GUI_FillRect(&lcd_dev_info, win_rect, MMI_BLACK_COLOR);
+
+    text_style.align = ALIGN_HVMIDDLE;
+    text_style.font = SONG_FONT_20;
+    text_style.font_color = MMI_WHITE_COLOR;
+    MMIRES_GetText(ZMT_DIAL_STORE, win_id, &text_string);
+    GUISTR_DrawTextToLCDInRect(
+        (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
+        &title_rect,
+        &title_rect,
+        &text_string,
+        &text_style,
+        GUISTR_STATE_ALIGN,
+        GUISTR_TEXT_DIR_AUTO
+    );
+    
+    GUIRES_DisplayImg(NULL,&img_rect,NULL,win_id,IMG_ZMT_DIAL_STORE,&lcd_dev_info);
+}
+#endif
 
 LOCAL void SetPanelIndex(MMI_WIN_ID_T win_id)
 {
+    BOOLEAN is_get = FALSE;
     uint8 i = 0;
     for(i=0;i<PANEL_SIZE; i++)
     {
@@ -2826,9 +2983,50 @@ LOCAL void SetPanelIndex(MMI_WIN_ID_T win_id)
             //MMIWatchPanel_Open();
             WatchOpen_IdleWin();
             WatchSLIDEAGE_SetCurrentPageIndex(1);
+            ZMT_DialRelease();
+            is_get = TRUE;
             break;
         }
     }
+    SCI_TRACE_LOW("%s: is_get = %d", __FUNCTION__, is_get);
+    if(is_get){
+        return;
+    }
+    //SCI_TRACE_LOW("%s: PANEL_SIZE = %d, i = %d, win_id = %d", __FUNCTION__, PANEL_SIZE, i, win_id);
+#ifdef ZMT_DIAL_STORE_SUPPORT
+    {
+        uint8 j = 0;
+        MMI_CTRL_ID_T ctrl_id = 0;
+        GUI_RECT_T anim_rect = {0};
+        char img_str[80] = {0};
+        wchar img_path[80] = {0};
+        ZMT_DIAL_LIST_INFO_T * dail_list = ZmtWatch_GetPanelList();
+        if(dail_list != NULL)
+        {
+            for(i = 0;i < dail_list->count && i < PANEL_SIZE_MAX - PANEL_SIZE;i++)
+            {
+                if(win_id == WATCH_LAUNCHER_PANEL_ZMT_0_WIN_ID + i)
+                {
+                    WATCH_PANEL_TYPE_T style = {0};
+                    style.watch_index= ZMT_DIAL_INDEX_0 + i;
+                    if(dail_list->info[i]->type == 2){
+                        style.is_anolog_panel = TRUE;
+                    }else{
+                        style.is_anolog_panel = FALSE;
+                    }
+                    MMISET_SetWatchPanelStyle(style);
+                    WatchSLIDEPAGE_DestoryHandle(s_panel_select_handle);
+                    s_panel_select_handle = 0;
+                    ZMT_DialRelease();
+                    WatchOpen_IdleWin();
+                    WatchSLIDEAGE_SetCurrentPageIndex(1);
+                    break;
+                }
+            }
+            ZmtDial_ReleaseDialList(dail_list);
+        }
+    }
+#endif
 }
 
 PUBLIC MMI_RESULT_E Watch_Panel_Select_HandleCb(
@@ -2954,16 +3152,30 @@ LOCAL MMI_RESULT_E HandlePanelSelectWinMsg(
             break;
         case MSG_FULL_PAINT:
         {
+            SCI_TRACE_LOW("%s: win_id = %d", __FUNCTION__, win_id);
+        #ifdef ZMT_DIAL_STORE_SUPPORT
+            if(win_id == WATCH_LAUNCHER_PANEL_ZMT_STORE_WIN_ID)
+            {
+                ZMT_DisplayStorePanel(win_id);
+                break;
+            }
+        #endif
             DisplayPanelPage(win_id);
             break;
         }
-
         case MSG_APP_WEB:
         {
+        #ifdef ZMT_DIAL_STORE_SUPPORT
+            if(win_id == WATCH_LAUNCHER_PANEL_ZMT_STORE_WIN_ID)
+            {
+                MMI_CreateZmtDialStoreWin();
+                WatchSLIDEAGE_SetCurrentPageIndex(1);
+                break;
+            }
+        #endif
             SetPanelIndex(win_id);
             break;
         }
-
         default:
             recode = MMI_RESULT_FALSE;
             break;
@@ -2996,8 +3208,35 @@ LOCAL void Watch_Panel_Select_Enter(uint8 index)
         {
             focus_index = i;
         }
+        //SCI_TRACE_LOW("%s: elem[%d].win_id = %d", __FUNCTION__, i, elem[i].win_id);
     }
-
+    SCI_TRACE_LOW("%s: PANEL_SIZE = %d, index = %d, i = %d", __FUNCTION__, PANEL_SIZE, index, i);
+#ifdef ZMT_DIAL_STORE_SUPPORT
+    {
+        uint8 j = 0;
+        ZMT_DIAL_LIST_INFO_T * dail_list = NULL;    
+        dail_list = ZmtWatch_GetPanelList();
+        if(dail_list != NULL){
+            for(;i < PANEL_SIZE + dail_list->count;i++)
+            {
+                elem[i].fun_enter_win = WatchPanel_CreateWin;
+                elem[i].win_id = WATCH_LAUNCHER_PANEL_ZMT_0_WIN_ID + j;
+                if(index == ZMT_DIAL_INDEX_0 - PANEL_SIZE + i)
+                {
+                    focus_index = i;
+                }
+                j++;
+                //SCI_TRACE_LOW("%s: elem[%d].win_id = %d", __FUNCTION__, i, elem[i].win_id);
+            }
+            ZmtDial_ReleaseDialList(dail_list);
+        }
+    }
+    
+    elem[i].fun_enter_win = WatchPanel_CreateWin;
+    elem[i].win_id = WATCH_LAUNCHER_PANEL_ZMT_STORE_WIN_ID;
+    i++;
+#endif
+    //SCI_TRACE_LOW("%s: focus_index = %d", __FUNCTION__, focus_index);
     WatchSLIDEPAGE_Open(handle, elem, i, focus_index, TRUE, Watch_Panel_Select_HandleCb);
     s_panel_select_handle = handle;
 }

@@ -513,6 +513,11 @@ SRCPATH += $(MMI_DIR)/source/mmi_app/app/setupwizard/h
 SOURCES += setupwizard_mdu_def.h
 endif
 
+ifeq ($(strip $(ZMT_DIAL_STORE_SUPPORT)), TRUE)
+SOURCES	 += zmt_dial_mdu_def.h 
+SRCPATH += $(MMI_DIR)/source/mmi_app/app/zmt_dial/h
+endif
+
 ifeq ($(strip $(MATH_COUNT_SUPPORT)), TRUE)
 SOURCES	 += math_count_mdu_def.h 
 SRCPATH += $(MMI_DIR)/source/mmi_app/app/math_count/h

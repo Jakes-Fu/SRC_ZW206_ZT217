@@ -598,6 +598,10 @@ ENGPC_W217 = TRUE                                    ### Switch ENGPC_W217 Suppo
 
 LCD_INSTALL_ANGLE = 0    #90
 
+DYNAMIC_WATCHFACE_SUPPORT = FALSE	#原表盘商城
+
+ZMT_DIAL_STORE_SUPPORT = TRUE		#表盘商城
+
 MATH_COUNT_SUPPORT = TRUE 			#口算达人
 
 LISTENING_PRATICE_SUPPORT = TRUE	#听力练习
