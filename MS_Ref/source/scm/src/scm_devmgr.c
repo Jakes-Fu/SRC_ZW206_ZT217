@@ -88,7 +88,7 @@ PUBLIC uint32 _DeleteSlotFromDevice(SCM_SLOT_NAME_E slotNO,SCM_DEVICE_NAME_E Dev
 
 PUBLIC BOOLEAN _DevPwr(SCM_DEVICE_NAME_E DevNO,SCM_SLOT_NAME_E slotNO,SLOT_PWR_SWITCH_E pwron)
 {
-#if 0
+    #if 1
 	SCI_ASSERT(slotNO < SCM_MAX_SLOT_NO);	/*assert verified*/
 	SCI_ASSERT(DevNO < MAX_DEVICE_COUNT);	/*assert verified*/
 	SCI_ASSERT(TRUE == s_scmDevLst[DevNO].slotNO[slotNO]);	/*assert verified*/

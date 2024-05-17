@@ -262,7 +262,6 @@ WECHAT_SEND_EMOJI = TRUE #支持手表发送表情
 KEYUP_RED_GOTO_IDLE = TRUE #按power键返回表盘待机界面
 PLAY_NEW_SMS_RING = FALSE #接收短信播放铃声或者震动
 
-SDCARD_SUPPORT = TRUE
 
 
 # *************************************************************************************************************************************
@@ -597,6 +596,10 @@ ENGPC_W217 = TRUE                                    ### Switch ENGPC_W217 Suppo
                                                      # Option2:FALSE
 
 LCD_INSTALL_ANGLE = 0    #90
+
+MSDC_CARD_SUPPORT = TRUE                             ### SD Card Support:
+                                                     # Option1:TRUE
+                                                     # Option2:FALSE
 
 DYNAMIC_WATCHFACE_SUPPORT = FALSE	#原表盘商城
 

@@ -207,30 +207,35 @@ static uint32 Preview_init_config(DC_CAMERA_CFG* param)
     pCfg->hal_cfg.camId                 =  0;
     pCfg->hal_cfg.cropEnable            = FALSE;
     pCfg->hal_cfg.vsync_inv             = FALSE;
-    pCfg->hal_cfg.spi_pixels_per_line   = 640;                 //240; //IspOutWidth;
-    pCfg->hal_cfg.spi_pixels_per_column = 480;                 //IspOutHeight;
+    pCfg->hal_cfg.spi_pixels_per_line   = 240;                 //240; //IspOutWidth;
+    pCfg->hal_cfg.spi_pixels_per_column = 240;                 //IspOutHeight;
     pCfg->hal_cfg.spi_yuv_out           = SPI_OUT_Y0_U0_Y1_V0;
     pCfg->hal_cfg.spi_mode              = SENSOR_DATA_OUTPUT_MODE;
     pCfg->hal_cfg.spi_little_endian_en  = FALSE;
     pCfg->hal_cfg.spi_ctrl_clk_div      = 1;
     pCfg->hal_cfg.ddr_en                = SENSOR_DATA_DDR_MODE;   //ddr enable
 
-    pCfg->hal_cfg.colRatio              = COL_RATIO_1_2;
-    pCfg->hal_cfg.rowRatio              = ROW_RATIO_1_2;
+//bringupTmp shengzhanhe:disable scale&crop, camera full size preview
+/*
+    pCfg->hal_cfg.colRatio   = COL_RATIO_1_2;
+    pCfg->hal_cfg.rowRatio   = ROW_RATIO_1_2;
     pCfg->hal_cfg.scaleEnable = TRUE;
 
     pCfg->hal_cfg.cropEnable     = TRUE;
-    pCfg->hal_cfg.dstWinColStart = 36;
-    pCfg->hal_cfg.dstWinColEnd   = 640-36;
+    pCfg->hal_cfg.dstWinColStart = 0;
+    pCfg->hal_cfg.dstWinColEnd   = 640;
     pCfg->hal_cfg.dstWinRowStart = 0;
     pCfg->hal_cfg.dstWinRowEnd   = 480;
-
+*/
+    #ifdef  LCD_INSTALL_ANGLE_90
     pCfg->preview_rot = 1;   //ÆÕÍ¨Ô¤ÀÀĞı×ª90¶È
-    
-    pCfg->width  = 284;      
+    #else
+    pCfg->preview_rot = 1;
+    #endif
+    pCfg->width  = 240;
     pCfg->height = 240;
 
-    pCfg->display_width = 284;
+    pCfg->display_width = 240;
     pCfg->display_height =240;
 
     return 0;

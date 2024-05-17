@@ -23,8 +23,8 @@
 #include "prod_param.h"
 #ifdef UDISK_PC_CONNECT
 #include "flash.h"
-#include "xsr_partition.h"
 #endif
+#include "xsr_partition.h"
 #include "umss_common.h"
 #include "usb_utils.h"
 #include "sfs.h"
@@ -48,27 +48,40 @@ LOCAL const unsigned char   s_ubot_hex_string[]  = "0123456789ABCDEF";
 
 /*--------------------------- Global Data -----------------------------------*/
 
-__align(4) LOCAL uint8 s_umss_VenderStr[UMSS_SCSI_VENDER_STR_LEN]={
+__align(4) LOCAL const uint8 s_umss_VenderStr[UMSS_SCSI_VENDER_STR_LEN]={
     "Generic"
 };
 
-__align(4) LOCAL uint8 s_umss_ProductIDStrNand[UMSS_SCSI_PRODUCT_ID_STR_LEN]={
-    "LOCAL DISK     "
-};
-__align(4) LOCAL uint8 s_umss_ProductIDStrSD[UMSS_SCSI_PRODUCT_ID_STR_LEN]={
-    "SDCard DISK    "
+__align(4) LOCAL const uint8 s_umss_ProductIDStrNand[UMSS_SCSI_PRODUCT_ID_STR_LEN]={
+    "LOCAL DISK      "
 };
 
-__align(4) LOCAL uint8 s_umss_ProductIDStrSD_1[UMSS_SCSI_PRODUCT_ID_STR_LEN]={
-    "SDCard_1 DISK  "
+__align(4) LOCAL const uint8 s_umss_ProductIDStrSD[UMSS_SCSI_PRODUCT_ID_STR_LEN]={
+    "SDCard DISK     "
+};
+#if 0//def _MEM_CUT_
+__align(4) LOCAL const uint8 s_umss_ProductIDStrSD_1[UMSS_SCSI_PRODUCT_ID_STR_LEN]={
+    "SDCard_1 DISK   "
 };
 
-__align(4) LOCAL uint8 s_umss_ProductIDStrHiddenPartition[UMSS_SCSI_PRODUCT_ID_STR_LEN]={
-    "System DISK    "
+__align(4) LOCAL const uint8 s_umss_ProductIDStrHiddenPartition[UMSS_SCSI_PRODUCT_ID_STR_LEN]={
+    "System DISK     "
 };
-
+#endif
 
 LOCAL UMSS_DEV_T s_umss_DiskInf[] = {
+    //SDCard Disk
+    {
+        (uint8*)STL_SD_DEVICE_NAME,   //UBOT will base on this id to call BSD ;
+        s_umss_VenderStr,
+        s_umss_ProductIDStrSD,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+         0,
+         0
+    },
     //NAND Disk
     {
         (uint8*)STL_UDISK_FS_PART,	//
@@ -87,17 +100,7 @@ LOCAL UMSS_DEV_T s_umss_DiskInf[] = {
     },
 
     //SDCard Disk
-    {
-        (uint8*)STL_SD_DEVICE_NAME,   //UBOT will base on this id to call BSD ;
-        s_umss_VenderStr,
-        s_umss_ProductIDStrSD,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-         0,
-         0
-    },
+#if 0//def _MEM_CUT_
 
     //SDCard_1 Disk
     {
@@ -123,6 +126,7 @@ LOCAL UMSS_DEV_T s_umss_DiskInf[] = {
         0,		//dev_state:no_present
         1		//hidden
     },
+#endif
 };
 
 
@@ -138,37 +142,38 @@ LOCAL UMSS_DEV_T s_umss_DiskInf[] = {
 //  Author:         Daniel.Ding
 //  Note:           
 /*****************************************************************************/
-LOCAL void _UMSS_GetSerialNumber( uint8 * serialNum )
+char s_umss_sn[USB_STR_SERIALNUMBER_DESCRIPTOR_MIN] = "uws6121e0123456789";
+PUBLIC char * _UMSS_GetSerialNumber( void )
 {
     uint32  tick = SCI_GetTickCount();
     uint32  i;
-    uint8   MobileSerialNumber[16];
+    char   MobileSerialNumber[USB_STR_SERIALNUMBER_DESCRIPTOR_MIN];
     
-    SCI_MEMSET ( MobileSerialNumber, NULL, 16 );
-    PROD_GetMobileSerialNumber( MobileSerialNumber, 12 );
+    SCI_MEMSET ( MobileSerialNumber, NULL, USB_STR_SERIALNUMBER_DESCRIPTOR_MIN );
+    PROD_GetMobileSerialNumber( MobileSerialNumber, USB_STR_SERIALNUMBER_DESCRIPTOR_MIN );
    
     // Init it.
-    for( i = 0; i < (USB_STR_SERIALNUMBER_DESCRIPTOR_MIN /2); i++ )
-    {
-        *(serialNum+ i * 2 + 0) = '0';
-        *(serialNum+ i * 2 + 1) = 0;
-    }
     
     if( MobileSerialNumber[0] )
     {
-        for( i = 0; i < (USB_STR_SERIALNUMBER_DESCRIPTOR_MIN /2); i++ )
+        for( i = 0; i < (USB_STR_SERIALNUMBER_DESCRIPTOR_MIN); i++ )
         {
-            *(serialNum+ i * 2 + 0) = MobileSerialNumber[i];
+            s_umss_sn[i] = MobileSerialNumber[i];
         }
     }
     else
     {
-        for( i = 0; i < (USB_STR_SERIALNUMBER_DESCRIPTOR_MIN /2); i++ )
+       //If device has no sn,give a default serialmuber-not a random serialmuber,in case of port number changed every time
+
+       /*
+        for( i = 0; i < (USB_STR_SERIALNUMBER_DESCRIPTOR_MIN); i++ )
         {
-            *(serialNum+ i * 2 + 0) = s_ubot_hex_string[ tick & 0xF ];
+             s_umss_sn[i] = s_ubot_hex_string[ tick & 0xF]; //random serialmuber
             tick >>= 1;
         }
+        */
     }
+    return (char *)s_umss_sn;
 }
 
 /*****************************************************************************/
@@ -318,7 +323,8 @@ PUBLIC UMSS_DEV_T *  umss_CustomerConfig (void)
 			s_umss_active_disk_info_ptr[index].page_number = t_umss_disk_info_ptr[i].page_number;
 			s_umss_active_disk_info_ptr[index].dev_state = UMSS_DEV_PRESENT;
 			s_umss_active_disk_info_ptr[index].is_Hidden = t_umss_disk_info_ptr[i].is_Hidden;
-			
+			s_umss_active_disk_info_ptr[index].vendor = t_umss_disk_info_ptr[i].vendor;
+            s_umss_active_disk_info_ptr[index].product = t_umss_disk_info_ptr[i].product;
 			USB_LOG_TRACE("dev_name:%s, is present\n",t_umss_disk_info_ptr[i].dev_name);
 
             s_active_disk_num++;

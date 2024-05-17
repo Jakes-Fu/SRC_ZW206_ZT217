@@ -20569,13 +20569,15 @@ AT_CMD_FUNC(ATC_ProcessCHANGERAT)
 	return S_ATC_FAIL;
 #endif
 }
-
+#ifdef MSDC_CARD_SUPPORT
+extern void  sdtest_get_space(char *spaceBuf);
+#endif
 AT_CMD_FUNC(ATC_ProcessSPCHKSD)
 {
-#if defined(_ATC_UIX8910_ENABLE_)
+#ifdef MSDC_CARD_SUPPORT
     uint32 portNo;
     uint8 index;
-
+    uint8 capaBuf[32] = {0};
 #define COM_DEBUG 1
 
     switch (ATC_GET_CMD_TYPE)
@@ -20588,14 +20590,13 @@ AT_CMD_FUNC(ATC_ProcessSPCHKSD)
             for (index = 0; index < 1; index++)
 #endif
             {
-#ifdef SDCARD_SUPPORT
                 if (SCM_STATUS_NORMAL == SCM_GetSlotStatus(index))
                 {
-                    sprintf((char *)g_rsp_str, "+SPCHKSD: 1");
+                    sdtest_get_space(&capaBuf[0]);
+                    sprintf((char *)g_rsp_str, "+SPCHKSD,Size:%s",capaBuf);
                     ATC_BuildInfoRsp(atc_config_ptr, g_rsp_str);
                     return S_ATC_SUCCESS;
                 }
-#endif
             }
             return S_ATC_FAIL;
         }

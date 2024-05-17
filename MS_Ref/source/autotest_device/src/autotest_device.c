@@ -2405,7 +2405,85 @@ LOCAL uint32 HandleIicDeviceAutotest(
 
     return 1;
 }
+#ifdef  MSDC_CARD_SUPPORT
+#define SDTEST_LOG_TRACE(...) SCI_TraceLow(__VA_ARGS__)
+#define SDTEST_FILE_SIZE 1024
+#define SFS_INVALID_HANDLE 0
 
+uint8 sdtest_write_file(const wchar *device_ptr)
+{
+     uint16 i=0;
+     uint8 *write_buff_ptr = PNULL;
+     uint8 *read_buff_ptr = PNULL;
+     uint32 wrtlen,rdlen = 0;
+     uint32 errBytes = 0xff;
+     uint8 ret = SCI_FAILURE;
+     SFS_ERROR_E         result = SFS_ERROR_NO_SPACE;
+     SFS_DEVICE_FORMAT_E     format = SFS_UNKNOWN_FORMAT;
+     SFS_HANDLE sfs_fd;
+     wchar g_sdtest_file_name[32] = {'E',':', '\\', 's','d','t','e','s','t','\\','t', 'e', 's', 't', 'f', 'i', 'l', 'e', '0', 0};/*lint !e785*/
+     if(MMIAPIFMM_IsDevEnoughSpace(SDTEST_FILE_SIZE,2/*MMI_DEVICE_SDCARD*/) == FALSE){
+         SDTEST_LOG_TRACE("diag: not enough space in sd card!");
+         goto clean;
+     }
+     sfs_fd = MMIAPIFMM_CreateFile(g_sdtest_file_name, SFS_MODE_CREATE_ALWAYS|SFS_MODE_WRITE, NULL, NULL);
+     if(SFS_INVALID_HANDLE == sfs_fd)
+     {
+         SDTEST_LOG_TRACE("diag: create file:%s fail", g_sdtest_file_name);
+         goto clean;
+     }
+     write_buff_ptr = SCI_ALLOC_APP(SDTEST_FILE_SIZE);
+     if(write_buff_ptr == NULL)
+     {
+         SDTEST_LOG_TRACE("diag: alloc write_buff_ptr fail");/*lint !e522 */
+         goto clean;
+     }
+     for(i=0;i<SDTEST_FILE_SIZE;i+=2){
+         write_buff_ptr[i] = 0x53;
+         write_buff_ptr[i+1] = 0x44;
+     }
+     result = MMIAPIFMM_WriteFile(sfs_fd, (void*)write_buff_ptr, SDTEST_FILE_SIZE, &wrtlen, PNULL);
+     if(result !=SFS_ERROR_NONE){
+         SDTEST_LOG_TRACE("diag: MMIAPIFMM_WriteFile fail,result:%d,wrtlen:%d",result,wrtlen);/*lint !e522 */
+         goto clean;
+     }
+     SFS_CloseFile (sfs_fd);
+     sfs_fd = SFS_INVALID_HANDLE;
+     read_buff_ptr = SCI_ALLOC_APP(SDTEST_FILE_SIZE);
+     if(read_buff_ptr == NULL)
+     {
+         SDTEST_LOG_TRACE("diag: alloc read_buff_ptr fail");/*lint !e522 */
+         goto clean;
+     }
+     sfs_fd = MMIAPIFMM_CreateFile(g_sdtest_file_name, SFS_MODE_OPEN_EXISTING|SFS_MODE_READ, NULL, NULL);
+     if(SFS_INVALID_HANDLE == sfs_fd)
+     {
+         SDTEST_LOG_TRACE("diag: open file:%s fail", g_sdtest_file_name);
+         goto clean;
+     }
+     SFS_SetFilePointer(sfs_fd, 0, SFS_SEEK_BEGIN);
+     result = MMIAPIFMM_ReadFile(sfs_fd, (void*)read_buff_ptr, SDTEST_FILE_SIZE, &rdlen, PNULL);
+     if(result != SFS_ERROR_NONE && rdlen != SDTEST_FILE_SIZE)
+     {
+        SDTEST_LOG_TRACE("diag: MMIAPIFMM_ReadFile fail,result:%d,rdlen:%d",result,rdlen);/*lint !e522 */
+        goto clean;
+     }
+     if(memcmp(read_buff_ptr,write_buff_ptr,SDTEST_FILE_SIZE) == 0){
+         errBytes = 0;
+         ret = SCI_SUCCESS;
+     }
+clean:
+     SDTEST_LOG_TRACE("diag: sd filesystem test ret:%d,errBytes:%d",ret,errBytes);
+     if(write_buff_ptr)
+         SCI_Free(write_buff_ptr);
+     if(read_buff_ptr)
+         SCI_Free(read_buff_ptr);
+     if(sfs_fd){
+         SFS_CloseFile (sfs_fd);
+     }
+     return ret;
+}
+#endif
 LOCAL uint32 HandleTFAutotest(
     uint8 **dest_ptr,       // Pointer of the response message.
     uint16 *dest_len_ptr,   // Pointer of size of the response message in uin8.
@@ -2418,7 +2496,7 @@ LOCAL uint32 HandleTFAutotest(
 		wchar at_sdcard[2]  = { 'E', 0 };
 		MSG_HEAD_T  *msg_head = (MSG_HEAD_T *)src_ptr;
 		SFS_ERROR_E device_error = 0;
-#ifdef  SDCARD_SUPPORT
+#ifdef  MSDC_CARD_SUPPORT
 		if (( SCM_NOT_EXIST != SCM_GetSlotStatus(SCM_SLOT_0)) && (SFS_ERROR_NONE == SFS_GetDeviceStatus(at_sdcard)))
 		{
 			ret = SCI_SUCCESS;
@@ -2447,12 +2525,14 @@ LOCAL uint32 HandleTFAutotest(
 			}
 
 		}
+        ret = sdtest_write_file(at_sdcard);
 
 		*dest_len_ptr = sizeof(MSG_HEAD_T);
 		*dest_ptr = (uint8 *)SCI_ALLOC_APP(*dest_len_ptr);
 		SCI_ASSERT(SCI_NULL != *dest_ptr);
 
 		SCI_MEMCPY(*dest_ptr, msg_head, sizeof(MSG_HEAD_T));
+        SDTEST_LOG_TRACE("%s ret:%d",__FUNCTION__,ret);
 
 		((MSG_HEAD_T  *)(*dest_ptr))->len = *dest_len_ptr;
 		((MSG_HEAD_T  *)(*dest_ptr))->subtype  = ret;

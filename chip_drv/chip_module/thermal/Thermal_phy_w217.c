@@ -132,7 +132,7 @@ PUBLIC int32 THERMAL_Skin_Temp_Read(void)
     uint32          table_size = sizeof(skin_temp_table)/sizeof(skin_temp_table[0]);
 
    // vol =  _CHGMNG_GetChannelVol(ADC_CHANNEL_ADCI2, ADC_SCALE_2V444);  //Tianyu.Yang
-    vol =  _CHGMNG_GetChannelVol(ADC_CHANNEL_VBAT, ADC_SCALE_2V444);  //Tianyu.Yang
+    vol =  _CHGMNG_GetChannelVol(ADC_CHANNEL_ADCI1, ADC_SCALE_2V444);  //Tianyu.Yang
 
     for  (i = 0; i < table_size; i++)
     {

@@ -33,6 +33,7 @@
 #include "scm_config.h"
 #include "gpio_prod_api.h"
 #include "os_api.h"
+#include "sfs.h"
 
 /**---------------------------------------------------------------------------*
  **                         Debugging Flag                                    *
@@ -53,14 +54,14 @@
  **---------------------------------------------------------------------------*/
 #define SCM_CFG_PRINT(x) SCI_TRACE_LOW x
 
-#define SCM_SDIO_PIN_CMD		0x5010c020
-#define SCM_SDIO_PIN_D0			0x5010c024
-#define SCM_SDIO_PIN_D1			0x5010c028
-#define SCM_SDIO_PIN_D2			0x5010c02c
-#define SCM_SDIO_PIN_D3			0x5010c030
-#define SCM_SDIO_PIN_CLK		0x5010c01c
-#define SCM_APB_CLK_CFG0		0x50100148	//6800H:[3:2] 00:XTL_Clock  01:MPLL_DIV8(48Mhz)  1x:MPLL_DIV4(96Mhz)
-#define SCM_GR_MPLL_MN			0x50109040	//6800H:0x8B00001C		[11:0]MPLL_N		[20:16]MPLL_M		F=26Mhz*N/M
+//#define SCM_SDIO_PIN_CMD		0x51510160
+//#define SCM_SDIO_PIN_D0			0x5151015c
+//#define SCM_SDIO_PIN_D1			0x51510158
+//#define SCM_SDIO_PIN_D2			0x51510154
+//#define SCM_SDIO_PIN_D3			0x51510150
+//#define SCM_SDIO_PIN_CLK		0x51510164
+//#define SCM_APB_CLK_CFG0		0x0480300C//0x50100148	//6800H:[3:2] 00:XTL_Clock  01:MPLL_DIV8(48Mhz)  1x:MPLL_DIV4(96Mhz)
+//#define SCM_GR_MPLL_MN			0x50109040	//6800H:0x8B00001C		[11:0]MPLL_N		[20:16]MPLL_M		F=26Mhz*N/M
 												//8800H:0x8B000024	[4:0]MPLL_M		[27:16]MPLL_N
 												//8800G:0x8B000024	[11:0]MPLL_N		[21:16]MPLL_M
 //#define SCM_GR_CLK_GEN5			0x8B00007C	//8800H:[18:17] CLK_SDIOPLL_SEL 00:MPLL  01:VPLL  1x:TDPLL  [9:5] CLK_SDIO_DIV F = f(pll)/(n+1)
@@ -70,11 +71,7 @@
 /**---------------------------------------------------------------------------*
  **                         Local Variables                                   *
  **---------------------------------------------------------------------------*/
-#if 1
-PUBLIC uint32 SCM_TASK_STACK_SIZE = 2048;
-LOCAL uint32 SCM_TASK_QUEUE_NUM = 40;
-PUBLIC uint32 SCM_TASK_TASK_PRIO = 26;
-#endif
+
 
 LOCAL BOOLEAN change_mode = FALSE;		//FALSE: Default use High Speed Mode    TRUE: Change to Normal Speed Mode
 
@@ -108,6 +105,7 @@ typedef struct
 
 LOCAL uint8 s_atest_mode[SDCARD_SUPPORT_NUM] = {0}; // ATest Mode
 LOCAL uint8 s_sd_card_status[SDCARD_SUPPORT_NUM] = {0};  // ATest Mode	
+uint16 g_sd_dev_name[2] = {'E', 0};
 
 LOCAL uint32 Slot0_GetCapacity(void);
 #endif 
@@ -141,6 +139,71 @@ LOCAL BOOLEAN slot0_CloseProtocol(void)
 // Note:
 /******************************************************************************/
 #ifdef  SD_SUPORT_DIAG
+char totalCapaBuf[14] = {0};
+char usedSpaceBuf[14] = {0};
+#define SDTEST_LOG_TRACE(...) SCI_TraceLow(__VA_ARGS__)
+void sdtest_SpaceToString( uint32  low_size , uint32  hight_size,char *str_ptr)
+{    
+    uint32      gb_size     =   1 << 30;
+    uint32      tb_size     =   1 << 8;
+    uint32      kb_size     =   1 << 10;
+    uint32      mb_size     =   1 << 20;
+    char *temp_str = str_ptr;
+    if (hight_size > tb_size)
+    {
+        sprintf( temp_str, "%ld.%ld T", (hight_size/tb_size),(hight_size % tb_size)/(tb_size/10));/*lint !e737 */
+    }
+    else if (hight_size > 0)
+    {
+        sprintf( temp_str, "%ld.%ld G", ((hight_size<<2) + low_size/gb_size),(low_size % gb_size)/(gb_size/10));/*lint !e737 */
+    }
+    else
+    {
+        if (low_size < kb_size)
+        {
+            sprintf (temp_str, "%ldB", (int32) low_size);
+        }
+        else if (low_size < mb_size)
+        {
+            sprintf (temp_str, "%ld.%ldK", (int32) (low_size / kb_size), (int32) (low_size % kb_size) / (kb_size / 10));/*lint !e737 !e573*/
+        }
+        else if (low_size < gb_size)
+        {
+            sprintf (temp_str, "%ld.%ldM", (int32) (low_size / mb_size), (int32) (low_size % mb_size) / (mb_size / 10));/*lint !e737 !e573*/
+        }
+        else
+        {
+            sprintf (temp_str, "%ld.%ldG", (int32) (low_size / gb_size), (int32) (low_size % gb_size) / (gb_size / 10));/*lint !e737 !e573*/
+        }
+    }   
+}
+void  sdtest_get_space(char *spaceBuf)
+{
+    uint32          free_space_low                              =   0;
+    uint32          free_space_high                             =   0;
+    uint32          used_space_low                              =   0;
+    uint32          used_space_high                             =   0;
+    uint32          total_space_high                            =   0;
+    uint32          total_space_low                             =   0;
+	if (SFS_GetDeviceStatus(g_sd_dev_name) == SFS_ERROR_NONE)
+	{                    
+		SFS_GetDeviceUsedSpace(g_sd_dev_name,&used_space_high, &used_space_low);
+		SFS_GetDeviceFreeSpace(g_sd_dev_name,&free_space_high, &free_space_low);   
+	}
+    total_space_low  =  used_space_low + free_space_low;  
+    if ((total_space_low < used_space_low) || (total_space_low < free_space_low))
+    {
+        total_space_high =  used_space_high + free_space_high +1;
+    }
+    else
+    {
+        total_space_high =  used_space_high + free_space_high;
+    }
+    sdtest_SpaceToString(total_space_low,total_space_high,totalCapaBuf);
+    sdtest_SpaceToString(used_space_low,used_space_high,usedSpaceBuf);
+    sprintf(spaceBuf,"%s/%s",usedSpaceBuf,totalCapaBuf);
+    SDTEST_LOG_TRACE("diag:spaceBuf:%s",spaceBuf);
+}
 LOCAL uint32 _SD_diag_handler (
     uint8 **dest_ptr,       // Pointer of the response message.
     uint16 *dest_len_ptr,   // Pointer of size of the response message in uin8.
@@ -228,23 +291,22 @@ LOCAL uint32 _SD_diag_handler (
 LOCAL BOOLEAN slot0_Init(void)
 {
 	BOOLEAN ret = FALSE;
-	
         //SCM_CFG_PRINT:"[Init]SCM_SDIO_PIN_CMD = 0x%x"
-        SCI_TRACE_ID(TRACE_TOOL_CONVERT,SCM_CONFIG_219_112_2_18_0_26_32_41,(uint8*)"d", * (volatile uint32 *) SCM_SDIO_PIN_CMD);
+        //SCI_TRACE_ID(TRACE_TOOL_CONVERT,SCM_CONFIG_219_112_2_18_0_26_32_41,(uint8*)"d", * (volatile uint32 *) SCM_SDIO_PIN_CMD);
         //SCM_CFG_PRINT:"[Init]SCM_SDIO_PIN_D0 = 0x%x"
-        SCI_TRACE_ID(TRACE_TOOL_CONVERT,SCM_CONFIG_220_112_2_18_0_26_32_42,(uint8*)"d", * (volatile uint32 *) SCM_SDIO_PIN_D0);
+        //SCI_TRACE_ID(TRACE_TOOL_CONVERT,SCM_CONFIG_220_112_2_18_0_26_32_42,(uint8*)"d", * (volatile uint32 *) SCM_SDIO_PIN_D0);
         //SCM_CFG_PRINT:"[Init]SCM_SDIO_PIN_D1 = 0x%x"
-        SCI_TRACE_ID(TRACE_TOOL_CONVERT,SCM_CONFIG_221_112_2_18_0_26_32_43,(uint8*)"d", * (volatile uint32 *) SCM_SDIO_PIN_D1);
+        //SCI_TRACE_ID(TRACE_TOOL_CONVERT,SCM_CONFIG_221_112_2_18_0_26_32_43,(uint8*)"d", * (volatile uint32 *) SCM_SDIO_PIN_D1);
         //SCM_CFG_PRINT:"[Init]SCM_SDIO_PIN_D2 = 0x%x"
-        SCI_TRACE_ID(TRACE_TOOL_CONVERT,SCM_CONFIG_222_112_2_18_0_26_32_44,(uint8*)"d",  * (volatile uint32 *)SCM_SDIO_PIN_D2);
+        //SCI_TRACE_ID(TRACE_TOOL_CONVERT,SCM_CONFIG_222_112_2_18_0_26_32_44,(uint8*)"d",  * (volatile uint32 *)SCM_SDIO_PIN_D2);
         //SCM_CFG_PRINT:"[Init]SCM_SDIO_PIN_D3 = 0x%x"
-        SCI_TRACE_ID(TRACE_TOOL_CONVERT,SCM_CONFIG_223_112_2_18_0_26_32_45,(uint8*)"d", * (volatile uint32 *) SCM_SDIO_PIN_D3);
+        //SCI_TRACE_ID(TRACE_TOOL_CONVERT,SCM_CONFIG_223_112_2_18_0_26_32_45,(uint8*)"d", * (volatile uint32 *) SCM_SDIO_PIN_D3);
         //SCM_CFG_PRINT:"[Init]SCM_SDIO_PIN_CLK = 0x%x"
-        SCI_TRACE_ID(TRACE_TOOL_CONVERT,SCM_CONFIG_224_112_2_18_0_26_32_46,(uint8*)"d", * (volatile uint32 *)SCM_SDIO_PIN_CLK);
+        //SCI_TRACE_ID(TRACE_TOOL_CONVERT,SCM_CONFIG_224_112_2_18_0_26_32_46,(uint8*)"d", * (volatile uint32 *)SCM_SDIO_PIN_CLK);
         //SCM_CFG_PRINT:"[Init]SCM_APB_CLK_CFG0 = 0x%x"
-        SCI_TRACE_ID(TRACE_TOOL_CONVERT,SCM_CONFIG_225_112_2_18_0_26_32_47,(uint8*)"d", * (volatile uint32 *)SCM_APB_CLK_CFG0);
+        //SCI_TRACE_ID(TRACE_TOOL_CONVERT,SCM_CONFIG_225_112_2_18_0_26_32_47,(uint8*)"d", * (volatile uint32 *)SCM_APB_CLK_CFG0);
         //SCM_CFG_PRINT:"[Init]SCM_GR_MPLL_MN = 0x%x"
-        SCI_TRACE_ID(TRACE_TOOL_CONVERT,SCM_CONFIG_226_112_2_18_0_26_32_48,(uint8*)"d", * (volatile uint32 *)SCM_GR_MPLL_MN);
+        //SCI_TRACE_ID(TRACE_TOOL_CONVERT,SCM_CONFIG_226_112_2_18_0_26_32_48,(uint8*)"d", * (volatile uint32 *)SCM_GR_MPLL_MN);
 
 #ifdef SD_SUPORT_DIAG
         //DIAG_RegisterCmdRoutine(DIAG_SDCARD_TEST_F, _SD_diag_handler);
@@ -266,8 +328,8 @@ LOCAL BOOLEAN slot0_IsExist(void)
 {
 	if(0 == s_atest_mode[0])	//normal mode
 	{
-    		return TRUE; //GPIO_CheckSDCardStatus();
     		//return GPIO_CheckSDCardStatus();
+    		return GPIO_CheckSDCardStatus();
 	}
 	else		//ATest mode
 	{
@@ -394,7 +456,7 @@ LOCAL BOOLEAN SDIO0_Pwr(SCM_SLOT_NAME_E slotNO,SLOT_PWR_SWITCH_E pwrOn)
 #endif
 
 
-//#define CHIP_SDIO_FIX
+#define CHIP_SDIO_FIX
 
 #ifdef SRAM_SIZE_16MBIT
 #define CHIPSDIOFIXBUFSIZE 16
@@ -713,21 +775,21 @@ LOCAL BOOLEAN slot0_ErrProc(SCM_FUN_E cmd,SCM_PARAM_T* param)
 	}
 	
         //SCM_CFG_PRINT:"[ErrProc]SCM_SDIO_PIN_CMD = 0x%x"
-        SCI_TRACE_ID(TRACE_TOOL_CONVERT,SCM_CONFIG_670_112_2_18_0_26_33_58,(uint8*)"d", * (volatile uint32 *) SCM_SDIO_PIN_CMD);
+        //SCI_TRACE_ID(TRACE_TOOL_CONVERT,SCM_CONFIG_670_112_2_18_0_26_33_58,(uint8*)"d", * (volatile uint32 *) SCM_SDIO_PIN_CMD);
         //SCM_CFG_PRINT:"[ErrProc]SCM_SDIO_PIN_D0 = 0x%x"
-        SCI_TRACE_ID(TRACE_TOOL_CONVERT,SCM_CONFIG_671_112_2_18_0_26_33_59,(uint8*)"d", * (volatile uint32 *) SCM_SDIO_PIN_D0);
+        //SCI_TRACE_ID(TRACE_TOOL_CONVERT,SCM_CONFIG_671_112_2_18_0_26_33_59,(uint8*)"d", * (volatile uint32 *) SCM_SDIO_PIN_D0);
         //SCM_CFG_PRINT:"[ErrProc]SCM_SDIO_PIN_D1 = 0x%x"
-        SCI_TRACE_ID(TRACE_TOOL_CONVERT,SCM_CONFIG_672_112_2_18_0_26_33_60,(uint8*)"d", * (volatile uint32 *) SCM_SDIO_PIN_D1);
+        //SCI_TRACE_ID(TRACE_TOOL_CONVERT,SCM_CONFIG_672_112_2_18_0_26_33_60,(uint8*)"d", * (volatile uint32 *) SCM_SDIO_PIN_D1);
         //SCM_CFG_PRINT:"[ErrProc]SCM_SDIO_PIN_D2 = 0x%x"
-        SCI_TRACE_ID(TRACE_TOOL_CONVERT,SCM_CONFIG_673_112_2_18_0_26_33_61,(uint8*)"d",  * (volatile uint32 *)SCM_SDIO_PIN_D2);
+        //SCI_TRACE_ID(TRACE_TOOL_CONVERT,SCM_CONFIG_673_112_2_18_0_26_33_61,(uint8*)"d",  * (volatile uint32 *)SCM_SDIO_PIN_D2);
         //SCM_CFG_PRINT:"[ErrProc]SCM_SDIO_PIN_D3 = 0x%x"
-        SCI_TRACE_ID(TRACE_TOOL_CONVERT,SCM_CONFIG_674_112_2_18_0_26_33_62,(uint8*)"d", * (volatile uint32 *) SCM_SDIO_PIN_D3);
+        //SCI_TRACE_ID(TRACE_TOOL_CONVERT,SCM_CONFIG_674_112_2_18_0_26_33_62,(uint8*)"d", * (volatile uint32 *) SCM_SDIO_PIN_D3);
         //SCM_CFG_PRINT:"[ErrProc]SCM_SDIO_PIN_CLK = 0x%x"
-        SCI_TRACE_ID(TRACE_TOOL_CONVERT,SCM_CONFIG_675_112_2_18_0_26_33_63,(uint8*)"d", * (volatile uint32 *)SCM_SDIO_PIN_CLK);
+        //SCI_TRACE_ID(TRACE_TOOL_CONVERT,SCM_CONFIG_675_112_2_18_0_26_33_63,(uint8*)"d", * (volatile uint32 *)SCM_SDIO_PIN_CLK);
         //SCM_CFG_PRINT:"[ErrProc]SCM_APB_CLK_CFG0 = 0x%x"
-        SCI_TRACE_ID(TRACE_TOOL_CONVERT,SCM_CONFIG_676_112_2_18_0_26_33_64,(uint8*)"d", * (volatile uint32 *) SCM_APB_CLK_CFG0);
+        //SCI_TRACE_ID(TRACE_TOOL_CONVERT,SCM_CONFIG_676_112_2_18_0_26_33_64,(uint8*)"d", * (volatile uint32 *) SCM_APB_CLK_CFG0);
         //SCM_CFG_PRINT:"[ErrProc]SCM_GR_MPLL_MN = 0x%x"
-        SCI_TRACE_ID(TRACE_TOOL_CONVERT,SCM_CONFIG_677_112_2_18_0_26_33_65,(uint8*)"d", * (volatile uint32 *)SCM_GR_MPLL_MN);
+        //SCI_TRACE_ID(TRACE_TOOL_CONVERT,SCM_CONFIG_677_112_2_18_0_26_33_65,(uint8*)"d", * (volatile uint32 *)SCM_GR_MPLL_MN);
 
 	do
 	{
@@ -756,16 +818,6 @@ LOCAL BOOLEAN slot0_ErrProc(SCM_FUN_E cmd,SCM_PARAM_T* param)
 				BOOLEAN result;
 		//---
 		        result = slot0_Read(param->readParam.startBlock, param->readParam.num, param->readParam.buf);
-#if 0 //ken.kuang repace by local funtion.
-                if(1 == param->readParam.num)
-				{
-					result = CARD_SDIO_ReadSingleBlock(s_cardHandle, param->readParam.startBlock, param->readParam.buf);
-				}
-				else
-				{
-					result = CARD_SDIO_ReadMultiBlock(s_cardHandle, param->readParam.startBlock, param->readParam.num, param->readParam.buf);
-				}
-#endif
 				if(TRUE == result)
 				{
 					return TRUE;
@@ -778,16 +830,6 @@ LOCAL BOOLEAN slot0_ErrProc(SCM_FUN_E cmd,SCM_PARAM_T* param)
 					if(TRUE == CARD_SDIO_InitCard(s_cardHandle, speedmode))
 					{
                         result = slot0_Read(param->readParam.startBlock, param->readParam.num, param->readParam.buf);
-#if 0 //ken.kuang repace by local funtion.
-						if(1 == param->readParam.num)
-						{
-							result = CARD_SDIO_ReadSingleBlock(s_cardHandle, param->readParam.startBlock, param->readParam.buf);
-						}
-						else
-						{
-							result = CARD_SDIO_ReadMultiBlock(s_cardHandle, param->readParam.startBlock, param->readParam.num, param->readParam.buf);
-						}
-#endif
 						if(TRUE == result)
 						{
 							return TRUE;
@@ -802,23 +844,6 @@ LOCAL BOOLEAN slot0_ErrProc(SCM_FUN_E cmd,SCM_PARAM_T* param)
 			{
 				BOOLEAN result;
 		//---
-#if 0 //ken.kuang move this to below (A)
-		        result = slot0_Write(param->writeParam.startBlock,param->writeParam.num,param->writeParam.buf);
-#if 0 //ken.kuang repace by local funtion.
-				if(1 == param->writeParam.num)
-				{
-					result = CARD_SDIO_WriteSingleBlock(s_cardHandle, param->writeParam.startBlock, param->writeParam.buf);
-				}
-				else
-				{
-					result = CARD_SDIO_WriteMultiBlock(s_cardHandle, param->writeParam.startBlock, param->writeParam.num, param->writeParam.buf);
-				}
-#endif
-				if(TRUE == result)
-				{
-					return TRUE;
-				}
-#endif
 
 				for(i = 0; i < 2; i++) // from (A) to here!
 				{
@@ -827,16 +852,6 @@ LOCAL BOOLEAN slot0_ErrProc(SCM_FUN_E cmd,SCM_PARAM_T* param)
 					if(TRUE == CARD_SDIO_InitCard(s_cardHandle, speedmode))
 					{
 		                result = slot0_Write(param->writeParam.startBlock,param->writeParam.num,param->writeParam.buf);
-#if 0 //ken.kuang repace by local funtion.
-						if(1 == param->writeParam.num)
-						{
-							result = CARD_SDIO_WriteSingleBlock(s_cardHandle, param->writeParam.startBlock, param->writeParam.buf);
-						}
-						else
-						{
-							result = CARD_SDIO_WriteMultiBlock(s_cardHandle, param->writeParam.startBlock, param->writeParam.num, param->writeParam.buf);
-						}
-#endif
 						if(TRUE == result)
 						{
 							return TRUE;

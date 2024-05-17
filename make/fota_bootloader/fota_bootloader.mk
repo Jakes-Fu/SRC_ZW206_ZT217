@@ -202,8 +202,7 @@ endif
 
 
 SOURCES   +=  sfc_phy_uws6121e_v2.c\
-              mcd_sdmmc.c \
-              hal_sdmmc.c \
+		mcd_emmc.c \
 			  ifc_hal.c\
               ifc_manager_cfg.c\
               ff.c\

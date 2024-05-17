@@ -344,7 +344,7 @@ typedef void (*MCD_CARD_DETECT_HANDLER_T)(BOOLEAN cardPlugged);
   MCD_ERR_T mcd_Close(MCD_CARD_ID mcdId);
   MCD_ERR_T mcd_Close_no_sleep(MCD_CARD_ID mcdId);
   void mcd_LowPower(void);
-
+  void Emmc_Poweroff(void);
 
 
 //  uint8 mcd_IsOpened(MCD_CARD_ID mcdId);

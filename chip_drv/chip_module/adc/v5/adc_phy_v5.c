@@ -307,7 +307,7 @@ PUBLIC uint32 ADC_GetResultDirectly (ADC_E source, BOOLEAN scale)
 
 
     //ADC_LOG_TRACE:"[ADC:ADC_GetResultDirectly] IN(%d) OUT(%d)"
-    //SCI_TRACE_ID(TRACE_TOOL_CONVERT,ADC_PHY_V5_273_112_2_17_23_2_29_16,(uint8*)"dd",source, result);
+    SCI_TRACE_ID(TRACE_TOOL_CONVERT,ADC_PHY_V5_273_112_2_17_23_2_29_16,(uint8*)"dd",source, result);
     
     // clear the intsts
     ADC_REG_OR (ADC_INT_CLR, ADC_DATA_MSK);

@@ -90,7 +90,7 @@ extern   "C"
 #define TB_ANA_INT                   0x24
 #define TB_DCAM_INT                  TB_CAMERA_INT
 #define TB_IIS_INT                   0x27
-#define TB_SDIO_INT                  SYS_IRQ_ID_SDMMC
+#define TB_SDIO_INT                  SYS_IRQ_ID_EMMC
 #define TB_SDIO2_INT                 SYS_IRQ_ID_SDMMC
 #define TB_ARM7_INT                  0x29
 #define TB_ARM7_TIMER_INT            0x2A

@@ -26,6 +26,7 @@
 #include "sdua_config.h"
 #endif
 #include "mcd_m.h"
+#include "aon_clk.h"
 
 //#define CARD_SDIO_HIGHSPEED_SUPPORT
 
@@ -356,9 +357,18 @@ PUBLIC void CARD_SDIO_Close(CARD_SDIO_HANDLE cardHandle)
     cardHandle->mutex = NULL;
     #endif
 }
+#if defined(OS_NONE)
+PUBLIC void GPIO_OpenSDPower (BOOLEAN is_open){}
+#endif
 
 PUBLIC void CARD_SDIO_PwrCtl(CARD_SDIO_HANDLE cardHandle,BOOLEAN switchCtl)
 {
+    SCI_TraceLow("%s,switchCtl:%d",__FUNCTION__,switchCtl);
+    GPIO_OpenSDPower(switchCtl);
+    if(switchCtl == FALSE)
+        Emmc_Poweroff();
+    else
+        CARD_SDIO_Open(CARD_SDIO_SLOT_0);
        return;
 
 	 #if 0

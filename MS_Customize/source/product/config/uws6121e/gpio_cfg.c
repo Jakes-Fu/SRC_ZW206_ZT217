@@ -77,8 +77,8 @@ LOCAL const GPIO_CFG_INFO_T s_gpio_prod_cfg_cus_table[] =
     {GPIO_PROD_VIBRATIOR_EN_ID,            GPIO_PROD_TYPE_MAX, GPIO_PROD_HIGH_LEVEL,      GPIO_PROD_NUM_INVALID,    _GPIO_OpenVibrator},
     {GPIO_PROD_FLASH_EN_ID,                GPIO_PROD_TYPE_MAX, GPIO_PROD_HIGH_LEVEL,      GPIO_PROD_NUM_INVALID,    _GPIO_OpenFlashLight},
 
-    {GPIO_PROD_HEADSET_BUTTON_ID,        GPIO_PROD_TYPE_EIC_DBNC, GPIO_PROD_HIGH_LEVEL,     EICA_AUD_HEAD_BUTTON,  PNULL },
-    {GPIO_PROD_HEADSET_DETECT_ID,        GPIO_PROD_TYPE_BB0, GPIO_PROD_LOW_LEVEL,     21,             PNULL   }, // GPIO_69
+    {GPIO_PROD_HEADSET_BUTTON_ID,        GPIO_PROD_TYPE_BB0, GPIO_PROD_HIGH_LEVEL,     GPIO_PROD_NUM_INVALID,  PNULL },
+    {GPIO_PROD_HEADSET_DETECT_ID,        GPIO_PROD_TYPE_BB0, GPIO_PROD_HIGH_LEVEL,     21,             PNULL   }, // GPIO_69
     //   {GPIO_PROD_HEADSET_DETECT_ID,        GPIO_PROD_TYPE_EIC_DBNC, GPIO_PROD_HIGH_LEVEL,     EIC_AUD_HEAD_INSERT_ALL,             PNULL   }, // GPIO_69
 
     //{GPIO_PROD_SENSOR_RESET_ID,            GPIO_PROD_TYPE_BB0, GPIO_PROD_HIGH_LEVEL,     33,               PNULL    }, // 53--33
@@ -119,7 +119,7 @@ LOCAL const GPIO_CFG_INFO_T s_gpio_prod_cfg_cus_table[] =
     {GPIO_PROD_GSENSOR_INT_2_ID,			GPIO_PROD_TYPE_BB0, GPIO_PROD_HIGH_LEVEL, 	5,  PNULL},	//G-SENSOR INT1
 #else
 #ifdef MOTION_SENSOR_TYPE
-     {GPIO_PROD_GSENSOR_INT_ID,            GPIO_PROD_TYPE_BB0, GPIO_PROD_LOW_LEVEL,     8,             (GPIO_CB)MSensor_IntHandler    },    //G-SENSOR INT1 USE GPIO8
+    // {GPIO_PROD_GSENSOR_INT_ID,            GPIO_PROD_TYPE_BB0, GPIO_PROD_LOW_LEVEL,     8,             (GPIO_CB)MSensor_IntHandler    },    //G-SENSOR INT1 USE GPIO8
 #endif
 #endif
 
@@ -319,14 +319,14 @@ PUBLIC void GPIO_CustomizeInit(void)
     GPIO_SetLisrInt(6, TRUE);
 
      // headset plug detect
-   /* GPIO_PROD_RegGpio(
+    GPIO_PROD_RegGpio(
         GPIO_PROD_HEADSET_DETECT_ID,
         SCI_FALSE,
         SCI_FALSE,
         SCI_TRUE,
-        HEADSET_DETECT_SHAKING_TIME,
+        HEADSET_DETECT_SHAKING_TIME*4,
         (GPIO_PROD_CALLBACK)GPIO_HeadsetDetectIntHandler
-        );*/
+        );
         
     // Charge plug detect
     GPIO_PROD_RegGpio(
@@ -443,7 +443,7 @@ PUBLIC void GPIO_CustomizeInit(void)
     SCI_TRACE_ID(TRACE_TOOL_CONVERT,GPIO_CFG_265_112_2_18_0_26_25_35,(uint8*)"");
 #endif
 
-   /*     // SDCARD plug detect
+        // SDCARD plug detect
         GPIO_PROD_RegGpio(
         GPIO_PROD_SDCARD_DETECT_ID,
         SCI_FALSE,
@@ -451,7 +451,7 @@ PUBLIC void GPIO_CustomizeInit(void)
         SCI_TRUE,
         SDCARD_DETECT_SHAKING_TIME,
         (GPIO_PROD_CALLBACK)GPIO_SdcardDetectIntHandler
-        );*/
+        );
 
 	 GPIO_PROD_RegGpio(
         GPIO_PROD_TEST_ID,

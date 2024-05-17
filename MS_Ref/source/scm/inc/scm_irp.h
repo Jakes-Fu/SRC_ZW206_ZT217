@@ -38,8 +38,6 @@
 #define SCM_ENABLE_IRQ SCI_RestoreIRQ
 #endif
 
-extern uint32 SCM_TASK_STACK_SIZE;
-extern uint32 SCM_TASK_TASK_PRIO;
 extern SCM_SLOT_DESCRIPTION_T g_slotInformation[];
 extern uint32 g_slotInformationNum;
 //----------Module Function----------------------------

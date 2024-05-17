@@ -5,6 +5,7 @@ endif
 MINCPATH =  MS_Ref/source/scp/inc MS_Ref/source/scp/inc
 MINCPATH += chip_drv/export/inc/outdated
 MINCPATH += chip_drv/chip_module/sdio/uws6121e
+MINCPATH += chip_drv/chip_plf/uws6121e
 
 MSRCPATH =  MS_Ref/source/scp/src
 
@@ -43,7 +44,7 @@ SOURCES     += sdio_card_pal.c card_sdio.c
 endif
 
 ifeq ($(strip $(PLATFORM)),	UWS6121E)
-SOURCES     += sdio_card_pal.c card_sdio.c mcd_sdmmc.c
+SOURCES     += sdio_card_pal.c card_sdio.c mcd_emmc.c
 endif
 
 ifeq ($(strip $(PLATFORM)),	SC8800H)

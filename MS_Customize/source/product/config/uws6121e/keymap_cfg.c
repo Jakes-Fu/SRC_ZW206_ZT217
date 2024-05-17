@@ -20,7 +20,7 @@ LOCAL const uint16 keymap[] = {
 	/*				|						|						|						|						|						|						|						|                                     */
 	/*KEYOUT0------o-----------------------o-----------------------o-----------------------o-----------------------o-----------------------o----------------------  o-----------------------o--------------------  */
 	/*				|						|						|						|						|						|						|						|				           */
-					SCI_VK_OK,	     SCI_VK_MENU_CANCEL,	          SCI_VK_RIGHT,                  SCI_VK_VOL_UP,	SCI_VK_INVALID_KEY,  	SCI_VK_INVALID_KEY,      SCI_VK_INVALID_KEY,      SCI_VK_INVALID_KEY,
+					SCI_VK_MENU_SELECT,	     SCI_VK_MENU_CANCEL,	          SCI_VK_RIGHT,                  SCI_VK_VOL_UP,	SCI_VK_INVALID_KEY,  	SCI_VK_INVALID_KEY,      SCI_VK_INVALID_KEY,      SCI_VK_INVALID_KEY,
 	/*				|						|						|						|						|						|						|						|                                     */
 	/*				|						|						|						|						|						|						|						|                                    */
 	/*KEYOUT1------o-----------------------o-----------------------o-----------------------o-----------------------o-----------------------o----------------------- o----------------------o----------------------*/

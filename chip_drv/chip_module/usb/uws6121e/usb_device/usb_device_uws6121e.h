@@ -23,6 +23,9 @@ extern "C" {
 #include "../inc/queue.h"
 #include "usb_ch9.h"
 #include "usb_utils.h"
+#ifdef USB_MASS_STORAGE_SUPPORT
+#include "umss_common.h"
+#endif
 
 #define EP0_STATE_DIRIN_MASK 0x2
 #define EP0_STATE_DATA_MASK 0x1

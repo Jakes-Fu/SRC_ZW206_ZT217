@@ -5,8 +5,6 @@
 #include "sci_types.h"
 #include "scm_api.h"
 
-extern PUBLIC uint32 SCM_TASK_STACK_SIZE ;
-extern PUBLIC uint32 SCM_TASK_TASK_PRIO ;
 extern PUBLIC uint32 g_slotInformationNum ;
 extern SCM_SLOT_DESCRIPTION_T g_slotInformation[] ;
 

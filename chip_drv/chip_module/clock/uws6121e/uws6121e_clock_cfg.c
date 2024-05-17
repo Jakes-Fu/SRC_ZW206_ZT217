@@ -1684,6 +1684,7 @@ LOCAL void _VspReset (void)
     /* Enable Sdio apb clock */
     //CLOCK_LOG_TRACE:"[_SdioEnable]"
     SCI_TRACE_ID(TRACE_TOOL_CONVERT,SC6530_CLOCK_CFG_1666_112_2_17_23_3_49_628,(uint8*)"");
+    hwp_apApb->clk_ap_en1 |= AP_APB_CLK_EN_EMMC;
 
 //bringup_tmp    hwp_sysCtrl->CLK_SYS_AXI_ENABLE = SYS_CTRL_ENABLE_SYS_AXI_CLK_ID_SDMMC1;
 }
@@ -1696,6 +1697,7 @@ LOCAL void _VspReset (void)
     /* Disable Sdio apb clock */
     //CLOCK_LOG_TRACE:"[_SdioDisable]"
     SCI_TRACE_ID(TRACE_TOOL_CONVERT,SC6530_CLOCK_CFG_1676_112_2_17_23_3_49_629,(uint8*)"");
+    hwp_apApb->clk_ap_en1 &= ~AP_APB_CLK_EN_EMMC;
 
 //bringup_tmp    hwp_sysCtrl->REG_DBG = 0xa50001;     /*allow to set disable_reg*/
 //bringup_tmp    hwp_sysCtrl->CLK_SYS_AXI_DISABLE = SYS_CTRL_DISABLE_SYS_AXI_CLK_ID_SDMMC1;
@@ -1713,9 +1715,11 @@ void _SdioReset (void)
 //bringup_tmp    hwp_sysCtrl->REG_DBG = 0xa50001;     /*allow to set disable_reg*/
 	//reset adi module
 //bringup_tmp    hwp_sysCtrl->AP_APB_RST_SET = SYS_CTRL_SET_AP_APB_RST_ID_SDMMC1;
+    hwp_apApb->ap_rst0_set |= AP_APB_RST_EMMC;
     DELAY_CYCLE(1000)
 
 //bringup_tmp    hwp_sysCtrl->AP_APB_RST_CLR = SYS_CTRL_CLR_AP_APB_RST_ID_SDMMC1;
+    hwp_apApb->ap_rst0_clr |= AP_APB_RST_EMMC;
     DELAY_CYCLE(1000)
     //hwp_sysCtrl->REG_DBG = 0xa50000;     /*do not allow to set disable_reg*/
 }

@@ -162,8 +162,7 @@ ifeq ($(strip $(PLATFORM)),	UWS6121E)
                 fdl_bootloader/chip_drv/src/usb_boot/usb11/usb_uws6121e \
                 MS_Ref/source/base/src
 
-  SOURCES   +=  mcd_sdmmc.c \
-              hal_sdmmc.c \
+  SOURCES   +=  mcd_emmc.c \
               hal_gouda.c \
               apifc_phy.c \
 			  ifc_hal.c\

@@ -1484,7 +1484,7 @@ PUBLIC void PROD_Init(void)
 	}
 
 #ifndef MODEM_PLATFORM
-#ifdef SDCARD_SUPPORT
+#ifdef MSDC_CARD_SUPPORT
 	SCM_Init();
 #endif
 #endif
@@ -1879,24 +1879,27 @@ PUBLIC void PROD_GetMobileSerialNumber( uint8 *serialNumberBuffer, uint32  buffe
 
     len     = sizeof (TEST_DATA_INFO_T);
 
-    address = FLASH_GetProductInfoAddr() ; /*useless now */
+    //address = FLASH_GetProductInfoAddr() ; /*useless now */
 
 	ptr = (uint8 *)SCI_ALLOC_APP(len);
 	SCI_ASSERT(SCI_NULL != ptr);/*assert verified*/
 
+    NVITEM_GetProductInfo_Protect((uint8*)ptr,sizeof(TEST_DATA_INFO_T));
+#if 0
 	/* Read product control information */
 	if (EFS_Direct( SCI_TRUE, ptr,address, len)) {
         SCI_FREE(ptr);
         return ;
 	}
+#endif
 
     header_ptr = (TEST_TRACK_HEADER_T *)(ptr);
 
     /* Get SerialNum */
     val = header_ptr->SN[0]; /*lint !e613*/
-    if((val >= 0x30)&&(val <= 0x39)) /*valid char*/
+    if((val >= 0x30)&&(val <= 0x39) || (val >= 0x41)&&(val <= 0x5a) || (val >= 0x61)&&(val <= 0x7a)) /*valid char*/
     {
-    	SCI_MEMCPY(serialNumberBuffer,&header_ptr->SN[6],bufferLen); /*lint !e613*/
+        SCI_MEMCPY(serialNumberBuffer,&header_ptr->SN[0],bufferLen); /*lint !e613*/
     }else
     {
 	    SCI_MEMSET(serialNumberBuffer,0,bufferLen);

@@ -58,7 +58,7 @@ LOCAL uint8 mirror_flip = 0x55;
 // use next two interface
 //#define GC032A_OUTPUT_MODE_CCIR656_2BIT
 #define GC032A_OUTPUT_MODE_PACKET_DDR_2BIT
-#define GC032A_OUTPUT_MODE_QVGA
+//#define GC032A_OUTPUT_MODE_QVGA
 
 
 //#define GC032A_SERIAL_LOAD_FROM_T_FLASH
@@ -1223,7 +1223,8 @@ __align(4) const SENSOR_REG_T GC032A_YUV_640X480[] =
 #if defined(PRODUCT_CONFIG_uis8910c_demophone)
     {0x17,0x57},
 #else
-    {0x17,0x56},// wuxx modify 显示倒的 0x55-0x57 ---0X56 OK   ZW201_CAMERA_ROTATION
+    //{0x17,0x56},// wuxx modify 显示倒的 0x55-0x57 ---0X56 OK   ZW201_CAMERA_ROTATION
+    {0x17,0x54},
 #endif
     {0x19,0x08},
     {0x1a,0x0a},

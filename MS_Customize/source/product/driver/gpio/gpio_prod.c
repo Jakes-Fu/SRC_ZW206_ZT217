@@ -771,7 +771,7 @@ PUBLIC void GPIO_HeadsetDetectIntHandler (uint32 gpio_id, uint32 gpio_state)
 
     GPIO_CFG_INFO_T_PTR cfg_ptr = GPIO_PROD_GetCfgInfo (GPIO_PROD_HEADSET_DETECT_ID);
 
-    SCI_TRACE_LOW("{xx}GPIO_HeadsetDetectIntHandler gpio_state = %d",gpio_state);
+    SCI_TRACE_LOW("{xx}GPIO_HeadsetDetectIntHandler gpio_state = %d,valid_level=%d",gpio_state,cfg_ptr->valid_level);
     if (PNULL != cfg_ptr)
     {
      SCI_TRACE_LOW("{xx}GPIO_HeadsetDetectIntHandler (PNULL != cfg_ptr)");
@@ -1007,7 +1007,7 @@ PUBLIC void GPIO_BackendICIntHandler (uint32 gpio_id, uint32 gpio_state)
 }
 
 #ifndef MODEM_PLATFORM
-#ifdef SDCARD_SUPPORT
+#ifdef MSDC_CARD_SUPPORT
 /*****************************************************************************/
 //  Description:    SDCard detection handler function.
 //  Author:         juan.zhang
@@ -1015,12 +1015,12 @@ PUBLIC void GPIO_BackendICIntHandler (uint32 gpio_id, uint32 gpio_state)
 /*****************************************************************************/
 PUBLIC void GPIO_SdcardDetectIntHandler (uint32 gpio_id, uint32 gpio_state)
 {
-#if defined(CHIP_VER_6531) || defined(CHIP_VER_6531EFM)
+#if defined(CHIP_VER_6531) || defined(CHIP_VER_6531EFM) || defined(CHIP_VER_UWS6121E)
 #define    SCM_SLOT_DETECT     SCM_SLOT_0
 #else
 #define    SCM_SLOT_DETECT     SCM_SLOT_1
 #endif
-#define    SCM_SLOT_DETECT     SCM_SLOT_0
+
     GPIO_CFG_INFO_T_PTR cfg_ptr = GPIO_PROD_GetCfgInfo (GPIO_PROD_SDCARD_DETECT_ID);
 SCI_TRACE_LOW("{xx}GPIO_SdcardDetectIntHandler gpio_state = %d",gpio_state);
     if (PNULL != cfg_ptr)
@@ -1325,9 +1325,9 @@ BOOLEAN GPIO_PROD_RegGpio (
             {
                 case PM_LEVEL:
 #if defined(CHIP_VER_UWS6121E)
-                    if ( !HAL_GetGPIOVal (cfg_ptr->gpio_num) || (cfg_ptr->gpio_num == 6))//RTC INT use hight leve triger
+                    if ( !HAL_GetGPIOVal (cfg_ptr->gpio_num) || (cfg_ptr->gpio_num == 6) || (cfg_ptr->gpio_num == 21) )//RTC INT use hight leve triger
 #else
-                    if ( !HAL_GetGPIOVal (cfg_ptr->gpio_num) || (cfg_ptr->gpio_num == 7))//RTC INT use hight leve triger
+                    if ( !HAL_GetGPIOVal (cfg_ptr->gpio_num) || (cfg_ptr->gpio_num == 7) || (cfg_ptr->gpio_num == 21) )//RTC INT use hight leve triger
 #endif
                     {
                     SCI_TRACE_LOW("{xx}GPIO_PROD_RegGpio GPIO_INT_LEVEL_HIGH lichao");

@@ -137,7 +137,7 @@ static int _msgSetup(copsFunc_t *f, const usb_device_request_t *ctrl)
     uint16_t w_length_raw = cpu_to_le16(ctrl->wLength);
     uint16_t w_length = OSI_MIN(uint16_t, w_length_raw, cc->bufsize);
     int value = -EOPNOTSUPP;
-	uint8 t_uLun = 1;//(msg->dev.priv)->udisk_num;
+    uint8_t t_uLun = umss_GetActiveDiskNum();//(msg->dev.priv)->udisk_num;
     uint8_t nluns[1] = {0};
 	int res;
 	

@@ -90,6 +90,7 @@ PUBLIC BOOLEAN UBOT_GetDiskHiddenState (uint8 *dev_name);
 PUBLIC void  umss_CustomerDeconfig (void);
 PUBLIC UMSS_DEV_T * umss_GetActiveDiskDev (void);
 PUBLIC uint8 umss_GetActiveDiskNum (void);
+PUBLIC char * _UMSS_GetSerialNumber( void );
 
 
 /**----------------------------------------------------------------------------*

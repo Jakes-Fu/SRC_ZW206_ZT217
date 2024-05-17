@@ -56,16 +56,23 @@ struct composite_device_s
 
 #define COPS_DEV_MANUFACTURER 0
 #define COPS_DEV_PRODUCT 1
+#define COPS_SERIAL_NUMBER 2
+
 static usbString_t cops_string_defs[] = {
     {
-      COPS_DEV_MANUFACTURER,
+      0,//COPS_DEV_MANUFACTURER,
       0,
       "UNISOC",
     },
     {
-      COPS_DEV_PRODUCT,
+      0,//COPS_DEV_PRODUCT,
       0,
-      "UNISOC-uws6121e",
+      "UNISOC-217",
+    },
+    {
+      0,//COPS_SERIAL_NUMBER,
+      0,
+      NULL,//"uws6121e1234", //sn read from phase check
     },
 };
 	  
@@ -249,18 +256,18 @@ static int _copsGetString(cops_t *c, uint16_t language, uint8_t id, char *buf, u
 
     if (id == 0)
     {
-        desc->bLength = OSI_MIN(uint32_t, length, 4);
+        desc->bLength = 4;//OSI_MIN(uint32_t, length, 4);
         language = 0x0409;
         memcpy(desc->wData, &language, desc->bLength - 2);
-        return desc->bLength;
+        return OSI_MIN(uint32_t,length,desc->bLength);
     }
 
     str = _copsIdString(c, language, id);
     if (str)
     {
-        desc->bLength = strlen(str) * 2 + 2;
-        r = _ascii2Unicode(str, (char *)&desc->wData[0], length - 2);
-        return (r + 2);
+        r = _ascii2Unicode(str, (char *)&desc->wData[0], strlen(str) * 2);
+        desc->bLength = r + 2;
+        return OSI_MIN(uint32_t,length,desc->bLength);
     }
 
     return -1;
@@ -283,7 +290,7 @@ static void _deviceQualifier(cops_t *c, void *buf, unsigned size)
 
 static void prvDumpSetup(const usb_device_request_t *ctrl)
 {
-    SCI_TraceLow("cops dump setup %x %x %x %x %x",
+    USB_LOG_TRACE("cops dump setup %x %x %x %x %x",
              ctrl->bRequestType, ctrl->bRequest,
              ctrl->wValue, ctrl->wIndex, ctrl->wLength);
 }
@@ -358,7 +365,7 @@ static int _copsSetupStandard(udevDrv_t *driver, const usb_device_request_t *ctr
     {
         if (x->length > c->ctrl.bufsize)
         {
-            SCI_TraceLow("cops ctrl buffer overflow, %u/%u", x->length, c->ctrl.bufsize);
+            USB_ERR_TRACE("cops ctrl buffer overflow, %u/%u", x->length, c->ctrl.bufsize);
             SCI_ASSERT(0);
         }
 
@@ -561,7 +568,12 @@ int copsRemoveString(cops_t *c, usbString_t *ustr)
 static void _copsDeviceInit(cops_t *c)
 {
     usb_device_descriptor_t *dev = &c->device_desc;
-
+    #ifdef USB_MASS_STORAGE_SUPPORT
+    if(cops_string_defs[COPS_SERIAL_NUMBER].s == NULL){
+        cops_string_defs[COPS_SERIAL_NUMBER].s = _UMSS_GetSerialNumber();
+    }
+    #endif
+    USB_ERR_TRACE("_copsDeviceInit sn:%s \n",cops_string_defs[COPS_SERIAL_NUMBER].s);
     dev->bLength = USB_DT_DEVICE_SIZE;
     dev->bDescriptorType = USB_DT_DEVICE;
     dev->bcdUSB = 0x0200;
@@ -574,7 +586,7 @@ static void _copsDeviceInit(cops_t *c)
     dev->bcdDevice = 0x01;
     dev->iManufacturer = copsAssignStringId(c, &cops_string_defs[COPS_DEV_MANUFACTURER]);
     dev->iProduct = copsAssignStringId(c, &cops_string_defs[COPS_DEV_PRODUCT]);
-    dev->iSerialNumber = 0,
+    dev->iSerialNumber = copsAssignStringId(c, &cops_string_defs[COPS_SERIAL_NUMBER]);
     dev->bNumConfigurations = 1;
 }
 
@@ -590,7 +602,7 @@ cops_t *copsCreate()
     const unsigned allocsize = sizeof(cops_t) + COPS_CTRL_BUFFER_SIZE + CONFIG_CACHE_LINE_SIZE;
     cops_t *c = (cops_t *)calloc(1, allocsize);
     if (c == NULL){
-		USB_LOG_TRACE("copsCreate fail \n");
+        USB_ERR_TRACE("copsCreate fail \n");
         return NULL;
     	}
 
@@ -639,7 +651,7 @@ bool copsAddFunction(cops_t *c, copsFunc_t *f)
 
     if (c->n_func == COPS_MAX_FUNCTION_COUNT)
     {
-        SCI_TraceLow("function count had reached the maximum, %d", COPS_MAX_FUNCTION_COUNT);
+        USB_ERR_TRACE("function count had reached the maximum, %d", COPS_MAX_FUNCTION_COUNT);
         return false;
     }
 
@@ -650,7 +662,7 @@ bool copsAddFunction(cops_t *c, copsFunc_t *f)
     {
         f->cops = NULL;
         f->controller = NULL;
-        SCI_TraceLow("bind function %4c fail", f->name);
+        USB_ERR_TRACE("bind function %4c fail", f->name);
         return false;
     }
 
@@ -671,7 +683,7 @@ bool copsAddFunctions(cops_t *c, copsFunc_t **funcs, unsigned count)
 
     if (c->n_func + count > COPS_MAX_FUNCTION_COUNT)
     {
-        SCI_TraceLow("too many functions, %d/%d", c->n_func + count, COPS_MAX_FUNCTION_COUNT);
+        USB_ERR_TRACE("too many functions, %d/%d", c->n_func + count, COPS_MAX_FUNCTION_COUNT);
         return false;
     }
 
@@ -686,7 +698,7 @@ bool copsAddFunctions(cops_t *c, copsFunc_t **funcs, unsigned count)
         r = cfBind(f, c, c->driver.udc);
         if (r < 0)
         {
-           SCI_TraceLow("bind function %4c fail", f->name);
+           USB_ERR_TRACE("bind function %4c fail", f->name);
             result = false;
             break;
         }

@@ -28,7 +28,7 @@
 
 #define MSG_DEV_THREAD_STACK_SIZE (8 * 1024)
 #define MSG_DEV_THREAD_PRIORITY  32 //(PRI_USB_SERVICE-5) //63
-#define MSG_DATA_BUF_MAX (512)
+#define MSG_DATA_BUF_MAX (4096)
 #define MSG_IN_DATA_BUF_MAX (4096)
 #define TCARD_SECTOR_SIZE (512)
 #define TCARD_TX_SECTOR_ONCE_COUNT (8)
@@ -162,9 +162,11 @@ static bool prvInquiryData(msgDevPriv_t *p, const msgRxData_t *d)
     uint8_t Resvered[3] = {0x00, 0x00, 0x00};
 	struct InquiryData *r;
 	int result;
-    char VendInfo[8] = {'U', 'n', 'i', 's', 'o', 'c', ' ', ' '};
-    char ProductIden[16] = {'S', 't', 'o', 'r', 'a', 'g', 'e', ' ', 'D', 'e', 'v', 'i', 'c', 'e', ' ', ' '};
+    char VendInfo[8] = {0};
+    char ProductIden[16] = {0};
     char ProductRevision[4] = {'1', '.', '0', '0'};
+    memcpy(&VendInfo[0],p->umssDev[d->Lun].vendor,8);
+    memcpy(&ProductIden[0],p->umssDev[d->Lun].product,16);
 
 	//char *VendInfo = (char *)p->umssDev[d->Lun].vendor;
     //char *ProductIden= (char *)p->umssDev[d->Lun].product;
@@ -186,7 +188,7 @@ static bool prvInquiryData(msgDevPriv_t *p, const msgRxData_t *d)
     result = udcEpQueue(p->msg->func->controller, p->msg->epin, p->tx_xfer);
     if (result < 0)
     {
-        USB_LOG_TRACE("msg %x data fail %d\n", d->Param[0], result);
+        USB_ERR_TRACE("%s msg %x data fail %d\n", __FUNCTION__,d->Param[0], result);
     }
     return result == 0;
 }
@@ -213,7 +215,7 @@ static bool prvRDFormatCapacitiesData(msgDevPriv_t *p, const msgRxData_t *d)
     result = udcEpQueue(p->msg->func->controller, p->msg->epin, p->tx_xfer);
     if (result < 0)
     {
-        USB_LOG_TRACE("msg %x data fail %d\n", d->Param[0], result);
+        USB_ERR_TRACE("%s,msg %x data fail %d\n", __FUNCTION__,d->Param[0], result);
     }
     return result == 0;
 }
@@ -236,7 +238,7 @@ static bool prvRDCapacityData(msgDevPriv_t *p, const msgRxData_t *d)
     result = udcEpQueue(p->msg->func->controller, p->msg->epin, p->tx_xfer);
     if (result < 0)
     {
-        USB_LOG_TRACE("msg %x data fail %d\n", d->Param[0], result);
+        USB_ERR_TRACE("%s,msg %x data fail %d\n",__FUNCTION__, d->Param[0], result);
     }
     return result == 0;
 }
@@ -257,7 +259,7 @@ static bool prvModeSense6Data(msgDevPriv_t *p, const msgRxData_t *d)
     result = udcEpQueue(p->msg->func->controller, p->msg->epin, p->tx_xfer);
     if (result < 0)
     {
-        USB_LOG_TRACE("msg %x data fail %d\n", d->Param[0], result);
+        USB_ERR_TRACE("%s,msg %x data fail %d\n", __FUNCTION__,d->Param[0], result);
     }
     return result == 0;
 }
@@ -288,7 +290,7 @@ static bool prvRead10Data(msgDevPriv_t *p, const msgRxData_t *d)
 	}
 	else
 	{
-		USB_LOG_TRACE("p->umssDev[%d].page_size is not set!\n",d->Lun);
+		USB_ERR_TRACE("p->umssDev[%d].page_size is not set!\n",d->Lun);
 		return FALSE;
 	}
 	
@@ -322,7 +324,7 @@ static bool prvRead10Data(msgDevPriv_t *p, const msgRxData_t *d)
 	
 	   if(BSD_SUCCESS != status)
 	   {
-	   	   USB_LOG_TRACE("BSD_Read[%s] fail %d\n", p->umssDev[d->Lun].dev_name,status);
+	   	   USB_ERR_TRACE("BSD_Read[%s] fail %d\n", p->umssDev[d->Lun].dev_name,status);
 		   return FALSE;
 	   }
 	   tx_count += current_count;
@@ -339,7 +341,7 @@ static bool prvRead10Data(msgDevPriv_t *p, const msgRxData_t *d)
     result = udcEpQueue(p->msg->func->controller, p->msg->epin, p->tx_xfer);
     if (result < 0)
     {
-        USB_LOG_TRACE( "msg %x data fail %d\n", d->Param[0], result);
+        USB_ERR_TRACE( "msg %x data fail %d\n", d->Param[0], result);
     }
     return result == 0;
 }
@@ -364,14 +366,14 @@ static int prvWrite10Data(msgDevPriv_t *p, const msgRxData_t *d)
 	page_size = p->umssDev[Lun].page_size;
 	
 	if(page_size)
-		total_count = p->rx_xfer->length /page_size;
+		total_count = p->rx_xfer->actual /page_size;
 	else
 	{
-		USB_LOG_TRACE("p->umssDev[%d].page_size is not set!\n",Lun);
+		USB_ERR_TRACE("p->umssDev[%d].page_size is not set!\n",Lun);
 		return 0;
 	}
 	
-	USB_LOG_TRACE("MSG prvWrite10Data[%d] LBA is 0x%x, rx count is %d, total_count is %d, p->dummy_data->XferLen is 0x%x\n",Lun, LBA, rx_count, total_count, p->dummy_data->XferLen);
+	USB_LOG_TRACE("MSG prvWrite10Data[%d] LBA is 0x%x, rx count is %d, total_count is %d, p->dummy_data->XferLen is 0x%x,actual:%d\n",Lun, LBA, rx_count, total_count, p->dummy_data->XferLen,p->rx_xfer->actual);
 #if 0
 
     do
@@ -395,14 +397,14 @@ do{
 	
     if(BSD_SUCCESS != status)
     {
-    	 USB_LOG_TRACE("BSD_Write[%s] fail %d\n", p->umssDev[Lun].dev_name,status);
+    	 USB_ERR_TRACE("BSD_Write[%s] fail 0x%x\n", p->umssDev[Lun].dev_name,status);
          return 0;
     }
 	rx_count += count;
 }while(total_count - count);
 #endif
 
-    p->dummy_data->XferLen -= p->rx_xfer->length;
+    p->dummy_data->XferLen -= p->rx_xfer->actual;
     //cnt = 0;
     if (!p->dummy_data->XferLen)
     {
@@ -411,7 +413,7 @@ do{
     }
 	USB_LOG_TRACE("MSG write10 %d, total_count is %d, rx_count is %d\n", p->rx_sector_done, total_count, rx_count);
 
-    return p->rx_xfer->length;
+    return p->rx_xfer->actual;
 }
 
 static bool prvCSWRespPhase(msgDevPriv_t *p, const msgRxData_t *d, unsigned length)
@@ -422,7 +424,10 @@ static bool prvCSWRespPhase(msgDevPriv_t *p, const msgRxData_t *d, unsigned leng
 	p->tx_state = x_csw;
     r->Signature = CSW;
     r->Tag = d->Tag;
+    if (MSG_READ10 == d->Param[0] || MSG_WRITE10 == d->Param[0])
     r->CSWDataResidue = d->XferLen - length;
+    else
+        r->CSWDataResidue = 0;
     if (MSG_PREVENTALLWMDMRMVL == d->Param[0])
         r->CSWStatus = d->Param[4]; //resp for MSG_PREVENTALLWMDMRMVL
     else
@@ -433,7 +438,7 @@ static bool prvCSWRespPhase(msgDevPriv_t *p, const msgRxData_t *d, unsigned leng
     result = udcEpQueue(p->msg->func->controller, p->msg->epin, p->tx_xfer);
     if (result < 0)
     {
-        USB_LOG_TRACE("msg resp fail %d\n", result);
+        USB_ERR_TRACE("msg resp fail %d\n", result);
     }
     return result == 0;
 }
@@ -451,7 +456,7 @@ static bool prvProcessCommand(msgDevPriv_t *p, const msgRxData_t *d, unsigned le
             res = prvReqSense(p, d);
             if (!res)
             {
-                USB_LOG_TRACE("msg requestsense resp %x error\n", d->Param[0]);
+                USB_ERR_TRACE("msg requestsense resp %x error\n", d->Param[0]);
                 return false;
             }
             break;
@@ -459,7 +464,7 @@ static bool prvProcessCommand(msgDevPriv_t *p, const msgRxData_t *d, unsigned le
             res = prvInquiryData(p, d);
             if (!res)
             {
-                USB_LOG_TRACE("msg data resp %x error\n", d->Param[0]);
+                USB_ERR_TRACE("msg data resp %x error\n", d->Param[0]);
                 return false;
             }
             break;
@@ -467,7 +472,7 @@ static bool prvProcessCommand(msgDevPriv_t *p, const msgRxData_t *d, unsigned le
             res = prvRDFormatCapacitiesData(p, d);
             if (!res)
             {
-                USB_LOG_TRACE("msg data resp %x error\n", d->Param[0]);
+                USB_ERR_TRACE("msg data resp %x error\n", d->Param[0]);
                 return false;
             }
             break;
@@ -475,7 +480,7 @@ static bool prvProcessCommand(msgDevPriv_t *p, const msgRxData_t *d, unsigned le
             res = prvRDCapacityData(p, d);
             if (!res)
             {
-                USB_LOG_TRACE( "msg data resp %x error\n", d->Param[0]);
+                USB_ERR_TRACE( "msg data resp %x error\n", d->Param[0]);
                 return false;
             }
             break;
@@ -483,7 +488,7 @@ static bool prvProcessCommand(msgDevPriv_t *p, const msgRxData_t *d, unsigned le
             res = prvModeSense6Data(p, d);
             if (!res)
             {
-                USB_LOG_TRACE("msg data resp %x error\n", d->Param[0]);
+                USB_ERR_TRACE("msg data resp %x error\n", d->Param[0]);
                 return false;
             }
             break;
@@ -491,7 +496,7 @@ static bool prvProcessCommand(msgDevPriv_t *p, const msgRxData_t *d, unsigned le
             res = prvRead10Data(p, d);
             if (!res)
             {
-                USB_LOG_TRACE( "msg read data resp %x error\n", d->Param[0]);
+                USB_ERR_TRACE( "msg read data resp %x error\n", d->Param[0]);
                 return false;
             }
             break;
@@ -502,14 +507,15 @@ static bool prvProcessCommand(msgDevPriv_t *p, const msgRxData_t *d, unsigned le
             p->dummy_data->XferLen = d->XferLen;
 			p->dummy_data->Lun = d->Lun;
             p->dummy_data->Signature = (d->Param[2] << 24) + (d->Param[3] << 16) + (d->Param[4] << 8) + d->Param[5]; //for use the unified structure;
-            USB_LOG_TRACE("msg write10 data start!\n");
+            p->rx_xfer->length = p->umssDev[d->Lun].page_size;
+            USB_LOG_TRACE("msg write10 data start,d->XferLen=%d,p->rx_xfer->length:%d\n",d->XferLen,p->rx_xfer->length);
             break;
         case MSG_TESTUNITREADY:
         case MSG_PREVENTALLWMDMRMVL:
             res = prvCSWRespPhase(p, d, d->XferLen);
             if (!res)
             {
-                USB_LOG_TRACE("msg resp code %x error\n", d->Param[0]);
+                USB_ERR_TRACE("msg resp code %x error\n", d->Param[0]);
                 return false;
             }
             break;
@@ -534,7 +540,7 @@ static bool prvProcessCommand(msgDevPriv_t *p, const msgRxData_t *d, unsigned le
         }
         if (!result)
         {
-            USB_LOG_TRACE( "msg resp code %x error\n", d->Param[0]);
+            USB_ERR_TRACE( "msg resp code %x error\n", d->Param[0]);
             return false;
         }
     }
@@ -561,7 +567,7 @@ static void prvMsgRxWork(void *param)
 
     if (x->status < 0)
     {
-        USB_LOG_TRACE("msg rx complete fail 0x%x\n", x->status);
+        USB_ERR_TRACE("msg rx complete fail 0x%x\n", x->status);
 		return;
     }
 
@@ -571,7 +577,7 @@ static void prvMsgRxWork(void *param)
         r = prvProcessCommand(p, d, x->actual);
         if (!r)
         {
-            USB_LOG_TRACE("msg rx parse fail\n");
+            USB_ERR_TRACE("msg rx parse fail\n");
         }
     }
 	else if (p->rx_state == x_data)
@@ -581,7 +587,7 @@ static void prvMsgRxWork(void *param)
         status = prvWrite10Data(p, d);
         if (!status)
         {
-            USB_LOG_TRACE("msg write data fail\n");
+            USB_ERR_TRACE("msg write data fail\n");
         }
 		write10_length += x->actual;
         if (p->rx_sector_done)
@@ -590,7 +596,7 @@ static void prvMsgRxWork(void *param)
             r = prvProcessCommand(p, d, write10_length/*x->actual*/);
             if (!r)
             {
-                USB_LOG_TRACE("msg rx parse fail\n");
+                USB_ERR_TRACE("msg rx parse fail\n");
             }
 			write10_length=0;
             p->rx_state = x_idle;
@@ -599,7 +605,7 @@ static void prvMsgRxWork(void *param)
 
     if (!prvMsgRxStart(p))
     {
-        USB_LOG_TRACE("msg rx restart fail\n");
+        USB_ERR_TRACE("msg rx restart fail\n");
     }
 
 }
@@ -616,6 +622,8 @@ static void prvMsgTxWork(void *param)
     	{
 			read10_length += p->tx_xfer->actual;
 		}
+        else
+            read10_length = p->tx_xfer->actual;
         if ((d->Param[0] == MSG_READ10) && !(p->tx_sector_done))
         {
             p->tx_state = x_data;
@@ -625,11 +633,11 @@ static void prvMsgTxWork(void *param)
         else
         {
             p->tx_state = x_csw;
-            USB_LOG_TRACE("msg tx read10 data done and send csw resp\n");
+            USB_LOG_TRACE("msg tx cmd_code:0x%x data done,len:0x%x send csw resp\n",d->Param[0],read10_length);
             r = prvProcessCommand(p, d, read10_length);
             if (!r)
             {
-                USB_LOG_TRACE( "msg data_resp pahase fail\n");
+                USB_ERR_TRACE( "msg data_resp pahase fail\n");
             }
 			read10_length = 0;
         }
@@ -647,7 +655,7 @@ static void prvMsgTxComplete(usbEp_t *ep, struct usb_xfer *xfer)
     USB_LOG_TRACE("msg tx complete %d/%d\n", xfer->status, xfer->length);
     if (xfer->status < 0)
     {
-        USB_LOG_TRACE(0x1000a040, "msg tx complete fail %d", xfer->status);
+        USB_ERR_TRACE(0x1000a040, "msg tx complete fail %d", xfer->status);
     }
 
     if (xfer->status != -ECANCELED)

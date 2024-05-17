@@ -244,8 +244,7 @@ SOURCES		=   fdl_main.c\
                 diskio_sdio.c\
                 card_sdio.c\
                 sdio_card_pal.c\
-                mcd_sdmmc.c\
-                hal_sdmmc.c\
+                mcd_emmc.c\
                 apifc_phy.c\
 				ifc_hal.c\
 				ifc_manager_cfg.c\

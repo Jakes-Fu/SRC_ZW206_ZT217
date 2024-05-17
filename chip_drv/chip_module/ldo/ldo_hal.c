@@ -118,7 +118,9 @@ void LDO_TestInit(void)
 #if 1 //!defined(HW_6121_pre_w217)
     LDO_TurnOffLDO(LDO_LDO_IO33); //add by bao for vib
 #endif
-
+#if defined(MSDC_CARD_SUPPORT)
+     ANA_REG_MSK_OR(ANA_LDO_VOSEL3, 0x35<<10, (0x3FUL<<10));//set VDDMMC to 3.3V
+#endif
 	//LDO_TurnOnLDO(LDO_LDO_VDD18);
 	LDO_TurnOnLDO(LDO_LDO_IO18);
 

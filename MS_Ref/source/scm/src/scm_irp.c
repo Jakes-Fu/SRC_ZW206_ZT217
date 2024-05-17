@@ -4,6 +4,9 @@
 #include "scm_irp.h"
 #include "priority_system.h"
 extern void SCM_Task(uint32 argc, void*argv);
+#define  SCM_TASK_STACK_SIZE 2048
+#define  SCM_TASK_QUEUE_NUM  1
+#define  SCM_TASK_TASK_PRIO  PRI_SCM
 
 #define SCM_LOCAL_EVENT
 #ifdef SCM_LOCAL_EVENT
@@ -32,8 +35,8 @@ PUBLIC BOOLEAN _SCM_ScheInit(void)
 		0,							// First parameter for entry function,
 		0,							// Second parameter for entry function,
 		SCM_TASK_STACK_SIZE,		// Size of the thread stack in bytes
-		1,							// Number of messages which can be enqueued
-		PRI_SCM,		// Prority of the thread.
+		SCM_TASK_QUEUE_NUM,			// Number of messages which can be enqueued
+		SCM_TASK_TASK_PRIO,		    // Prority of the thread.
 		SCI_PREEMPT,				// Indicates if the thread is preemptable.
 		SCI_AUTO_START			// Specifies whether the thread starts 
 								// immediately or stays in a pure suspended
