@@ -291,12 +291,7 @@ PUBLIC MMI_HANDLE_T ZMT_CreateAnimImg(MMI_WIN_ID_T         win_id,
     {
         SCI_FREE(file_info.full_path_wstr_ptr);
     }
-    if(GUIANIM_RESULT_SUCC != anim_res)
-    {
-        MMK_DestroyControl(handle);
-        handle = 0;
-    }
-    return handle;
+    SCI_TRACE_LOW("%s: end", __FUNCTION__);
 }
 
 LOCAL void ZMT_CalculatePointerAngles(int hour, 
@@ -1088,7 +1083,7 @@ LOCAL void ZMT_CreateAnalogTime(GUI_LCD_DEV_INFO * p_lcd_info,
 #endif
 }
 
-LOCAL void ZMT_CreateElementImg(GUI_LCD_DEV_INFO * p_lcd_info,
+PUBLIC void ZMT_CreateElementImg(GUI_LCD_DEV_INFO * p_lcd_info,
                                                 GUI_RECT_T*          disp_rect,
                                                 wchar*               p_image_path
                                                 )
@@ -1103,6 +1098,7 @@ LOCAL void ZMT_CreateElementImg(GUI_LCD_DEV_INFO * p_lcd_info,
     uint16              rect_height = 0;
     GUIIMG_INFO_T       img_info = {0};
 
+    //SCI_TRACE_LOW("%s: p_image_path = %ls", __FUNCTION__, p_image_path);
     ZMT_GetImgInfoByPath(p_image_path, &img_info);
     rect_width = img_info.image_width;
     rect_height = img_info.image_height;
@@ -1169,8 +1165,11 @@ PUBLIC void ZMT_DialPanelShow(MMI_WIN_ID_T win_id, char * watch_name)
     GUISTR_STYLE_T text_style = {0};
     GUI_POINT_T point = {0};
     wchar image_name[WATCH_IMAGE_FULL_PATH_MAX_LEN] ={0};
+    char image_str[WATCH_IMAGE_FULL_PATH_MAX_LEN] = {0};
     wchar text_name[WATCH_IMAGE_FULL_PATH_MAX_LEN] ={0};
+    char text_str[WATCH_IMAGE_FULL_PATH_MAX_LEN] = {0};
     char str_name[WATCH_IMAGE_FULL_PATH_MAX_LEN] = {0};
+    char dir_str[20] = {0};
     uint8 img_cnt = 0;
     uint8 label_cnt = 0;
     uint8 img_width = 0;
@@ -1189,13 +1188,14 @@ PUBLIC void ZMT_DialPanelShow(MMI_WIN_ID_T win_id, char * watch_name)
 #else
     sprintf(file_path, ZMT_DIAL_FILE_BASE_PATH, watch_name, watch_name);
 #endif
+    //SCI_TRACE_LOW("%s: file_path = %s", __FUNCTION__, file_path);
     if(zmt_watch_dial == NULL){
         if(dsl_file_exist(file_path)){
             data_buf = dsl_file_data_read(file_path, &file_len);
         }else{
             SCI_TRACE_LOW("%s: file_path = %s not exist !!", __FUNCTION__, file_path);
             return;
-        }  
+        }
         zmt_watch_dial = (watch_dial_t*)SCI_ALLOC_APPZ(sizeof(watch_dial_t));
         memset(zmt_watch_dial, 0, sizeof(watch_dial_t));
         if(data_buf && file_len > 2){
@@ -1213,8 +1213,8 @@ PUBLIC void ZMT_DialPanelShow(MMI_WIN_ID_T win_id, char * watch_name)
 
     TM_GetSysTime(&sys_time);
     TM_GetSysDate(&sys_date);
-    SCI_TRACE_LOW("%s: sys_time.hour = %d, sys_time.min = %d, sys_time.sec = %d", __FUNCTION__, sys_time.hour, sys_time.min, sys_time.sec);
-    SCI_TRACE_LOW("%s: mon = %d, mday = %d, wday = %d", __FUNCTION__, sys_date.mon, sys_date.mday, sys_date.wday);
+    //SCI_TRACE_LOW("%s: sys_time.hour = %d, sys_time.min = %d, sys_time.sec = %d", __FUNCTION__, sys_time.hour, sys_time.min, sys_time.sec);
+    //SCI_TRACE_LOW("%s: mon = %d, mday = %d, wday = %d", __FUNCTION__, sys_date.mon, sys_date.mday, sys_date.wday);
     
     MMK_GetWinLcdDevInfo(win_id,&lcd_dev_info);
     GUI_FillRect(&lcd_dev_info, win_rect, MMI_BLACK_COLOR);
@@ -1228,7 +1228,10 @@ PUBLIC void ZMT_DialPanelShow(MMI_WIN_ID_T win_id, char * watch_name)
     win_rect.right = 240;
     win_rect.top = 0;
     win_rect.bottom = 240;
-    MMIAPICOM_StrToWstr(watch_dial->bg_img, image_name);
+    sprintf(dir_str, "%s", watch_dial->name);
+    memset(&image_str, 0, WATCH_IMAGE_FULL_PATH_MAX_LEN);
+    sprintf(image_str, "%s\\%s\\%s", ZMT_DIAL_DIR_BASE_PATH, dir_str, watch_dial->bg_img);
+    MMIAPICOM_StrToWstr(image_str, image_name);
     ZMT_CreateElementImg(&lcd_dev_info, &win_rect, &image_name);
     for(i = 0;i < watch_dial->element_cnt && i < WATCH_MAX_ARRAY_COUNT;i++)
     {
@@ -1264,13 +1267,21 @@ PUBLIC void ZMT_DialPanelShow(MMI_WIN_ID_T win_id, char * watch_name)
                     }
                 }
                 if(hour >= 0 && min >= 0 && sec >= 0){
-                    MMIAPICOM_StrToWstr(watch_dial->element_ll[i].img_ll[hour].sub_img_ll[0].sub_img, image_hour);
-                    MMIAPICOM_StrToWstr(watch_dial->element_ll[i].img_ll[min].sub_img_ll[0].sub_img, image_min);
-                    MMIAPICOM_StrToWstr(watch_dial->element_ll[i].img_ll[sec].sub_img_ll[0].sub_img, image_sec);                                
+                    memset(&image_str, 0, WATCH_IMAGE_FULL_PATH_MAX_LEN);
+                    sprintf(image_str, "%s\\%s\\%s", ZMT_DIAL_DIR_BASE_PATH, dir_str, watch_dial->element_ll[i].img_ll[hour].sub_img_ll[0].sub_img);          
+                    MMIAPICOM_StrToWstr(image_str, image_hour);
+                    memset(&image_str, 0, WATCH_IMAGE_FULL_PATH_MAX_LEN);
+                    sprintf(image_str, "%s\\%s\\%s", ZMT_DIAL_DIR_BASE_PATH, dir_str, watch_dial->element_ll[i].img_ll[min].sub_img_ll[0].sub_img); 
+                    MMIAPICOM_StrToWstr(image_str, image_min);
+                    memset(&image_str, 0, WATCH_IMAGE_FULL_PATH_MAX_LEN);
+                    sprintf(image_str, "%s\\%s\\%s", ZMT_DIAL_DIR_BASE_PATH, dir_str, watch_dial->element_ll[i].img_ll[sec].sub_img_ll[0].sub_img);
+                    MMIAPICOM_StrToWstr(image_str, image_sec);
                     ZMT_CreateAnalogTime(&lcd_dev_info, &win_rect, &image_hour, &image_min, &image_sec);
                 }
                 if(center >= 0){
-                    MMIAPICOM_StrToWstr(watch_dial->element_ll[i].img_ll[center].sub_img_ll[0].sub_img, image_center); 
+                    memset(&image_str, 0, WATCH_IMAGE_FULL_PATH_MAX_LEN);
+                    sprintf(image_str, "%s\\%s\\%s", ZMT_DIAL_DIR_BASE_PATH, dir_str, watch_dial->element_ll[i].img_ll[center].sub_img_ll[0].sub_img);
+                    MMIAPICOM_StrToWstr(image_str, image_center); 
                     ZMT_CreateElementImg(&lcd_dev_info, &win_rect, &image_center);
                 }
             }
@@ -1303,7 +1314,9 @@ PUBLIC void ZMT_DialPanelShow(MMI_WIN_ID_T win_id, char * watch_name)
                                 }
                                 //SCI_TRACE_LOW("%s: ten = %d", __FUNCTION__, ten);
                                 ctrl_id = ZMT_DIAL_WIN_HOUR_TEN_CTRL_ID;
-                                MMIAPICOM_StrToWstr(watch_dial->element_ll[i].img_ll[j].sub_img_ll[ten].sub_img, image_name);
+                                memset(&image_str, 0, WATCH_IMAGE_FULL_PATH_MAX_LEN);
+                                sprintf(image_str, "%s\\%s\\%s", ZMT_DIAL_DIR_BASE_PATH, dir_str, watch_dial->element_ll[i].img_ll[j].sub_img_ll[ten].sub_img);
+                                MMIAPICOM_StrToWstr(image_str, image_name);
                             }
                             break;
                             case IMG_TYPE_TIME_HOUR_UNIT:
@@ -1317,7 +1330,9 @@ PUBLIC void ZMT_DialPanelShow(MMI_WIN_ID_T win_id, char * watch_name)
                                 }
                                 //SCI_TRACE_LOW("%s: unit = %d", __FUNCTION__, unit);
                                 ctrl_id = ZMT_DIAL_WIN_HOUR_UNIT_CTRL_ID;
-                                MMIAPICOM_StrToWstr(watch_dial->element_ll[i].img_ll[j].sub_img_ll[unit].sub_img, image_name);
+                                memset(&image_str, 0, WATCH_IMAGE_FULL_PATH_MAX_LEN);
+                                sprintf(image_str, "%s\\%s\\%s", ZMT_DIAL_DIR_BASE_PATH, dir_str, watch_dial->element_ll[i].img_ll[j].sub_img_ll[unit].sub_img);
+                                MMIAPICOM_StrToWstr(image_str, image_name);
                             }
                             break;
                             case IMG_TYPE_TIME_MIN_TENS:
@@ -1329,7 +1344,9 @@ PUBLIC void ZMT_DialPanelShow(MMI_WIN_ID_T win_id, char * watch_name)
                                 }
                                 //SCI_TRACE_LOW("%s: ten = %d", __FUNCTION__, ten);
                                 ctrl_id = ZMT_DIAL_WIN_MIN_TEN_CTRL_ID;
-                                MMIAPICOM_StrToWstr(watch_dial->element_ll[i].img_ll[j].sub_img_ll[ten].sub_img, image_name);
+                                memset(&image_str, 0, WATCH_IMAGE_FULL_PATH_MAX_LEN);
+                                sprintf(image_str, "%s\\%s\\%s", ZMT_DIAL_DIR_BASE_PATH, dir_str, watch_dial->element_ll[i].img_ll[j].sub_img_ll[ten].sub_img);
+                                MMIAPICOM_StrToWstr(image_str, image_name);
                             }
                             break;
                             case IMG_TYPE_TIME_MIN_UNIT:
@@ -1337,7 +1354,9 @@ PUBLIC void ZMT_DialPanelShow(MMI_WIN_ID_T win_id, char * watch_name)
                                 unit = sys_time.min % 10;
                                 //SCI_TRACE_LOW("%s: unit = %d", __FUNCTION__, unit);
                                 ctrl_id = ZMT_DIAL_WIN_MIN_UNIT_CTRL_ID;
-                                MMIAPICOM_StrToWstr(watch_dial->element_ll[i].img_ll[j].sub_img_ll[unit].sub_img, image_name);
+                                memset(&image_str, 0, WATCH_IMAGE_FULL_PATH_MAX_LEN);
+                                sprintf(image_str, "%s\\%s\\%s", ZMT_DIAL_DIR_BASE_PATH, dir_str, watch_dial->element_ll[i].img_ll[j].sub_img_ll[unit].sub_img);
+                                MMIAPICOM_StrToWstr(image_str, image_name);
                             }
                             break;
                             default:
@@ -1353,7 +1372,9 @@ PUBLIC void ZMT_DialPanelShow(MMI_WIN_ID_T win_id, char * watch_name)
                     {
                         point.x = watch_dial->element_ll[i].label_ll[j].text_pos.x;
                         point.y = watch_dial->element_ll[i].label_ll[j].text_pos.y;
-                        MMIAPICOM_StrToWstr(watch_dial->element_ll[i].label_ll[j].text, text_name);                            
+                        memset(&text_str, 0, WATCH_IMAGE_FULL_PATH_MAX_LEN);
+                        sprintf(text_str, "%s\\%s\\%s", ZMT_DIAL_DIR_BASE_PATH, dir_str, watch_dial->element_ll[i].label_ll[j].text);
+                        MMIAPICOM_StrToWstr(text_str, text_name);                       
                         text_string.wstr_ptr = text_name;
                         text_string.wstr_len = MMIAPICOM_Wstrlen(text_string.wstr_ptr);
                         GUISTR_DrawTextToLCDSingleLine(
@@ -1384,7 +1405,9 @@ PUBLIC void ZMT_DialPanelShow(MMI_WIN_ID_T win_id, char * watch_name)
                                 anim_rect.right = anim_rect.left + watch_dial->element_ll[i].img_ll[j].img_width;
                                 anim_rect.top = watch_dial->element_ll[i].img_ll[j].img_pos.y;
                                 anim_rect.bottom = anim_rect.top + watch_dial->element_ll[i].img_ll[j].img_height;
-                                MMIAPICOM_StrToWstr(watch_dial->element_ll[i].img_ll[j].sub_img_ll[week].sub_img, image_name);
+                                memset(&image_str, 0, WATCH_IMAGE_FULL_PATH_MAX_LEN);
+                                sprintf(image_str, "%s\\%s\\%s", ZMT_DIAL_DIR_BASE_PATH, dir_str, watch_dial->element_ll[i].img_ll[j].sub_img_ll[week].sub_img);
+                                MMIAPICOM_StrToWstr(image_str, image_name);
                                 //ZMT_CreateElementImg(&lcd_dev_info, &anim_rect, image_name);
                                 ZMT_CreateAnimImg(win_id, ZMT_DIAL_WIN_WEEK_DIGIT_CTRL_ID, &anim_rect, image_name, 1, &lcd_dev_info);
                                 //ZMT_ShowElementImg(win_id, &lcd_dev_info, &anim_rect, &image_name);
@@ -1557,7 +1580,9 @@ PUBLIC void ZMT_DialPanelShow(MMI_WIN_ID_T win_id, char * watch_name)
                                     percent = battery / (100 / bat_img_cnt);
                                 }
                                 //SCI_TRACE_LOW("%s: percent = %d", __FUNCTION__, percent);
-                                MMIAPICOM_StrToWstr(watch_dial->element_ll[i].img_ll[j].sub_img_ll[percent].sub_img, image_name);
+                                memset(&image_str, 0, WATCH_IMAGE_FULL_PATH_MAX_LEN);
+                                sprintf(image_str, "%s\\%s\\%s", ZMT_DIAL_DIR_BASE_PATH, dir_str, watch_dial->element_ll[i].img_ll[j].sub_img_ll[percent].sub_img);
+                                MMIAPICOM_StrToWstr(image_str, image_name);
                                 //ZMT_CreateElementImg(&lcd_dev_info, &anim_rect, image_name);
                                 ZMT_CreateAnimImg(win_id, ZMT_DIAL_WIN_BATTERY_SIGN_CTRL_ID, &anim_rect, image_name, 1, &lcd_dev_info);
                                 //ZMT_ShowElementImg(win_id, &lcd_dev_info, &anim_rect, &image_name);
@@ -1640,7 +1665,9 @@ PUBLIC void ZMT_DialPanelShow(MMI_WIN_ID_T win_id, char * watch_name)
                             anim_rect.right = anim_rect.left + watch_dial->element_ll[i].img_ll[j].img_width;
                             anim_rect.top = watch_dial->element_ll[i].img_ll[j].img_pos.y;
                             anim_rect.bottom = anim_rect.top + watch_dial->element_ll[i].img_ll[j].img_height;
-                            MMIAPICOM_StrToWstr(watch_dial->element_ll[i].img_ll[j].sub_img_ll[level].sub_img, image_name);
+                            memset(&image_str, 0, WATCH_IMAGE_FULL_PATH_MAX_LEN);
+                            sprintf(image_str, "%s\\%s\\%s", ZMT_DIAL_DIR_BASE_PATH, dir_str, watch_dial->element_ll[i].img_ll[j].sub_img_ll[level].sub_img);
+                            MMIAPICOM_StrToWstr(image_str, image_name);
                             //ZMT_CreateElementImg(&lcd_dev_info, &anim_rect, image_name);
                             ZMT_CreateAnimImg(win_id, ZMT_DIAL_WIN_SIGNAL_SIGN_CTRL_ID, &anim_rect, image_name, 1, &lcd_dev_info);
                             //ZMT_ShowElementImg(win_id, &lcd_dev_info, &anim_rect, &image_name);

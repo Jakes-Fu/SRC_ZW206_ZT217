@@ -74,27 +74,6 @@ PUBLIC ZMT_DIAL_LIST_INFO_T * ZmtWatch_GetPanelList(void)
     return dial_list;
 }
 
-PUBLIC BOOLEAN ZmtDial_IsExistPanel(char * dial_name)
-{
-    uint16 i = 0;
-    BOOLEAN is_exist = FALSE;
-    ZMT_DIAL_LIST_INFO_T * dial_list = ZmtWatch_GetPanelList();
-
-    if(dial_list != NULL){
-        for(i = 0;i < dial_list->count;i++)
-        {
-            if(0 == strncmp(dial_name, dial_list->info[i]->name, strlen(dial_list->info[i]->name)))
-            {
-                is_exist = TRUE;
-                break;
-            }
-        }
-        SCI_FREE(dial_list);
-    }
-    SCI_TRACE_LOW("%s: is_exist = %d", __FUNCTION__, is_exist);
-    return is_exist;
-}
-
 PUBLIC void ZmtDialPreview_RealseDialInfo(void)
 {
     if(zmt_cur_dial_info != NULL){
@@ -114,6 +93,27 @@ PUBLIC void ZmtDial_ReleaseDialList(ZMT_DIAL_LIST_INFO_T * dail_list)
         SCI_FREE(dail_list);
         dail_list = NULL;
     }
+}
+
+PUBLIC BOOLEAN ZmtDial_IsExistPanel(char * dial_name)
+{
+    uint16 i = 0;
+    BOOLEAN is_exist = FALSE;
+    ZMT_DIAL_LIST_INFO_T * dail_list = ZmtWatch_GetPanelList();
+
+    if(dail_list != NULL){
+        for(i = 0;i < dail_list->count;i++)
+        {
+            if(0 == strncmp(dial_name, dail_list->info[i]->name, strlen(dail_list->info[i]->name)))
+            {
+                is_exist = TRUE;
+                break;
+            }
+        }
+        ZmtDial_ReleaseDialList(dail_list);
+    }
+    SCI_TRACE_LOW("%s: is_exist = %d", __FUNCTION__, is_exist);
+    return is_exist;
 }
 
 PUBLIC void ZmtDial_ReleaseDialListInfo(void)
@@ -274,6 +274,10 @@ LOCAL MMI_RESULT_E ZmtDialStorePreview_ButtonClickUse(MMI_WIN_ID_T win_id)
         WatchSLIDEPAGE_DestoryHandle(zmt_dial_select_handle);
         zmt_dial_select_handle = 0;
     }
+    if(MMK_IsOpenWin(ZMT_DIAL_STORE_PREVIEW_2_WIN_ID))
+    {
+        MMK_CloseWin(ZMT_DIAL_STORE_PREVIEW_2_WIN_ID);
+    }
     if(MMK_IsOpenWin(ZMT_DIAL_STORE_WIN_ID))
     {
         MMK_CloseWin(ZMT_DIAL_STORE_WIN_ID);
@@ -293,21 +297,24 @@ LOCAL void ZmtDialStorePreview_ShowPreview(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO
     GUIIMG_INFO_T img_info = {0};
     GUI_RECT_T img_rect = {0};
     MMI_CTRL_ID_T ctrl_id = 0;
-    char img_str[80] = {0};
-    wchar img_path[80] = {0};
+    char img_str[128] = {0};
+    wchar img_path[128] = {0};
     
+    if(zmt_cur_dial_info == NULL){
+        return;
+    }
     ctrl_id = ZMT_DIAL_STORE_PREVIEW_IMG_1_CTRL_ID + index;
     sprintf(img_str, "%s\\%s\\%s_preview.png", ZMT_DIAL_DIR_BASE_PATH, zmt_cur_dial_info->name, zmt_cur_dial_info->name);
     if(dsl_file_exist(img_str)){
-        //SCI_TRACE_LOW("%s: img_str = %d", __FUNCTION__, img_str);
-        MMIAPICOM_StrToWstr(&img_str, &img_path);
-        ZMT_GetImgInfoByPath(&img_path, &img_info);
-        memset(&img_rect, 0, sizeof(GUI_RECT_T));
+        //SCI_TRACE_LOW("%s: img_str = %s", __FUNCTION__, img_str);
+        MMIAPICOM_StrToWstr(img_str, img_path);
+        ZMT_GetImgInfoByPath(img_path, &img_info);
         img_rect.left = (MMI_MAINSCREEN_WIDTH - img_info.image_width) / 2;
         img_rect.top = ZMT_DIAL_LINE_HIGHT;
         img_rect.right = img_info.image_width + img_rect.left;
         img_rect.bottom = img_info.image_height + img_rect.top;
-        ZMT_CreateAnimImg(win_id, ctrl_id, &img_rect, img_path, 1, &lcd_dev_info);
+        ZMT_CreateElementImg(&lcd_dev_info, &img_rect, img_path);
+        //ZMT_CreateAnimImg(ZMT_DIAL_STORE_PREVIEW_2_WIN_ID, ctrl_id, &img_rect, img_path, 1, &lcd_dev_info);
     }
 }
 
@@ -320,6 +327,7 @@ LOCAL void ZmtDialStorePreview_FULL_PAINT(MMI_WIN_ID_T win_id)
     GUI_BORDER_T btn_border = {1, MMI_BLACK_COLOR, GUI_BORDER_SOLID};
     wchar dial_name[80] = {0};
 
+    MMK_GetWinLcdDevInfo(win_id,&lcd_dev_info);
     GUI_FillRect(&lcd_dev_info, zmt_dial_win_rect, MMI_WHITE_COLOR);
 
     text_style.align = ALIGN_HVMIDDLE;
@@ -421,6 +429,18 @@ LOCAL MMI_RESULT_E HandleZmtDialStorePreviewWinMsg(MMI_WIN_ID_T win_id,MMI_MESSA
         default:
             break;
     }
+}
+
+WINDOW_TABLE(MMI_ZMT_STORE_PREVIEW_WIN_TAB) = {
+    WIN_ID(ZMT_DIAL_STORE_PREVIEW_2_WIN_ID),
+    WIN_FUNC((uint32)HandleZmtDialStorePreviewWinMsg),
+    WIN_HIDE_STATUS,
+    END_WIN
+};
+
+LOCAL void MMIZMT_CreateZmtDialStorePreviewWin(void)
+{
+    MMK_CreateWin((uint32 *)MMI_ZMT_STORE_PREVIEW_WIN_TAB, PNULL);
 }
 
 LOCAL void MMI_CreateZmtDialStorePreviewWin(const MMI_WIN_ID_T win_id)
@@ -600,6 +620,7 @@ LOCAL void ZmtDialStore_CTL_PENOK(MMI_WIN_ID_T win_id)
     zmt_cur_dial_info->type = zmt_dial_name_str[cur_idx].type;
     
     ZmtDialStorePreview_Enter();
+    //MMIZMT_CreateZmtDialStorePreviewWin();
 }
 
 LOCAL MMI_RESULT_E HandleZmtDialStoreWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_id, DPARAM param)

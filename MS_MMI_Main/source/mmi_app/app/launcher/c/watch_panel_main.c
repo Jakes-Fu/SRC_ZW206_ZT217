@@ -2873,6 +2873,7 @@ LOCAL void DisplayPanelPage(MMI_WIN_ID_T win_id)
     GUI_LCD_DEV_INFO lcd_dev_info = {0};
     GUI_RECT_T img_rect = WATCH_PANEL_PREVIEW_IMG_RECT;
     GUI_POINT_T img_point;
+    
     img_point.x = img_rect.left;
     img_point.y = img_rect.top;
     MMK_GetWinRect(win_id, &win_rect);
@@ -2892,35 +2893,38 @@ LOCAL void DisplayPanelPage(MMI_WIN_ID_T win_id)
     if(is_get){
         return;
     }
-    SCI_TRACE_LOW("%s: PANEL_SIZE = %d, i = %d, win_id = %d", __FUNCTION__, PANEL_SIZE, i, win_id);
+    //SCI_TRACE_LOW("%s: PANEL_SIZE = %d, i = %d, win_id = %d", __FUNCTION__, PANEL_SIZE, i, win_id);
 #ifdef ZMT_DIAL_STORE_SUPPORT
     {
         MMI_CTRL_ID_T ctrl_id = 0;
         GUI_RECT_T anim_rect = {0};
-        char img_str[80] = {0};
-        wchar img_path[80] = {0};
+        char img_str[128] = {0};
+        wchar img_path[128] = {0};
         ZMT_DIAL_LIST_INFO_T * dail_list = ZmtWatch_GetPanelList();
         if(dail_list != NULL)
         {
-            SCI_TRACE_LOW("%s: WATCH_LAUNCHER_PANEL_ZMT_0_WIN_ID = %d", __FUNCTION__, WATCH_LAUNCHER_PANEL_ZMT_0_WIN_ID);
+            //SCI_TRACE_LOW("%s: WATCH_LAUNCHER_PANEL_ZMT_0_WIN_ID = %d", __FUNCTION__, WATCH_LAUNCHER_PANEL_ZMT_0_WIN_ID);
             for(i = 0;i < dail_list->count && i < PANEL_SIZE_MAX - PANEL_SIZE;i++)
             {
                 if(win_id == WATCH_LAUNCHER_PANEL_ZMT_0_WIN_ID + i)
                 {
                     GUIIMG_INFO_T img_info = {0};
-                    GUI_FillRect(&lcd_dev_info, win_rect, MMI_BLACK_COLOR);
+                    GUI_FillRect(&lcd_dev_info, win_rect, MMI_BLACK_COLOR);                    
+                    if(dail_list->info[i] == NULL){
+                        return;
+                    }
                     ctrl_id = LAUNCHER_SELECET_PANEL_0_CTRL_ID + i;
                     sprintf(img_str, "%s\\%s\\%s", ZMT_DIAL_DIR_BASE_PATH, dail_list->info[i]->name, dail_list->info[i]->preview);
-                    SCI_TRACE_LOW("%s: img_str = %d", __FUNCTION__, img_str);
+                    //SCI_TRACE_LOW("%s: img_str = %s", __FUNCTION__, img_str);
                     if(dsl_file_exist(img_str)){
-                        MMIAPICOM_StrToWstr(&img_str, &img_path);
-                        ZMT_GetImgInfoByPath(&img_path, &img_info);
-                        memset(&img_rect, 0, sizeof(GUI_RECT_T));
+                        MMIAPICOM_StrToWstr(img_str, img_path);
+                        ZMT_GetImgInfoByPath(img_path, &img_info);
                         img_rect.left = (MMI_MAINSCREEN_WIDTH - img_info.image_width) / 2;
                         img_rect.top = (MMI_MAINSCREEN_HEIGHT - img_info.image_height) / 2;
-                        img_rect.right = img_info.image_width + img_rect.left;
-                        img_rect.bottom = img_info.image_height + img_rect.top;
-                        ZMT_CreateAnimImg(win_id, ctrl_id, &img_rect, img_path, 1, &lcd_dev_info);
+                        img_rect.right = img_rect.left + img_info.image_width;
+                        img_rect.bottom = img_rect.top + img_info.image_height;
+                        ZMT_CreateElementImg(&lcd_dev_info, &img_rect, img_path);
+                        //ZMT_CreateAnimImg(WATCH_LAUNCHER_PANEL_ZMT_0_WIN_ID, ctrl_id, &img_rect, img_path, 1, &lcd_dev_info);
                     }
                     break;
                 }
