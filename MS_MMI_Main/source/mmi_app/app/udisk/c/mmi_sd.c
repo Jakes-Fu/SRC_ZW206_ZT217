@@ -150,7 +150,7 @@ PUBLIC BOOLEAN  MMIAPISD_Init(void)
 
     SFS_ERROR_E     error   =   SFS_ERROR_NONE;
     SCM_STATUS      scmstatus   =   SCM_STATUS_NORMAL;
-#ifdef BOARD_CONFIG_AntisW3 //1924362
+#ifdef MSDC_CARD_SUPPORT//def BOARD_CONFIG_AntisW3 //1924362
 #ifndef MAINLCD_SIZE_128X64 
     SCM_SLOT_NAME_E slot_name = SCM_SLOT_0;
 #endif
@@ -192,7 +192,7 @@ PUBLIC BOOLEAN  MMIAPISD_Init(void)
         SCI_TRACE_LOW("MMIAPIFMM_RegisterDevice fail, error = %d", error);
     }
 #endif
-#ifdef BOARD_CONFIG_AntisW3 //1924362
+#if 1//def BOARD_CONFIG_AntisW3 //1924362
 #ifndef MAINLCD_SIZE_128X64 
 //#ifndef WIN32
 #ifdef MSDC_CARD_SUPPORT
