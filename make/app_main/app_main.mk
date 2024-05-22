@@ -2605,3 +2605,9 @@ MINCPATH		+=  MS_MMI_Main/source/mmi_app/app/dsl_hanzi/h
 MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/dsl_hanzi/c
 SOURCES			+=  dsl_hanzi_main.c dsl_hanzi_data.c 
 endif
+
+ifeq ($(strip $(ZMT_GPT_SUPPORT)), TRUE)
+MINCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_gpt/h
+MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_gpt/c
+SOURCES			+=  zmt_gpt.c zmt_gpt_zuowen.c zmt_gpt_kouyu.c
+endif

@@ -1421,3 +1421,7 @@ RES_ADD_MODULE(MMI_MODULE_DSL_POETRY,"\\dsl_poetry\\dsl_poetry_mdu_def.h")
 #ifdef  HANZI_CARD_SUPPORT
 RES_ADD_MODULE(MMI_MODULE_DSL_HANZI,"\\dsl_hanzi\\dsl_hanzi_mdu_def.h")
 #endif
+
+#ifdef  ZMT_GPT_SUPPORT
+RES_ADD_MODULE(MMI_MODULE_ZMT_GPT,"\\zmt_gpt\\zmt_gpt_mdu_def.h")
+#endif

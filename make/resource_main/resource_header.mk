@@ -543,6 +543,11 @@ SOURCES	 += dsl_hanzi_mdu_def.h
 SRCPATH += $(MMI_DIR)/source/mmi_app/app/dsl_hanzi/h
 endif
 
+ifeq ($(strip $(ZMT_GPT_SUPPORT)), TRUE)
+SOURCES	 += zmt_gpt_mdu_def.h 
+SRCPATH += $(MMI_DIR)/source/mmi_app/app/zmt_gpt/h
+endif
+
  
 #
 #  make process ,don't modify

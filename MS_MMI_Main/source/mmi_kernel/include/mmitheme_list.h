@@ -1087,6 +1087,40 @@ ADULTWATCH
     //|---------------------------|
     GUIITEM_DSL_HANZI_BOOK,
 #endif
+#ifdef ZMT_GPT_SUPPORT
+    //|---------------------------|
+    //|       icon      text                     |
+    //|---------------------------|
+    GUIITEM_STYLE_GPT_ONE_ICON_AND_ONE_TEXT_MS,
+
+    //|---------------------------|
+    //|       icon      text                     |
+    //|---------------------------|
+    GUIITEM_STYLE_GPT_MINE_TEXT_MS,
+
+    //|---------------------------|
+    //|       text      icon                     |
+    //|---------------------------|
+    GUIITEM_STYLE_GPT_AI_TEXT_MS,
+
+    GUIITEM_STYLE_GPT_MINE_2LINE_TEXT_MS,
+    GUIITEM_STYLE_GPT_AI_2LINE_TEXT_MS,
+
+    GUIITEM_STYLE_GPT_MINE_3LINE_TEXT_MS,
+    GUIITEM_STYLE_GPT_AI_3LINE_TEXT_MS,
+
+    GUIITEM_STYLE_GPT_MINE_4LINE_TEXT_MS,
+    GUIITEM_STYLE_GPT_AI_4LINE_TEXT_MS,
+
+    GUIITEM_STYLE_GPT_MINE_5LINE_TEXT_MS,
+    GUIITEM_STYLE_GPT_AI_5LINE_TEXT_MS,
+
+    GUIITEM_STYLE_GPT_MINE_6LINE_TEXT_MS,
+    GUIITEM_STYLE_GPT_AI_6LINE_TEXT_MS,
+
+    GUIITEM_STYLE_GPT_MINE_7LINE_TEXT_MS,
+    GUIITEM_STYLE_GPT_AI_7LINE_TEXT_MS,
+#endif
 //============================================================================//
 //                                   For watch                                //
 //============================================================================//

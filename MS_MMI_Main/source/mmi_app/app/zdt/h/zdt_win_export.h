@@ -159,6 +159,14 @@ PUBLIC void MMIREADBOY_CreatePoetryWin(void);
 PUBLIC void MMI_CreateHanziWin(void);
 #endif
 
+#ifdef ZMT_DIAL_STORE_SUPPORT
+PUBLIC void MMI_CreateZmtDialStoreWin(void);
+#endif
+
+#ifdef ZMT_GPT_SUPPORT
+PUBLIC void MMIZMT_CreateZmtGptWin(void);
+#endif
+
 #ifdef MAINMENU_STYLE_SUPPORT
 PUBLIC void WatchSET_MenuStyle_Enter( void );//²Ëµ¥ÇÐ»»
 #endif
