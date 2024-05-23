@@ -294,27 +294,78 @@ LOCAL MMI_RESULT_E ZmtDialStorePreview_ButtonClickDownload(MMI_WIN_ID_T win_id)
 
 LOCAL void ZmtDialStorePreview_ShowPreview(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_dev_info, int index)
 {
+    MMI_CTRL_ID_T form_ctrl_id = ZMT_DIAL_STORE_PREVIEW_FORM_CTRL_ID;
+    MMI_CTRL_ID_T anim_ctrl_id = ZMT_DIAL_STORE_PREVIEW_IMG_1_CTRL_ID;
+    GUIANIM_INIT_DATA_T anim_init_data = {0};
+    GUIFORM_DYNA_CHILD_T anim_form_child_ctrl = {0};
+    MMI_HANDLE_T ctrl_handle = 0;
     GUIIMG_INFO_T img_info = {0};
+    GUI_RECT_T form_rect = {0};
     GUI_RECT_T img_rect = {0};
     MMI_CTRL_ID_T ctrl_id = 0;
     char img_str[128] = {0};
     wchar img_path[128] = {0};
+    uint8 i = 0;
     
     if(zmt_cur_dial_info == NULL){
         return;
     }
-    ctrl_id = ZMT_DIAL_STORE_PREVIEW_IMG_1_CTRL_ID + index;
+    
     sprintf(img_str, "%s\\%s\\%s_preview.png", ZMT_DIAL_DIR_BASE_PATH, zmt_cur_dial_info->name, zmt_cur_dial_info->name);
-    if(dsl_file_exist(img_str)){
-        //SCI_TRACE_LOW("%s: img_str = %s", __FUNCTION__, img_str);
+    if(dsl_file_exist(img_str))
+    {
         MMIAPICOM_StrToWstr(img_str, img_path);
         ZMT_GetImgInfoByPath(img_path, &img_info);
         img_rect.left = (MMI_MAINSCREEN_WIDTH - img_info.image_width) / 2;
-        img_rect.top = ZMT_DIAL_LINE_HIGHT;
+        img_rect.top = 1.5*ZMT_DIAL_LINE_HIGHT;
         img_rect.right = img_info.image_width + img_rect.left;
         img_rect.bottom = img_info.image_height + img_rect.top;
-        ZMT_CreateElementImg(&lcd_dev_info, &img_rect, img_path);
-        //ZMT_CreateAnimImg(ZMT_DIAL_STORE_PREVIEW_2_WIN_ID, ctrl_id, &img_rect, img_path, 1, &lcd_dev_info);
+
+        GUIFORM_CreatDynaCtrl(win_id, form_ctrl_id, GUIFORM_LAYOUT_ORDER);
+        {
+            anim_form_child_ctrl.child_handle = anim_ctrl_id+i;
+            anim_form_child_ctrl.init_data_ptr = &anim_init_data;
+            anim_form_child_ctrl.guid = SPRD_GUI_ANIM_ID;
+            GUIFORM_CreatDynaChildCtrl(win_id, form_ctrl_id, &anim_form_child_ctrl);
+        }
+        ctrl_handle = MMK_GetCtrlHandleByWin(win_id, form_ctrl_id);
+        GUIFORM_SetRect(ctrl_handle, &img_rect);
+        {
+            GUIFORM_CHILD_WIDTH_T width = {0, GUIFORM_CHILD_WIDTH_FIXED};
+            GUIFORM_CHILD_HEIGHT_T height = {0, GUIFORM_CHILD_HEIGHT_FIXED};
+            GUIANIM_FILE_INFO_T file_info = {0};
+            
+            GUIANIM_CTRL_INFO_T ctrl_info = {0};
+            GUIANIM_DISPLAY_INFO_T display_info = {0};
+            BOOLEAN is_visible = FALSE;
+            BOOLEAN is_update = FALSE;
+
+            file_info.full_path_wstr_ptr = SCI_ALLOC_APPZ(sizeof(wchar)*(WATCH_IMAGE_FULL_PATH_MAX_LEN + 1));
+            if (PNULL == file_info.full_path_wstr_ptr){
+                SCI_TRACE_LOW("%s: full_path_wstr_ptr = pnull!", __FUNCTION__);
+                return;
+            }
+            SCI_MEMSET(file_info.full_path_wstr_ptr,0,(sizeof(wchar)*(WATCH_IMAGE_FULL_PATH_MAX_LEN + 1)));
+
+            file_info.full_path_wstr_len = MMIAPICOM_Wstrlen(img_path);
+            MMI_WSTRNCPY(file_info.full_path_wstr_ptr,sizeof(wchar)*(file_info.full_path_wstr_len+1),
+                img_path,file_info.full_path_wstr_len,file_info.full_path_wstr_len);
+
+            ctrl_info.is_ctrl_id = TRUE;
+            ctrl_info.ctrl_id = anim_ctrl_id+i;
+            display_info.align_style = GUIANIM_ALIGN_HVMIDDLE;
+            display_info.is_auto_zoom_in = TRUE;
+            display_info.is_update = TRUE;
+            display_info.is_disp_one_frame = TRUE;
+
+            width.add_data = img_info.image_width;
+            height.add_data = img_info.image_height;
+            GUIFORM_SetChildAlign(ctrl_handle, anim_ctrl_id+i, GUIFORM_CHILD_ALIGN_HMIDDLE);
+            GUIFORM_SetChildWidth(ctrl_handle, anim_ctrl_id+i, &width);
+            GUIFORM_SetChildHeight(ctrl_handle, anim_ctrl_id+i, &height);
+            //GUIANIM_SetDefaultIcon(anim_ctrl_id, PNULL, PNULL);
+            GUIANIM_SetParam(&ctrl_info, PNULL, &file_info, &display_info);
+        }
     }
 }
 
@@ -333,11 +384,11 @@ LOCAL void ZmtDialStorePreview_FULL_PAINT(MMI_WIN_ID_T win_id)
     text_style.align = ALIGN_HVMIDDLE;
     text_style.font = SONG_FONT_20;
     text_style.font_color = MMI_BLACK_COLOR;
-//#ifdef WIN32
-//    GUI_UTF8ToWstr(&dial_name, 80, zmt_cur_dial_info->ch_name, strlen(zmt_cur_dial_info->ch_name));
-//#else
+#ifndef WIN32
+    GUI_UTF8ToWstr(&dial_name, 80, zmt_cur_dial_info->ch_name, strlen(zmt_cur_dial_info->ch_name));
+#else
     GUI_GBToWstr(&dial_name, zmt_cur_dial_info->ch_name, strlen(zmt_cur_dial_info->ch_name));
-//#endif
+#endif
     text_string.wstr_ptr = dial_name;
     text_string.wstr_len = MMIAPICOM_Wstrlen(text_string.wstr_ptr);
     GUISTR_DrawTextToLCDInRect(
