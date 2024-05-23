@@ -50,7 +50,7 @@
 #define GPT_KOUYU_TALK_STR_MAX_LEN 100
 #define GPT_KOUYU_TOPIC_MAX_SIZE 20
 #define GPT_KOUYU_TALK_MAX_SIZE 20
-#define GPT_ZUOWEN_TALK_MAX_SIZE 10
+#define GPT_ZUOWEN_TALK_MAX_SIZE 4
 
 extern char * gpt_baidu_access_token;
 

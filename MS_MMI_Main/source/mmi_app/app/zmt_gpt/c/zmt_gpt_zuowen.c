@@ -72,7 +72,57 @@ LOCAL void ZmtGptZuoWen_ReleaseTalkInfo(void)
             gpt_zuowen_talk_info[i] = NULL;
         }
     }
-    gpt_zuowen_talk_size = 0;
+}
+
+LOCAL void ZmtGptZuoWen_DeleteFrontTwoMsg(void)
+{
+    uint8 index = 0;
+    uint8 i = 0;
+    uint16 size = 0;
+    gpt_talk_info_t * talk_info[GPT_ZUOWEN_TALK_MAX_SIZE];
+
+    for(i = 0;i < GPT_ZUOWEN_TALK_MAX_SIZE;i++)
+    {
+        if(i != 1 && i != 2){
+            if(gpt_zuowen_talk_info[i] != NULL){
+                talk_info[index] = SCI_ALLOC_APPZ(sizeof(gpt_talk_info_t));
+                memset(talk_info[index], 0, sizeof(gpt_talk_info_t));
+                talk_info[index]->is_load = gpt_zuowen_talk_info[i]->is_load;
+                size = strlen(gpt_zuowen_talk_info[i]->str);
+                talk_info[index]->str = SCI_ALLOC_APPZ(size + 1);
+                memset(talk_info[index]->str, 0, size + 1);
+                SCI_MEMCPY(talk_info[index]->str, gpt_zuowen_talk_info[i]->str, size);
+                index++;
+            }
+        }
+    }
+    SCI_TRACE_LOW("%s: index = %d", __FUNCTION__, index);
+    
+    ZmtGptZuoWen_ReleaseTalkInfo();
+    for(i = 0;i < GPT_ZUOWEN_TALK_MAX_SIZE - 2;i++)
+    {
+        if(talk_info[i] != NULL){
+            gpt_zuowen_talk_info[i] = SCI_ALLOC_APPZ(sizeof(gpt_talk_info_t));
+            memset(gpt_zuowen_talk_info[i], 0, sizeof(gpt_talk_info_t));
+            gpt_zuowen_talk_info[i]->is_load = talk_info[i]->is_load;
+            size = strlen(talk_info[i]->str);
+            gpt_zuowen_talk_info[i]->str = SCI_ALLOC_APPZ(size + 1);
+            memset(gpt_zuowen_talk_info[i]->str, 0, size + 1);
+            SCI_MEMCPY(gpt_zuowen_talk_info[i]->str, talk_info[i]->str, size);
+        }
+    }
+	
+    for(i = 0;i < GPT_ZUOWEN_TALK_MAX_SIZE && i < index;i++)
+    {
+        if(talk_info[i] != NULL){
+            if(talk_info[i]->str != NULL){
+                SCI_FREE(talk_info[i]->str);
+                talk_info[i]->str = NULL;
+            }
+            SCI_FREE(talk_info[i]);
+            talk_info[i] = NULL;
+        }
+    }
 }
 
 PUBLIC void ZmtGptZuoWen_RecAiTextResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id)
@@ -157,7 +207,7 @@ PUBLIC void ZmtGptZuoWen_RecvResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,
                 SCI_TRACE_LOW("%s: gpt_zuowen_talk_size = %d", __FUNCTION__, gpt_zuowen_talk_size);
                 if(gpt_zuowen_talk_info[gpt_zuowen_talk_size] == NULL){
                     gpt_zuowen_talk_info[gpt_zuowen_talk_size] = SCI_ALLOC_APPZ(sizeof(gpt_talk_info_t));
-                }           
+                }
                 memset(gpt_zuowen_talk_info[gpt_zuowen_talk_size], 0, sizeof(gpt_talk_info_t));
                 gpt_zuowen_talk_info[gpt_zuowen_talk_size]->is_load = FALSE;
 				
@@ -326,14 +376,22 @@ LOCAL void ZmtGptZuoWen_RightIndentifyClick(MMI_WIN_ID_T win_id)
     gpt_zuowen_talk_info[gpt_zuowen_talk_size]->is_load = FALSE;
     gpt_zuowen_talk_info[gpt_zuowen_talk_size]->str = SCI_ALLOC_APPZ(strlen(gpt_zuowen_record_text)+1);
     memset(gpt_zuowen_talk_info[gpt_zuowen_talk_size]->str, 0, strlen(gpt_zuowen_record_text)+1);
-    strcpy(gpt_zuowen_talk_info[gpt_zuowen_talk_size]->str, gpt_zuowen_record_text);
+    SCI_MEMCPY(gpt_zuowen_talk_info[gpt_zuowen_talk_size]->str, gpt_zuowen_record_text, strlen(gpt_zuowen_record_text));
     gpt_zuowen_talk_size++;
+    SCI_TRACE_LOW("%s: 00gpt_zuowen_talk_size = %d", __FUNCTION__, gpt_zuowen_talk_size);
     gpt_zuowen_record_type = GPT_RECORD_TYPE_NONE;
+    if(gpt_zuowen_talk_size >= GPT_ZUOWEN_TALK_MAX_SIZE){
+        ZmtGptZuoWen_DeleteFrontTwoMsg();
+        gpt_zuowen_talk_size -= 2;
+        SCI_TRACE_LOW("%s: 01gpt_zuowen_talk_size = %d", __FUNCTION__, gpt_zuowen_talk_size);
+    }
     gpt_zuowen_load_text = TRUE;
     ZmtGpt_SendTxt(88, gpt_zuowen_record_text, NULL, NULL, 1);
     MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
-    SCI_FREE(gpt_zuowen_record_text);
-    gpt_zuowen_record_text = NULL;
+    if(gpt_zuowen_record_text){
+        SCI_FREE(gpt_zuowen_record_text);
+        gpt_zuowen_record_text = NULL;
+    }
 }
 
 LOCAL void ZmtGptZuoWen_DisplayList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
@@ -941,6 +999,7 @@ LOCAL void ZmtGptZuoWen_OPEN_WINDOW(MMI_WIN_ID_T win_id)
 LOCAL void ZmtGptZuoWen_CLOSE_WINDOW(void)
 {
     ZmtGptZuoWen_ReleaseTalkInfo();
+    gpt_zuowen_talk_size = 0;
     if (PNULL != gpt_zuowen_record_handle)
     {
         MMIRECORDSRV_StopRecord(gpt_zuowen_record_handle);

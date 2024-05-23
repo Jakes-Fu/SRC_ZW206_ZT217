@@ -80,13 +80,13 @@ LOCAL void ZmtGptKouYuTalk_ReleaseTalkInfo(void)
             gpt_kouyu_talk_info[i] = NULL;
         }
     }
-    gpt_kouyu_talk_size = 0;
 }
 
 LOCAL void ZmtGptKouYuTalk_DeleteFrontTwoMsg(void)
 {
     uint8 index = 0;
     uint8 i = 0;
+    uint16 size = 0;
     gpt_talk_info_t * talk_info[GPT_KOUYU_TALK_MAX_SIZE];
 
     for(i = 2;i < GPT_KOUYU_TALK_MAX_SIZE;i++)
@@ -95,9 +95,10 @@ LOCAL void ZmtGptKouYuTalk_DeleteFrontTwoMsg(void)
             talk_info[index] = SCI_ALLOC_APPZ(sizeof(gpt_talk_info_t));
             memset(talk_info[index], 0, sizeof(gpt_talk_info_t));
             talk_info[index]->is_load = gpt_kouyu_talk_info[i]->is_load;
-            talk_info[index]->str = SCI_ALLOC_APPZ(strlen(gpt_kouyu_talk_info[i]->str));
-            memset(talk_info[index]->str, 0, strlen(gpt_kouyu_talk_info[i]->str));
-            strcpy(talk_info[index]->str, gpt_kouyu_talk_info[i]->str);
+            size = strlen(gpt_kouyu_talk_info[i]->str);
+            talk_info[index]->str = SCI_ALLOC_APPZ(size + 1);
+            memset(talk_info[index]->str, 0, size + 1);
+            SCI_MEMCPY(talk_info[index]->str, gpt_kouyu_talk_info[i]->str, size);
             index++;
         }
     }
@@ -110,9 +111,10 @@ LOCAL void ZmtGptKouYuTalk_DeleteFrontTwoMsg(void)
             gpt_kouyu_talk_info[i] = SCI_ALLOC_APPZ(sizeof(gpt_talk_info_t));
             memset(gpt_kouyu_talk_info[i], 0, sizeof(gpt_talk_info_t));
             gpt_kouyu_talk_info[i]->is_load = talk_info[i]->is_load;
-            gpt_kouyu_talk_info[i]->str = SCI_ALLOC_APPZ(strlen(talk_info[i]->str));
-            memset(gpt_kouyu_talk_info[i]->str, 0, strlen(talk_info[i]->str));
-            strcpy(gpt_kouyu_talk_info[i]->str, talk_info[i]->str);
+            size = strlen(talk_info[i]->str);
+            gpt_kouyu_talk_info[i]->str = SCI_ALLOC_APPZ(size + 1);
+            memset(gpt_kouyu_talk_info[i]->str, 0, size + 1);
+            SCI_MEMCPY(gpt_kouyu_talk_info[i]->str, talk_info[i]->str, size);
         }
     }
 	
@@ -1102,6 +1104,7 @@ LOCAL void ZmtGptKouYuTalk_OPEN_WINDOW(MMI_WIN_ID_T win_id)
 LOCAL void ZmtGptKouYuTalk_CLOSE_WINDOW(void)
 {
     ZmtGptKouYuTalk_ReleaseTalkInfo();
+    gpt_kouyu_talk_size = 0;
     ZmtGptKouYuTalk_StopAmrData();
     if (PNULL != gpt_kouyu_record_handle)
     {
