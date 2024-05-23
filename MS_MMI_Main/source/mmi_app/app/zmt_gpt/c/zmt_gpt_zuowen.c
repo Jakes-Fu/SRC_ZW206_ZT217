@@ -230,7 +230,11 @@ LOCAL void ZmtGptZuoWen_StopRecord(MMI_WIN_ID_T win_id, BOOLEAN is_send)
             ZmtGpt_SendRecord(1537, data_buf, data_size);
         }
         dsl_file_delete(ZMT_GPT_RECORD_FILE_C);
+    #if ZMT_GPT_USE_FOR_TEST != 0
+        gpt_zuowen_record_type = GPT_RECORD_TYPE_SUCCESS;
+    #else
         gpt_zuowen_record_type = GPT_RECORD_TYPE_LOADING;
+    #endif
         MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
     }else{
         dsl_file_delete(ZMT_GPT_RECORD_FILE_C);
@@ -490,6 +494,112 @@ LOCAL void ZmtGptZuoWen_DisplayList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
     }
 }
 
+LOCAL void ZmtGptZuoWen_ShowFormList(MMI_WIN_ID_T win_id)
+{
+    uint8 i = 0;
+    MMI_CTRL_ID_T form_ctrl_id = ZMT_GPT_FORM_CTRL_ID;
+    MMI_CTRL_ID_T anim_ctrl_id = ZMT_GPT_FORM_ANIM_CTRL_ID;
+    MMI_CTRL_ID_T text_ctrl_id = 0;
+    MMI_HANDLE_T ctrl_handle = 0;
+    GUI_BG_T form_bg = {GUI_BG_COLOR, GUI_SHAPE_ROUNDED_RECT, 0, MMI_BLACK_COLOR, FALSE};
+    GUI_BG_T text_bg = {GUI_BG_COLOR, GUI_SHAPE_ROUNDED_RECT, 0, MMI_BLACK_COLOR, FALSE};
+    GUIFORM_CHILD_WIDTH_T child_width = {0};
+    GUI_COLOR_T font_color = MMI_WHITE_COLOR;
+    GUI_FONT_T font_size = SONG_FONT_16;
+    MMI_STRING_T text_string = {0};
+    wchar text_str[2048] = {0};
+    uint8 line_num = 0;
+    uint16 width = 0;
+    BOOLEAN result = FALSE;
+
+    result = GUIFORM_CreatDynaCtrl(win_id, form_ctrl_id, GUIFORM_LAYOUT_ORDER);
+    SCI_TRACE_LOW("%s: gpt_zuowen_talk_size = %d", __FUNCTION__, gpt_zuowen_talk_size);
+    for(i = 0;i < gpt_zuowen_talk_size;i++)
+    {
+        GUITEXT_INIT_DATA_T text_init_data = {0};
+        GUIFORM_DYNA_CHILD_T text_form_child_ctrl = {0};
+        text_form_child_ctrl.child_handle = ZMT_GPT_FORM_TEXT_1_CTRL_ID + i;
+        text_form_child_ctrl.init_data_ptr = &text_init_data;
+        text_form_child_ctrl.guid = SPRD_GUI_TEXTBOX_ID;
+        result = GUIFORM_CreatDynaChildCtrl(win_id, form_ctrl_id, &text_form_child_ctrl);
+    }
+    if(gpt_zuowen_load_text){
+        GUIANIM_INIT_DATA_T anim_init_data = {0};
+        GUIFORM_DYNA_CHILD_T anim_form_child_ctrl = {0};
+        anim_form_child_ctrl.child_handle = anim_ctrl_id;
+        anim_form_child_ctrl.init_data_ptr = &anim_init_data;
+        anim_form_child_ctrl.guid = SPRD_GUI_ANIM_ID;
+        result = GUIFORM_CreatDynaChildCtrl(win_id, form_ctrl_id, &anim_form_child_ctrl);
+    }
+    ctrl_handle = MMK_GetCtrlHandleByWin(win_id, form_ctrl_id);
+    
+    GUIFORM_SetBg(ctrl_handle, &form_bg);
+    GUIFORM_SetRect(ctrl_handle, &zmt_gpt_list_rect);
+
+    for(i = 0;i < gpt_zuowen_talk_size;i++)
+    {
+        memset(text_str, 0, 2048);
+        if(i == 0){
+            GUI_GBToWstr(text_str, gpt_zuowen_talk_info[i]->str, strlen(gpt_zuowen_talk_info[i]->str));
+        }else{
+            GUI_UTF8ToWstr(text_str, 2048, gpt_zuowen_talk_info[i]->str, strlen(gpt_zuowen_talk_info[i]->str));
+        }
+        text_string.wstr_ptr = text_str;
+        text_string.wstr_len = MMIAPICOM_Wstrlen(text_string.wstr_ptr);
+        line_num = GUI_CalculateStringLinesByPixelNum(160,text_string.wstr_ptr,text_string.wstr_len,font_size,0,TRUE);    
+        if(line_num == 1){
+            width = GUI_CalculateStringPiexlNum(text_string.wstr_ptr, text_string.wstr_len, font_size, 0) + 20;
+        }else{
+            width = zmt_gpt_list_rect.right - ZMT_GPT_LINE_WIDTH;
+        }
+        //SCI_TRACE_LOW("%s: width = %d", __FUNCTION__, width);
+        text_ctrl_id = ZMT_GPT_FORM_TEXT_1_CTRL_ID + i;
+        child_width.type = GUIFORM_CHILD_WIDTH_FIXED;
+        child_width.add_data = width;
+        GUIFORM_SetChildWidth(ctrl_handle, text_ctrl_id, &child_width);
+        if(i % 2 == 0){
+            text_bg.color = MMI_WHITE_COLOR;
+            font_color = MMI_BLACK_COLOR;
+            GUIFORM_SetChildAlign(ctrl_handle, text_ctrl_id, GUIFORM_CHILD_ALIGN_LEFT);
+        }else{
+            text_bg.color = GUI_RGB2RGB565(0, 255, 0);
+            font_color = MMI_WHITE_COLOR;
+            GUIFORM_SetChildAlign(ctrl_handle, text_ctrl_id, GUIFORM_CHILD_ALIGN_RIGHT);            
+        }
+        GUITEXT_SetAlign(text_ctrl_id, ALIGN_LVMIDDLE);
+        GUITEXT_SetBg(text_ctrl_id, &text_bg);
+        GUITEXT_SetFont(text_ctrl_id, &font_size, &font_color);
+        GUITEXT_IsDisplayPrg(FALSE, text_ctrl_id);
+        GUITEXT_SetClipboardEnabled(text_ctrl_id, FALSE);        
+        GUITEXT_SetString(text_ctrl_id, text_string.wstr_ptr, text_string.wstr_len, TRUE);
+        GUITEXT_SetHandleTpMsg(TRUE, text_ctrl_id);
+    }
+    if(gpt_zuowen_load_text){
+        GUIFORM_CHILD_WIDTH_T width = {60, GUIFORM_CHILD_WIDTH_FIXED};
+        GUIFORM_CHILD_HEIGHT_T height = {30, GUIFORM_CHILD_HEIGHT_FIXED};
+        GUIANIM_DATA_INFO_T img_info = {0};
+        
+        GUIANIM_CTRL_INFO_T ctrl_info = {0};
+        GUIANIM_DISPLAY_INFO_T display_info = {0};
+        BOOLEAN is_visible = FALSE;
+        BOOLEAN is_update = FALSE;
+        
+        img_info.img_id = IMG_ZMT_GPT_LOAD_1;
+        ctrl_info.is_ctrl_id = TRUE;
+        ctrl_info.ctrl_id = anim_ctrl_id;
+        display_info.align_style = GUIANIM_ALIGN_HVMIDDLE;
+        display_info.is_auto_zoom_in = TRUE;
+        display_info.is_update = TRUE;
+        display_info.is_disp_one_frame = TRUE;
+        
+        GUIFORM_SetChildAlign(ctrl_handle, anim_ctrl_id, GUIFORM_CHILD_ALIGN_LEFT);
+        GUIFORM_SetChildWidth(ctrl_handle, anim_ctrl_id, &width);
+        GUIFORM_SetChildHeight(ctrl_handle, anim_ctrl_id, &height);
+        GUIANIM_SetParam(&ctrl_info, &img_info, PNULL, &display_info);
+    }
+    MMK_SetAtvCtrl(win_id, form_ctrl_id);
+}
+
 LOCAL void  ZmtGptZuoWen_DispalyRecord(MMI_WIN_ID_T win_id, int record_type)
 {
     GUI_LCD_DEV_INFO lcd_dev_info = {GUI_MAIN_LCD_ID,GUI_BLOCK_MAIN};
@@ -609,11 +719,13 @@ LOCAL void  ZmtGptZuoWen_DispalyRecord(MMI_WIN_ID_T win_id, int record_type)
             LCD_DrawRoundedRect(&gpt_zuowen_record_layer, zmt_gpt_record_rect, zmt_gpt_record_rect, MMI_WHITE_COLOR);
             LCD_FillRoundedRect(&gpt_zuowen_record_layer, zmt_gpt_record_rect, zmt_gpt_record_rect, MMI_WHITE_COLOR);
 
-            /*if(gpt_zuowen_record_text == NULL){
+        #if ZMT_GPT_USE_FOR_TEST != 0
+            if(gpt_zuowen_record_text == NULL){
                 gpt_zuowen_record_text = SCI_ALLOC_APPZ(200);
                 memset(gpt_zuowen_record_text, 0, 200);
                 strcpy(gpt_zuowen_record_text, "她俩向着光明和快乐飞走了，飞到那没有寒冷的地方");
-            }*/
+            }
+         #endif
             if(gpt_zuowen_record_text != NULL){
                 sprintf(text_str, "%s", gpt_zuowen_record_text);
             #ifndef WIN32
@@ -774,15 +886,19 @@ LOCAL void ZmtGptZuoWen_FULL_PAINT(MMI_WIN_ID_T win_id)
         return;
     }
     
-    ZmtGptZuoWen_DisplayList(win_id, ZMT_GPT_ZUOWEN_LIST_CTRL_ID);
+    //ZmtGptZuoWen_DisplayList(win_id, ZMT_GPT_ZUOWEN_LIST_CTRL_ID);
+    ZmtGptZuoWen_ShowFormList(win_id);
 
     ZmtGptZuoWen_DispalyRecord(win_id, gpt_zuowen_record_type);
 }
 
-LOCAL void ZmtGptZuoWen_CTL_PENOK(MMI_WIN_ID_T win_id)
+LOCAL void ZmtGptZuoWen_CTL_PENOK(MMI_WIN_ID_T win_id, DPARAM param)
 {
-    uint16 cur_idx = GUILIST_GetCurItemIndex(ZMT_GPT_ZUOWEN_LIST_CTRL_ID);
-    
+    //uint16 cur_idx = GUILIST_GetCurItemIndex(ZMT_GPT_ZUOWEN_LIST_CTRL_ID);
+    uint8 cur_idx = 0;
+    MMI_CTRL_ID_T ctrl_id = ((MMI_NOTIFY_T *)param)->src_id;
+    cur_idx = ctrl_id - ZMT_GPT_FORM_TEXT_1_CTRL_ID;
+    SCI_TRACE_LOW("%s: cur_idx = %d", __FUNCTION__, cur_idx);
 }
 
 LOCAL void ZmtGptZuoWen_OPEN_WINDOW(MMI_WIN_ID_T win_id)
@@ -817,6 +933,9 @@ LOCAL void ZmtGptZuoWen_OPEN_WINDOW(MMI_WIN_ID_T win_id)
     gpt_zuowen_talk_size++;
     gpt_zuowen_talk_info[gpt_zuowen_talk_size] = NULL;
     zmt_gpt_zuowen_status = 3;
+    if(MMK_IsFocusWin(win_id)){
+        MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
+    }
 }
 
 LOCAL void ZmtGptZuoWen_CLOSE_WINDOW(void)
@@ -865,7 +984,7 @@ LOCAL MMI_RESULT_E HandleZmtGptZuoWenWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
             break;
         case MSG_CTL_PENOK:
             {
-                ZmtGptZuoWen_CTL_PENOK(win_id);
+                ZmtGptZuoWen_CTL_PENOK(win_id, param);
             }
             break;
         case MSG_TP_PRESS_LONG:
