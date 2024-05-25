@@ -168,6 +168,61 @@ PUBLIC void ZmtGpt_SendRecord(uint32 lan_type, char * record_buf, uint32 record_
     cJSON_Delete(root);
 }
 
+PUBLIC void ZmtGpt_SendSelfTxt(uint8 lan_type, char * send_txt, BOOLEAN is_new_talk)
+{
+    cJSON * root;
+    cJSON * uid;
+    cJSON * question;
+    cJSON * proceed;
+    char * out = NULL;
+    char imei[20] = {0};
+    char url[1024] = {0};
+
+    root = cJSON_CreateObject();
+    sprintf(imei, "%s", "869937060002261");
+    uid = cJSON_CreateString(imei);
+    cJSON_AddItemToObject(root, "imei", uid);
+    question = cJSON_CreateString(send_txt);
+    cJSON_AddItemToObject(root, "question", question);
+    if(is_new_talk){
+        proceed = cJSON_CreateFalse();
+    }else{
+        proceed = cJSON_CreateTrue();
+    }
+    cJSON_AddItemToObject(root, "proceed", proceed);
+    out = cJSON_PrintUnformatted(root);
+    cJSON_Delete(root);
+    SCI_TRACE_LOW("%s: out = %s", __FUNCTION__, out);
+
+    if(lan_type == 0)
+    {
+        sprintf(url, "%s%s", GPT_HTTP_SELF_API_BASE_PATH, GPT_HTTP_SELF_API_KOUYU_PATH);
+#if ZMT_GPT_USE_FOR_TEST != 0
+        {
+            uint8 * buf = PNULL;
+            uint32 len = 0;
+            ZmtGptKouYuTalk_RecvSelfResultCb(0, buf, len, 0); 
+        }
+ #else
+        MMIZDT_HTTP_AppSend(FALSE, url, out, strlen(out), 10*1000, 0, 0, 0, 0, 0, ZmtGptKouYuTalk_RecvSelfResultCb);
+ #endif        
+    }
+    else
+    {
+        sprintf(url, "%s%s", GPT_HTTP_SELF_API_BASE_PATH, GPT_HTTP_SELF_API_ZUOWEN_PATH);
+ #if ZMT_GPT_USE_FOR_TEST != 0
+        {
+            uint8 * buf = PNULL;
+            uint32 len = 0;
+            ZmtGptZuoWen_RecvSelfResultCb(0, buf, len, 0); 
+        }
+ #else
+        MMIZDT_HTTP_AppSend(FALSE, url, out, strlen(out), 10*1000, 0, 0, 0, 0, 0, ZmtGptZuoWen_RecvSelfResultCb);
+ #endif         
+    }
+    SCI_FREE(out);
+}
+
 PUBLIC void ZmtGpt_SendTxt(uint32 app_type, char * send_txt, char * sys_param, char * field, int post_type)
 {
     cJSON * root;
