@@ -211,12 +211,6 @@ PUBLIC MMI_HANDLE_T ZMT_CreateAnimImg(MMI_WIN_ID_T         win_id,
     GUI_RECT_T win_rect = {0, 0, 0, 0};
     uint16 w, h = 0;
 
-    if(PNULL == p_image_name)
-    {
-        SCI_TRACE_LOW("%s: image_name = pnull!", __FUNCTION__);
-        return handle;
-    }
-
     if(PNULL == p_lcd_info)
     {
         SCI_TRACE_LOW("%s: p_lcd_info = pnull!", __FUNCTION__);
@@ -259,31 +253,26 @@ PUBLIC MMI_HANDLE_T ZMT_CreateAnimImg(MMI_WIN_ID_T         win_id,
         control_info.is_ctrl_id = TRUE;
         control_info.ctrl_id = ctrl_id;
         control_info.ctrl_ptr = anim_ctrl_ptr;
-    }
-    else
-    {
-        control_info.is_ctrl_id = TRUE;
-        control_info.ctrl_id = ctrl_id;
+
+        display_info.is_update = TRUE;
+        display_info.align_style = GUIANIM_ALIGN_HVMIDDLE;
+        display_info.is_disp_one_frame = TRUE;
+        display_info.is_crop_rect = TRUE;
+        display_info.is_syn_decode = TRUE;
+        display_info.is_handle_transparent = TRUE;
+        display_info.is_auto_zoom_in = TRUE;
+        display_info.is_zoom = (1 == scale) ? FALSE : TRUE;
+
+        //set anim lcd
+        GUIAPICTRL_SetLcdDevInfo(ctrl_id, p_lcd_info);
+
+        //set anim rect
+        GUIAPICTRL_SetRect(ctrl_id, disp_rect);
+        
+        //set default icon
+        GUIANIM_SetDefaultIcon(ctrl_id, PNULL, PNULL);
     }
 
-    display_info.is_update = TRUE;
-    display_info.align_style = GUIANIM_ALIGN_HVMIDDLE;
-    display_info.is_disp_one_frame = TRUE;
-    display_info.is_crop_rect = TRUE;
-    display_info.is_syn_decode = TRUE;
-    display_info.is_handle_transparent = TRUE;
-    display_info.is_auto_zoom_in = TRUE;
-    display_info.is_zoom = (1 == scale) ? FALSE : TRUE;
-    
-    //set anim lcd
-    GUIAPICTRL_SetLcdDevInfo(ctrl_id, p_lcd_info);
-
-    //set anim rect
-    GUIAPICTRL_SetRect(ctrl_id, disp_rect);
-    
-    //set default icon
-    GUIANIM_SetDefaultIcon(ctrl_id, PNULL, PNULL);
-    
     //set bg anim
     anim_res = GUIANIM_SetParam(&control_info, PNULL, &file_info, &display_info);
     
@@ -291,7 +280,6 @@ PUBLIC MMI_HANDLE_T ZMT_CreateAnimImg(MMI_WIN_ID_T         win_id,
     {
         SCI_FREE(file_info.full_path_wstr_ptr);
     }
-    SCI_TRACE_LOW("%s: end", __FUNCTION__);
 }
 
 LOCAL void ZMT_CalculatePointerAngles(int hour, 
@@ -1223,11 +1211,7 @@ PUBLIC void ZMT_DialPanelShow(MMI_WIN_ID_T win_id, char * watch_name)
         SCI_TRACE_LOW("%s: watch_dial is empty!!", __FUNCTION__);
         return;
     }
-    
-    win_rect.left = 0;
-    win_rect.right = 240;
-    win_rect.top = 0;
-    win_rect.bottom = 240;
+
     sprintf(dir_str, "%s", watch_dial->name);
     memset(&image_str, 0, WATCH_IMAGE_FULL_PATH_MAX_LEN);
     sprintf(image_str, "%s\\%s\\%s", ZMT_DIAL_DIR_BASE_PATH, dir_str, watch_dial->bg_img);
