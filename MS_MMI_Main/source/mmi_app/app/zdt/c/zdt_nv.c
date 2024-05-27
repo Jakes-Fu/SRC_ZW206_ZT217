@@ -86,6 +86,7 @@ const uint16 zdt_nv_len[] =
     24*sizeof(uint8),//网标号码
     sizeof(uint8),  //MMI_ZDT_NV_INFO_RESET
     sizeof(ZDT_SWVER), //sw version
+    sizeof(MMI_ZDT_FACTORY_T), //工测模式保留数据
     sizeof(uint8),  //max
 };
 
@@ -294,8 +295,8 @@ PUBLIC BOOLEAN ZDT_NV_GetIsAutoPower()
 
 PUBLIC void  MMIZDT_NV_SetRejectUnknownCall(uint8 isOn) 
 {
-     BOOLEAN status = isOn;
-    MMINV_WRITE(MMI_ZDT_NV_REJECT_CALL_ONOFF, &status);
+     uint8 status = isOn;
+    MMI_WriteNVItem(MMI_ZDT_NV_REJECT_CALL_ONOFF, &status);
 }
 
 #ifdef ZDT_NFC_SUPPORT
@@ -663,7 +664,7 @@ PUBLIC void MMIZDT_NV_ResetFactory()
     MMIZDT_NV_Set_Auto_Low_Battery_Flag(0);
     MMIZDT_NV_Set_Auto_Low_Battery(0);
     MMIZDT_Set_CTA_Net_Id("");
-    MMIZDT_NV_Set_Target_Step(0);
+    MMIZDT_NV_Set_Target_Step(3000); //默认3000
     MMI_Pedometer_Factory();
     MMIZDT_NV_Set_Device_Report_Status(0);
 #endif
@@ -744,6 +745,7 @@ PUBLIC void MMIZDT_NVClearSWVER(void)
 
 PUBLIC void MMIZDT_NV_ResetFOTA()
 {
+#if 0
 #ifdef ZTE_WATCH
     MMIZDT_NV_Set_Auto_Low_Battery(0);
     MMIZDT_NV_Set_Auto_Answer_Call_Status(0);
@@ -751,12 +753,13 @@ PUBLIC void MMIZDT_NV_ResetFOTA()
     MMIZDT_NV_Set_Device_Report_Status(0);
     MMIZDT_NV_Set_Auto_Low_Battery_Flag(0);
     MMIZDT_Set_CTA_Net_Id("");
-    MMIZDT_NV_Set_Target_Step(0);
+    MMIZDT_NV_Set_Target_Step(3000);
     MMI_Pedometer_Factory();
     MMIZDT_NV_Set_Netword_Connect_Time(0);
 #endif
 #ifdef W217_AGING_TEST_CUSTOM //new_aginglist
     MMIZDT_NV_Set_Aging_Times(0);
+#endif
 #endif
     MMIZDT_NVSetSWVER(ZDT_SFR_SW_VER);
 }
@@ -786,5 +789,30 @@ PUBLIC BOOLEAN MMIZDT_IsSWVERChanged(void)
     return TRUE;
 }
 #endif
+
+static  MMI_ZDT_FACTORY_T em_test = {0};
+
+PUBLIC uint8* MMIZDT_NVGetFactory_Tese_Init()
+{
+     if (MN_RETURN_SUCCESS != MMI_ReadNVItem(MMI_ZDT_NV_FACTORY_TEST, &em_test))
+     {
+         SCI_MEMSET(&em_test, 0, sizeof(MMI_ZDT_FACTORY_T));
+         MMI_WriteNVItem(MMI_ZDT_NV_FACTORY_TEST, &em_test);
+     }
+    return em_test.em_test_is_ok;
+}
+
+PUBLIC void MMIZDT_NVSet_Factory_Tese(uint8 *em_is_ok,uint em_is_ok_len)
+{
+    SCI_MEMSET(&em_test, 0, sizeof(MMI_ZDT_FACTORY_T));
+    SCI_MEMCPY(&em_test.em_test_is_ok, em_is_ok, em_is_ok_len);
+    MMI_WriteNVItem(MMI_ZDT_NV_FACTORY_TEST, &em_test);
+}
+
+PUBLIC void MMIZDT_NVClear_Factory_Tese(void)
+{
+    SCI_MEMSET(&em_test, 0, sizeof(MMI_ZDT_FACTORY_T));
+    MMI_WriteNVItem(MMI_ZDT_NV_FACTORY_TEST, &em_test);
+}
 
 

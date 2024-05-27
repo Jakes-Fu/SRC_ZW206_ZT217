@@ -2366,6 +2366,7 @@ PUBLIC void MMISET_ResetFactorySetting(void)
 	BOOLEAN 							is_red_keylock				=	FALSE;
 	MMISET_LANGUAGE_TYPE_E				language_type			=	MMISET_EDEFAULT_LANGUAGE;/*lint !e64*/	//MMISET_LANGUAGE_SIMP_CHINESE; //default type of language
 	MMISET_TXT_CODE_TYPE_TYPE_E 		code_type = MMISET_TXT_CODE_TYPE_GB;
+    WATCH_PANEL_TYPE_T temp_style = {1 , 0}; //恢复默认表盘
 #ifdef MV_SUPPORT	 
 	BOOLEAN								is_mv_on = FALSE;
 	MMISET_MV_INFO_T					mv_info  = {0};
@@ -2833,6 +2834,7 @@ PUBLIC void MMISET_ResetFactorySetting(void)
     MMIAPISET_SaveDataSimToNV(MN_DUAL_SYS_1);
 
     MMIZDT_Reset_SaveNV();
+    MMISET_SetWatchPanelStyle(temp_style); //恢复默认表盘
 	//MMK_PostMsg(MMISET_RESET_FACTORY_WAITING_WIN_ID, MSG_SET_RESET_FACTORY_OVER_IND, PNULL,0);
 }
 
@@ -2844,12 +2846,17 @@ PUBLIC void MMISET_ResetFactorySetting(void)
 /*****************************************************************************/
 LOCAL void RestoreDataTimeFactorySetting(void)
 {
-#ifdef ZDT_ZFB_SUPPORT
-    return;
-#else
 #ifndef WIN32
     SCI_TIME_T                  sys_time = {0};
     SCI_DATE_T                  sys_date = {0};
+#ifdef ZDT_ZFB_SUPPORT
+    TM_GetSysDate(&sys_date);
+    if(sys_date.year > 2023)
+    {
+        //如果时间已经更新不允许复位时间
+        return;
+    }
+#endif
     sys_time.hour = 0;
     sys_time.min = 0;
     sys_time.sec = 0;
@@ -2860,7 +2867,6 @@ LOCAL void RestoreDataTimeFactorySetting(void)
     sys_date.year = 2011;//bug-1641662
     MMIAPICOM_SetSysData(sys_date); 
     MAIN_SetStbDispTime();
-#endif
 #endif
 }
 /*****************************************************************************/

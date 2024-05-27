@@ -2703,6 +2703,28 @@ PUBLIC void MMIZFB_OpenMenuWin(void)
 #endif
 
 #if 1
+LOCAL uint8 delay_timer_id = 0; 
+
+
+LOCAL void Alipay_Delay_Full(
+                                                                        uint8 timer_id,
+                                                                        uint32 param
+                                                                        )
+{
+    MMIZFB_OpenMenuWin();
+    MMK_CloseWin(MMIZFB_MAIN_WIN_ID);
+}
+
+LOCAL void MMIZFB_Stop_DelayTimer()
+{
+    if(delay_timer_id != 0)
+    {
+        MMK_StopTimer(delay_timer_id);
+        delay_timer_id = 0;
+    }
+}
+
+
 LOCAL BOOLEAN  ZFB_Main_Show(MMI_WIN_ID_T    win_id)
 {
     GUI_LCD_DEV_INFO  lcd_dev_info = { GUI_MAIN_LCD_ID, GUI_BLOCK_MAIN };
@@ -2783,8 +2805,7 @@ LOCAL MMI_RESULT_E  HandleZFB_MainWinMsg(
         break;
         
     case MSG_ZDB_STATUS_PAY:
-            MMIZFB_OpenMenuWin();
-            MMK_CloseWin(win_id);
+		delay_timer_id =  MMK_CreateTimerCallback(5*100, Alipay_Delay_Full, 0, FALSE);
         break;
         
     case MSG_ZDB_STATUS_ERR_INIT:
@@ -2826,6 +2847,7 @@ LOCAL MMI_RESULT_E  HandleZFB_MainWinMsg(
             break;
             
         case MSG_CLOSE_WINDOW:
+                MMIZFB_Stop_DelayTimer();
                 MMIZFB_BackLight(FALSE);
             break;
         default:

@@ -359,7 +359,11 @@ PUBLIC MMI_RESULT_E MMIAPIUdisk_HandleUsbCablePlugIn(void)
     restart_condition = POWER_GetRestartCondition();
     //SCI_TRACE_LOW:"mmiudisk:MMIAPIUdisk_HandlePlugIn:restart_condition=%d"
     SCI_TRACE_ID(TRACE_TOOL_CONVERT,MMIUDISK_279_112_2_18_3_4_4_33,(uint8*)"d", restart_condition);
-#if 1 // add by bao user版本也需要打开Diag 用来工厂测试
+#ifdef RELEASE_INFO
+        if(USB_SERVICE_NULL !=  USB_GetCurService()) //added by bao 避免开机后反复重启
+        {
+            USB_StopService(USB_GetCurService());
+        }
         MMIUDISK_StartUsbLog();
         return result;
 #endif
@@ -1002,7 +1006,16 @@ PUBLIC BOOLEAN MMIUDISK_StartUdisk(void)
             
     return(result);
 }                      
-                                             
+
+PUBLIC BOOLEAN MMIUDISK_EngStartUdisk(void)
+{
+    if(USB_SERVICE_NULL !=  USB_GetCurService())
+    {
+        USB_StopService(USB_GetCurService());
+    }
+    return MMIUDISK_StartUdisk();
+}
+
 /*****************************************************************************/
 //  Description : 格式化U盘
 //  Global resource dependence : 

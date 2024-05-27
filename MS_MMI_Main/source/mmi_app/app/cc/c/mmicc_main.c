@@ -275,6 +275,7 @@ LOCAL MMI_RESULT_E  CCApplet_HandleEvent(
 #endif
         {
             MMIAPICC_ReleaseCallByRedkey();	
+            ZDT_SOS_Call_Success();
         }
 #endif       
         break;

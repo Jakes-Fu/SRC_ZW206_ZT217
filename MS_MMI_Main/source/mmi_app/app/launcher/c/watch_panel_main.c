@@ -10,15 +10,8 @@
 #include "watch_launcher_main.h"
 #include "watch_slidepage.h"
 #include "graphics_draw.h"
-#include "ctrlanim_export.h"
-#include "../../../mmi_ctrl/source/anim/h/ctrlanim.h"
 #include "zdt_app.h"
 #include "zdt_win_export.h"
-#if ZMT_DIAL_STORE_SUPPORT
-#include "zmt_dial.h"
-#include "zmt_dial_image.h"
-#include "zmt_dial_text.h"
-#endif
 
 #define MAXPAGENUM 1// xiongkai only two analog clock 3
 #define doubThres 0.00001
@@ -1263,37 +1256,6 @@ LOCAL void drawDigitalWatch3()
 }
 #endif
 //=====================Ì«¿ÕÕ¾Óîº½Ô±±íÅÌend ============================
-#ifdef ZMT_DIAL_STORE_SUPPORT
-int32 zmt_watch_last_index = -1;
-uint8 * zmt_watch_name = NULL;
-LOCAL void ZMT_DisplayDial(MMI_WIN_ID_T win_id, PANEL_INDEX_E index)
-{
-    uint8 idx = 0;
-    uint8 size = 0;
-    ZMT_DIAL_LIST_INFO_T * dail_list = NULL;
-
-    idx = index - ZMT_DIAL_INDEX_0;
-    //SCI_TRACE_LOW("%s: zmt_watch_last_index = %d, index = %d", __FUNCTION__, zmt_watch_last_index, index);
-    if(zmt_watch_last_index != index){
-        zmt_watch_last_index = index;
-        dail_list = ZmtWatch_GetPanelList();
-        if(dail_list != NULL){
-            if(zmt_watch_name != NULL){
-                SCI_FREE(zmt_watch_name);
-                zmt_watch_name = NULL;
-            }
-            size = strlen(dail_list->info[idx]->name);
-            zmt_watch_name = SCI_ALLOC_APPZ(size + 1);
-            memset(zmt_watch_name, 0, size + 1);
-            SCI_MEMCPY(zmt_watch_name, dail_list->info[idx]->name, size);            
-            ZmtDial_ReleaseDialList(dail_list);
-        }
-    }
-    if(zmt_watch_name != NULL){
-        ZMT_DialPanelShow(win_id, zmt_watch_name);
-    }
-}
-#endif
 
 LOCAL void draw_watch_panel(PANEL_INDEX_E watch_index)
 {
@@ -1331,22 +1293,6 @@ LOCAL void draw_watch_panel(PANEL_INDEX_E watch_index)
             ZTE_Draw_Cat_Panel(WATCH_LAUNCHER_PANEL_WIN_ID);
             break;
     #endif
-#ifdef ZMT_DIAL_STORE_SUPPORT
-        case ZMT_DIAL_INDEX_0:
-        case ZMT_DIAL_INDEX_1:
-        case ZMT_DIAL_INDEX_2:
-        case ZMT_DIAL_INDEX_3:
-        case ZMT_DIAL_INDEX_4:
-        case ZMT_DIAL_INDEX_5:
-        case ZMT_DIAL_INDEX_6:
-        case ZMT_DIAL_INDEX_7:
-        case ZMT_DIAL_INDEX_8:
-        case ZMT_DIAL_INDEX_9:
-            {
-                ZMT_DisplayDial(WATCH_LAUNCHER_PANEL_WIN_ID, watch_index);
-            }
-            break;
-#endif
         default:
             setDefaultPanel();
             break;
@@ -1463,8 +1409,8 @@ LOCAL MMI_RESULT_E MMIWatchPanel_HandleWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_I
                 {
                     SCI_TRACE_LOW("MMIWatchIdle_HandleWinMsg. draw clock begin index:%d", style.watch_index);
                     updateClock(style.watch_index);
-                    //ZDT_DisplayBattery(win_id);
-                    //ZDT_DisplaySingal(win_id);
+                    ZDT_DisplayBattery(win_id);
+                    ZDT_DisplaySingal(win_id);
 
                     SCI_TRACE_LOW("MMIWatchIdle_HandleWinMsg. draw clock end.");
                 }
@@ -2648,6 +2594,7 @@ LOCAL void ZTE_Draw_Spaceman_Panel(MMI_WIN_ID_T win_id)
     Draw_Battery(&draw_battery_t,win_id);
     Draw_messageImg(message_point,panel_message_tip,win_id);
     Draw_TimeAmOrPmFlag(twelve_hours_time,win_id);
+    //SCI_TRACE_LOW("[MEM] %d KB-- %d KB U=%d KB",SCI_GetSystemSpaceTotalAvalidMem()/1024, SCI_GetHeapTotalSpace(DYNAMIC_HEAP_APP_MEMORY)/1024,ZDT_File_GetMemFree(FALSE));
 }
 //  end astronaut ZTE Óîº½Ô±
 
@@ -2688,6 +2635,7 @@ LOCAL void ZTE_Draw_Rocket_Panel(MMI_WIN_ID_T win_id)
     Draw_Battery(&draw_battery_t,win_id);
     Draw_messageImg(message_point,panel_message_tip,win_id);
     Draw_TimeAmOrPmFlag(twelve_hours_time,win_id);
+    //SCI_TRACE_LOW("[MEM] %d KB-- %d KB U=%d KB",SCI_GetSystemSpaceTotalAvalidMem()/1024, SCI_GetHeapTotalSpace(DYNAMIC_HEAP_APP_MEMORY)/1024,ZDT_File_GetMemFree(FALSE));
 }
 //  end rocket ZTE »ð¼ý
 
@@ -2725,6 +2673,7 @@ LOCAL void ZTE_Draw_Cat_Panel(MMI_WIN_ID_T win_id)
     Draw_Battery(&draw_battery_t,win_id);
     Draw_messageImg(message_point,panel_message_tip,win_id);
     Draw_TimeAmOrPmFlag(twelve_hours_time,win_id);
+    //SCI_TRACE_LOW("[MEM] %d KB-- %d KB U=%d KB",SCI_GetSystemSpaceTotalAvalidMem()/1024, SCI_GetHeapTotalSpace(DYNAMIC_HEAP_APP_MEMORY)/1024,ZDT_File_GetMemFree(FALSE));
 }
 
 #endif //end ZTE WATCH
@@ -2756,11 +2705,6 @@ typedef struct
     DRAWHANDLE draw_handle; //±íÅÌ»æÖÆÈë¿Ú
 
 }PANEL_SELECT_INFO;
-
-typedef struct
-{
-    PANEL_INDEX_E index_id;
-}PANEL_INDEX_ID_INFO;
 
 LOCAL MMI_HANDLE_T s_panel_select_handle;
 
@@ -2818,152 +2762,40 @@ LOCAL void setDefaultPanel()
 
 LOCAL void updateClock(PANEL_INDEX_E index)
 {
-    switch(index)
+    if(index == PANEL_PANDA)
     {
-        case PANEL_PANDA:
-            {
-            #ifdef WATCH_PANEL_PANDA_SUPPORT //ÐÜÃ¨
-                DrawAClock();
-            #endif
-            }
-            break;
-        case PANEL_BLACK_GREEN:
-            {
-            #ifdef WATCH_PANEL_BLACK_GREEN_SUPPORT //ºÚÂÌÉ«Ä£ÄâÊ±ÖÓ
-                DrawAClock1();
-            #endif
-            }
-            break;
-        case PANEL_DEER:
-            {
+        #ifdef WATCH_PANEL_PANDA_SUPPORT //ÐÜÃ¨
+        DrawAClock();
+        #endif
+    }
+    else if(index == PANEL_BLACK_GREEN)
+    {
+        #ifdef WATCH_PANEL_BLACK_GREEN_SUPPORT //ºÚÂÌÉ«Ä£ÄâÊ±ÖÓ
+        DrawAClock1();
+        #endif
+    }
+    else if(index == PANEL_DEER)
+    {
         #ifdef WATCH_PANEL_DEER_SUPPORT    //Ð¡Â¹
             #ifdef MAINLCD_DEV_SIZE_240X284
-                DrawAClock2();
+            DrawAClock2();
             #endif
         #endif
-            }
-            break;
-#ifdef ZMT_DIAL_STORE_SUPPORT
-        case ZMT_DIAL_INDEX_0:
-        case ZMT_DIAL_INDEX_1:
-        case ZMT_DIAL_INDEX_2:
-        case ZMT_DIAL_INDEX_3:
-        case ZMT_DIAL_INDEX_4:
-        case ZMT_DIAL_INDEX_5:
-        case ZMT_DIAL_INDEX_6:
-        case ZMT_DIAL_INDEX_7:
-        case ZMT_DIAL_INDEX_8:
-        case ZMT_DIAL_INDEX_9:
-            {
-                ZMT_DisplayDial(WATCH_LAUNCHER_PANEL_WIN_ID, index);
-            }
-            break;
-#endif
-        default:
-            {
-                setDefaultPanel();
-            }
-            break;
     }
-}
-
-#ifdef ZMT_DIAL_STORE_SUPPORT
-LOCAL void DisplayPanelZmtDial(MMI_WIN_ID_T win_id)
-{
-    uint8 i = 0;
-    GUI_RECT_T win_rect = {0};
-    GUI_LCD_DEV_INFO lcd_dev_info = {0};
-    MMI_CTRL_ID_T ctrl_id = 0;
-    GUI_RECT_T anim_rect = {0};
-    GUI_RECT_T img_rect = {0};
-    char img_str[128] = {0};
-    wchar img_path[128] = {0};
-    ZMT_DIAL_LIST_INFO_T * dail_list = ZmtWatch_GetPanelList();
-    if(dail_list != NULL)
+    else
     {
-        for(i = 0;i < dail_list->count && i < PANEL_SIZE_MAX - PANEL_SIZE;i++)
-        {
-            if(win_id == WATCH_LAUNCHER_PANEL_ZMT_0_WIN_ID + i)
-            {
-                MMK_GetWinRect(win_id, &win_rect);
-                MMK_GetWinLcdDevInfo(win_id,&lcd_dev_info);
-                GUI_FillRect(&lcd_dev_info, win_rect, MMI_BLACK_COLOR);
-                
-                if(dail_list->info[i] == NULL){
-                    return;
-                }
-                ctrl_id = LAUNCHER_SELECET_PANEL_0_CTRL_ID + i;
-                sprintf(img_str, "%s\\%s\\%s", ZMT_DIAL_DIR_BASE_PATH, dail_list->info[i]->name, dail_list->info[i]->preview);
-                //SCI_TRACE_LOW("%s: img_str = %s", __FUNCTION__, img_str);
-                if(dsl_file_exist(img_str))
-                {
-                    GUIIMG_INFO_T img_info = {0};
-                    MMIAPICOM_StrToWstr(img_str, img_path);
-                    ZMT_GetImgInfoByPath(img_path, &img_info);
-                    img_rect.left = (MMI_MAINSCREEN_WIDTH - img_info.image_width) / 2;
-                    img_rect.top = (MMI_MAINSCREEN_HEIGHT - img_info.image_height) / 2;
-                    img_rect.right = img_rect.left + img_info.image_width;
-                    img_rect.bottom = img_rect.top + img_info.image_height;
-                    {
-                        GUIANIM_FILE_INFO_T file_info = {0};                           
-                        GUIANIM_CTRL_INFO_T ctrl_info = {0};
-                        GUIANIM_DISPLAY_INFO_T display_info = {0};
-                        GUIANIM_CTRL_INFO_T control_info = {0};
-                        GUIANIM_INIT_DATA_T anim_init = {0};
-                        MMI_CONTROL_CREATE_T anim_create = {0};
-                        CTRLANIM_OBJ_T* anim_ctrl_ptr = PNULL;
-
-                        file_info.full_path_wstr_ptr = SCI_ALLOC_APPZ(sizeof(wchar)*(WATCH_IMAGE_FULL_PATH_MAX_LEN + 1));
-                        if (PNULL == file_info.full_path_wstr_ptr){
-                            SCI_TRACE_LOW("%s: full_path_wstr_ptr = pnull!", __FUNCTION__);
-                            return;
-                        }
-                        SCI_MEMSET(file_info.full_path_wstr_ptr,0,(sizeof(wchar)*(WATCH_IMAGE_FULL_PATH_MAX_LEN + 1)));
-
-                        file_info.full_path_wstr_len = MMIAPICOM_Wstrlen(img_path);
-                        MMI_WSTRNCPY(file_info.full_path_wstr_ptr,sizeof(wchar)*(file_info.full_path_wstr_len+1),
-                                img_path,file_info.full_path_wstr_len,file_info.full_path_wstr_len);
-
-                        ctrl_info.is_ctrl_id = TRUE;
-                        ctrl_info.ctrl_id = ctrl_id;
-                        display_info.align_style = GUIANIM_ALIGN_HVMIDDLE;
-                        display_info.is_auto_zoom_in = TRUE;
-                        display_info.is_update = TRUE;
-                        display_info.is_disp_one_frame = TRUE;
-
-                        anim_init.both_rect.h_rect = anim_init.both_rect.v_rect = img_rect;
-                        anim_create.guid = SPRD_GUI_ANIM_ID;
-                        anim_create.ctrl_id = ctrl_id;
-                        anim_create.init_data_ptr = &anim_init;
-                        anim_create.parent_win_handle = win_id;
-                        anim_ctrl_ptr = (CTRLANIM_OBJ_T*)MMK_CreateControl(&anim_create);
-
-                        control_info.is_ctrl_id = TRUE;
-                        control_info.ctrl_id = ctrl_id;
-                        control_info.ctrl_ptr = anim_ctrl_ptr;
-                            
-                        GUIANIM_SetDefaultIcon(ctrl_id, PNULL, PNULL);
-                        GUIANIM_SetDisplayRect(ctrl_id, &img_rect, FALSE);
-                        GUIANIM_SetParam(&ctrl_info, PNULL, &file_info, &display_info);
-                    }
-                }
-                break;
-            }
-        }
-        ZmtDial_ReleaseDialList(dail_list);
+        setDefaultPanel();
     }
+    
 }
-#endif
 
 LOCAL void DisplayPanelPage(MMI_WIN_ID_T win_id)
 {
-    BOOLEAN is_get = FALSE;
     uint8 i = 0;
     GUI_RECT_T win_rect = {0};
     GUI_LCD_DEV_INFO lcd_dev_info = {0};
     GUI_RECT_T img_rect = WATCH_PANEL_PREVIEW_IMG_RECT;
     GUI_POINT_T img_point;
-    
     img_point.x = img_rect.left;
     img_point.y = img_rect.top;
     MMK_GetWinRect(win_id, &win_rect);
@@ -2975,57 +2807,13 @@ LOCAL void DisplayPanelPage(MMI_WIN_ID_T win_id)
         {
             GUI_FillRect(&lcd_dev_info, win_rect, MMI_BLACK_COLOR);
             GUIRES_DisplayImg(NULL,&img_rect,NULL,win_id,panel_select_page_list[i].img_id,&lcd_dev_info);
-            is_get = TRUE;
             break;
         }
     }
-    SCI_TRACE_LOW("%s: is_get = %d", __FUNCTION__, is_get);
-    if(is_get){
-        return;
-    }
-
-#ifdef ZMT_DIAL_STORE_SUPPORT
-    DisplayPanelZmtDial(win_id);
-#endif
 }
-
-#ifdef ZMT_DIAL_STORE_SUPPORT
-LOCAL void ZMT_DisplayStorePanel(MMI_WIN_ID_T win_id)
-{   
-    GUI_LCD_DEV_INFO lcd_dev_info = {0};
-    GUI_RECT_T win_rect = {0};
-    GUI_RECT_T title_rect = {0, 0, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT/10};
-    GUI_RECT_T img_rect = WATCH_PANEL_PREVIEW_IMG_RECT;
-    GUISTR_STATE_T text_state = GUISTR_STATE_ALIGN | GUISTR_STATE_ELLIPSIS_EX;
-    GUISTR_STYLE_T text_style = {0};
-    MMI_STRING_T text_string = {0};
-
-    MMK_GetWinRect(win_id, &win_rect);
-    MMK_GetWinLcdDevInfo(win_id,&lcd_dev_info);
-
-    GUI_FillRect(&lcd_dev_info, win_rect, MMI_BLACK_COLOR);
-
-    text_style.align = ALIGN_HVMIDDLE;
-    text_style.font = SONG_FONT_20;
-    text_style.font_color = MMI_WHITE_COLOR;
-    MMIRES_GetText(ZMT_DIAL_STORE, win_id, &text_string);
-    GUISTR_DrawTextToLCDInRect(
-        (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
-        &title_rect,
-        &title_rect,
-        &text_string,
-        &text_style,
-        GUISTR_STATE_ALIGN,
-        GUISTR_TEXT_DIR_AUTO
-    );
-    
-    GUIRES_DisplayImg(NULL,&img_rect,NULL,win_id,IMG_ZMT_DIAL_STORE,&lcd_dev_info);
-}
-#endif
 
 LOCAL void SetPanelIndex(MMI_WIN_ID_T win_id)
 {
-    BOOLEAN is_get = FALSE;
     uint8 i = 0;
     for(i=0;i<PANEL_SIZE; i++)
     {
@@ -3041,50 +2829,9 @@ LOCAL void SetPanelIndex(MMI_WIN_ID_T win_id)
             //MMIWatchPanel_Open();
             WatchOpen_IdleWin();
             WatchSLIDEAGE_SetCurrentPageIndex(1);
-            ZMT_DialRelease();
-            is_get = TRUE;
             break;
         }
     }
-    SCI_TRACE_LOW("%s: is_get = %d", __FUNCTION__, is_get);
-    if(is_get){
-        return;
-    }
-    //SCI_TRACE_LOW("%s: PANEL_SIZE = %d, i = %d, win_id = %d", __FUNCTION__, PANEL_SIZE, i, win_id);
-#ifdef ZMT_DIAL_STORE_SUPPORT
-    {
-        uint8 j = 0;
-        MMI_CTRL_ID_T ctrl_id = 0;
-        GUI_RECT_T anim_rect = {0};
-        char img_str[80] = {0};
-        wchar img_path[80] = {0};
-        ZMT_DIAL_LIST_INFO_T * dail_list = ZmtWatch_GetPanelList();
-        if(dail_list != NULL)
-        {
-            for(i = 0;i < dail_list->count && i < PANEL_SIZE_MAX - PANEL_SIZE;i++)
-            {
-                if(win_id == WATCH_LAUNCHER_PANEL_ZMT_0_WIN_ID + i)
-                {
-                    WATCH_PANEL_TYPE_T style = {0};
-                    style.watch_index= ZMT_DIAL_INDEX_0 + i;
-                    if(dail_list->info[i]->type == 2){
-                        style.is_anolog_panel = TRUE;
-                    }else{
-                        style.is_anolog_panel = FALSE;
-                    }
-                    MMISET_SetWatchPanelStyle(style);
-                    WatchSLIDEPAGE_DestoryHandle(s_panel_select_handle);
-                    s_panel_select_handle = 0;
-                    ZMT_DialRelease();
-                    WatchOpen_IdleWin();
-                    WatchSLIDEAGE_SetCurrentPageIndex(1);
-                    break;
-                }
-            }
-            ZmtDial_ReleaseDialList(dail_list);
-        }
-    }
-#endif
 }
 
 PUBLIC MMI_RESULT_E Watch_Panel_Select_HandleCb(
@@ -3210,30 +2957,16 @@ LOCAL MMI_RESULT_E HandlePanelSelectWinMsg(
             break;
         case MSG_FULL_PAINT:
         {
-            SCI_TRACE_LOW("%s: win_id = %d", __FUNCTION__, win_id);
-        #ifdef ZMT_DIAL_STORE_SUPPORT
-            if(win_id == WATCH_LAUNCHER_PANEL_ZMT_STORE_WIN_ID)
-            {
-                ZMT_DisplayStorePanel(win_id);
-                break;
-            }
-        #endif
             DisplayPanelPage(win_id);
             break;
         }
+
         case MSG_APP_WEB:
         {
-        #ifdef ZMT_DIAL_STORE_SUPPORT
-            if(win_id == WATCH_LAUNCHER_PANEL_ZMT_STORE_WIN_ID)
-            {
-                MMI_CreateZmtDialStoreWin();
-                WatchSLIDEAGE_SetCurrentPageIndex(1);
-                break;
-            }
-        #endif
             SetPanelIndex(win_id);
             break;
         }
+
         default:
             recode = MMI_RESULT_FALSE;
             break;
@@ -3266,35 +2999,8 @@ LOCAL void Watch_Panel_Select_Enter(uint8 index)
         {
             focus_index = i;
         }
-        //SCI_TRACE_LOW("%s: elem[%d].win_id = %d", __FUNCTION__, i, elem[i].win_id);
     }
-    SCI_TRACE_LOW("%s: PANEL_SIZE = %d, index = %d, i = %d", __FUNCTION__, PANEL_SIZE, index, i);
-#ifdef ZMT_DIAL_STORE_SUPPORT
-    {
-        uint8 j = 0;
-        ZMT_DIAL_LIST_INFO_T * dail_list = NULL;    
-        dail_list = ZmtWatch_GetPanelList();
-        if(dail_list != NULL){
-            for(;i < PANEL_SIZE + dail_list->count;i++)
-            {
-                elem[i].fun_enter_win = WatchPanel_CreateWin;
-                elem[i].win_id = WATCH_LAUNCHER_PANEL_ZMT_0_WIN_ID + j;
-                if(index == ZMT_DIAL_INDEX_0 - PANEL_SIZE + i)
-                {
-                    focus_index = i;
-                }
-                j++;
-                //SCI_TRACE_LOW("%s: elem[%d].win_id = %d", __FUNCTION__, i, elem[i].win_id);
-            }
-            ZmtDial_ReleaseDialList(dail_list);
-        }
-    }
-    
-    elem[i].fun_enter_win = WatchPanel_CreateWin;
-    elem[i].win_id = WATCH_LAUNCHER_PANEL_ZMT_STORE_WIN_ID;
-    i++;
-#endif
-    //SCI_TRACE_LOW("%s: focus_index = %d", __FUNCTION__, focus_index);
+
     WatchSLIDEPAGE_Open(handle, elem, i, focus_index, TRUE, Watch_Panel_Select_HandleCb);
     s_panel_select_handle = handle;
 }
@@ -3442,14 +3148,14 @@ LOCAL BOOLEAN DisplayImageToBufferWithAngle(uint8 *dst_buf,
     }
     image_width = img_info.width;
     image_height = img_info.height;
-    Trace_Log_ZDT(" start %d KB-- %d kB",SCI_GetSystemSpaceTotalAvalidMem()/1024, SCI_GetHeapTotalSpace(DYNAMIC_HEAP_APP_MEMORY)/1024);
+    //Trace_Log_ZDT(" start %d KB-- %d kB",SCI_GetSystemSpaceTotalAvalidMem()/1024, SCI_GetHeapTotalSpace(DYNAMIC_HEAP_APP_MEMORY)/1024);
 
     //step 2. decode
     image_decompress_size = image_width * image_height * sizeof(uint32);
     image_decompress_ptr = (uint8 *)SCI_ALLOC_APPZ(image_decompress_size);
-    Trace_Log_ZDT(" end %d KB-- %d kB",SCI_GetSystemSpaceTotalAvalidMem()/1024, SCI_GetHeapTotalSpace(DYNAMIC_HEAP_APP_MEMORY)/1024);
+    //Trace_Log_ZDT(" end %d KB-- %d kB",SCI_GetSystemSpaceTotalAvalidMem()/1024, SCI_GetHeapTotalSpace(DYNAMIC_HEAP_APP_MEMORY)/1024);
 
-    Trace_Log_ZDT("malloc image_decompress_ptr, addr = 0x%0x.", image_decompress_ptr);
+    //Trace_Log_ZDT("malloc image_decompress_ptr, addr = 0x%0x.", image_decompress_ptr);
     if (image_decompress_ptr == NULL) /*lint !e774*/
     {
         Trace_Log_ZDT("malloc image_decompress_ptr = error.");
@@ -3471,10 +3177,10 @@ LOCAL BOOLEAN DisplayImageToBufferWithAngle(uint8 *dst_buf,
     img_dst.dstrect.left = 0;
     img_dst.dstrect.right = img_info.width - 1;
     img_dst.dstrect.bottom = img_info.height - 1;
-    Trace_Log_ZDT(" start %d KB-- %d kB",SCI_GetSystemSpaceTotalAvalidMem()/1024, SCI_GetHeapTotalSpace(DYNAMIC_HEAP_APP_MEMORY)/1024);
+    //Trace_Log_ZDT(" start %d KB-- %d kB",SCI_GetSystemSpaceTotalAvalidMem()/1024, SCI_GetHeapTotalSpace(DYNAMIC_HEAP_APP_MEMORY)/1024);
 
     error = ALPHA_RES_Display_Img(&img_src, &img_dst);
-    Trace_Log_ZDT(" start %d KB-- %d kB",SCI_GetSystemSpaceTotalAvalidMem()/1024, SCI_GetHeapTotalSpace(DYNAMIC_HEAP_APP_MEMORY)/1024);
+    //Trace_Log_ZDT(" start %d KB-- %d kB",SCI_GetSystemSpaceTotalAvalidMem()/1024, SCI_GetHeapTotalSpace(DYNAMIC_HEAP_APP_MEMORY)/1024);
 
     if (error != IMG_RES_SUCCESS)
     {
@@ -3507,16 +3213,16 @@ LOCAL BOOLEAN DisplayImageToBufferWithAngle(uint8 *dst_buf,
         rot_in.target_center.y = dst_height / 2;
 
         rot_in.mode = ROTATE_ARBITRARY_AUTO_CROP;
-        Trace_Log_ZDT(" start %d KB-- %d kB",SCI_GetSystemSpaceTotalAvalidMem()/1024, SCI_GetHeapTotalSpace(DYNAMIC_HEAP_APP_MEMORY)/1024);
+        //Trace_Log_ZDT(" start %d KB-- %d kB",SCI_GetSystemSpaceTotalAvalidMem()/1024, SCI_GetHeapTotalSpace(DYNAMIC_HEAP_APP_MEMORY)/1024);
 
         if (SCI_SUCCESS != GRAPH_RotateArbitrary(&rot_in, &rot_out))
         {
-            Trace_Log_ZDT(" error. end %d KB-- %d kB",SCI_GetSystemSpaceTotalAvalidMem()/1024, SCI_GetHeapTotalSpace(DYNAMIC_HEAP_APP_MEMORY)/1024);
+            //Trace_Log_ZDT(" error. end %d KB-- %d kB",SCI_GetSystemSpaceTotalAvalidMem()/1024, SCI_GetHeapTotalSpace(DYNAMIC_HEAP_APP_MEMORY)/1024);
             SCI_FREE(image_decompress_ptr);
             SCI_TRACE_LOW("invoke GRAPH_RotateArbitrary() error.");
             return FALSE;
         }
-        Trace_Log_ZDT(" end %d KB-- %d kB",SCI_GetSystemSpaceTotalAvalidMem()/1024, SCI_GetHeapTotalSpace(DYNAMIC_HEAP_APP_MEMORY)/1024);
+        //Trace_Log_ZDT(" end %d KB-- %d kB",SCI_GetSystemSpaceTotalAvalidMem()/1024, SCI_GetHeapTotalSpace(DYNAMIC_HEAP_APP_MEMORY)/1024);
     } while (0);
 #else
 
@@ -3776,9 +3482,9 @@ LOCAL void TimeTeacherClock(MMI_WIN_ID_T  win_id,
 
     Trace_Log_ZDT("hour=%d,min=%d,angle_hour=%d,angle_min=%d",sys_time.hour,sys_time.min,angle_arr[0],angle_arr[1]);
     
-    Trace_Log_ZDT(" start %d KB-- %d kB",SCI_GetSystemSpaceTotalAvalidMem()/1024, SCI_GetHeapTotalSpace(DYNAMIC_HEAP_APP_MEMORY)/1024);
+    //Trace_Log_ZDT(" start %d KB-- %d kB",SCI_GetSystemSpaceTotalAvalidMem()/1024, SCI_GetHeapTotalSpace(DYNAMIC_HEAP_APP_MEMORY)/1024);
     CreateCacheLayer(&lcd_cache_info, win_id, (rect.right), (rect.bottom));
-    Trace_Log_ZDT(" end %d KB-- %d kB",SCI_GetSystemSpaceTotalAvalidMem()/1024, SCI_GetHeapTotalSpace(DYNAMIC_HEAP_APP_MEMORY)/1024);
+    //Trace_Log_ZDT(" end %d KB-- %d kB",SCI_GetSystemSpaceTotalAvalidMem()/1024, SCI_GetHeapTotalSpace(DYNAMIC_HEAP_APP_MEMORY)/1024);
 
     if (lcd_cache_info.block_id == UILAYER_NULL_HANDLE) 
     {
@@ -3806,10 +3512,10 @@ LOCAL void TimeTeacherClock(MMI_WIN_ID_T  win_id,
                       &lcd_cache_info);             //clock bg
     }
     //step2. draw hour, min, second image to dstbuf
-        Trace_Log_ZDT(" start %d KB-- %d kB",SCI_GetSystemSpaceTotalAvalidMem()/1024, SCI_GetHeapTotalSpace(DYNAMIC_HEAP_APP_MEMORY)/1024);
+        //Trace_Log_ZDT(" start %d KB-- %d kB",SCI_GetSystemSpaceTotalAvalidMem()/1024, SCI_GetHeapTotalSpace(DYNAMIC_HEAP_APP_MEMORY)/1024);
         rotate_buf_ptr = SCI_ALLOC_APPZ(rotate_buf_size);
-        Trace_Log_ZDT(" end %d KB-- %d kB",SCI_GetSystemSpaceTotalAvalidMem()/1024, SCI_GetHeapTotalSpace(DYNAMIC_HEAP_APP_MEMORY)/1024);
-        Trace_Log_ZDT("malloc rotate_buf_ptr, addr = 0x%0x.", rotate_buf_ptr);
+        //Trace_Log_ZDT(" end %d KB-- %d kB",SCI_GetSystemSpaceTotalAvalidMem()/1024, SCI_GetHeapTotalSpace(DYNAMIC_HEAP_APP_MEMORY)/1024);
+        //Trace_Log_ZDT("malloc rotate_buf_ptr, addr = 0x%0x.", rotate_buf_ptr);
     
         if (rotate_buf_ptr == NULL)
         {
@@ -3823,14 +3529,14 @@ LOCAL void TimeTeacherClock(MMI_WIN_ID_T  win_id,
             MMI_WATCHIDLE_CLOCK_ALPHA_IMG_T bk = {0};
             MMI_WATCHIDLE_CLOCK_ALPHA_IMG_T fg = {0};
             SCI_MEMSET(rotate_buf_ptr, 0, rotate_buf_size);
-            Trace_Log_ZDT(" start %d KB-- %d kB",SCI_GetSystemSpaceTotalAvalidMem()/1024, SCI_GetHeapTotalSpace(DYNAMIC_HEAP_APP_MEMORY)/1024);
+            //Trace_Log_ZDT(" start %d KB-- %d kB",SCI_GetSystemSpaceTotalAvalidMem()/1024, SCI_GetHeapTotalSpace(DYNAMIC_HEAP_APP_MEMORY)/1024);
             DisplayImageToBufferWithAngle(rotate_buf_ptr,
                                                                 (rect.right), 
                                                                 (rect.bottom),
                                                                 win_id,
                                                                 image_arr[i],
                                                                 angle_arr[i]);
-            Trace_Log_ZDT(" end %d KB-- %d kB",SCI_GetSystemSpaceTotalAvalidMem()/1024, SCI_GetHeapTotalSpace(DYNAMIC_HEAP_APP_MEMORY)/1024);
+            //Trace_Log_ZDT(" end %d KB-- %d kB",SCI_GetSystemSpaceTotalAvalidMem()/1024, SCI_GetHeapTotalSpace(DYNAMIC_HEAP_APP_MEMORY)/1024);
 
             bk.data_ptr = UILAYER_GetLayerBufferPtr(&lcd_cache_info);
             bk.data_type = 0;
@@ -3853,7 +3559,7 @@ LOCAL void TimeTeacherClock(MMI_WIN_ID_T  win_id,
             Trace_Log_ZDT("free rotate_buf_ptr, addr = 0x%0x.", rotate_buf_ptr);
             SCI_FREE(rotate_buf_ptr);
         }
-        Trace_Log_ZDT(" end %d KB-- %d kB",SCI_GetSystemSpaceTotalAvalidMem()/1024, SCI_GetHeapTotalSpace(DYNAMIC_HEAP_APP_MEMORY)/1024);
+        //Trace_Log_ZDT(" end %d KB-- %d kB",SCI_GetSystemSpaceTotalAvalidMem()/1024, SCI_GetHeapTotalSpace(DYNAMIC_HEAP_APP_MEMORY)/1024);
         
         GUIRES_GetImgWidthHeight(&image_width, &image_height, clock_center, win_id);
         clockcenter_pos.x = (rect.right - image_width) / 2;

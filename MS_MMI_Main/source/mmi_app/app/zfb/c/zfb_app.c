@@ -651,6 +651,7 @@ PUBLIC void ZFB_ID2TraceExt(const char *string, int len)
 
 void ZFB_ID2Trace(const char *pszFmt, ...)
 {
+#ifndef RELEASE_INFO
     char buf[1024] = {0};
     int tmp_len = 0;
     va_list va_args;    
@@ -666,6 +667,7 @@ void ZFB_ID2Trace(const char *pszFmt, ...)
         ZFB_ID2TraceExt(buf,tmp_len);
     }
     va_end(va_args);
+#endif
 }
 static uint8 Nibble2HexChar(uint8 bNibble)
 {
@@ -977,6 +979,7 @@ PUBLIC void ZFB_AlipayTraceCR(const char *data_str, int data_len)
 
 void ZFB_AlipayTrace(const char *pszFmt, ...)
 {
+#ifndef RELEASE_INFO
     char buf[1024] = {0};
     int tmp_len = 0;
     va_list va_args;    
@@ -991,6 +994,7 @@ void ZFB_AlipayTrace(const char *pszFmt, ...)
         ZFB_AlipayTraceExt(buf,tmp_len);
     }
     va_end(va_args);
+#endif
 }
 
 PUBLIC void ZFB_cJsonTrace(const char *string, int len)

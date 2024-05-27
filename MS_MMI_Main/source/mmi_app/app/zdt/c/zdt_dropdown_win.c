@@ -142,6 +142,7 @@ extern uint8 progress_down_flag;
 
 LOCAL uint8 goto_flasg_light;
 LOCAL uint8 last_brightness;
+LOCAL BOOLEAN slide_end = FALSE;
 
 #endif
 
@@ -169,36 +170,10 @@ LOCAL void Restore_Brightness()
     WATCHCOM_Backlight(FALSE);   
 }
 
-LOCAL uint8 GetSignalLevel()
+LOCAL uint8 GetSignalLevel(MN_DUAL_SYS_E dual_sys)
 {
-    uint8 signal_level;
-    const int16 lte_signal_level[] ={17,22,26,35,43};
-    uint8 rxLevel = MMIZDT_Net_GetRssiInd();
-    if (lte_signal_level[4] <= rxLevel)
-    {
-        signal_level = 5;
-    }
-    else if (lte_signal_level[3] <= rxLevel)
-    {
-        signal_level = 4;
-    }
-    else if (lte_signal_level[2] <= rxLevel)
-    {
-        signal_level = 3;
-    }
-    else if (lte_signal_level[1] <= rxLevel)
-    {
-        signal_level = 2;
-    }
-    else if (lte_signal_level[0] <= rxLevel)
-    {
-        signal_level = 1;
-    }
-    else
-    {
-        signal_level = 0;
-    }
-    return signal_level;
+    uint8 rxLevel = MMIIDLE_GetIdleWinInfo()->rxlevel_step[dual_sys];
+    return rxLevel;
 }
 
 /*****************************************************************************/
@@ -236,7 +211,7 @@ LOCAL MMI_IMAGE_ID_T Shortcut_GetSignalInfo(char * string_str)
         ual_tele_radio_current_network_type_e network_status_rat = UAL_TELE_RADIO_CURRENT_NETWORK_TYPE_2G;
         network_status_rat = ual_tele_radio_get_current_network_type(dual_sys);
     #endif
-        SCI_TRACE_LOW("Shortcut_GetSignalInfo: network_status_rat = %d", network_status_rat);
+        SCI_TRACE_LOW("[RSSI] Shortcut_GetSignalInfo: network_status_rat = %d", network_status_rat);
         //network_status_rat = MMI_GMMREG_RAT_3G;
         switch (network_status_rat) 
         {
@@ -288,7 +263,7 @@ LOCAL MMI_IMAGE_ID_T Shortcut_GetSignalInfo(char * string_str)
             }
             else
             {
-                image_id = signal_img_id[GetSignalLevel()];
+                image_id = signal_img_id[GetSignalLevel(dual_sys)];
             }
         }
         else
@@ -434,7 +409,8 @@ PUBLIC void ZDT_DisplaySingal(MMI_WIN_ID_T win_id)
 
 PUBLIC void ZDT_UpdateSingal()
 {
-    if (MMK_IsOpenWin(MMIZDT_DROPDOWN_WIN_ID) && MMK_IsFocusWin(MMIZDT_DROPDOWN_WIN_ID))
+    //slide_end 下滑收起过程中刷新的话会导致界面错乱
+    if (MMK_IsOpenWin(MMIZDT_DROPDOWN_WIN_ID) && MMK_IsFocusWin(MMIZDT_DROPDOWN_WIN_ID) && slide_end)
     {
         MMK_SendMsg(MMIZDT_DROPDOWN_WIN_ID, MSG_FULL_PAINT,PNULL);
     }
@@ -1193,6 +1169,7 @@ LOCAL MMI_RESULT_E HandleDropDownWinMsg(
 
         case MSG_CLOSE_WINDOW:
         {
+            slide_end = FALSE;
             if(goto_flasg_light == 1)
             {
                 goto_flasg_light = 0;
@@ -1297,12 +1274,12 @@ LOCAL MMI_RESULT_E HandleDropDownWinMsg(
         //bug2143162
         case MSG_SLIDEWIN_END:
         {
-            GUIWIN_SetStbDropDownState(win_id, FALSE);
+            slide_end = TRUE;
         }
         break;
         case MSG_SLIDEWIN_BEGIN:
         {
-            GUIWIN_SetStbDropDownState(win_id, TRUE);
+            slide_end = FALSE;
         }
         break;
         case MSG_KEYDOWN_RED:

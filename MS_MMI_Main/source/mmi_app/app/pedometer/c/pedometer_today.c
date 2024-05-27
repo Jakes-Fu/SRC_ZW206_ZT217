@@ -236,7 +236,7 @@ LOCAL MMI_RESULT_E HandlePedometerTodayWin(
 	{
 	case MSG_OPEN_WINDOW:
 		{
-			
+			timer_id = MMK_CreateWinTimer(win_id, 1500,TRUE);
 		}
 		break;
 	case MSG_GET_FOCUS:
@@ -245,8 +245,9 @@ LOCAL MMI_RESULT_E HandlePedometerTodayWin(
 				MMK_StopTimer(timer_id);
 				timer_id = 0;
 			}
-			if(!MMIZDT_IsInChargingWin()){
-				timer_id = MMK_CreateTimerCallback(1500, PedometerTodayRefresh, PNULL, TRUE);
+			if(!MMIZDT_IsInChargingWin())
+            {
+                timer_id = MMK_CreateWinTimer(win_id, 1500,TRUE);
 			}
 		}
 		break;
@@ -305,6 +306,14 @@ LOCAL MMI_RESULT_E HandlePedometerTodayWin(
 	case MSG_KEYUP_RED:
 		MMK_CloseWin(win_id);
 		break; 
+    case MSG_TIMER:
+        {
+            if (*(uint8*)param == timer_id && MMK_GetFocusWinId() == win_id)
+            {
+                MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
+            }
+        }
+        break;
 	default:
         recode = MMI_RESULT_FALSE;
 		break;
@@ -325,13 +334,9 @@ WINDOW_TABLE(MMI_PEDOMETER_TODAY_WIN_TAB) =
 PUBLIC void MMIPEDOMETER_CreateTodayWin()
 {
 	MMI_WIN_ID_T win_id = MMI_PEDOMETER_TODAY_EXERCISE_WIN_ID;
-	MMI_HANDLE_T win_handle = 0;
-	GUI_RECT_T rect = {0,0,240,240};
 	if (MMK_IsOpenWin(win_id))
 	{
 		MMK_CloseWin(win_id);
 	}
-
-	win_handle = MMK_CreateWin((uint32*)MMI_PEDOMETER_TODAY_WIN_TAB, NULL);
-	MMK_SetWinRect(win_handle, &rect);
+    MMK_CreateWin((uint32*)MMI_PEDOMETER_TODAY_WIN_TAB, NULL);
 }

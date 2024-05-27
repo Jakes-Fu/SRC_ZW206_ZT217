@@ -3000,12 +3000,18 @@ PUBLIC BOOLEAN MMIZDT_Net_StatusInd(APP_MN_NETWORK_STATUS_IND_T *status_ptr)
     return TRUE;
 }
 
-void MMIZDT_Net_RssiInd(MN_DUAL_SYS_E dual_sys,uint8 rssi)
+BOOLEAN MMIZDT_Net_RssiInd(MN_DUAL_SYS_E dual_sys,uint8 rssi)
 {
+    BOOLEAN res = FALSE;
     if(dual_sys == s_zdt_net_set_sys)
     {
-        g_zdt_s_station_data.rssiLevel = rssi;
+        if(g_zdt_s_station_data.rssiLevel != rssi)
+        {
+            g_zdt_s_station_data.rssiLevel = rssi;
+            res = TRUE;
+        }
     }
+    return res;
 }
 
 uint16 MMIZDT_Net_GetRssiInd(void)

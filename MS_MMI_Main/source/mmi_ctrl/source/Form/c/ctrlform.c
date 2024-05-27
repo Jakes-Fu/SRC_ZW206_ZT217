@@ -994,7 +994,7 @@ PUBLIC void CTRLFORM_Display(
         }
         
         //display scroll bar
-        //DisplayScrollBar(is_update_prgbox,form_ctrl_ptr);
+        DisplayScrollBar(is_update_prgbox,form_ctrl_ptr);
     }
 }
 
@@ -1981,7 +1981,7 @@ LOCAL void HandleAnimDisplayIndMsg(
             CTRLFORM_SetChildRect(TRUE,form_ctrl_ptr);
             
             //display scroll bar
-            //DisplayScrollBar(TRUE,form_ctrl_ptr);
+            DisplayScrollBar(TRUE,form_ctrl_ptr);
         }
     }
 }
@@ -3518,7 +3518,7 @@ LOCAL BOOLEAN SetChildDisplay(
                 CTRLFORM_Layout(form_ctrl_ptr,TRUE,TRUE);
                 
                 //display scroll bar
-                //DisplayScrollBar(TRUE,form_ctrl_ptr);
+                DisplayScrollBar(TRUE,form_ctrl_ptr);
             }
         }
         else
@@ -3554,7 +3554,7 @@ LOCAL BOOLEAN SetChildDisplay(
                     CTRLFORM_Layout(parent_form_ctrl_ptr,TRUE,TRUE);
                 
                     //display scroll bar
-                    //DisplayScrollBar(TRUE,parent_form_ctrl_ptr);
+                    DisplayScrollBar(TRUE,parent_form_ctrl_ptr);
                 }
             }
             else

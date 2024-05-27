@@ -4356,6 +4356,9 @@ PUBLIC void MAIN_HandleRxLevelTimer(uint8 timer_id, uint32 param)
             //刷新小屏的显示，刷新信号
             MMISUB_UpdateDisplaySubLcd();
 #endif
+#ifdef ZTE_WATCH
+            ZDT_UpdateSingal();
+#endif
         }
     }    
 }
@@ -4411,6 +4414,10 @@ PUBLIC void MAIN_SetIdleRxLevel(MN_DUAL_SYS_E e_dual_sys, uint8 rx_level, BOOLEA
 #if defined(BLUETOOTH_SUPPORT) && defined(BT_BQB_SUPPORT)
             MMIAPIBT_Service_Indicator(FALSE);
 #endif
+#ifdef ZTE_WATCH
+            ZDT_UpdateSingal();
+#endif
+
         }
         else
         {

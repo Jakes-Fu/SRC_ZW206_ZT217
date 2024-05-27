@@ -298,6 +298,8 @@ extern BOOLEAN ZFB_DB_INIT_OK_Reset_All(void);
 extern BOOLEAN  MMIENG_OpenAgingTestWin(void);
 #endif
 
+PUBLIC BOOLEAN MMIUDISK_EngStartUdisk(void);
+
 #if defined(ZDT_SHIPPING_MODE_CMD)// ´¬ÔËÄ£Ê½
 PUBLIC void ZDT_open_shipping_mode(void)
 {
@@ -623,7 +625,7 @@ LOCAL const MMIENG_IDLE_DIAL_NUM_APP_T s_mmieng_idle_dial_num_app_tab[] =
         "#*331#",
         MMIENG_OPEN_UDISK,
         PARS_MANUFACTURE_TEST,
-        MMIUDISK_StartUdisk,
+        MMIUDISK_EngStartUdisk,
     }
     ,
 // add_agingtest

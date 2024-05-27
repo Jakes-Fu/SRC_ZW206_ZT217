@@ -48,6 +48,13 @@ typedef struct
     uint8 month;
     uint8 day;
 }STEP_NV_T;
+
+typedef struct _MMI_ZDT_FACTORY_T
+{
+   uint8 em_test_is_ok[30+1];
+} MMI_ZDT_FACTORY_T ;
+
+
 typedef enum
 {
         MMI_ZDT_NV_RUNMODE = (MMI_MODULE_ZDT << 16),
@@ -97,6 +104,7 @@ typedef enum
         MMI_ZDT_NV_NET_ID,//网标号码
         MMI_ZDT_NV_INFO_RESET,  // 1==自刷机后已经恢复出厂设置过
         MMI_ZDT_NV_SWVER, //sw version
+        MMI_ZDT_NV_FACTORY_TEST, //工测模式保留数据
         MMI_ZDT_NV_MAX_ID
 }ZDT_NV_ITEM_E;
 

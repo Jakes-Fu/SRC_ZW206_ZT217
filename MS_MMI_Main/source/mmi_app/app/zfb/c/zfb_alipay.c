@@ -1149,7 +1149,7 @@ void ZFBPay_TaskCreate(void)
 			ZFB_Alipay_TaskEntry,
 			NULL,
 			NULL,
-			1024*300,
+			1024*50,  //300 bao modefied for mem  cust
 			100,
 			TX_SYSTEM_NORMALE,
 			SCI_PREEMPT,

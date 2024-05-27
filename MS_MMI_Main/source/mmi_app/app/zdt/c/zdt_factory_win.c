@@ -253,7 +253,7 @@ BOOLEAN g_factory_aging_test_flag = FALSE;
 #ifdef W217_AGING_TEST_CUSTOM //new_aginglist
 LOCAL uint8 aging_timer_id = 0; 
 LOCAL uint8 agingtext_timer_id = 0;
-uint32 time_index = 0;
+LOCAL uint32 time_index = 0;
 #endif
 
 #if 1

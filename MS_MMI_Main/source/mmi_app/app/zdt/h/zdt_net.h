@@ -119,7 +119,7 @@ PUBLIC void MMIZDT_Net_SetActiveSys(MN_DUAL_SYS_E set_sys);
 PUBLIC MMI_RESULT_E MMIZDT_Net_Handle_AppMsg(PWND app_ptr, uint16 msg_id, DPARAM param);
 
 PUBLIC BOOLEAN MMIZDT_Net_StatusInd(APP_MN_NETWORK_STATUS_IND_T *status_ptr);
-PUBLIC void MMIZDT_Net_RssiInd(MN_DUAL_SYS_E dual_sys,uint8 rssi);
+PUBLIC BOOLEAN MMIZDT_Net_RssiInd(MN_DUAL_SYS_E dual_sys,uint8 rssi);
 PUBLIC void MMIZDT_Station_Rssi_Update(uint8 rssi);
 PUBLIC BOOLEAN MMIZDT_Net_APP_Init(void);
 PUBLIC BOOLEAN MMIZDT_Net_GPRS_SimSwitch(MN_DUAL_SYS_E dual_sys);

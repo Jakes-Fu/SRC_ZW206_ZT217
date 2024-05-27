@@ -77,7 +77,7 @@ LOCAL WATCHCOM_LIST_ITEM__ST s_sound_call_ring_list[] =
 
     { WatchCOM_List_Item_Visible_Default,   GUIITEM_STYLE_1STR_RADIO,   &s_sound_call_ring_item_one,     PNULL },
     { WatchCOM_List_Item_Visible_Default,   GUIITEM_STYLE_1STR_RADIO,   &s_sound_call_ring_item_two,     PNULL },
-    { WatchCOM_List_Item_Visible_Default,   GUIITEM_STYLE_1STR_RADIO,   &s_sound_call_ring_item_thr,     PNULL },
+    //{ WatchCOM_List_Item_Visible_Default,   GUIITEM_STYLE_1STR_RADIO,   &s_sound_call_ring_item_thr,     PNULL },
  //#endif
 };
 #endif

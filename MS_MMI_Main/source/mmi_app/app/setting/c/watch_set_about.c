@@ -196,11 +196,12 @@ LOCAL void Settings_About_OPEN_WINDOW( MMI_WIN_ID_T win_id )
 		
     //MMI_GetLabelTextByLang(TXT_WATCH_HARDWARE_VERSION, &title_str);
     // MMIAPICOM_StrcatFromSTRINGToUCS2(pDisplayWStr, &displayWStrLen, &title_str);
+#ifndef ZTE_WATCH //努比亚要求去掉硬件版本
     MMIAPICOM_StrcatFromTextIDToUCS2(pDisplayWStr,&displayWStrLen,TXT_WATCH_HARDWARE_VERSION);
     // MMIAPICOM_StrcatFromSTRINGToUCS2(pDisplayWStr, &displayWStrLen, &newLineStr);//换行
     MMIAPICOM_StrcatFromStrToUCS2(pDisplayWStr, &displayWStrLen, WATCH_HARDWARE_VERSION, strlen(WATCH_HARDWARE_VERSION));
     //MMIAPICOM_StrcatFromSTRINGToUCS2(content_text, &uint16_str_len, &cr_s);//换行
-	
+#endif	
     //content_str.wstr_ptr = content_text;
     //content_str.wstr_len = MMIAPICOM_Wstrlen(content_text);
 		
@@ -470,7 +471,7 @@ LOCAL MMI_RESULT_E  HandleSettingsRegardWindow(
         {
             if(!MMIENG_IsMonkeyTestMode())
             {
-            MMIAPIENG_MainWinEnter( 0,FALSE );
+                //MMIAPIENG_MainWinEnter( 0,FALSE );
             }
             break;
         }

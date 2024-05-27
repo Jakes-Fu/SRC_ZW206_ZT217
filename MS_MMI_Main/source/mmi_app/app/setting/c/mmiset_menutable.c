@@ -1074,6 +1074,7 @@ const GUIMENU_ITEM_T menu_sos_numberlist_opt[] =
 #endif
 #endif//#if defined(MMI_INDIAN_SOS_SUPPORT)
 
+#ifndef  ZTE_WATCH
 //James li add
 const GUIMENU_ITEM_T menu_volume_settings_entry[] =
 {
@@ -1097,6 +1098,8 @@ const GUIMENU_ITEM_T settings_menulist_icon[] =
 #endif	
 };
 //end
+
+#endif	
 
 #define MENU_DEF(_TABLEID, _ITEMPTR, _STYLE, _TITLESTR, _TITLE_ICON, _TITLE_NUMICON, _TITLE_BACKGROUND, \
     _ITEMCOUNT) \

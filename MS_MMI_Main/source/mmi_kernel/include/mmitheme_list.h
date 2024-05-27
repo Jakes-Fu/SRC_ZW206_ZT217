@@ -1148,6 +1148,7 @@ ADULTWATCH
     //|      text            กั   |
     //|---------------------------|
     GUIITEM_STYLE_1STR_1LINE_RADIO_BIG_LAYOUT1,
+    GUIITEM_STYLE_1ICON_2STR_1LINE_LAYOUT,
 #endif
     GUIITEM_STYLE_ONE_LINE_TEXT_FACTORY,
 

@@ -1791,12 +1791,10 @@ LOCAL MMI_RESULT_E HandleBrightnessWindow(
     GUI_RECT_T progresstouchrect = SET_PROGRESSBAR_TOUCHRECT;
     GUI_RECT_T setok_btn_rect =  WATCH_SETOK_BTN_RECT;
     uint32      cur_item_index = 0;
+    LOCAL GUI_POINT_T down_point = {0};
 #else
     GUI_RECT_T leftBtnRect = SET_BTN_MINUS_RECT;
     GUI_RECT_T rightBtnRect = SET_BTN_PLUS_RECT;
-#endif
-	
-
     MMI_IMAGE_ID_T Bright_Image_Id[6]=
     {
         IMAGE_BRIGHT_LEVEL0,
@@ -1806,7 +1804,8 @@ LOCAL MMI_RESULT_E HandleBrightnessWindow(
         IMAGE_BRIGHT_LEVEL4,
         IMAGE_BRIGHT_LEVEL5
     };
-	
+#endif
+		
     switch (msg_id)
     {
     case MSG_OPEN_WINDOW:	
@@ -1965,9 +1964,9 @@ LOCAL MMI_RESULT_E HandleBrightnessWindow(
     case MSG_TP_PRESS_DOWN:
         {
             GUI_POINT_T   point = {0};
-            point.x = MMK_GET_TP_X(param);
-            point.y = MMK_GET_TP_Y(param);
-            if (GUI_PointIsInRect(point, progresstouchrect))
+            down_point.x = MMK_GET_TP_X(param);
+            down_point.y = MMK_GET_TP_Y(param);
+            if (GUI_PointIsInRect(down_point, progresstouchrect))
             {
                 //uint8 percent = (point.x - rect.left)*100/(rect.right-rect.left);
                 progress_down_flag = 1;
@@ -2044,6 +2043,16 @@ LOCAL MMI_RESULT_E HandleBrightnessWindow(
     case MSG_TP_PRESS_UP:
         {
 #ifdef ZTE_WATCH
+            if(progress_down_flag ==0)
+            {
+                GUI_POINT_T   point = {0};              
+                point.x = MMK_GET_TP_X(param);
+                point.y = MMK_GET_TP_Y(param);
+                if(point.x - down_point.x > MMI_MAINSCREEN_WIDTH/2)
+                {
+                    MMK_CloseWin(win_id);
+                }
+            }
             progress_down_flag = 0;
 #else
             GUI_POINT_T   point = {0};
@@ -2531,6 +2540,7 @@ LOCAL MMI_RESULT_E HandleCallVolumeSetWindow(
     GUI_RECT_T setok_btn_rect =  WATCH_SETOK_BTN_RECT;
     uint32      cur_item_index = 0;
     uint32  volume_item_total = MMISET_VOL_MAX+1;
+    LOCAL GUI_POINT_T down_point = {0};
 #else
     GUI_RECT_T leftBtnRect = SET_BTN_MINUS_RECT;
     GUI_RECT_T rightBtnRect = SET_BTN_PLUS_RECT;
@@ -2749,15 +2759,15 @@ LOCAL MMI_RESULT_E HandleCallVolumeSetWindow(
 #ifdef ZTE_WATCH
     case MSG_TP_PRESS_DOWN:
         {
-            GUI_POINT_T   point = {0};
-            point.x = MMK_GET_TP_X(param);
-            point.y = MMK_GET_TP_Y(param);
-            if (GUI_PointIsInRect(point, prgtouchrect))
+            down_point.x = MMK_GET_TP_X(param);
+            down_point.y = MMK_GET_TP_Y(param);
+
+            if (GUI_PointIsInRect(down_point, prgtouchrect))
             {
                 //uint8 percent = (point.x - rect.left)*100/(rect.right-rect.left);
                 progress_down_flag = 1;
                 cur_item_index =  ROUND((float)(volume_item_total)
-                                *(point.x - progressrect.left)
+                                *(down_point.x - progressrect.left)
                                 /(progressrect.right-progressrect.left)); //0 is not in total num, eg total=100, progressbar display 0~100
                 if(cur_item_index > volume_item_total)
                     cur_item_index = volume_item_total -1;
@@ -2821,7 +2831,9 @@ LOCAL MMI_RESULT_E HandleCallVolumeSetWindow(
                 }
             }
             else
+            {
                 progress_down_flag = 0;
+            }
         }
         break;
     
@@ -2831,6 +2843,17 @@ LOCAL MMI_RESULT_E HandleCallVolumeSetWindow(
             //MMIAPISET_SetCallVolume(s_setting_call_volume_value);     
             //MMIAPISET_UiPlayRingByVolume(0, FALSE,0, 1, MMISET_RING_TYPE_KEY, PNULL, s_setting_call_volume_value);
             Settings_Volume_SoundUpdate(cur_call_volume_img_id);
+        }
+        else
+        {
+            GUI_POINT_T   point = {0};              
+            point.x = MMK_GET_TP_X(param);
+            point.y = MMK_GET_TP_Y(param);
+            if(point.x - down_point.x > MMI_MAINSCREEN_WIDTH/2)
+            {
+                MMK_CloseWin(win_id);
+            }
+
         }
         progress_down_flag = 0;
         break;
@@ -2970,6 +2993,7 @@ LOCAL MMI_RESULT_E HandleRingVolumeSetWindow(
     GUI_RECT_T setok_btn_rect =  WATCH_SETOK_BTN_RECT;
     uint32      cur_item_index = 0;
     uint32  volume_item_total = MMISET_VOL_MAX+1;
+    LOCAL GUI_POINT_T down_point = {0};
 #else
     GUI_RECT_T leftBtnRect = SET_BTN_MINUS_RECT;
     GUI_RECT_T rightBtnRect = SET_BTN_PLUS_RECT;
@@ -3184,15 +3208,14 @@ LOCAL MMI_RESULT_E HandleRingVolumeSetWindow(
 #ifdef ZTE_WATCH
     case MSG_TP_PRESS_DOWN:
         {
-            GUI_POINT_T   point = {0};
-            point.x = MMK_GET_TP_X(param);
-            point.y = MMK_GET_TP_Y(param);
-            if (GUI_PointIsInRect(point, progress_volume_touchrect))
+            down_point.x = MMK_GET_TP_X(param);
+            down_point.y = MMK_GET_TP_Y(param);
+            if (GUI_PointIsInRect(down_point, progress_volume_touchrect))
             {
                 //uint8 percent = (point.x - rect.left)*100/(rect.right-rect.left);
                 progress_down_flag = 1;	
                 cur_item_index =  ROUND((float)(volume_item_total)
-                            *(point.x - progress_volume_rect.left)
+                            *(down_point.x - progress_volume_rect.left)
                             /(progress_volume_rect.right-progress_volume_rect.left)); //0 is not in total num, eg total=100, progressbar display 0~100
                 if(cur_item_index > volume_item_total)
                     cur_item_index = volume_item_total -1;
@@ -3280,6 +3303,16 @@ LOCAL MMI_RESULT_E HandleRingVolumeSetWindow(
             //MMIAPISET_SetCallVolume(s_setting_ring_volume_value);     
             //MMIAPISET_UiPlayRingByVolume(0, FALSE,0, 1, MMISET_RING_TYPE_KEY, PNULL, s_setting_call_volume_value);
             Settings_Volume_SoundUpdate(cur_ring_volume_img_id);
+        }
+        else
+        {
+            GUI_POINT_T   point = {0};              
+            point.x = MMK_GET_TP_X(param);
+            point.y = MMK_GET_TP_Y(param);
+            if(point.x - down_point.x > MMI_MAINSCREEN_WIDTH/2)
+            {
+                MMK_CloseWin(win_id);
+            }
         }
         progress_down_flag = 0;
         break;

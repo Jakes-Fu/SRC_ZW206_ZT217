@@ -764,7 +764,12 @@ PUBLIC void GPIO_HeadsetButtonIntHandler (uint32 gpio_id, uint32 gpio_state)
     SCI_TRACE_LOW("GPIO_HeadsetButton: headset = %d, after timer = %d, button_status = %d, gpio_state = %d",
                       s_headset_ctl.status, (tick - s_headset_ctl.time), gpio_msg.message, gpio_state );
 }
-extern PUBLIC void CODEC_SetHeadphoneConnectStatus(BOOLEAN status);
+
+/*****************************************************************************/
+//  Description:    Headset detection handler function.
+//  Author:         BenjaminWang
+//  Note:
+/*****************************************************************************/
 PUBLIC void GPIO_HeadsetDetectIntHandler (uint32 gpio_id, uint32 gpio_state)
 {
     TB_MSG  gpio_msg = {0};
@@ -1008,6 +1013,7 @@ PUBLIC void GPIO_BackendICIntHandler (uint32 gpio_id, uint32 gpio_state)
 
 #ifndef MODEM_PLATFORM
 #ifdef MSDC_CARD_SUPPORT
+
 /*****************************************************************************/
 //  Description:    SDCard detection handler function.
 //  Author:         juan.zhang

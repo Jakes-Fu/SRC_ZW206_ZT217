@@ -121,14 +121,17 @@ LOCAL WATCHCOM_LIST_ITEM__ST s_watch_tools_main_text_list_data[] =
 
 // ADD TOOLS MENU HERE. 
 
+#ifndef ZTE_WATCH
 //计算器
 LOCAL WATCHCOM_LIST_ITEM_STYLE_1ICON_1STR_ST   list_item_calculator    = { IMAGE_CALCULATOR_ICON,     TXT_TOOLS_CALCULATOR };
 //天气
 LOCAL WATCHCOM_LIST_ITEM_STYLE_1ICON_1STR_ST   list_item_weather    = { IMAGE_WEATHER_SEC_MENU_ICON,     TXT_WEATHER_FORECAST };
 //闹钟
 LOCAL WATCHCOM_LIST_ITEM_STYLE_1ICON_1STR_ST   list_item_alarm_clock    = { IMAGE_ALARM_ICON,     TXT_ALARM_CLOCK };
+
 //秒表
 LOCAL WATCHCOM_LIST_ITEM_STYLE_1ICON_1STR_ST   list_item_stopwatch    = { IMAGE_STOPWATCH_SEC_MENU_ICON,     TXT_ACC_STOPWATCH };
+#endif
 //计步
 LOCAL WATCHCOM_LIST_ITEM_STYLE_1ICON_1STR_ST   list_item_pedometer    = { IMAGE_PEDOMETER_SEC_MENU_ICON,     STXT_TOOLS_PEDOMETER };//TXT_ZDT_MAINMENU_STEP TXT_ZDT_MAINMENU_JB TXT_ZDT_MAINMENU_PEDO
 //课程表
@@ -149,13 +152,16 @@ LOCAL WATCHCOM_LIST_ITEM_STYLE_1ICON_1STR_ST   list_item_app_center    = { IMAGE
 
 LOCAL WATCHCOM_LIST_ITEM__ST s_watch_tools_main_text_list_data[] =
 {
+   #ifndef ZTE_WATCH
 	{ WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR, &list_item_calculator, MMIAPICALC_OpenMainWin},
 
 	{ WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR, &list_item_weather, MMIZDT_OpenWeatherWin},
 
 	{ WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR, &list_item_alarm_clock, WatchAlarm_MainWin_Enter},
+		
 
 	{ WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR, &list_item_stopwatch, WatchStopWatch_MainWin_Enter},
+	#endif
 
 	{ WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR, &list_item_pedometer, MMIZDT_OpenPedometerWin},
 

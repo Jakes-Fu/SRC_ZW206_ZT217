@@ -117,6 +117,7 @@ LOCAL RECORD_SRV_HANDLE  s_cc_watch_record_handle = PNULL;
 LOCAL MMICL_CALL_TYPE_E s_calllog_type = MMICL_CALL_DIALED;
 LOCAL MMICC_CALL_LOG_INFO_T s_calllog_info = {0};
 LOCAL uint8 s_record_calllog_timer = 0;
+extern BOOLEAN s_cc_reject_call_by_unkown_call;
 
 /*---------------------------------------------------------------------------*
 **                          LOCAL FUNCTION DECLARE                           *
@@ -509,10 +510,8 @@ LOCAL void CC_DisconnectedCallLog(uint32 msg_id,
             break;
     }
 
-    //更新UI
-    MMICC_UpdateCallStatusDisplay(MMICC_DISCONNECTED_IND);
-
-    if (!is_stk_call)//stk call need not save to call log
+    //拒接陌生电话不保存通话记录
+    if (!is_stk_call && !s_cc_reject_call_by_unkown_call)//stk call need not save to call log
     {
         //MMIAPICL_RecordCallInfo(sim_id, s_calllog_type, cl_info );
         s_calllog_info.sim_id = sim_id;
@@ -522,6 +521,9 @@ LOCAL void CC_DisconnectedCallLog(uint32 msg_id,
 
         s_record_calllog_timer = MMK_CreateTimerCallback(MMI_500MSECONDS, CC_RecordCallLogInfo, NULL, FALSE);
     }
+    //更新UI
+    MMICC_UpdateCallStatusDisplay(MMICC_DISCONNECTED_IND);
+
     // TODO:使用MMI_STATUSBAR_SCROLLMSG_SUPPORT控制
     // TODO:使用MMIPB_MOST_USED_SUPPORT控制
     /* Bug fix: cr00198061. when a call disconnected, allow key auto lock */

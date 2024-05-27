@@ -894,8 +894,7 @@ LOCAL void OpenChargeTipDelayCallback(uint8 timer_id, uint32 param)
     if (FALSE == MMK_IsOpenWin(MMIUDISK_USB_OPER_SELECT_WIN_ID))
     {
         //WatchLAUNCHER_ChargeTip_Enter();
-       // MMIZDT_OpenChargingWin();
-	   MMIZDT_OpenChargingWin();
+        MMIZDT_OpenChargingWin();
     }
     if (0 != s_charge_tip_delay_timer)
     {

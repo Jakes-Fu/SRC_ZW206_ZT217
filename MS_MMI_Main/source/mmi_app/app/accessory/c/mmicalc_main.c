@@ -4483,7 +4483,7 @@ LOCAL BOOLEAN DigitLineEditor(uint8 *buf, uint16 max_len, BOOLEAN is_add, uint8 
         return FALSE;
     }
     
-    if(MMIAPICOM_SearchChar(buf, 'e'))
+    if(MMIAPICOM_SearchChar(buf, 'e') || MMIAPICOM_SearchChar(buf, 'E'))
     {
         SCI_MEMSET(buf, 0 ,max_len);        
     }

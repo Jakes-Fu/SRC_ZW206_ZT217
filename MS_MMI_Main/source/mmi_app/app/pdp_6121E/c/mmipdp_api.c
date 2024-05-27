@@ -3222,7 +3222,7 @@ PUBLIC BOOLEAN MMIAPIPDP_Active(MMIPDP_ACTIVE_INFO_T *app_info_ptr)
     {
         //MMIPUB_OpenAlertWarningWin(STR_SIM_SEARCH_FAIL);
         SCI_TRACE_LOW("mmipdp error MMIAPIPDP_Active: SIM%d is not attached ready!!", app_info_ptr->dual_sys);
-        #ifndef WIN32
+        #if 0 //ndef WIN32 不能开启，在弱信号下会掉卡
         MMIAPIPHONE_DeactivePS(app_info_ptr->dual_sys); //在这里处理一下拔卡出来卡的状态还是SIM_STATUS_OK
         #endif
         return FALSE;

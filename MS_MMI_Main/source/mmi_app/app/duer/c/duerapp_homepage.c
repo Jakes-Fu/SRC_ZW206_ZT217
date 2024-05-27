@@ -1771,15 +1771,24 @@ PUBLIC void MMIDUERAPP_HomePageOpenWinInit(void)
     duer_auth_anonymous();
 }
 
+extern void duer_ask_clear_http_save_info(void);
+
+extern void duer_uninit_codec(void);
+
+extern void duer_try_playing_timer_thread_delete(void);
+
 PUBLIC void MMIDUERAPP_HomePageCloseWinDeinit(void)
 {
     if (MMIDUERAPP_GetInitStatus()) {
         duer_asr_stop();
+        duer_uninit_codec();
         duer_ext_stop_speak();
         duer_audio_player_stop();
         duer_dcs_audio_on_stopped();
         duer_dcs_close_multi_dialog();
         duer_dcs_dialog_cancel();
+		duer_ask_clear_http_save_info();
+        duer_try_playing_timer_thread_delete();
     }
 #ifdef DUERAPP_USE_SLIDEPAGE
     // Hemingway
@@ -1787,6 +1796,39 @@ PUBLIC void MMIDUERAPP_HomePageCloseWinDeinit(void)
 #endif    
     s_init_status = 0;
 }
+
+PUBLIC void MMIDUERAPP_Exit(void)
+{
+	if(MMK_IsOpenWin(MMI_DUERAPP_PLAY_INFO_WIN_ID))
+	{
+		MMK_CloseWin(MMI_DUERAPP_PLAY_INFO_WIN_ID);
+	}
+	if(MMK_IsOpenWin(MMI_DUERAPP_MAIN_WIN_ID))
+	{
+		MMK_CloseWin(MMI_DUERAPP_MAIN_WIN_ID);
+	}
+	if(MMK_IsOpenWin(MMI_DUERAPP_HOME_WIN_ID))
+	{
+		MMK_CloseWin(MMI_DUERAPP_HOME_WIN_ID);
+	}
+	if (MMIDUERAPP_GetInitStatus()) {
+		duer_asr_stop();
+		duer_uninit_codec();
+		duer_ext_stop_speak();
+		duer_audio_player_stop();
+		duer_dcs_audio_on_stopped();
+		duer_dcs_close_multi_dialog();
+		duer_dcs_dialog_cancel();
+		duer_ask_clear_http_save_info();
+        duer_try_playing_timer_thread_delete();
+	}
+	#ifdef DUERAPP_USE_SLIDEPAGE
+	// Hemingway
+	WatchSLIDEPAGE_DestoryHandle(setting.slide_handle);
+	#endif    
+	s_init_status = 0;
+}
+
 /*****************************************************************************/
 
 /*****************************************************************************/

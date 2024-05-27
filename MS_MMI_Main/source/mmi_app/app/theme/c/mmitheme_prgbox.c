@@ -39,41 +39,41 @@
 
 LOCAL uint32 scroll_bar_list[] = {
         res_common_scroll_bar_00,
-        res_common_scroll_bar_01,
-        res_common_scroll_bar_02,
+//        res_common_scroll_bar_01,
+//        res_common_scroll_bar_02,
         res_common_scroll_bar_03,
-        res_common_scroll_bar_04,
-        res_common_scroll_bar_05,
+//        res_common_scroll_bar_04,
+//        res_common_scroll_bar_05,
         res_common_scroll_bar_06,
-        res_common_scroll_bar_07,
-        res_common_scroll_bar_08,
+//        res_common_scroll_bar_07,
+//        res_common_scroll_bar_08,
         res_common_scroll_bar_09,
-        res_common_scroll_bar_10,
-        res_common_scroll_bar_11,
+//        res_common_scroll_bar_10,
+//        res_common_scroll_bar_11,
         res_common_scroll_bar_12,
-        res_common_scroll_bar_13,
-        res_common_scroll_bar_14,
+//        res_common_scroll_bar_13,
+//        res_common_scroll_bar_14,
         res_common_scroll_bar_15,
-        res_common_scroll_bar_16,
-        res_common_scroll_bar_17,
+//        res_common_scroll_bar_16,
+//        res_common_scroll_bar_17,
         res_common_scroll_bar_18,
-        res_common_scroll_bar_19,
-        res_common_scroll_bar_20,
+//        res_common_scroll_bar_19,
+//        res_common_scroll_bar_20,
         res_common_scroll_bar_21,
-        res_common_scroll_bar_22,
-        res_common_scroll_bar_23,
+//        res_common_scroll_bar_22,
+//        res_common_scroll_bar_23,
         res_common_scroll_bar_24,
-        res_common_scroll_bar_25,
-        res_common_scroll_bar_26,
+//        res_common_scroll_bar_25,
+//        res_common_scroll_bar_26,
         res_common_scroll_bar_27,
-        res_common_scroll_bar_28,
-        res_common_scroll_bar_29,
+//        res_common_scroll_bar_28,
+//        res_common_scroll_bar_29,
         res_common_scroll_bar_30,
-        res_common_scroll_bar_31,
-        res_common_scroll_bar_32,
+//        res_common_scroll_bar_31,
+//        res_common_scroll_bar_32,
         res_common_scroll_bar_33,
-        res_common_scroll_bar_34,
-        res_common_scroll_bar_35,
+//        res_common_scroll_bar_34,
+//        res_common_scroll_bar_35,
         res_common_scroll_bar_36
 };
 #endif
@@ -149,7 +149,7 @@ PUBLIC void MMITHEME_GetVerticalScrollTheme(
         theme_ptr->fg_img_list_ptr= scroll_bar_list;
         theme_ptr->scroll_bar_id = *scroll_bar_list;
         theme_ptr->groove_bg_id = 0;
-        theme_ptr->total_arc_degrees = 36;
+        theme_ptr->total_arc_degrees = 13;
         theme_ptr->scroll_bar_rect.left = DP2PX_VALUE(216); 
         theme_ptr->scroll_bar_rect.top = DP2PX_VALUE(72);
         theme_ptr->scroll_bar_rect.right = DP2PX_VALUE(239);

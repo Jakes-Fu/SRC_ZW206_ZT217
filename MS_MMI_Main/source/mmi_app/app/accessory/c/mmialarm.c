@@ -5184,6 +5184,7 @@ PUBLIC void StartRingOrVib(void)
         || MMIAPIVT_IsVtCalling()
 #endif
 		|| MMIAPIATV_IsRecording()
+        || VideoChat_IsInCall() //视频通话中不响铃
         ) //cr63879
     {
         if((MMISET_MSG_RING == opt_type)||(MMISET_MSG_VIBRA_AND_RING == opt_type))
@@ -6703,11 +6704,11 @@ LOCAL MMI_RESULT_E HandleAutoPowerOffExpired(
             past_time.min = s_arrived_event.event_fast_info.minute;
             
             //响应的都为当前时间，不应该去读取NV的时间
-            MMIAPISET_FormatTimeStrByTime(past_time.hour,past_time.min,(uint8*)time_str,MMIALM_TIME_STR_12HOURS_LEN + 1);
-            alarm_str[0].wstr_len = strlen(time_str);
+ //           MMIAPISET_FormatTimeStrByTime(past_time.hour,past_time.min,(uint8*)time_str,MMIALM_TIME_STR_12HOURS_LEN + 1);
+ //           alarm_str[0].wstr_len = strlen(time_str);
             alarm_str[0].wstr_ptr = SCI_ALLOC_APP((alarm_str[0].wstr_len+1+20)*sizeof(wchar));
-            SCI_MEMSET(alarm_str[0].wstr_ptr,0,((alarm_str[0].wstr_len + 1) * sizeof(wchar)));
-            MMI_STRNTOWSTR(alarm_str[0].wstr_ptr,alarm_str[0].wstr_len,time_str,strlen(time_str),strlen(time_str));/*lint !e64*/
+            SCI_MEMSET(alarm_str[0].wstr_ptr,0,((alarm_str[0].wstr_len + 1 + 20) * sizeof(wchar)));
+//            MMI_STRNTOWSTR(alarm_str[0].wstr_ptr,alarm_str[0].wstr_len,time_str,strlen(time_str),strlen(time_str));/*lint !e64*/
 
             MMI_GetLabelTextByLang(TXT_ALARM_WILL_TO, &tmp_str_t1); 
             MMI_GetLabelTextByLang(TXT_ALARM_SHUT_DOWN, &tmp_str_t2);
@@ -14655,6 +14656,15 @@ LOCAL MMI_RESULT_E HandleAlarmClockWinMsg_FULL_PAINT(MMI_WIN_ID_T win_id)
 	return MMI_RESULT_TRUE;
 }
 
+LOCAL BOOLEAN ShouldInBackground(MMI_HANDLE_T win_handle)
+{
+    if((MMK_GetWinPriority(win_handle)==WIN_LOWEST_LEVEL)||(MMIAPICC_IsInState(CC_IN_CALL_STATE))||(VideoChat_IsInCall()))//后台提醒情况
+    {
+        return TRUE;
+    }
+    return FALSE;
+}
+
 LOCAL MMI_RESULT_E HandleAlarmClockWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E  msg_id, DPARAM param)
 {
     MMI_RESULT_E    recode = MMI_RESULT_TRUE;
@@ -14672,8 +14682,7 @@ LOCAL MMI_RESULT_E HandleAlarmClockWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E 
 	    case MSG_OPEN_WINDOW:
 		    {
 			    s_open_event_id = s_arrived_event_id;//CR192240
-                if((MMK_GetWinPriority(win_handle)==WIN_LOWEST_LEVEL)
-                    ||(MMIAPICC_IsInState(CC_IN_CALL_STATE)))//后台提醒情况
+                if(ShouldInBackground(win_handle))//后台提醒情况
                 {
                     StartAlarmTimer(&s_event_timer_id, BACKGROUND_ALERT_RING_DURATION, FALSE);
                 }
@@ -14689,10 +14698,10 @@ LOCAL MMI_RESULT_E HandleAlarmClockWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E 
                 //以下是点亮屏幕的操作,需放在MMIPUB_HandleWaitWinMsg之后处理
                 if ( STARTUP_ALARM != MMIAPIPHONE_GetStartUpCondition())
                 {
-                if(MMK_GetWinPriority(win_handle)!=WIN_LOWEST_LEVEL)
-                {
-                    MMIDEFAULT_AllowTurnOffBackLight(FALSE);
-                }
+                    if(MMK_GetWinPriority(win_handle)!=WIN_LOWEST_LEVEL)
+                    {
+                        MMIDEFAULT_AllowTurnOffBackLight(FALSE);
+                    }
                 }
                 else
                 {
@@ -14702,11 +14711,14 @@ LOCAL MMI_RESULT_E HandleAlarmClockWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E 
 		    break;
 	    case MSG_FULL_PAINT:
 		    {
-			    HandleAlarmClockWinMsg_FULL_PAINT(win_id);
+                if(!ShouldInBackground(win_handle))//电话，视频通话中不显示
+                {
+                    HandleAlarmClockWinMsg_FULL_PAINT(win_id);
+                }
 		    }
 		    break;
         case MSG_GET_FOCUS:
-            if(MMK_GetWinPriority(win_handle)==WIN_LOWEST_LEVEL)//后台提醒情况下不用做任何事。
+            if(ShouldInBackground(win_handle))//后台提醒情况)//后台提醒情况下不用做任何事。
             {//修改详情参考CR122782的comments
                 break;
             }
@@ -14739,7 +14751,10 @@ LOCAL MMI_RESULT_E HandleAlarmClockWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E 
         case MSG_LOSE_FOCUS:
     //修改详情参考CR122782的comments
             StopRingOrVib(FALSE);
-            MMIDEFAULT_AllowTurnOffBackLight(TRUE);
+            if(!ShouldInBackground(win_handle))//后台提醒情况 //电话中 视频通话中不允许灭屏
+            {
+                MMIDEFAULT_AllowTurnOffBackLight(TRUE);
+            }
             break;
         //close alarm
         case MSG_CTL_CANCEL:
@@ -14802,10 +14817,10 @@ LOCAL MMI_RESULT_E HandleAlarmClockWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E 
                 // 设置延时的闹钟
                 SetDelayAlarmTime(s_arrived_event_id, s_arrived_event, TRUE);
             
-                if(MMK_GetWinPriority(win_handle)!=WIN_LOWEST_LEVEL)
+                if(!ShouldInBackground(win_handle))//后台提醒情况 //电话中 视频通话中不允许灭屏
                 {
-                    MMIDEFAULT_AllowTurnOffBackLight(TRUE);
-			    }
+                     MMIDEFAULT_AllowTurnOffBackLight(TRUE);
+                }
                 MMK_CloseWin(win_id);
 
                 if ( STARTUP_ALARM == MMIAPIPHONE_GetStartUpCondition() || STARTUP_CHARGE == MMIAPIPHONE_GetStartUpCondition()) // bug 2119552
@@ -14837,7 +14852,7 @@ LOCAL MMI_RESULT_E HandleAlarmClockWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E 
 			    s_open_event_id = 0;
             }
             StopRingOrVib(TRUE);
-            if(MMK_GetWinPriority(win_handle)!=WIN_LOWEST_LEVEL)
+            if(!ShouldInBackground(win_handle)) //电话中 视频通话中不允许灭屏
             {
                 MMIDEFAULT_TurnOnBackLight();
                 MMIDEFAULT_AllowTurnOffBackLight(TRUE);

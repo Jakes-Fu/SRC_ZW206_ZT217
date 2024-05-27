@@ -340,7 +340,7 @@ RES_ADD_MODULE(MMI_MODULE_MMIBROWSER,"\\browser\\browser_mdu_def.h")
 RES_ADD_MODULE(MMI_MODULE_MMS,"\\mms\\mms_mdu_def.h")
 RES_ADD_MODULE(MMI_MODULE_SMS,"\\sms\\sms_mdu_def.h")
 RES_ADD_MODULE(MMI_MODULE_FM,"\\fm\\fm_mdu_def.h")
-RES_ADD_MODULE(MMI_MODULE_EBOOK,"\\ebook\\ebook_mdu_def.h")
+//RES_ADD_MODULE(MMI_MODULE_EBOOK,"\\ebook\\ebook_mdu_def.h")
 RES_ADD_MODULE(MMI_MODULE_MULTIM,"\\multim\\multim_mdu_def.h")
 #ifdef GAME_SUPPORT
 RES_ADD_MODULE(MMI_MODULE_GAME_MANAGER,"\\game_manager\\game_manager_mdu_def.h")
@@ -366,7 +366,9 @@ RES_ADD_MODULE(MMI_MODULE_DL,"\\dl\\dl_mdu_def.h")
 #ifdef APP_PRODUCT_DM
 RES_ADD_MODULE(MMI_MODULE_ENGTD,"\\engtd\\engtd_mdu_def.h")
 #endif
+#ifdef MMI_RECORD_SUPPORT
 RES_ADD_MODULE(MMI_MODULE_RECORD,"\\record\\record_mdu_def.h")
+#endif
 RES_ADD_MODULE(MMI_MODULE_ACC,"\\tools\\tools_mdu_def.h")
 RES_ADD_MODULE(MMI_MODULE_ALARM,"\\clock\\clock_mdu_def.h")
 RES_ADD_MODULE(MMI_MODULE_BT,"\\bt\\bt_mdu_def.h")
@@ -533,7 +535,7 @@ RES_ADD_MODULE(MMI_MODULE_ZDT,"\\zdt\\zdt_mdu_def.h")
 #endif
 
 #ifdef LOCAL_ALARM_CLOCK_SUPPORT
-RES_ADD_MODULE(MMI_MODULE_ALARMCLOCK,"\\alarmClock\\alarmClock_mdu_def.h")
+//RES_ADD_MODULE(MMI_MODULE_ALARMCLOCK,"\\alarmClock\\alarmClock_mdu_def.h")
 #endif
 
 #ifdef ZTE_PEDOMETER_SUPPORT
@@ -666,8 +668,9 @@ RES_ADD_RING(R_CALL_2,"\\RING\\R_FLIP_2.WAV")
 RES_ADD_RING(R_CALL_3,"\\RING\\R_LIVEPAPER_CAT.wav")
 #else
 #ifdef ZTE_WATCH
-RES_ADD_RING(R_CALL_2,"\\RING\\R_Call2_Morning.mp3")
-RES_ADD_RING(R_CALL_3,"\\RING\\R_Call3_Nifty.mp3")
+//RES_ADD_RING(R_CALL_2,"\\RING\\R_Call2_Morning.mp3")
+RES_ADD_RING(R_CALL_2,"\\RING\\R_Call3_Nifty.mp3")
+//RES_ADD_RING(R_CALL_3,"\\RING\\R_Call3_Nifty.mp3")
 #else
 RES_ADD_RING(R_CALL_2,"\\RING\\R_CALL_2_lowcost.mid")// bug 2124817
 RES_ADD_RING(R_CALL_3,"\\RING\\R_MMS_1.mid")

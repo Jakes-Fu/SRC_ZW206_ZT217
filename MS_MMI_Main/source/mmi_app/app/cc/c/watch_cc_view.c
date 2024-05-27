@@ -144,7 +144,8 @@ LOCAL uint8  cc_call_waiting_timer_id = 0;
 LOCAL BOOLEAN  s_cc_reject_call_by_sms = FALSE;
 LOCAL uint8    s_cc_waiting_call_ring_timer = 0; //Bug 2194799
 LOCAL uint8    s_cc_call_time_count_timer = 0;
-LOCAL BOOLEAN  s_cc_reject_call_by_unkown_call = FALSE;
+//拒接陌生电话挂断电话标记
+PUBLIC BOOLEAN s_cc_reject_call_by_unkown_call = FALSE;
 
 /*---------------------------------------------------------------------------*/
 /*                          LOCAL FUNCTION DECLARE                           */
@@ -1148,7 +1149,7 @@ LOCAL void  CC_UpdateWatchDisconnectedCallStatus(void)
             SCI_TRACE_LOW("[WatchCC] MMICC_UpdateCallStatusDisplay, No notewin when MT is not hangup by self");
             //WatchCC_CallEnded_NoteWin_Enter();
         }
-        else//主动挂断来电
+        else//挂断来电
         {
             SCI_TRACE_LOW("[WatchCC] MMICC_UpdateCallStatusDisplay s_cc_reject_call_by_sms = %d", s_cc_reject_call_by_sms);
             if(s_cc_reject_call_by_sms)
@@ -1160,17 +1161,17 @@ LOCAL void  CC_UpdateWatchDisconnectedCallStatus(void)
             {
                 if(MMIZDT_ShouldStayInClassModeWin())
                 {
-                    return; //上课禁用中自动挂断电话就不显示通话结束的窗口了
+                    //上课禁用中自动挂断电话就不显示通话结束的窗口了
+                }
+                else if(s_cc_reject_call_by_unkown_call)
+                {
+                    s_cc_reject_call_by_unkown_call = FALSE;
+                    //拒接模生电话中自动挂断电话就不显示通话结束的窗口了
                 }
                 else
                 {
-                    if(s_cc_reject_call_by_unkown_call)
-                    {
-                        s_cc_reject_call_by_unkown_call = FALSE;
-                        return;//拒接模生电话中自动挂断电话就不显示通话结束的窗口了
-                    }
+                    WatchCC_CallEnded_NoteWin_Enter();
                 }
-                WatchCC_CallEnded_NoteWin_Enter();
             }
         }
     }

@@ -21,7 +21,7 @@
 #include "wav_adp.h"
 
 /* volume: [0,9] */
-static int s_volume = 8;
+static int s_volume = 9; //5;
 static int s_is_mute = 0;
 
 static gps_info_t s_gps_info;

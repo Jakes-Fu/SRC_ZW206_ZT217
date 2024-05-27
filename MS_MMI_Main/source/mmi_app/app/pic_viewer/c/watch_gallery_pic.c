@@ -188,6 +188,7 @@ LOCAL GUIANIM_RESULT_E GallerySetAnimParam(
 
         //背景色设为黑色
         display_info.bg.color       = MMI_BLACK_COLOR;
+        display_info.is_no_miniatur = TRUE;
 		{
 			anim_info.full_path_wstr_ptr = file_info_ptr->filename;
 			anim_info.full_path_wstr_len = file_info_ptr->name_len;
@@ -252,11 +253,11 @@ LOCAL void PIC_HandlePENOKMsg(MMI_WIN_ID_T  win_id,DPARAM  param)
               /* edit end */
 				MMK_CloseWin(win_id);
 				//add by fys for bug 10/24
-				MMK_CloseWin(WATCH_GALLERY_MAIN_WIN_ID);
-				if(!delete_button_click){
-					delete_button_click = 1;
-					WatchGallery_MainWin_Enter();
-				}
+				//MMK_CloseWin(WATCH_GALLERY_MAIN_WIN_ID);
+				//if(!delete_button_click){
+				//	delete_button_click = 1;
+				//	WatchGallery_MainWin_Enter();
+				//}
 				//add end
            }
            break;
@@ -272,11 +273,11 @@ LOCAL void PIC_HandlePENOKMsg(MMI_WIN_ID_T  win_id,DPARAM  param)
 				MMK_CloseWin(win_id);
 
 				//add by fys for bug 10/24
-				if(MMK_IsOpenWin(WATCH_GALLERY_MAIN_WIN_ID)){
-					GalleryPicListUnmarked(MMIPICVIEW_LIST_CTRL_ID);
-					Gallery_Main_ReLoadFile();
-					MMK_SendMsg(WATCH_GALLERY_MAIN_WIN_ID, MSG_FULL_PAINT, PNULL);
-				}
+				//if(MMK_IsOpenWin(WATCH_GALLERY_MAIN_WIN_ID)){
+				//	GalleryPicListUnmarked(MMIPICVIEW_LIST_CTRL_ID);
+				//	Gallery_Main_ReLoadFile();
+				//	MMK_SendMsg(WATCH_GALLERY_MAIN_WIN_ID, MSG_FULL_PAINT, PNULL);
+				//}
 				//add end
 		   }
            break;

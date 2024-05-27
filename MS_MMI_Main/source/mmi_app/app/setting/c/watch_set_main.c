@@ -221,8 +221,8 @@ LOCAL WATCHCOM_LIST_ITEM__ST s_settings_main_text_list_data[] =
 #endif    
 };
 
-LOCAL WATCHCOM_LIST_ITEM_STYLE_1ICON_1STR_ST   list_item_callvolume    = { IMAGE_CALL_VOLUME_ICON,     text_call_volume_setting };
-LOCAL WATCHCOM_LIST_ITEM_STYLE_1ICON_1STR_ST   list_item_ringtonevolume    = { IMAGE_RINGTONE_SET_ICON,     text_ringtone_volume_setting };
+//LOCAL WATCHCOM_LIST_ITEM_STYLE_1ICON_1STR_ST   list_item_callvolume    = { IMAGE_CALL_VOLUME_ICON,     text_call_volume_setting };
+//LOCAL WATCHCOM_LIST_ITEM_STYLE_1ICON_1STR_ST   list_item_ringtonevolume    = { IMAGE_RINGTONE_SET_ICON,     text_ringtone_volume_setting };
 
 LOCAL WATCHCOM_LIST_ITEM__ST s_displaysetting_text_list_data[] =
 {
@@ -373,32 +373,6 @@ LOCAL void Settings_Main_OPEN_WINDOW(MMI_WIN_ID_T win_id)
 //  Author:bin.wang1
 //  Note:
 /*****************************************************************************/
-PUBLIC BOOLEAN dsl_tfcard_exist(void)
-{    
-    MMIFILE_DEVICE_E sd_type             = MMI_DEVICE_SDCARD;        
-    if(MMIAPIFMM_GetDeviceStatus (MMIAPIFMM_GetDevicePath (sd_type), MMIAPIFMM_GetDevicePathLen (sd_type)))    
-    {		
-        SCI_TRACE_LOW("dsl %s exit = %d", __FUNCTION__, TRUE);
-        return TRUE;    
-    }   
-      if(MMIAPIFMM_GetDeviceStatus (MMIAPIFMM_GetDevicePath (MMI_DEVICE_SDCARD_1), MMIAPIFMM_GetDevicePathLen (MMI_DEVICE_SDCARD_1)))    
-    {		
-        SCI_TRACE_LOW("dsl %s exit MMI_DEVICE_SDCARD_1= %d", __FUNCTION__, TRUE);
-        return TRUE;    
-    }   
-      if(MMIAPIFMM_GetDeviceStatus (MMIAPIFMM_GetDevicePath (MMI_DEVICE_UDISK), MMIAPIFMM_GetDevicePathLen (MMI_DEVICE_UDISK)))    
-    {		
-        SCI_TRACE_LOW("dsl %s exit MMI_DEVICE_UDISK= %d", __FUNCTION__, TRUE);
-        return TRUE;    
-    }   
-      if(MMIAPIFMM_GetDeviceStatus (MMIAPIFMM_GetDevicePath (MMI_DEVICE_SYSTEM), MMIAPIFMM_GetDevicePathLen (MMI_DEVICE_SYSTEM)))    
-    {		
-        SCI_TRACE_LOW("dsl %s exit MMI_DEVICE_SYSTEM= %d", __FUNCTION__, TRUE);
-        return TRUE;    
-    }   
-    SCI_TRACE_LOW("dsl %s exitEND = %d", __FUNCTION__, TRUE);
-    return FALSE;
-}
 LOCAL MMI_RESULT_E  HandleSettingsMainWindow(
                                          MMI_WIN_ID_T    win_id,
                                          MMI_MESSAGE_ID_E   msg_id,
@@ -412,7 +386,6 @@ LOCAL MMI_RESULT_E  HandleSettingsMainWindow(
     case MSG_OPEN_WINDOW:
         {
             Settings_Main_OPEN_WINDOW(win_id);
-            dsl_tfcard_exist();
             break;
         }
     //#ifdef SCREEN_SHAPE_CIRCULAR

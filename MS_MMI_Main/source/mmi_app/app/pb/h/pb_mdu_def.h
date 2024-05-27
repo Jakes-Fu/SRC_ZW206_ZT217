@@ -884,6 +884,18 @@ RES_ADD_IMG(IMAGE_BT_CONTACT_TAB_OFF,"\\MMI_RES_##\\IMAG\\IMAGE_BT_CONTACT_TAB_O
 //================================================================================================================================//
 
 //contacts portrait
+#ifdef ZTE_WATCH
+RES_ADD_IMG(IAMGE_CONTACT_PORTRAIT_BROTHER,"\\MMI_RES_##\\IMAG\\zte\\res_replace.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(IAMGE_CONTACT_PORTRAIT_FATHER,"\\MMI_RES_##\\IMAG\\zte\\res_replace.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(IAMGE_CONTACT_PORTRAIT_GRANDFATHER,"\\MMI_RES_##\\IMAG\\zte\\res_replace.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(IAMGE_CONTACT_PORTRAIT_GRANDMA,"\\MMI_RES_##\\IMAG\\zte\\res_replace.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(IAMGE_CONTACT_PORTRAIT_GRANDMOTHER,"\\MMI_RES_##\\IMAG\\zte\\res_replace.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(IAMGE_CONTACT_PORTRAIT_GRANDPA,"\\MMI_RES_##\\IMAG\\zte\\res_replace.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(IAMGE_CONTACT_PORTRAIT_MOTHER,"\\MMI_RES_##\\IMAG\\zte\\res_replace.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(IAMGE_CONTACT_PORTRAIT_SISTER,"\\MMI_RES_##\\IMAG\\zte\\res_replace.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(IAMGE_CONTACT_PORTRAIT_STRANGER,"\\MMI_RES_##\\IMAG\\zte\\res_replace.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(IAMGE_CONTACT_PORTRAIT_TEACHER,"\\MMI_RES_##\\IMAG\\zte\\res_replace.png",IMG_CMP_PNG_ARGB_RLE,0)
+#else
 RES_ADD_IMG(IAMGE_CONTACT_PORTRAIT_BROTHER,"\\MMI_RES_##\\IMAG\\contact portrait\\res_contact_portrait_brother.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(IAMGE_CONTACT_PORTRAIT_FATHER,"\\MMI_RES_##\\IMAG\\contact portrait\\res_contact_portrait_father.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(IAMGE_CONTACT_PORTRAIT_GRANDFATHER,"\\MMI_RES_##\\IMAG\\contact portrait\\res_contact_portrait_grandfather.png",IMG_CMP_PNG_ARGB_RLE,0)
@@ -894,6 +906,7 @@ RES_ADD_IMG(IAMGE_CONTACT_PORTRAIT_MOTHER,"\\MMI_RES_##\\IMAG\\contact portrait\
 RES_ADD_IMG(IAMGE_CONTACT_PORTRAIT_SISTER,"\\MMI_RES_##\\IMAG\\contact portrait\\res_contact_portrait_sister.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(IAMGE_CONTACT_PORTRAIT_STRANGER,"\\MMI_RES_##\\IMAG\\contact portrait\\res_contact_portrait_stranger.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(IAMGE_CONTACT_PORTRAIT_TEACHER,"\\MMI_RES_##\\IMAG\\contact portrait\\res_contact_portrait_teacher.png",IMG_CMP_PNG_ARGB_RLE,0)
+#endif
 #ifdef SCREEN_SHAPE_CIRCULAR
 RES_ADD_IMG(IAMGE_CONTACT_PORTRAIT_CLASSMATE,"\\MMI_RES_##\\IMAG\\contact portrait\\res_contact_portrait_classmate.png",IMG_CMP_PNG_ARGB_RLE,0)
 #endif

@@ -3,6 +3,10 @@
 #  易赛 增加的宏添加到这里
 # 
 # *************************************************************************************************************************************
+ZDT_RAM_MEM_CUST = TRUE					## 精减内存
+                                                     # Option1:TRUE
+                                                     # Option2:FALSE
+
 ZYB_APP_SUPPORT = TRUE                                 ### 流媒体播放接口，微聊使用
                                                      # Option1:TRUE
                                                      # Option2:FALSE
@@ -596,6 +600,9 @@ ENGPC_W217 = TRUE                                    ### Switch ENGPC_W217 Suppo
 LCD_INSTALL_ANGLE = 0    #90
 
 TRACE_INFO_SUPPORT = FALSE
+MSDC_CARD_SUPPORT = TRUE                             ### SD Card Support:
+                                                     # Option1:TRUE
+                                                     # Option2:FALSE
 
 DYNAMIC_WATCHFACE_SUPPORT = FALSE	#原表盘商城
 
@@ -610,3 +617,5 @@ WORD_CARD_SUPPORT = TRUE			#单词卡
 POETRY_LISTEN_SUPPORT = TRUE		#古诗词
 
 HANZI_CARD_SUPPORT = TRUE			#汉字卡
+
+ZMT_GPT_SUPPORT = TRUE				#对话GPT

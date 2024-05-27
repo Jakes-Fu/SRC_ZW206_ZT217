@@ -287,6 +287,9 @@
 /*-------------------------------sms segment-------------------------------------------*/
 
 // 短消息NV最大存储条数 需要NANDBOOT_SUPPORT宏定义打开，跟NV大小有关系
+#ifdef ZDT_RAM_MEM_CUST
+  #define MMINV_MAX_SMS_RECORDS    3
+#else
 #ifdef MMI_SMS_MINI_SUPPORT
   #ifdef MMI_SMS_MAX_NUM_NV_50_ITEMS
   #define MMINV_MAX_SMS_RECORDS    50
@@ -312,6 +315,7 @@
 #endif
 #define MMINV_MAX_SMS_RECORDS    1500
 #endif
+#endif //ZDT_RAM_MEM_CUST
 
 #ifdef MMI_ETWS_SUPPORT
 #define MMINV_MAX_SMSCB_RECORDS    10
@@ -341,6 +345,9 @@
     另一张卡的数目就设置为MMISMS_MAX_SYS_SIM_SMS_NUM-这个卡的数目;
     否则各读取的最大数目都设置为MMISMS_MAX_SYS_SIM_SMS_NUM/2
 */
+#ifdef ZDT_RAM_MEM_CUST
+#define MMISMS_MAX_SYS_SIM_SMS_NUM  10
+#else
 #ifdef MMI_SMS_MAX_NUM_SIM_40_ITEMS
 #ifdef MMI_MULTI_SIM_SYS_SINGLE
 #define MMISMS_MAX_SYS_SIM_SMS_NUM  40
@@ -354,10 +361,19 @@
 #define MMISMS_MAX_SYS_SIM_SMS_NUM  (100*MMI_DUAL_SYS_MAX) // 100*N
 #endif
 #endif
+#endif //ZDT_RAM_MEM_CUST
 
 //安全信箱默认密码(1-8位)
 #define MMISMS_SECURITYBOX_DEFAULT_PWD "1234"
 
+#ifdef ZDT_RAM_MEM_CUST
+//各个信箱的彩信总的条数（包括彩信通知,范围:1~100）
+#define    MMIMMS_MAX_MMS_NUM                 3
+//单条MMS最大size(范围:10~300k)
+#define MMIMMS_MAX_ONE_MMS_SIZE                (10 * 1024)    
+//彩信收件人最大个数(包括CC，BCC，TO）(范围:1~30)(短彩合一1~100)
+#define MMIMMS_MAX_RECEIVER_NUM                1   
+#else
 /*-------------------------------mms segment-------------------------------------------*/
 #ifdef NANDBOOT_SUPPORT
 //各个信箱的彩信总的条数（包括彩信通知,范围:1~200）
@@ -388,6 +404,7 @@
 #else
 #define MMIMMS_MAX_RECEIVER_NUM                30   
 #endif
+#endif //ZDT_RAM_MEM_CUST
 
 //每一条地址的最大长度(范围:1~40)
 #define MMIMMS_MAX_ADDRESS_LEN                40    
@@ -495,11 +512,16 @@
 #define CC_MAX_AUTOCALL_BLACKLIST   10  
 
 //电话记录的最大条数
+#ifdef ZDT_RAM_MEM_CUST
+    #define MMICL_RECORD_MAX_NUM    10 
+#else
 #ifdef MMI_CL_MINI_SUPPORT
     #define MMICL_RECORD_MAX_NUM    40 
 #else
     #define MMICL_RECORD_MAX_NUM    80
 #endif
+#endif //ZDT_RAM_MEM_CUST
+
 //@MS00216980 cheney 
 //Be careful!!! Customer must modify the following config for CMCC TEST
 //客户必须修改如下配置信息,与提交移动的信息保持完全一致!!!!!!!

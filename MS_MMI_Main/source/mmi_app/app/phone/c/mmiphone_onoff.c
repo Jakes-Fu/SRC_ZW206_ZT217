@@ -1611,7 +1611,11 @@ LOCAL BOOLEAN PlayDefaultPowerOnOffAnimation(BOOLEAN is_power_on_off)    //TRUE:
 // #if defined (MMI_PDA_SUPPORT) && defined (MAINLCD_SIZE_320X480) // xiaoqing
 //         data_info.anim_id = IMAGE_POWER_OFF;
 // #else
+    #ifdef ZTE_WATCH //省空间直接用开机动画
+        data_info.img_id = IMAGE_POWER_ON_PIC;  // Bug 1321510,1334016
+    #else
         data_info.img_id = IMAGE_POWER_OFF_PIC;  // Bug 1321510,1334016
+    #endif
 // #endif
         win_id = PHONE_POWER_OFF_WIN_ID;
     }

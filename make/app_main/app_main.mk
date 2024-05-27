@@ -1808,9 +1808,9 @@ SOURCES += videochat_wintable.c videochat_http.c videochat_app.c
 endif
 
 ifeq ($(strip $(LOCAL_ALARM_CLOCK_SUPPORT)), TRUE)
-MINCPATH += $(MMI_DIR)/source/mmi_app/app/alarmClock/h
-MSRCPATH += $(MMI_DIR)/source/mmi_app/app/alarmClock/c
-SOURCES += alarm_corepush.c alarmClock_alive.c alarmClock_main.c alarmClock_nv.c 
+#MINCPATH += $(MMI_DIR)/source/mmi_app/app/alarmClock/h
+#MSRCPATH += $(MMI_DIR)/source/mmi_app/app/alarmClock/c
+#SOURCES += alarm_corepush.c alarmClock_alive.c alarmClock_main.c alarmClock_nv.c 
 #SOURCES += alarmClock_select.c alarmClock_select_edit.c 
 endif
 

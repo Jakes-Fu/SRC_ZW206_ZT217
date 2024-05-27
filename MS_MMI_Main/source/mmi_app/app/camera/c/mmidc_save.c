@@ -65,7 +65,7 @@
 #define DV_VIDEOEXT_AVI					            "avi"
 
 #ifdef ZDT_PICLIST_SAVE_ONLY_NUM
-#define DC_SAVE_MAX_NUM 5
+#define DC_SAVE_MAX_NUM 10
 #endif
 
 #ifdef SNS_SUPPORT

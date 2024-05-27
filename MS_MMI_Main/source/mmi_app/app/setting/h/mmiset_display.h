@@ -211,18 +211,6 @@ typedef enum
     ZTE_PANEL_ROCKET,//努比亚火箭
     ZTE_PANEL_CAT,//努比亚粉色猫猫
 #endif
-#ifdef ZMT_DIAL_STORE_SUPPORT
-    ZMT_DIAL_INDEX_0,
-    ZMT_DIAL_INDEX_1,
-    ZMT_DIAL_INDEX_2,
-    ZMT_DIAL_INDEX_3,
-    ZMT_DIAL_INDEX_4,
-    ZMT_DIAL_INDEX_5,
-    ZMT_DIAL_INDEX_6,
-    ZMT_DIAL_INDEX_7,
-    ZMT_DIAL_INDEX_8,
-    ZMT_DIAL_INDEX_9,
-#endif
 }PANEL_INDEX_E;
 
 typedef struct 

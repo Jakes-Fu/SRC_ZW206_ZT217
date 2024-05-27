@@ -370,7 +370,8 @@ LOCAL void DisplayDayStep(GUI_LCD_DEV_INFO lcd_dev_info, int step, GUI_RECT_T bo
 	    text_style.font_color = MMI_WHITE_COLOR;
         if(step > 9999)
         {
-            sprintf(&step_ch,"1***");
+            float show = step/10000.0;
+            sprintf(&step_ch,"%.2fw",show);
         }
         else
         {
@@ -380,8 +381,8 @@ LOCAL void DisplayDayStep(GUI_LCD_DEV_INFO lcd_dev_info, int step, GUI_RECT_T bo
         text_str.wstr_ptr = step_str;
         text_str.wstr_len = MMIAPICOM_Wstrlen(step_str);
         text_rect.bottom = box_rect.top - 10;
-        text_rect.left = box_rect.left - 8;
-        text_rect.right = box_rect.right + 8;
+        text_rect.left = box_rect.left - 10;
+        text_rect.right = box_rect.right + 10;
         text_rect.top = text_rect.bottom - 20;
         GUISTR_DrawTextToLCDInRect(&lcd_dev_info,&text_rect,&text_rect,&text_str,&text_style,text_state,GUISTR_STATE_ELLIPSIS_EX);
     }

@@ -248,7 +248,7 @@ PUBLIC BOOLEAN MMIZDTWIFI_PowerOn_LocOnce(void)
     {
 #if defined(ZDT_W217_FACTORY_GPS)// wuxx_20231219  gps
         //CR 启动前,清空先前的GPS 数据
-        MMIZDTGPS_ClearGpsData();
+        //MMIZDTGPS_ClearGpsData(); //deleted by bao 
 #endif
         SCI_TraceLow("wuxx, MMIZDTWIFI_PowerOn_LocOnce, 02");
         MMIZDT_WIFI_OnOff(1);
@@ -324,9 +324,13 @@ BOOLEAN MMIZDTWIFI_API_LocStop(void)
 
 #if defined(ZDT_GPS_SUPPORT)||defined(ZDT_W217_FACTORY_GPS)
 extern BLOCK_ID ZDTGPS_TaskGetID(void);
+LOCAL void UAL_GPSSOpen(void);
 LOCAL void MMIZDTGPS_HandleInterval(void);
 LOCAL int MMIZDTGPS_API_LocCallback(uint8 is_ok,GPS_DATA_T * pos_ptr );
 PUBLIC void MMIZDTGPS_ClosePwOnLocOnceTimer(void);
+PUBLIC BOOLEAN mmi_reopen_gps_delay_StopTimer(void);
+PUBLIC BOOLEAN mmi_reopen_gps_delay_StartTimer(uint32 duaration);
+PUBLIC BOOLEAN  ZDT_GPS_RF_AM_IS_OK(void);
 
 LOCAL BOOLEAN g_gps_app_loc_need = FALSE;
 
@@ -866,7 +870,7 @@ void mmi_get_gps_data_delay(void)
     SCI_TRACE_LOW("TIMER CHECK,mmi_get_gps_data_delay.");
 
     //停止WIFI 
-    ZDT_W217_WIFI_ON_OFF_for_Net(FALSE);
+    //ZDT_W217_WIFI_ON_OFF_for_Net(FALSE);
 
     //启动GPS
     ZDT_GPS_PowerOn(); 
@@ -906,13 +910,10 @@ BOOLEAN mmi_get_gps_data_delay_StopTimer(void)
         return FALSE;
     }
 }
-
 #endif
-
 
 PUBLIC BOOLEAN MMIZDTGPS_PowerOn_LocOnce(uint32 once_time)
 {  
-    ////ZDT_GPS_PowerOn(); //先开了WIFI，使用定时器开启GPS //  WUXXX_20231213
 #if 0//defined(ZDT_W217_FACTORY_GPS)// wuxx add 20231127
     MMIZDTGPS_PowerOn_for_w217();
 #endif
@@ -929,7 +930,7 @@ PUBLIC BOOLEAN MMIZDTGPS_PowerOn_LocOnce(uint32 once_time)
     //先开了WIFI，使用定时器开启GPS
     g_get_gps_loc_once_duaration = once_time;
 
-    mmi_get_gps_data_delay_StartTimer(500); //15000 关闭WIFI后，GPS可以快速启动 modified by bao
+    mmi_get_gps_data_delay_StartTimer(3000); //15000 关闭WIFI后，GPS可以快速启动 modified by bao
 
     ////MMIZDTGPS_StartPwOnLocOnceTimer(once_time);    
     return TRUE;
@@ -1136,18 +1137,9 @@ static void  MMIGPS_HanldePosOK(DPARAM param)
     MMI_ZDT_SIG_T * pp_getdata = (MMI_ZDT_SIG_T *)param;
     MMI_ZDT_DATA_T * p_getdata = &(pp_getdata->data);
     GPS_DATA_T pos_data = {0};
-    #ifndef WIN32
-        GPS_API_GetLastPos(&pos_data);
-        ZDT_LOG("GPS OK is_valid=%d,sate_num=%d,speed=%ld,cog=%d,hdop=%d",\
-            pos_data.is_valid,pos_data.sate_num,pos_data.speed,pos_data.cog,pos_data.hdop);
-        ZDT_LOG("GPS OK date=0x%x,time=0x%x,Lat=%ld-%05ld,%c,long=%ld-%05d,%c",\
-            pos_data.date,pos_data.time, \
-            GPS_Data_Get_D(pos_data.Latitude),GPS_Data_Get_M(pos_data.Latitude),pos_data.Lat_Dir, \
-            GPS_Data_Get_D(pos_data.Longitude),GPS_Data_Get_M(pos_data.Longitude),pos_data.Long_Dir);
-    #endif
+    GPS_API_GetLastPos(&pos_data);
     g_gps_app_loc_once_result = 1;
-    SCI_TraceLow("wuxx, MMIGPS_HanldePosOK, 01 ");
-	#ifndef ZDT_PLAT_YX_SUPPORT_CY
+    SCI_TRACE_LOW("wuxx, MMIGPS_HanldePosOK, 01 ");
     if(g_gps_app_loc_once_start)
     {
         MMIZDTGPS_ClosePwOnLocOnceTimer();
@@ -1162,7 +1154,6 @@ static void  MMIGPS_HanldePosOK(DPARAM param)
             MMIZDTGPS_LocOnceCallback(0,&pos_data);
         }
     }
-    #endif
     
     if(p_getdata->str != PNULL)
     {
@@ -1233,10 +1224,14 @@ static void  MMIGPS_HanldePosOver(DPARAM param)
 
 
 #ifdef GPS_SUPPORT
+LOCAL BOOLEAN g_gnss_is_register = FALSE;
 LOCAL uint32 g_gnss_handle_for_w217 = 0;
+LOCAL uint8 g_gnss_handle_running = 0;
 #endif
 
 LOCAL uint8  g_gps_readInfo_timer_id_for_w217   = 0;
+LOCAL uint8 s_reopen_gps_data_timer_id = 0;
+LOCAL uint32 s_reopen_gps_data_times = 0;
 
 #ifdef GPS_SUPPORT
 typedef enum
@@ -1285,8 +1280,17 @@ static BOOLEAN GPS_Data_OneCycle_End(void)
         {
             s_gps_is_in_room = FALSE;
         }
-
-        #if 0
+        
+        #if 1
+        g_gps_data_valid_cnt++;
+        if(g_gps_data_valid_cnt >= 3)
+        {
+            s_gps_last_valid_data = s_gps_cur_data;
+            SCI_MEMCPY(&s_gps_last_valid_data, &s_gps_cur_data, sizeof(GPS_DATA_T));
+            g_gps_data_valid_cnt = 0;
+            MMIZDT_SendSigTo_APP(ZDT_APP_SIGNAL_YX_MDBC,NULL,0);
+        }
+        #else
         if(GPS_Data_IsValid(&s_gps_cur_data))
         {
             g_gps_data_valid_cnt++;
@@ -1315,7 +1319,7 @@ static BOOLEAN GPS_Data_OneCycle_End(void)
         #endif
         
         //s_gps_last_valid_data = s_gps_cur_data;
-        memcpy(&s_gps_last_valid_data, &s_gps_cur_data, sizeof(GPS_DATA_T));
+        //memcpy(&s_gps_last_valid_data, &s_gps_cur_data, sizeof(GPS_DATA_T));
         
         return TRUE;
     }
@@ -2096,10 +2100,10 @@ LOCAL boolean gnss_callback_for_w217(ual_cms_msg_t param)
             }
             if(TRUE == pStartInfo->is_ok)
             {
+                mmi_reopen_gps_delay_StopTimer();
                 ual_gnss_read_info();   //request gps and location info
                 Gps_StartReadInfoReqTimer_for_w217();
                 SCI_TRACE_LOW("[W217] [GPS]gnss_callback_for_w217 APP_MN_GPS_START_CNF is OK\n");
-
             }
             else
             {
@@ -2162,10 +2166,10 @@ LOCAL boolean gnss_callback_for_w217(ual_cms_msg_t param)
                 g_gps_readInfo_timer_id_for_w217 = 0;
             }
 
-            //power off gps
-            //MMIGPS_Close();
-            //ual_gnss_poweroff();
-            ual_gnss_unregister(g_gnss_handle_for_w217);
+            if(g_gnss_handle_running > 0)
+            {
+                mmi_reopen_gps_delay_StartTimer(3000);
+            }
             break;
         }
         case MSG_UAL_GNSS_FIX_IND:
@@ -2190,23 +2194,108 @@ LOCAL boolean gnss_callback_for_w217(ual_cms_msg_t param)
 }
 #endif
 
+LOCAL void UAL_GPSSOpen( void )
+{
+#ifdef UAL_GNSS_SUPPORT
+    ual_gnss_start_param_t   start_param = {0};
+    start_param.start_mode = 0;
+    ual_gnss_start(&start_param);
+#endif
+}
+void mmi_reopen_gps_delay(void)
+{
+    if(ZDT_GPS_RF_AM_IS_OK())
+    {
+        s_reopen_gps_data_times = 0;
+        UAL_GPSSOpen();
+    }
+    else
+    {
+        if(s_reopen_gps_data_times < 10)
+        {
+            s_reopen_gps_data_times++;
+            if(0 != s_reopen_gps_data_timer_id)
+            {
+                MMK_StopTimer(s_reopen_gps_data_timer_id);
+                s_reopen_gps_data_timer_id = 0;
+            }
+
+            s_reopen_gps_data_timer_id = MMK_CreateTimerCallback(2000, 
+                                                                                mmi_reopen_gps_delay, 
+                                                                                (uint32)0, 
+                                                                                FALSE);
+        }
+        else
+        {
+            s_reopen_gps_data_times = 0;
+            UAL_GPSSOpen();
+        }
+    }
+}
+
+BOOLEAN mmi_reopen_gps_delay_StartTimer(uint32 duaration)
+{
+    if (0 == duaration)
+    {
+        return FALSE;
+    }
+    if(0 != s_reopen_gps_data_timer_id)
+    {
+        MMK_StopTimer(s_reopen_gps_data_timer_id);
+        s_reopen_gps_data_timer_id = 0;
+    }
+    s_reopen_gps_data_times = 0;
+    s_reopen_gps_data_timer_id = MMK_CreateTimerCallback(duaration, 
+                                                                        mmi_reopen_gps_delay, 
+                                                                        (uint32)0, 
+                                                                        FALSE);
+    return TRUE;
+}
+
+BOOLEAN mmi_reopen_gps_delay_StopTimer(void)
+{
+    if (s_reopen_gps_data_timer_id != 0)
+    {
+        MMK_StopTimer(s_reopen_gps_data_timer_id);
+        s_reopen_gps_data_timer_id = 0;
+        return TRUE;
+    }
+    else
+    {
+        return FALSE;
+    }
+}
 
 LOCAL void UAL_GPSStart_for_w217( void )
 {
     //MMIGPS_RES_E gps_res = MMIGPS_RES_STATE_WRONG;
-#ifdef UAL_GNSS_SUPPORT
-    ual_gnss_start_param_t   start_param = {0};
-#endif
     SCI_TRACE_LOW("[GPS]UAL_GPSStart_for_w217");
     //init gps first
     //MMIGPS_RegisterCallBack(UITestGPSCallback);
     //gps_res = MMIGPS_Open();
+    if(g_gnss_handle_running > 0)
+    {
+        #ifdef UAL_GNSS_SUPPORT
+        ual_gnss_stop();
+        #endif
+    }
 #ifdef UAL_GNSS_SUPPORT
-    ual_gnss_set_gnss_mode(UAL_GNSS_MODE_GPS_BDS_GALILEO); //added by bao 默认开启4模定位
-    ual_gnss_register(gnss_callback_for_w217,&g_gnss_handle_for_w217);
-    start_param.start_mode = 0;
-    ual_gnss_start(&start_param);
+    if(g_gnss_is_register == FALSE)
+    {
+        ual_gnss_set_gnss_mode(UAL_GNSS_MODE_GPS_BDS); //added by bao
+        ual_gnss_register(gnss_callback_for_w217,&g_gnss_handle_for_w217);
+        g_gnss_is_register = TRUE;
+    }
+    if(ZDT_GPS_RF_AM_IS_OK())
+    {
+        UAL_GPSSOpen();
+    }
+    else
+    {
+        mmi_reopen_gps_delay_StartTimer(2000);
+    }
 #endif
+    g_gnss_handle_running = 1;
     //SCI_TRACE_LOW("[ENG_UITEST] gps init res:%d", gps_res);
 }
 
@@ -2215,12 +2304,11 @@ LOCAL void UAL_GPSStop_for_w217( void )
     SCI_TRACE_LOW("[GPS]UAL_GPSStop_for_w217");
 
     //ZDT_GPS_PowerOff();
-    ual_gnss_unregister(g_gnss_handle_for_w217);
-    
+    //ual_gnss_unregister(g_gnss_handle_for_w217);
+    g_gnss_handle_running = 0;
     #ifdef UAL_GNSS_SUPPORT
     ual_gnss_stop();
     #endif
-
 }
 
 void MMIZDTGPS_PowerOn_for_w217(void)
@@ -2527,7 +2615,7 @@ static BOOLEAN MMIZDT_HandleCheckTimer(void)
 #endif
 
 #ifdef CHGMNG_PSE_SUPPORT
-   // MMIZDT_CheckTempAlert();
+    MMIZDT_CheckTempAlert();
 #endif
 
     return TRUE;
@@ -2569,7 +2657,13 @@ static MMI_RESULT_E  HandleZDTAppMsg (PWND app_ptr,
     }
 #endif
     switch(msg_id)
-    {                       
+    {       
+        case ZDT_APP_SIGNAL_YX_MDBC: 
+            {
+                //用此消息处理GPS定位成功的消息
+                MMIGPS_HanldePosOK(param);
+            }
+            break;
         case ZDT_APP_SIGNAL_FLYMODE_RESET:
                 ZDT_LOG("ZDT_APP_SIGNAL_FLYMODE_RESET");
 #ifdef ZDT_NET_SUPPORT_FLYMODE_RESET
@@ -2889,7 +2983,7 @@ void ZDT_WIFI_TaskEntry(uint32 argc, void *argv)
                     g_zdt_wifi_is_hw_on = FALSE;
                     ZDT_WIFI_ReBuild_Data(g_zdt_wifi_data_cnt);
                     
-                    if(g_zdt_wifi_data_cnt > 0)
+                    if(g_zdt_wifi_data_cnt > 1)
                     {
                         MMIZDT_SendSigTo_APP(ZDT_APP_SIGNAL_WIFI_SCAN_OK,PNULL,0);
                     }
@@ -3132,6 +3226,25 @@ void MMIZDTWIFI_Stop(void);
 // g_zdt_wifi_hw_is_ok
 // ZDT_WIFI_Get_DataNum
 // ZDT_WIFI_Get_Data
+BOOLEAN  ZDT_WIFI_RF_AM_IS_OK(void)
+{
+    SCI_TRACE_LOW("ZDT_WIFI_RF_AM_IS_OK rm_status=%d,g_gnss_handle_running=%d",ual_rf_am_get_current_status(),g_gnss_handle_running);
+    if(g_gnss_handle_running == 0 && (RF_AM_STATE_IDLE == ual_rf_am_get_current_status() || RF_AM_STATE_WIFISCAN_WORK == ual_rf_am_get_current_status()))
+    {
+        return TRUE;
+    }
+    return FALSE;
+}
+
+BOOLEAN  ZDT_GPS_RF_AM_IS_OK(void)
+{
+    SCI_TRACE_LOW("ZDT_GPS_RF_AM_IS_OK rm_status=%d",ual_rf_am_get_current_status());
+    if(RF_AM_STATE_IDLE == ual_rf_am_get_current_status())
+    {
+        return TRUE;
+    }
+    return FALSE;
+}
 
 void  ZDT_WIFI_HW_Set_IsOK(BOOLEAN isOK)
 {
@@ -3212,7 +3325,7 @@ LOCAL boolean MMIZDT_HandleUalWifimsg(ual_cms_msg_t param)
             {
                 g_zdt_is_reopen_wifi_scan = FALSE;
                 #ifdef UAL_RF_AM_SUPPORT
-                if(RF_AM_STATE_IDLE == ual_rf_am_get_current_status() || RF_AM_STATE_WIFISCAN_WORK == ual_rf_am_get_current_status())
+                if(ZDT_WIFI_RF_AM_IS_OK())
                 {
                     ual_wifi_open();
                 }
@@ -3460,7 +3573,6 @@ LOCAL boolean MMIZDT_HandleUalWifimsg(ual_cms_msg_t param)
     return TRUE;
 }
 
-
 uint8 MMIZDTWIFI_Start(void)
 {
     uint8 res = 0;
@@ -3479,20 +3591,15 @@ uint8 MMIZDTWIFI_Start(void)
     }
 
 
-    if(NULL == g_zdt_ual_wifi_handle)
-    {
-        ual_wifi_register(MMIZDT_HandleUalWifimsg,&g_zdt_ual_wifi_handle);
-        SCI_TRACE_LOW("MMIZDTWIFI_Start = %d",g_zdt_ual_wifi_handle);
-    }
-    else
-    {
-        SCI_TRACE_LOW("MMIZDTWIFI_Start Error:g_zdt_ual_wifi_handle is %d,not NULL",g_zdt_ual_wifi_handle);
-    }
-
     #ifdef UAL_RF_AM_SUPPORT
-    if(RF_AM_STATE_IDLE == ual_rf_am_get_current_status() || RF_AM_STATE_WIFISCAN_WORK == ual_rf_am_get_current_status())
+    if(ZDT_WIFI_RF_AM_IS_OK())
     {
         SCI_TRACE_LOW("MMIZDTWIFI_Start, ual_wifi_open");
+        if(NULL == g_zdt_ual_wifi_handle)
+        {
+            ual_wifi_register(MMIZDT_HandleUalWifimsg,&g_zdt_ual_wifi_handle);
+            SCI_TRACE_LOW("MMIZDTWIFI_Start = %d",g_zdt_ual_wifi_handle);
+        }
         ual_wifi_open();
     }
     else
@@ -3534,7 +3641,7 @@ uint8 MMIZDTWIFI_Start(void)
         if (mmi_is_re_get_wifi_list_flag()>=(ZDT_UAL_WIFI_RE_GET_SCANN_TIMES-1)) // wuxx 20240102
         {
             //ual_wifi_stop_scan();
-            MMIZDTWIFI_Stop(); 
+            //MMIZDTWIFI_Stop(); 
             SCI_TRACE_LOW("MMIZDTWIFI_Start MMIZDTWIFI_Stop, mmi_is_re_get_wifi_list_flag()>=(ZDT_UAL_WIFI_RE_GET_SCANN_TIMES-1)");
             
              if (g_is_get_wifi_data_by_net == TRUE)
@@ -3578,12 +3685,14 @@ void MMIZDTWIFI_Stop(void)
     SCI_TRACE_LOW("MMIZDTWIFI_Stop");
     ual_wifi_close(); // wuxx add 20231213 , 有时有异常, 一直无法开启,可能需要 ual_wifi_close,不判断条件
 
+#if 0
     ual_wifi_get_current_state(&ual_wifi_state);
     if(UAL_WIFI_STATE_IDLE != ual_wifi_state)
     {
         SCI_TRACE_LOW("MMIZDTWIFI_Stop, ual_wifi_close, UAL_WIFI_STATE_IDLE != ual_wifi_state.");
         ual_wifi_close();
     }
+#endif
 
     if(NULL != g_zdt_ual_wifi_handle)
     {
@@ -3626,7 +3735,7 @@ void ZDT_W217_WIFI_scan_result_for_net(void) // 20231213 same as old msg. WIFISU
     g_zdt_wifi_is_hw_on = FALSE;
     ZDT_WIFI_ReBuild_Data(g_zdt_wifi_data_cnt);
     
-    if(g_zdt_wifi_data_cnt > 0)
+    if(g_zdt_wifi_data_cnt > 1)
     {
         mmi_re_get_wifi_list_delay_StopTimer();// 搜索OK, 停止重新搜索TIMER
         
@@ -4110,7 +4219,7 @@ PUBLIC void ZDT_NV_SetTodaySteps(uint32 steps)
     STEP_NV_T step_nv = {0};
     SCI_DATE_T          date;
     TM_GetSysDate(&date);
-    if(s_current_step_nv.day != date.mday || s_current_step_nv.month != date.mon)
+    if(s_current_step_nv.day != date.mday || s_current_step_nv.month != date.mon || steps == 0)//steps == 0 恢复出厂写0
     {
         ZDT_GSensor_SetStepOneDay(0);
         steps = 0;

@@ -139,6 +139,8 @@ PUBLIC void MMIDUERAPP_StartDictionaryAsrSet(void);
 
 PUBLIC void MMIDUERAPP_StartInterpreterAsrSet(void);
 
+PUBLIC void MMIDUERAPP_Exit(void);
+
 #ifdef _cplusplus
 	}
 #endif

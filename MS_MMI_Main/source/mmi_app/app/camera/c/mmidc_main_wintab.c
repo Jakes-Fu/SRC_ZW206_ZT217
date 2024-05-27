@@ -6067,17 +6067,21 @@ LOCAL BOOLEAN StartDCApplet(CAMERA_MODE_E mode
 //Description :  External close dc applet
 //Global resource dependence :none
 //Author:
-//Note:
+//Note:展锐patch 解决在相机界面或者拍照待保存界面(几乎必现)来视频通话死机问题
 /*****************************************************************************/
 void External_CloseDCApplet(void)
 {
     DC_FLOW_MODE_E current_mode = DC_PREVIEW_MODE;
+	uint8 index = 0;
     External_close_dc_sig = 1;
+    SCI_TRACE_LOW("[%s]: External_CloseDCApplet",__FUNCTION__);
     if(snapshot_check == 1)
     {
         do{
+                SCI_TRACE_LOW("[%s]: External_CloseDCApplet review_check:%d index:%d",__FUNCTION__,review_check,index);
                 SCI_Sleep(100);
-            }while(review_check  == 0);
+				index ++;
+            }while(review_check  == 0 && index <10); //解决从相机打开相册，来视频通话时导致死循环无响应问题
     }
     if(MMIDC_IsDCOpen())
     {
@@ -6086,6 +6090,7 @@ void External_CloseDCApplet(void)
     External_close_dc_sig=0;//?3??o?y?±?λ?0
     snapshot_check=0;//?3??o?y?±?λ?0
     review_check = 0;
+    SCI_TRACE_LOW("[%s]: External_CloseDCApplet review_check:%d",__FUNCTION__,review_check);
 }
 
 #endif

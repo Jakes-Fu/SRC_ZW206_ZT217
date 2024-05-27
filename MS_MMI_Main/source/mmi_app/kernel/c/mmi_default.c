@@ -3528,7 +3528,7 @@ LOCAL void InitUnRegisterService( void )
     }
     else
     {//bugid:1556885
-        SCI_PASSERT(0, ("InitUnRegisterService task_id Error!"));
+       // SCI_PASSERT(0, ("InitUnRegisterService task_id Error!")); //deleted by bao FOTA有升级版本的时候会运行这里导致死机
     }
 
 
@@ -3572,7 +3572,7 @@ LOCAL void InitRegisterServiceBack( void )
     }
     else
     {//bugid:1556885
-        SCI_PASSERT(0, ("InitRegisterServiceBack task_id Error!"));
+        //SCI_PASSERT(0, ("InitRegisterServiceBack task_id Error!")); //deleted by bao FOTA有升级版本的时候会运行这里导致死机
     }
 
     SCI_TRACE_LOW("InitRegisterServiceBack: backlight back");

@@ -5734,7 +5734,8 @@ LOCAL void InsertIcon(
     display_info.align_style       = GUIANIM_ALIGN_HVMIDDLE;
     display_info.is_crop_rect      = TRUE;
     display_info.is_disp_one_frame = TRUE;
-    
+    display_info.is_no_miniatur = TRUE;     //不支持缩略图形式(占用U盘空间)
+
     if (PNULL != data_info_ptr)
     {
         GUIANIM_SetParam(&ctrl_info,data_info_ptr,PNULL,&display_info);

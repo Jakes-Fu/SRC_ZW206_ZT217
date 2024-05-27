@@ -125,6 +125,7 @@ PUBLIC void CommonWin_SetAnimStyle(
     display_info.align_style = GUIANIM_ALIGN_HVMIDDLE;
     display_info.bg.bg_type = GUI_BG_COLOR;
     display_info.bg.color = MMI_BLACK_COLOR;
+    display_info.is_no_miniatur = TRUE;
     GUIANIM_SetParam(&control_info,&data_info,PNULL,&display_info);
     GUIANIM_SetCtrlRect(ctrl_id,&image_rect);
     GUIANIM_SetDisplayRect(ctrl_id,&image_rect,FALSE);

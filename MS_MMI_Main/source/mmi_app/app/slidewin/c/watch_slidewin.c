@@ -813,6 +813,12 @@ LOCAL MMI_RESULT_E SlideWin_ProcGetFocus(tSlideWinInfo *item, MMI_MESSAGE_ID_E m
     MMI_RESULT_E ret = MMI_RESULT_FALSE;
     TRACE_APP_LAUNCHER_ENTER
     SLIDEWIN_CHECK_ITEM_VALID(item)
+    if(item->slide_layer.block_id == UILAYER_NULL_HANDLE)
+    {
+        GUI_RECT_T win_rect ={0};
+        MMK_GetWinRect(item->win_id, &win_rect);
+        SlideWin_CreateSlideLayer(item->win_id, win_rect.right - win_rect.left + 1, win_rect.bottom- win_rect.top + 1, &item->slide_layer);
+    }
     SlideWin_AppendSlideLayerToBlt(item->slide_layer);
 
     SYSTEM_SLIDEWIN_DEACTIVEHOOK(item)
@@ -839,6 +845,7 @@ LOCAL MMI_RESULT_E SlideWin_ProcLoseFocus(tSlideWinInfo *item, MMI_MESSAGE_ID_E 
     MMI_RESULT_E ret = MMI_RESULT_FALSE;
     UILAYER_RemoveBltLayer(&item->slide_layer);
     SlideWin_StopTpDrapTimer(item);//fix bug1643155
+    UILAYER_ReleaseLayerExt(&item->slide_layer);
     return ret;
 }
 
@@ -1459,8 +1466,11 @@ PUBLIC BOOLEAN WatchSLIDEWIN_Destory(uint32 handle)
 
     TRACE_APP_LAUNCHER("handle = 0X%X.", item);
 
-    //free move layer;
-    UILAYER_RELEASELAYER(&item->slide_layer);
+    if(item->slide_layer.block_id != UILAYER_NULL_HANDLE)
+    {
+        //free move layer;
+        UILAYER_RELEASELAYER(&item->slide_layer);
+    }
 
     //stop timer
     MMK_StopTimer(item->tp_drap_timer);

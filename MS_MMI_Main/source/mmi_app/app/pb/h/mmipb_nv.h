@@ -36,6 +36,9 @@
  **--------------------------------------------------------------------------*/
 // 手机中电话簿记录的最大数
 #ifndef WIN32
+#ifdef ZDT_RAM_MEM_CUST
+    #define MMINV_MAX_PHONEBOOK_RECORDS     10
+#else
 #ifdef PB_SUPPORT_LOW_MEMORY
 //LOW MEMORY Platform
 #ifdef MMIPB_MAX_COUNT_100
@@ -48,6 +51,7 @@
 #else
     #define MMINV_MAX_PHONEBOOK_RECORDS     500
 #endif
+#endif //ZDT_RAM_MEM_CUST
 #else
     #define MMINV_MAX_PHONEBOOK_RECORDS     1000
  #endif

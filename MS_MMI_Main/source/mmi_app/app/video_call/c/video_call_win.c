@@ -60,7 +60,11 @@
 ////#include "brtc_hangup_btn.h"
 #endif
 
-//#include "video_call_demo.h"
+#ifdef BAIDU_AI_SUPPORT
+#include "duerapp_homepage.h"
+#endif
+
+#include "watch_gallery_export.h"
 
 uint8 video_call_waiting_timer_id = 0;
 uint8 video_call_show_hangup_timer_id = 0;
@@ -94,9 +98,7 @@ LOCAL GUI_LCD_DEV_INFO  s_video_call_ui_layer_handle = {0,UILAYER_NULL_HANDLE};
 
 
 //视频通话时长,秒--total=end-start
-uint32 g_baidu_video_call_timestamp_start=0;
-uint32 g_baidu_video_call_timestamp_end=0;
-uint32 g_baidu_video_call_timestamp_total=0;
+LOCAL uint32 g_baidu_video_call_timestamp_start=0;
 
 VIDEO_CALL_INFO g_video_call_info_tmp = {0};
 
@@ -105,6 +107,7 @@ BOOLEAN g_video_call_remote_hangup_but_not_invideo = FALSE;
 
 LOCAL void Video_Call_Close(MMI_WIN_ID_T win_id);
 
+PUBLIC BOOLEAN VideoChat_IsInCall();
 
 //extern unsigned char gImage_icon_videocall_connect_ringoffBtn_brtc;
 
@@ -148,13 +151,20 @@ LOCAL void video_call_backlight(BOOLEAN is_alway_on)
 {
     if(is_alway_on)
     {
-        MMIDEFAULT_SetAlwaysHalfOnBackLight(FALSE);
         MMIDEFAULT_AllowTurnOffBackLight(FALSE);
-        MMIDEFAULT_TurnOnBackLight();
-    } else {
+    } 
+    else 
+    {
         MMIDEFAULT_AllowTurnOffBackLight(TRUE);
-        MMIDEFAULT_SetAlwaysHalfOnBackLight(FALSE);
     }
+}
+
+LOCAL void Video_Call_Restore_Brightness()
+{
+    uint8 brightness = MMIAPISET_GetCurrentContrast();   
+	MMIAPISET_SetCurrentContrast(brightness);
+	MMIAPISET_UpdateLCDContrast(GUI_MAIN_LCD_ID, brightness);
+	MMIAPISET_SetMainLCDContrast(); 
 }
 
 LOCAL void Video_Call_Show_Toast(MMI_TEXT_ID_T text_id)
@@ -270,8 +280,12 @@ LOCAL void Stop_Call_Ten_Timer()
 //视频通话10分钟挂断
 LOCAL void Video_Call_Ten_TimeOut_CallBack(uint8 timer_id, uint32 param)
 {
-    Stop_Call_Ten_Timer();
-    MMK_CloseWin(WATCH_VIDEO_CALL_INCOMING_WIN_ID);
+    ZDT_LOG("Video_Call_Ten_TimeOut_CallBack timer_id=%d time:%d", timer_id,TM_GetTotalSeconds() - g_baidu_video_call_timestamp_start);
+    if(TM_GetTotalSeconds() - g_baidu_video_call_timestamp_start > VIDEO_CALL_TEN_TIME_OUT/1000)
+    {
+        Stop_Call_Ten_Timer();
+        MMK_CloseWin(WATCH_VIDEO_CALL_INCOMING_WIN_ID);
+    }
 }
 
 LOCAL void Stop_Charging_Delay_Timer()
@@ -306,38 +320,25 @@ LOCAL void Create_Video_Call_Ui_Layer(MMI_WIN_ID_T win_id)
     UILAYER_APPEND_BLT_T        append_layer = {0};
     UILAYER_RESULT_E ret = 0;
 
-    if (UILAYER_HANDLE_MULTI != UILAYER_GetHandleType(&s_video_call_ui_layer_handle))    
+    if (s_video_call_ui_layer_handle.lcd_id != UILAYER_NULL_HANDLE)    
     {
-        //get tips layer width height
-        GUILCD_GetLogicWidthHeight(GUI_MAIN_LCD_ID,&layer_width,&layer_height);    
-
         //creat layer
         create_info.lcd_id = GUI_MAIN_LCD_ID;
         create_info.owner_handle = win_id;
         create_info.offset_x = 0;
         create_info.offset_y = 0;
-        create_info.width = layer_width;
-        create_info.height = layer_height;
+        create_info.width = 240;
+        create_info.height = 284;
         create_info.is_bg_layer = FALSE;
         create_info.is_static_layer = TRUE; 
         ret = UILAYER_CreateLayer(&create_info, &s_video_call_ui_layer_handle);
       
         if (UILAYER_RESULT_SUCCESS == ret)
         {
-
-            UILAYER_RemoveMainLayer();
-        #ifndef WIN32
-            UILAYER_EnableOsdLayer(TRUE);
-        #endif
-            append_layer.layer_level = UILAYER_LEVEL_NORMAL;
+            append_layer.layer_level = UILAYER_LEVEL_HIGH;
             append_layer.lcd_dev_info = s_video_call_ui_layer_handle;
             UILAYER_SetLayerColorKey(&s_video_call_ui_layer_handle, TRUE, MMI_BLACK_COLOR);
-            UILAYER_AppendBltLayer(&append_layer);
-
-            #ifdef PLATFORM_ANTISW3
-            //开启ARGB888 Mode
-            LCD_SetARGB888Mode(TRUE);
-            #endif
+            UILAYER_WeakLayerAlpha(&s_video_call_ui_layer_handle, 0x80);
         }
         else
         {
@@ -353,16 +354,11 @@ LOCAL void Create_Video_Call_Ui_Layer(MMI_WIN_ID_T win_id)
 
 LOCAL void ReleaseVideo_Call_Ui_Layer()
 {
-    if (UILAYER_HANDLE_MULTI == UILAYER_GetHandleType(&s_video_call_ui_layer_handle))
+    if (UILAYER_NULL_HANDLE == s_video_call_ui_layer_handle.lcd_id)
     {
         UILAYER_RELEASELAYER(&s_video_call_ui_layer_handle);    /*lint !e506 !e774*/
 
     }
-    UILAYER_EnableOsdLayer(FALSE);
-    UILAYER_RestoreMainLayer();
-    #ifdef PLATFORM_ANTISW3
-    LCD_SetARGB888Mode(FALSE);
-    #endif
     s_video_call_ui_layer_handle.block_id = 0;
     s_video_call_ui_layer_handle.lcd_id = UILAYER_NULL_HANDLE;
 }
@@ -386,8 +382,8 @@ LOCAL void draw_head_image_and_name(MMI_WIN_ID_T win_id, GUISTR_STYLE_T text_sty
         {
             name_string.wstr_ptr = user_info->family_relative;
             name_string.wstr_len = MMIAPICOM_Wstrlen(name_string.wstr_ptr); 
-        #if 0//def ZTE_WATCH
-            image_id = WATCHCOM_GetAvaterBigImageId(in_str);
+        #ifdef ZTE_WATCH
+            image_id = WATCHCOM_GetAvaterBigImageId(name_string.wstr_ptr);
         #else
             image_id = WATCHCOM_GetAvaterImageId(name_string.wstr_ptr);
         #endif
@@ -400,15 +396,15 @@ LOCAL void draw_head_image_and_name(MMI_WIN_ID_T win_id, GUISTR_STYLE_T text_sty
             }
         }
     }
-    else if(MMI_VIDEO_CALL_STATE_INCOMING == type)
+    else if(MMI_VIDEO_CALL_STATE_INCOMING == type || MMI_VIDEO_CALL_STATE_ACTIVE == type)
     {
         VIDEO_CALL_INFO *video_call_info = (VIDEO_CALL_INFO *) MMK_GetWinUserData(win_id);
         if(video_call_info != NULL)
         {
             name_string.wstr_ptr = video_call_info->family_relative;
             name_string.wstr_len = MMIAPICOM_Wstrlen(name_string.wstr_ptr); 
-        #if 0//def ZTE_WATCH
-            image_id = WATCHCOM_GetAvaterBigImageId(in_str);
+        #ifdef ZTE_WATCH
+            image_id = WATCHCOM_GetAvaterBigImageId(name_string.wstr_ptr);
         #else
             image_id = WATCHCOM_GetAvaterImageId(name_string.wstr_ptr);
         #endif
@@ -500,6 +496,7 @@ LOCAL void Video_Call_Display_video_type(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO l
                     GUISTR_TEXT_DIR_AUTO
                     );
                 
+                draw_head_image_and_name(win_id, text_style,lcd_dev_info,type);
                 GUIRES_DisplayImg(PNULL, &hangup_in_vodeo_rect, PNULL, win_id, IMAGE_CALL_HANGUP, &lcd_dev_info);
 
  //               GUIRES_DisplayImg(PNULL, &del_rect, PNULL, win_id, IMG_CC_MINUS_ICON, &lcd_dev_info);
@@ -673,7 +670,6 @@ LOCAL void Video_Call_Status_Callback(brtc_msg_t *p_msg)
             {
                 MMK_SendMsg(WATCH_VIDEO_CALL_OUT_WIN_ID,MSG_CLOSE_WINDOW,PNULL);
             }
-            g_is_inVideo = FALSE;
             break;
         case BRTC_MSG_CONNECTION_LOST: /* local本端因网络原因掉线 */
             break;
@@ -793,15 +789,24 @@ PUBLIC void Baidu_Video_Call_Status_Callback(RtcMessageType msgType)
         {
             break;
         }
-    case RTC_MESSAGE_ROOM_EVENT_REMOTE_COMING:
+    case RTC_MESSAGE_ROOM_EVENT_REMOTE_COMING: //网络堵塞短暂没网网络恢复后会来
         {
             msg.code = BRTC_MSG_FIRST_VIDEO_FRAME_RECV;
             Video_Call_Status_Callback(&msg);
 
-            video_call_ten_timer_id = MMK_CreateTimerCallback(VIDEO_CALL_TEN_TIME_OUT,Video_Call_Ten_TimeOut_CallBack,NULL, FALSE);
-            
-            //记录接通时的时间戳 
-            g_baidu_video_call_timestamp_start =  TM_GetTotalSeconds();//时间戳//秒
+            if(video_call_ten_timer_id == 0)
+            {
+                SCI_TraceLow("Baidu_Video_Call_Status_Callback, create ten time out =%d", VIDEO_CALL_TEN_TIME_OUT);
+                //视频通话中定时器延迟很厉害达不到要求5秒延时1秒左右 10分钟延时30秒以上，
+                //所以采取每5秒计时一次然后算总时间这样误差在5秒内
+                video_call_ten_timer_id = MMK_CreateTimerCallback(5000,Video_Call_Ten_TimeOut_CallBack,NULL, TRUE);
+            }
+
+            if(g_baidu_video_call_timestamp_start == 0)
+            {           
+                //记录接通时的时间戳 
+                g_baidu_video_call_timestamp_start =  TM_GetTotalSeconds();//时间戳//秒
+            }
             SCI_TraceLow("Baidu_Video_Call_Status_Callback,wuxx, g_baidu_video_call_timestamp_start=%d", g_baidu_video_call_timestamp_start);
             break;
         }
@@ -809,14 +814,6 @@ PUBLIC void Baidu_Video_Call_Status_Callback(RtcMessageType msgType)
         {
             msg.code = BRTC_MSG_USER_OFFLINE;
             Video_Call_Status_Callback(&msg);
-            //记录接通时的时间戳 
-            g_baidu_video_call_timestamp_end=  TM_GetTotalSeconds();//时间戳//秒
-            SCI_TraceLow("Baidu_Video_Call_Status_Callback,wuxx, g_baidu_video_call_timestamp_end=%d", g_baidu_video_call_timestamp_end);
-
-            g_baidu_video_call_timestamp_total = g_baidu_video_call_timestamp_end-g_baidu_video_call_timestamp_start;
-            SCI_TraceLow("Baidu_Video_Call_Status_Callback,wuxx, g_baidu_video_call_timestamp_total=%d", g_baidu_video_call_timestamp_total);
-            YX_Net_Send_UPVCALLTIME(g_video_call_info_tmp.video_id, g_baidu_video_call_timestamp_total);
-            
             break;
         }
     case RTC_ROOM_EVENT_ON_USER_JOINED_ROOM:
@@ -890,6 +887,12 @@ LOCAL MMI_RESULT_E HandleVideoDialingWin(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E m
         break;
     case MSG_CLOSE_WINDOW:
         {
+            VIDEO_USER_INFO *video_user_info = (VIDEO_USER_INFO *) MMK_GetWinUserData(win_id);
+            if(video_user_info != NULL)
+            {
+                SCI_FREE(video_user_info);
+                MMK_SetWinUserData(win_id, NULL);
+            }
             Stop_Video_Call_Waiting_Timer();
         }
         break;
@@ -940,7 +943,8 @@ PUBLIC BOOLEAN  Video_Call_Device_Idle_Check(void)
 {
     if(MMICC_IsExistIncommingCall() || MMICC_IsExistActiveCall() 
         || MMIAPICC_IsInState(CC_MT_CONNECTING_STATE) || MMIAPICC_IsInState(CC_CALL_CONNECTED_STATE)
-        || MMIAPICC_IsInState(CC_MO_CONNECTING_STATE) || MMIZDT_IsClassModeWinOpen() == TRUE || Low_Battery_Model_Check())
+        || MMIAPICC_IsInState(CC_MO_CONNECTING_STATE) || MMIZDT_IsClassModeWinOpen() == TRUE || Low_Battery_Model_Check()
+        || VideoChat_IsInCall())
     {
         return TRUE;
     }
@@ -981,7 +985,7 @@ LOCAL void Display_Contact_List(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id, VIDE
     const uint16 img_width = 60;
     const uint16 height = img_height + 2*h_gap;
     GUI_RECT_T l_rect0 = { w_gap, h_gap,  img_width + w_gap,  img_height+h_gap};//bg
-    GUI_RECT_T l_rect1 = { img_width+w_gap+8,  h_gap,  MMI_MAINSCREEN_WIDTH-2*h_gap , img_height+h_gap};//text
+    GUI_RECT_T l_rect1 = { img_width+w_gap+8,  h_gap,  MMI_MAINSCREEN_WIDTH-2*h_gap - img_width , img_height+h_gap};//text
     GUI_RECT_T r_rect2 = { MMI_MAINSCREEN_WIDTH - img_width- 2*w_gap, h_gap,   MMI_MAINSCREEN_WIDTH - w_gap,  img_height+h_gap};//bg
     ////GUI_RECT_T r_rect1 = { MMI_MAINSCREEN_WIDTH - img_width- 2*w_gap+2,  h_gap,  MMI_MAINSCREEN_WIDTH - 2*w_gap , img_height+h_gap};//text
     
@@ -1073,6 +1077,7 @@ LOCAL MMI_RESULT_E  HandleVideoContactListWin(MMI_WIN_ID_T win_id, MMI_MESSAGE_I
             GUILIST_CreateListBox(win_id, 0, ctrl_id, &list_init);
             GUILIST_SetRect(ctrl_id,&rect);
             GUILIST_SetListState(ctrl_id, GUILIST_STATE_SPLIT_LINE, FALSE );//不需要分割线
+            GUILIST_SetListState(ctrl_id, GUILIST_STATE_TEXTSCROLL_ENABLE | GUILIST_STATE_AUTO_SCROLL, TRUE );//长文本滚动
             ret = GUILIST_SetMaxItem(ctrl_id, YX_DB_WHITE_MAX_SUM, FALSE);
             MMK_SetAtvCtrl(win_id,ctrl_id);
         }
@@ -1388,22 +1393,6 @@ LOCAL void Video_Call_Accept_And_Hangup(GUI_POINT_T tp_up, MMI_WIN_ID_T win_id)
     {
         if(g_is_incomeing && g_is_inVideo)//视频通话中挂断
         {
-            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            video_call_info = (VIDEO_CALL_INFO *) MMK_GetWinUserData(win_id);
-            SCI_TraceLow("wuxx, Video_Call_Accept_And_Hangup, incall,hangup,video_call_info->video_id=%s", video_call_info->video_id);
-            //YX_Net_Send_UPWATCHHANGUP(video_call_info->video_id); // HANG UP msg IN close win 20231208
-
-            
-            //记录接通时的时间戳 
-            g_baidu_video_call_timestamp_end=  TM_GetTotalSeconds();//时间戳//秒
-            SCI_TraceLow("Video_Call_Accept_And_Hangup,wuxx, g_baidu_video_call_timestamp_end=%d", g_baidu_video_call_timestamp_end);
-
-            g_baidu_video_call_timestamp_total = g_baidu_video_call_timestamp_end-g_baidu_video_call_timestamp_start;
-            SCI_TraceLow("Video_Call_Accept_And_Hangup,wuxx, g_baidu_video_call_timestamp_total=%d", g_baidu_video_call_timestamp_total);
-            ////YX_Net_Send_UPVCALLTIME(g_video_call_info_tmp.video_id, g_baidu_video_call_timestamp_total); // UPVCALLTIME msg IN close win 20231208
-             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-            // DrawCtrl_In_Video_Call(TRUE);
             video_call_stop();
             ////SCI_Sleep(1000);//延迟一下，要不可能窗口关闭了,视频界面没刷新
             MMK_CloseWin(win_id);
@@ -1444,11 +1433,13 @@ LOCAL void Video_Call_Close(MMI_WIN_ID_T win_id)
     }
     Stop_Video_Call_Waiting_Timer();
     Stop_Call_Ten_Timer();
+    baidu_video_offline_to_hangup_delay_StopTimer();
+    g_baidu_video_call_timestamp_start = 0;
+    g_is_inVideo = FALSE;
     //ReleaseVideo_Call_Ui_Layer();
     video_call_backlight(FALSE);
     ////SCI_Sleep(1000);
     MMK_UpdateScreen();
-    g_is_inVideo = FALSE;
 }
 
 //////////////////////////////////// incomming ///////////////////////////////////////
@@ -1490,7 +1481,8 @@ LOCAL MMI_RESULT_E HandleVideoIncommingWin(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E
                 if(video_call_info->call_type == VIDEO_CALL_INCOMING)
                 {
                     Video_Call_Display_video_type(win_id, lcd_dev_info,MMI_VIDEO_CALL_STATE_INCOMING);
-                    MMIAPISET_PlayCallRingByVol(MMISET_VOL_NINE, R_CALL_1, AUD_PLAY_FOREVER, MMISET_RING_TYPE_CALL, PNULL);// wuxx add, APP发找手表,正在响铃时,再来视频通话,无铃声问题
+                    //APP发找手表,正在响铃时,再来视频通话,无铃声不影响
+                    //MMIAPISET_PlayCallRingByVol(MMISET_VOL_NINE, R_CALL_1, AUD_PLAY_FOREVER, MMISET_RING_TYPE_CALL, PNULL);// wuxx add, APP发找手表,正在响铃时,再来视频通话,无铃声问题
                 }
                 else
                 {
@@ -1509,7 +1501,11 @@ LOCAL MMI_RESULT_E HandleVideoIncommingWin(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E
         break;
     case MSG_TIMER:
         {
-            MMK_CloseWin(win_id);
+            if (*(uint8*)param == video_call_waiting_timer_id)
+            {
+                MMK_CloseWin(win_id);
+            }
+            ZDT_LOG("[%s] time id:%d", __FUNCTION__,video_call_waiting_timer_id);
         }
         break;
     case MSG_TP_PRESS_MOVE:
@@ -1552,13 +1548,8 @@ LOCAL MMI_RESULT_E HandleVideoIncommingWin(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E
             //////////////////////////////////////////////////////////////////
             if(g_is_incomeing && g_is_inVideo)//视频通话中RED 挂断
             {
-                //记录接通时的时间戳 
-                g_baidu_video_call_timestamp_end=  TM_GetTotalSeconds();//时间戳//秒
-                SCI_TraceLow("HandleVideoIncommingWin,wuxx,red-key, g_baidu_video_call_timestamp_end=%d", g_baidu_video_call_timestamp_end);
-            
-                g_baidu_video_call_timestamp_total = g_baidu_video_call_timestamp_end-g_baidu_video_call_timestamp_start;
-                SCI_TraceLow("HandleVideoIncommingWin,wuxx,red-key, g_baidu_video_call_timestamp_total=%d", g_baidu_video_call_timestamp_total);
-                YX_Net_Send_UPVCALLTIME(g_video_call_info_tmp.video_id, g_baidu_video_call_timestamp_total);
+                //上报通话时长
+                YX_Net_Send_UPVCALLTIME(g_video_call_info_tmp.video_id, TM_GetTotalSeconds()-g_baidu_video_call_timestamp_start);
             }
             //////////////////////////////////////////////////////////////////
             
@@ -1579,6 +1570,7 @@ LOCAL MMI_RESULT_E HandleVideoIncommingWin(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E
             {
                 Start_Charging_Delay_Timer(VIDEO_CALL_CHARGING_DELAY_TIME_OUT);
             }
+            Video_Call_Restore_Brightness();//视频通话接通后亮度变暗,视频通话结束灭屏亮屏才恢复原因未知，这里设置一下
         }
         break;
     case MSG_KEYDOWN_RED:
@@ -1615,7 +1607,9 @@ LOCAL MMI_RESULT_E HandleVideoIncommingWin(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E
         #endif
 	//if(g_is_incomeing && g_is_inVideo)//视频通话中挂断
         {
+    #ifndef ZTE_WATCH
             MMK_CloseWin(win_id);
+    #endif
         }
         break;
         
@@ -1684,12 +1678,25 @@ PUBLIC uint8 Video_Call_Incoming(VIDEO_CALL_INFO video_call_info)
     Video_Call_Close(WATCH_VIDEO_CALL_INCOMING_WIN_ID);
 #endif
 
+#ifdef BAIDU_AI_SUPPORT
+#ifndef WIN32
+    MMIDUERAPP_Exit();// 打断小度
+#endif
+#endif
+
+    WatchGallery_Exit();//退出相册 特别是GUIICONLIST_LOAD_ALL方式加载时占用内存很多
 
     if(!VideoChat_IsInCall())
     {
 	    ///WATCHCOM_CloseAudioOrVieo();
         if(video_call_info.call_type == VIDEO_CALL_OUT)//设备拨打app
         {
+            VIDEO_USER_INFO *video_user_info = (VIDEO_USER_INFO *) MMK_GetWinUserData(WATCH_VIDEO_CALL_OUT_WIN_ID);
+            if(video_user_info != NULL)
+            {
+                ZDT_LOG("[%s] family_relative:%s", __FUNCTION__, video_user_info->family_relative);
+                memcpy(&video_call_info.family_relative, video_user_info->family_relative, sizeof(video_user_info->family_relative));
+            }
             Video_Call_Out_Close();
         }
         else
@@ -1703,11 +1710,6 @@ PUBLIC uint8 Video_Call_Incoming(VIDEO_CALL_INFO video_call_info)
     //COPY VIDEO CALL INFO//wuxx add 20231122
     memset(&g_video_call_info_tmp, 0, sizeof(g_video_call_info_tmp));
     memcpy(&g_video_call_info_tmp, &video_call_info, sizeof(video_call_info));
-    SCI_TraceLow("Video_Call_Incoming,video_id, video_id=%s", g_video_call_info_tmp.video_id);
-
-
-    
-    
     ZDT_LOG("[%s] appid:%s uid:%s channel_name:%s video_id:%s", __FUNCTION__, video_call_info.appId, video_call_info.mUseIdStr,video_call_info.channel_name, video_call_info.video_id);
 }
 
@@ -1720,12 +1722,6 @@ PUBLIC void Video_Call_Remote_Hangup()
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     if (g_is_inVideo)
     {
-        //记录接通时的时间戳 
-        g_baidu_video_call_timestamp_end=  TM_GetTotalSeconds();//时间戳//秒
-        SCI_TraceLow("Video_Call_Remote_Hangup,wuxx,red-key, g_baidu_video_call_timestamp_end=%d", g_baidu_video_call_timestamp_end);
-        
-        g_baidu_video_call_timestamp_total = g_baidu_video_call_timestamp_end-g_baidu_video_call_timestamp_start;
-        SCI_TraceLow("Video_Call_Remote_Hangup,wuxx,red-key, g_baidu_video_call_timestamp_total=%d", g_baidu_video_call_timestamp_total);
         // RTC_MESSAGE_ROOM_EVENT_REMOTE_LEAVING  MSG 中发 YX_Net_Send_UPVCALLTIME , 避免重复 20231208
         ////////YX_Net_Send_UPVCALLTIME(g_video_call_info_tmp.video_id, g_baidu_video_call_timestamp_total);// APP 挂断,终端也发通话时长// wuxx del it 20231208
 

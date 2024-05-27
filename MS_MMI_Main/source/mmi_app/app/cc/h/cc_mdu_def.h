@@ -756,6 +756,19 @@ RES_ADD_IMG(IAMGE_VT_RECORDON,"\\MMI_RES_##\\IMAG\\cc\\watch\\res_vt_ic_record_o
 RES_ADD_IMG(IAMGE_VT_SWITCHTOVOICE,"\\MMI_RES_##\\IMAG\\cc\\watch\\res_vt_ic_switch_to_voice.png",IMG_CMP_PNG_ARGB_RLE,0)
 #endif
 //in call portrait
+#ifdef ZTE_WATCH
+RES_ADD_IMG(IAMGE_CALL_PORTRAIT_BROTHER,"\\MMI_RES_##\\IMAG\\cc\\watch\\zte\\res_replace.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(IAMGE_CALL_PORTRAIT_EMERGENCY,"\\MMI_RES_##\\IMAG\\cc\\watch\\zte\\res_replace.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(IAMGE_CALL_PORTRAIT_FATHER,"\\MMI_RES_##\\IMAG\\cc\\watch\\zte\\res_replace.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(IAMGE_CALL_PORTRAIT_GRANDFATHER,"\\MMI_RES_##\\IMAG\\cc\\watch\\zte\\res_replace.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(IAMGE_CALL_PORTRAIT_GRANDMA,"\\MMI_RES_##\\IMAG\\cc\\watch\\zte\\res_replace.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(IAMGE_CALL_PORTRAIT_GRANDMOTHER,"\\MMI_RES_##\\IMAG\\cc\\watch\\zte\\res_replace.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(IAMGE_CALL_PORTRAIT_GRANDPA,"\\MMI_RES_##\\IMAG\\cc\\watch\\zte\\res_replace.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(IAMGE_CALL_PORTRAIT_MOTHER,"\\MMI_RES_##\\IMAG\\cc\\watch\\zte\\res_replace.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(IAMGE_CALL_PORTRAIT_SISTER,"\\MMI_RES_##\\IMAG\\cc\\watch\\zte\\res_replace.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(IAMGE_CALL_PORTRAIT_STRANGER,"\\MMI_RES_##\\IMAG\\cc\\watch\\zte\\res_replace.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(IAMGE_CALL_PORTRAIT_TEACHER,"\\MMI_RES_##\\IMAG\\cc\\watch\\zte\\res_replace.png",IMG_CMP_PNG_ARGB_RLE,0)
+#else
 RES_ADD_IMG(IAMGE_CALL_PORTRAIT_BROTHER,"\\MMI_RES_##\\IMAG\\cc\\watch\\portrait\\res_call_portrait_brother.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(IAMGE_CALL_PORTRAIT_EMERGENCY,"\\MMI_RES_##\\IMAG\\cc\\watch\\portrait\\res_call_portrait_emergency_72.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(IAMGE_CALL_PORTRAIT_FATHER,"\\MMI_RES_##\\IMAG\\cc\\watch\\portrait\\res_call_portrait_father.png",IMG_CMP_PNG_ARGB_RLE,0)
@@ -767,6 +780,7 @@ RES_ADD_IMG(IAMGE_CALL_PORTRAIT_MOTHER,"\\MMI_RES_##\\IMAG\\cc\\watch\\portrait\
 RES_ADD_IMG(IAMGE_CALL_PORTRAIT_SISTER,"\\MMI_RES_##\\IMAG\\cc\\watch\\portrait\\res_call_portrait_sister.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(IAMGE_CALL_PORTRAIT_STRANGER,"\\MMI_RES_##\\IMAG\\cc\\watch\\portrait\\res_call_portrait_stranger.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(IAMGE_CALL_PORTRAIT_TEACHER,"\\MMI_RES_##\\IMAG\\cc\\watch\\portrait\\res_call_portrait_brother.png",IMG_CMP_PNG_ARGB_RLE,0)
+#endif
 #ifdef SCREEN_SHAPE_CIRCULAR
 RES_ADD_IMG(IAMGE_CALL_PORTRAIT_CLASSMATE,"\\MMI_RES_##\\IMAG\\cc\\watch\\portrait\\res_call_portrait_classmate.png",IMG_CMP_PNG_ARGB_RLE,0)
 #endif

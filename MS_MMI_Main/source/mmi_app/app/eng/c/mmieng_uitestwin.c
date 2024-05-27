@@ -8205,7 +8205,7 @@ LOCAL void UITestGPSStart( void )
     //MMIGPS_RegisterCallBack(UITestGPSCallback);
     //gps_res = MMIGPS_Open();
 #ifdef UAL_GNSS_SUPPORT
-    ual_gnss_set_gnss_mode(UAL_GNSS_MODE_GPS_BDS_GALILEO);
+    ual_gnss_set_gnss_mode(UAL_GNSS_MODE_GPS_BDS);
     ual_gnss_register(gnss_callback,&g_gnss_handle);
     start_param.start_mode = 0;
     ual_gnss_start(&start_param);

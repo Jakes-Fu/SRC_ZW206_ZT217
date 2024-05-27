@@ -30,7 +30,7 @@
 #define CMIOT_FOTA_SERVICE_MODEL "ZW35"
 #define CMIOT_FOTA_SERVICE_LANG "CN"
 #define CMIOT_FOTA_SERVER_HOST "iosfotacn.ztems.com:443" // max length 32
-#define CMIOT_FIRMWARE_VERSION "ZTE_ZW35V1.0.0B17.0" // max length 128
+#define CMIOT_FIRMWARE_VERSION "ZTE_ZW35V1.0.0B34.0" // max length 128
 
 #define CMIOT_FOTA_FILENAME1 "mmi_res_240x240_child_circular.bin"
 #define CMIOT_FOTA_ADDRESS1 0x90000004

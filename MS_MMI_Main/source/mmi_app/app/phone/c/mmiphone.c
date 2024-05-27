@@ -1842,10 +1842,10 @@ LOCAL BOOLEAN PHONE_HandleDeviceMsg(ual_cms_msg_t msg)
         {
             if(FALSE == s_is_power_off)
             {
-                //s_is_power_off = TRUE;
-               // PHONE_Thermal_Win_Enter();
+                s_is_power_off = TRUE;
+                PHONE_Thermal_Win_Enter();
                 SCI_TRACE_LOW( "Thermal:receive MSG_UAL_DEVICE_THERMAL_POWER_OFF in phone");
-               // s_thermal_power_off_timer = MMK_CreateTimerCallback(MMI_3SECONDS, PHONE_ThermalPowerOff, NULL, FALSE);
+                s_thermal_power_off_timer = MMK_CreateTimerCallback(MMI_3SECONDS, PHONE_ThermalPowerOff, NULL, FALSE);
             }
             break;
         }
@@ -6025,14 +6025,15 @@ LOCAL MMI_RESULT_E HandleScellRssiInd(
     BOOLEAN is_direct_draw = FALSE;
     uint8 rxlevnindex = 0;
     MMI_GMMREG_RAT_E	network_status_rat = MMI_GMMREG_RAT_GPRS;
+	//下面修改注意要同步修改zdt_dropdown_win.c GetSignalLevel 方法
     const int16 g_service_rxlev_map[][PHONE_RX_SIG_DEFAULT_LEVEL] =
     {
         //{21, 13, 7, 3, 0},	 //GSM
         {59, 51, 42, 38, 33 },	//LTE -156 db  -97 -105 -114 -118 -123
-        {21, 15, 7, 3, 1 },   //W
+        {59, 51, 42, 38, 33 },	//LTE -156 db  -97 -105 -114 -118 -123
         //{42, 32, 22, 12, 0 },	//LTE
-        {44, 36, 27, 23, 18 },	//LTE -141 db  -97 -105 -114 -118 -123
-        {20, 16, 12, 8, 1 }    //default
+        {59, 51, 42, 38, 33 },	//LTE -156 db  -97 -105 -114 -118 -123
+        {59, 51, 42, 38, 33 },	//LTE -156 db  -97 -105 -114 -118 -123
     };
 
     dual_sys = srri_ind.dual_sys;
@@ -6053,7 +6054,6 @@ LOCAL MMI_RESULT_E HandleScellRssiInd(
     }
 #ifdef ZDT_NET_SUPPORT
     MMIZDT_Net_RssiInd(dual_sys,srri_ind.rxlev);
-    ZDT_UpdateSingal();
 #endif
 #ifdef WLDT_NET_SUPPORT
     MMIWLDT_Net_RssiInd(dual_sys,srri_ind.rxlev);

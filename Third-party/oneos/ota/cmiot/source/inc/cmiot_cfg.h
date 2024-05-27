@@ -61,7 +61,7 @@ extern "C" {
 #ifndef CMIOT_DEFAULT_TRY_TIME
 #define CMIOT_DEFAULT_TRY_TIME 200
 #endif
-#define CMIOT_DEFAULT_TRY_COUNT 6
+#define CMIOT_DEFAULT_TRY_COUNT 200
 #define CMIOT_DEFAULT_UTC_TIME  133
 
 /* get data size by index */

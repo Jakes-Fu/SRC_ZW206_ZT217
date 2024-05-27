@@ -688,11 +688,17 @@ static void ZDT_TCP_SocWrite(ZDT_TCP_INTERFACE_T *pMe)
 {
     if (TRUE == ZDT_TCP_SocWriteEx(pMe))
     {
-        TCP_LOG("TCP Write Over");
         if(pMe->m_tcp_cur_data != NULL && pMe->m_tcp_cur_data->rcv_handle != NULL)
         {
             pMe->m_tcp_need_rcv = TRUE;
-            ZDT_TCP_StartReadTimer(pMe,15000);
+            if(pMe->m_tcp_cur_data->timeout > 15000)
+            {
+                ZDT_TCP_StartReadTimer(pMe,pMe->m_tcp_cur_data->timeout);
+            }
+            else
+            {
+                ZDT_TCP_StartReadTimer(pMe,15000);
+            }
         }
         else
         {

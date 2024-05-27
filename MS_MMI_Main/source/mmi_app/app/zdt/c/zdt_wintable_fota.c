@@ -1115,14 +1115,19 @@ LOCAL MMI_RESULT_E CheckUpdateWinHandleMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E
             MMK_CloseWin(win_id);
              break;
          }
+	case MSG_KEYDOWN_RED:
+        break;
 
+    case MSG_KEYUP_RED:
+		break;
 
     case MSG_CLOSE_WINDOW:
 		//close winid;
 		FOTA_Switch_BackLight(FALSE);
-             FOTA_Check_TimeStop();
+        FOTA_Check_TimeStop();
+		FOTA_Download_TimeStop();
 #ifdef FOTA_SUPPORT_CMIOT
-            ZDT_Fota_Close();
+        ZDT_Fota_Close();
 #endif
         break;
         
@@ -1189,6 +1194,10 @@ PUBLIC void MMIAPISET_FotaCheck(void)
 
 PUBLIC void MMIAPISET_FotaFirstCheck(void)
 {
+    if(MMK_IsOpenWin(MMISET_PHONE_SETTING_FOTA_WIN_ID))
+    {
+        return;
+    }
     g_setting_upgrade_dl_percent = 0;
     SCI_MEMSET(g_setting_upgrade_new_ver,0,sizeof(g_setting_upgrade_new_ver));
 #ifdef FOTA_SUPPORT_CMIOT
@@ -1283,24 +1292,33 @@ BOOLEAN  ZDTFota_HandleUpgradeFirst(void)
     char ver[128] = {0};
     if(0 == cmiot_enable_net())
     {
-        ret = cmiot_report_upgrade();
-        if( ret != E_CMIOT_SUCCESS )
+        if(FirstFotaVer_err_times == 0)
         {
-            SCI_TRACE_LOW("cmiot:cmiot_report_upgrade result: %d\n", ret);
+            ret = cmiot_report_upgrade();
+            if( ret != E_CMIOT_SUCCESS )
+            {
+                SCI_TRACE_LOW("cmiot:cmiot_report_upgrade result: %d\n", ret);
+            }
+            FirstFotaVer_err_times++;
+            FOTA_StartFirstFotaVerTimer();
+            return TRUE;
         }
-        ret = cmiot_check_version(ver);
+        else
+        {
+            ret = cmiot_check_version(ver);
+        }
     }
     
     if(ret == E_CMIOT_SUCCESS)
     {
         //有新的版本
-        FirstFotaVer_err_times = 0;
+        FirstFotaVer_err_times = 1;
         FOTA_upgrade_HaveNewVer(ver);
     }
     else if(ret == E_CMIOT_LAST_VERSION)
     {
         //已经是最新版本
-        FirstFotaVer_err_times = 0;
+        FirstFotaVer_err_times = 1;
     }
     else
     {
@@ -1361,7 +1379,21 @@ BOOLEAN  ZDTFota_HandleGetVer(void)
     char ver[128] = {0};
     if(0 == cmiot_enable_net())
     {
-        ret = cmiot_check_version(ver);
+        if(FirstFotaVer_err_times == 0)
+        {
+            ret = cmiot_report_upgrade();
+            if( ret != E_CMIOT_SUCCESS )
+            {
+                SCI_TRACE_LOW("cmiot:cmiot_report_upgrade result: %d\n", ret);
+            }
+            FirstFotaVer_err_times++;
+            FOTA_StartGetFotaVerTimer();
+            return TRUE;
+        }
+        else
+        {
+            ret = cmiot_check_version(ver);
+        }
     }
     if(ret == E_CMIOT_SUCCESS)
     {
@@ -1378,12 +1410,14 @@ BOOLEAN  ZDTFota_HandleGetVer(void)
     else
     {
         //出错
+        #if 0
         if(GetFotaVer_err_times < 3)
         {
             GetFotaVer_err_times++;
             FOTA_StartGetFotaVerTimer();
         }
         else
+        #endif
         {
            FOTA_upgrade_ShowFotaExit();
         }
@@ -1569,7 +1603,6 @@ int ZDT_Fota_GetVer(void)
 
 int ZDT_Fota_Open(void)
 {    
-    FirstFotaVer_err_times = 0;
     GetFotaVer_err_times = 0;
     ZDTFota_TaskCreate();
     return 0;

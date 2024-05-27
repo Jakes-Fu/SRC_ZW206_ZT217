@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include "os_api.h"
 #include "lightduer_log.h"
+#include "lightduer_thread.h"
 #include "lightduer_timers.h"
 #include "lightduer_audio_player.h"
 
@@ -21,6 +22,9 @@ static volatile bool s_is_started = false;
 
 static const char *prompt_1 = "\xe6\x82\xa8\xe5\xb7\xb2\xe8\xaf\x95\xe5\x90\xac\xe4\xba\x86"; //您已试听了
 static const char *prompt_3 = "\xe9\xa6\x96\xe4\xbc\x9a\xe5\x91\x98\xe6\xad\x8c\xe6\x9b\xb2\xef\xbc\x8c\xe5\xbc\x80\xe9\x80\x9a\xe4\xbc\x9a\xe5\x91\x98\xe5\x8f\xaf\xe7\x95\x85\xe5\x90\xac\xe5\x85\xa8\xe9\x83\xa8\xe6\xad\x8c\xe6\x9b\xb2\xe5\x93\xa6\xef\xbc\x81"; //首会员歌曲，开通会员可畅听全部歌曲哦！
+
+static BLOCK_ID playing_callback_thread = 0;
+static volatile signed char playing_callback_thread_flag = 0;
 
 static unsigned int timer_get_remain_time(SCI_TIMER_PTR timer)
 {
@@ -41,15 +45,39 @@ static unsigned int timer_get_remain_time(SCI_TIMER_PTR timer)
     return remaining_time;
 }
 
-static void exec_by_CA(int what, void *object)
+// static void exec_by_CA(int what, void *object)
+// {
+//     duer_audio_play_next();
+// }
+
+// static void duer_timer_callback_entry(unsigned int argc, duer_thread_entry_args_t *params)
+// {
+//     // duer_emitter_emit(exec_by_CA, 0, NULL);
+//     duer_audio_play_next();
+//     duer_thread_exit(params, 1);
+// }
+LOCAL void duer_timer_callback_entry(
+    uint32 argc,
+    void * argv
+)
 {
-    duer_audio_play_next();
+    while (1) {
+        if (0 != playing_callback_thread_flag) {
+            playing_callback_thread_flag = 0;
+            duer_audio_play_next();
+        }
+        // SCI_Sleep(10);
+        SCI_SuspendThread(playing_callback_thread);
+    }
 }
 
 static void duer_try_playing_tm_cb(void *param)
 {
     DUER_LOGI("time up for try playing.");
-    duer_emitter_emit(exec_by_CA, 0, NULL);
+    if (0 == playing_callback_thread_flag) {
+        playing_callback_thread_flag = 1;
+        SCI_ResumeThread(playing_callback_thread);
+    }
 }
 
 int duer_get_try_playing_max_cnt()
@@ -69,6 +97,31 @@ int duer_try_playing_timer_start()
 
     if (!s_is_try_playing) {
         return 0;
+    }
+
+    if (!playing_callback_thread) {
+        // playing_callback_thread = duer_thread_create("duer_try_play_tm", "duer_try_play_tm_queue", 8192, 1, 76);
+        // if (NULL == playing_callback_thread) {
+        //     DUER_LOGE("duer timer playing_callback_thread create failed");
+        //     return (-1);
+        // }
+        // if (duer_thread_start(playing_callback_thread, duer_timer_callback_entry, NULL) != 0) {
+        //     DUER_LOGE("duer timer start create failed");
+        //     duer_thread_destroy(playing_callback_thread);
+        //     playing_callback_thread = NULL;
+        //     return (-2);
+        // }
+        playing_callback_thread = SCI_CreateAppThread(
+                                    "duer_try_play_tm",
+                                    "duer_try_play_tm_queue",
+                                    duer_timer_callback_entry,
+                                    0,
+                                    0,
+                                    8192,
+                                    8,
+                                    76,
+                                    SCI_PREEMPT,
+                                    SCI_AUTO_START);
     }
 
     if (s_try_playing_cnt % (s_try_playing_max_cnt + 1) == 0 && !s_prompt_flag) {
@@ -137,4 +190,12 @@ int duer_try_playing_timer_delete()
 {
     DUER_LOGI("delete timer.");
     s_is_try_playing = false;
+}
+
+void duer_try_playing_timer_thread_delete(void)
+{
+    if (playing_callback_thread) {
+        SCI_TerminateThread(playing_callback_thread);
+        playing_callback_thread = 0;
+    }
 }

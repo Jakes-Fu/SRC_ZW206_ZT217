@@ -396,9 +396,10 @@ static void duer_render_card_passed_callback(void *ctx, RES_CATEGORY_E category,
 }
 
 static void duer_render_card_filtered_callback(void *ctx, RES_CATEGORY_E category) {
-    const char *text = L"小度还不太理解呢";
+    const char *text = "\xe5\xb0\x8f\xe5\xba\xa6\xe8\xbf\x98\xe4\xb8\x8d\xe5\xa4\xaa\xe7\x90\x86\xe8\xa7\xa3\xe5\x91\xa2"; // 小度还不太理解呢
     DUER_LOGI("FILTERED");
     duer_dcs_user_interact(text);
+    duerapp_show_toast(L"小度还不太理解呢");
 }
 
 duer_status_t duer_dcs_render_card_handler(baidu_json *payload)
@@ -415,9 +416,12 @@ static void duer_render_player_info_passed_callback(void *ctx, RES_CATEGORY_E ca
 }
 
 static void duer_render_player_info_filtered_callback(void *ctx, RES_CATEGORY_E category) {
-    const char *text = L"暂无该播放资源";
+    const char *text = "\xe6\x9a\x82\xe6\x97\xa0\xe8\xaf\xa5\xe6\x92\xad\xe6\x94\xbe\xe8\xb5\x84\xe6\xba\x90"; // 暂无该播放资源
+    // const char *text = "1234"; // 暂无该播放资源
     DUER_LOGI("FILTERED");
     duer_dcs_user_interact(text);
+    
+    duerapp_show_toast(L"暂无该播放资源");
 }
 
 duer_status_t duer_dcs_render_player_info_hdl(baidu_json *payload)

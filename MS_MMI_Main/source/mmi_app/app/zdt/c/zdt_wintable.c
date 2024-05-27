@@ -5047,6 +5047,7 @@ PUBLIC void MMIZDT_CheckOpenClassModeWin()
         {
             MMK_CloseWin(MMIZDT_CLASSMODE_WIN_ID);
         }
+        MMIZDT_CheckLowBatteryMode();
 
     }
 }
@@ -5080,6 +5081,7 @@ PUBLIC void MMK_CloseClassModeWin()
     {
         MMK_CloseWin(MMIZDT_CLASSMODE_WIN_ID);
     }
+    MMIZDT_CheckLowBatteryMode();
 }
 
 LOCAL void DrawClassModeTime(MMI_WIN_ID_T win_id)
@@ -5291,6 +5293,7 @@ WINDOW_TABLE( MMIZDT_INSERTSIM_WIN_TAB ) =
     WIN_FUNC((uint32) HandleZDT_InsertSimWinMsg),    
     WIN_ID( MMIZDT_INSERTSIM_WIN_ID ),
     WIN_HIDE_STATUS,
+    WIN_STYLE(WS_DISABLE_FLING_CLOSE_WIN|WS_DISABLE_RETURN_WIN),
     END_WIN
 };
 
@@ -5462,13 +5465,29 @@ LOCAL MMI_RESULT_E  HandleZDT_InsertSimWinMsg(
             WatchOpen_IdleWin();
             break;
         case MSG_KEYDOWN_RED:
-            break;      
-
-	    case MSG_KEYUP_RED:			//bug   待机界面按红键会去主菜单
+            break;    
+			  
+        case MSG_TP_PRESS_FLING:
+        {
+        	MMI_TP_MSG_PARAM_T    *para = PNULL;
+        	para = param; // MMK_GetWinAddDataPtr(win_id);
+        	if(para != PNULL)
+        	{
+        		if(para->tp_fling_direction ==  TP_FLING_RIGHT)
+        		{
+        			MMK_CloseWin(win_id);
+        		}
+        	}
+        }
+		break;
+        case MSG_KEYUP_RED:			//bug   待机界面按红键会去主菜单
+                MMK_CloseWin(win_id);
+      	    break;
+			
         case MSG_CTL_CANCEL:
         case MSG_APP_CANCEL:
             MMK_CloseWin(win_id);
-            WatchOpen_IdleWin();
+            //WatchOpen_IdleWin();
             break;
 
         default:
@@ -5658,6 +5677,7 @@ PUBLIC void MMIZDT_CheckTempAlert(void)
             else
             {
                 MMK_ReturnIdleWin();
+                Video_Call_Check();//视频通话不允许return idle 所以这里判断挂断一下
                 MMIPUB_OpenAlertTimerWin(TXT_TEMP_AERT_LONG);
             }
         }

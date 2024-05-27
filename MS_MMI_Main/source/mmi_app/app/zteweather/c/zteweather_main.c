@@ -154,24 +154,24 @@ BOOLEAN Is_ZTE_WeatherGetFromServer()
 
 LOCAL void ZteWeather_RequsetTimerCallback(uint8 timer_id, uint32 param)
 {
-	if(zteWeather_timer_id = timer_id)
+    if(zteWeather_timer_id != 0)
 	{
 		MMK_StopTimer(zteWeather_timer_id);
-		zteWeather_timer_id = 0;
-        //请求超时，上一次请求成功，且不超过6个小时
-        if(zte_normal_info.status == 1 && (TM_GetTotalSeconds() - zte_normal_info.last_time) > 6*60*60)
-        {
+        zteWeather_timer_id = 0;
+	}
+    //请求超时，上一次请求成功，且不超过6个小时
+    if(zte_normal_info.status == 1 && (TM_GetTotalSeconds() - zte_normal_info.last_time) < 6*60*60)
+    {
 
-        }
-        else
-        {
-		    zte_normal_info.status = param;
-        }
-		SCI_TRACE_LOW("%s: zte_normal_info.status = %d", __FUNCTION__, zte_normal_info.status);
-		if(MMK_IsOpenWin(ZTEWEATHER_MAIN_WIN_ID))
-		{
-			MMK_SendMsg(ZTEWEATHER_MAIN_WIN_ID, MSG_FULL_PAINT, PNULL);
-		}
+    }
+    else
+    {
+		zte_normal_info.status = param;
+    }
+	SCI_TRACE_LOW("%s: zte_normal_info.status = %d", __FUNCTION__, zte_normal_info.status);
+	if(MMK_IsOpenWin(ZTEWEATHER_MAIN_WIN_ID))
+	{
+		MMK_SendMsg(ZTEWEATHER_MAIN_WIN_ID, MSG_FULL_PAINT, PNULL);
 	}
 }
 
@@ -180,7 +180,7 @@ LOCAL void ZteWeather_RequsetInfoTimer()
 	if(zteWeather_timer_id != 0){
 		MMK_StopTimer(zteWeather_timer_id);
 	}
-	zteWeather_timer_id = MMK_CreateTimerCallback(15*1000, ZteWeather_RequsetTimerCallback, 2, FALSE);
+	zteWeather_timer_id = MMK_CreateTimerCallback(35*1000, ZteWeather_RequsetTimerCallback, 2, FALSE);
 }
 
 LOCAL void ZteWeather_GetNewWeatherInfo()
@@ -190,10 +190,6 @@ LOCAL void ZteWeather_GetNewWeatherInfo()
 	if(!MMIAPIPHONE_GetSimExistedStatus(dual_sys))
 	{
 		zte_normal_info.status = 0;
-		//if(MMK_IsOpenWin(ZTEWEATHER_MAIN_WIN_ID))
-		//{
-		//	MMK_SendMsg(ZTEWEATHER_MAIN_WIN_ID, MSG_FULL_PAINT, PNULL);
-		//}
 		return;
 	}
 	SCI_TRACE_LOW("%s: cur_times = %d, last_time = %d", __FUNCTION__, cur_times, zte_normal_info.last_time);
@@ -205,6 +201,10 @@ LOCAL void ZteWeather_GetNewWeatherInfo()
 	#else
 		YX_API_WT_Send();
 	#endif
+        if(zte_normal_info.status == 2) //上一次是超时状态
+        {
+            zte_normal_info.status = -1;//界面显示正在请求
+        }
 		ZteWeather_RequsetInfoTimer();
 	}
 }
@@ -482,14 +482,14 @@ LOCAL void ZteWeatherMain_FullPaint(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_de
 	GUIRES_DisplayImg(PNULL, &bg_rect, PNULL, win_id, zteweather_today_bg, &lcd_dev_info);
     memset(&txt_char, 0, 20);
 	memset(&txt_wchar, 0, 20);
-    if(zte_wt_info[0].num < img_size)
+    if(zte_wt_info[0].num > img_size || zte_wt_info[0].num < 1)//防止非法数据造成死机
     {
-        GUIRES_DisplayImg(PNULL, &status_rect, PNULL, win_id, status_img[zte_wt_info[0].num-1], &lcd_dev_info);
-        sprintf(txt_char, "%d℃", zte_wt_info[0].cur_degree);
+        sprintf(txt_char, "ERROR", zte_wt_info[0].cur_degree);
     }
     else
     {
-        sprintf(txt_char, "ERROR", zte_wt_info[0].cur_degree);
+        GUIRES_DisplayImg(PNULL, &status_rect, PNULL, win_id, status_img[zte_wt_info[0].num-1], &lcd_dev_info);
+        sprintf(txt_char, "%d℃", zte_wt_info[0].cur_degree);
     }
 
 	GUI_GBToWstr(txt_wchar, txt_char, strlen(txt_char));

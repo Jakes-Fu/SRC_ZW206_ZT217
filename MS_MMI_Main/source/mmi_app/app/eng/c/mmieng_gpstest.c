@@ -1067,7 +1067,7 @@ LOCAL  MMI_RESULT_E MMIENG_GPSSatCN_WinHandleMsg(MMI_WIN_ID_T win_id, MMI_MESSAG
                 TRACE_APP_ENGINEERMODE("[GPS]: MSG_CTL_MIDSK gps not work state\n");
                 g_is_circle_test = FALSE;
                 TRACE_APP_ENGINEERMODE("[GPS]: set circle test false\n");
-                ual_gnss_set_gnss_mode(UAL_GNSS_MODE_GPS_BDS_GALILEO);
+                ual_gnss_set_gnss_mode(UAL_GNSS_MODE_GPS_BDS);
                 gnss_start_param.start_mode = g_start_mode_for_tracking_test;
                 ual_gnss_start(&gnss_start_param);
                 //Gps_StartRequestSatInfoTimer(g_sys_sim_index);
@@ -1777,7 +1777,7 @@ LOCAL void _EngGpsHandleStartNextStartGpsTimeout(uint8 timer_id,uint32 param)
         //g_is_gps_start = TRUE;
         //MMIGPS_Start(&start_param,_EngHandleGpsMessageCallback);
 #ifdef UAL_GNSS_SUPPORT
-        ual_gnss_set_gnss_mode(UAL_GNSS_MODE_GPS_BDS_GALILEO);
+        ual_gnss_set_gnss_mode(UAL_GNSS_MODE_GPS_BDS);
         gnss_start_param.start_mode = cur_start_mode;
         ual_gnss_start(&gnss_start_param);
 #endif
@@ -2182,7 +2182,7 @@ LOCAL void HandleCircleTestStartGps(void)
     g_start_gps_data[g_cur_start_mode].current_times = 1;
     g_have_gps_stop_cnf = FALSE;
 #ifdef UAL_GNSS_SUPPORT
-    ual_gnss_set_gnss_mode(UAL_GNSS_MODE_GPS_BDS_GALILEO);
+    ual_gnss_set_gnss_mode(UAL_GNSS_MODE_GPS_BDS);
     gnss_start_param.start_mode = g_cur_start_mode;
     ual_gnss_start(&gnss_start_param);
 #endif

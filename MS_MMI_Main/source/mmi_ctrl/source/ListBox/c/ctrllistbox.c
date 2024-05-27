@@ -2955,7 +2955,6 @@ LOCAL void ListDrawItem(
     //画item  背景
     if(isNeedDrawListItemBG(item_ptr->item.style_id))
     {
-    	GUI_BG_T    temp_bg;
         GUI_BG_T    item_bg     = WATCHTHEME_GetListItemBg();
         GUI_RECT_T  icon_rect   = {0};
         if(item_ptr->item.style_id == GUIITEM_STYLE_1ICON_1STR_1LINE_BIG_LAYOUT1||
@@ -2971,12 +2970,6 @@ LOCAL void ListDrawItem(
             {
                 item_bg = WATCHTHEME_GetListHightLightItemBg();				
             }
-			//这行代码去掉后，FOTA更新时有1M的改动，不能删除
-			if(CtrlList_GetDrawListBgStyle(item_ptr->item.style_id) == CTRLLIST_STYLE_ALARMCLOCK)
-			{
-				extern PUBLIC GUI_BG_T MMIALARMCLOCK_GETLISTBG(void);
-				temp_bg = MMIALARMCLOCK_GETLISTBG();
-			}
         }
 
         if (GUI_IntersectRect(&icon_rect, item_rect, list_rect))
@@ -13867,6 +13860,7 @@ LOCAL BOOLEAN isNeedDrawListItemBG(uint32 style_id)
         style_id == GUIITEM_STYLE_2STR_2LINE_LAYOUT1 ||
         style_id == GUIITEM_STYLE_2STR_1ICON_2LINE_LAYOUT1 ||
         style_id == GUIITEM_STYLE_1STR_1LINE_CHECK_LAYOUT1 ||
+        style_id == GUIITEM_STYLE_1ICON_2STR_1LINE_LAYOUT ||
         
 #endif
         style_id == GUIITEM_STYLE_TWO_LINE_ANIM_TEXT_AND_TEXT_ANIM)
