@@ -22,6 +22,13 @@
 #define ZMT_DIAL_FILE_BASE_PATH "D:\\zmt_dial\\%s\\%s_watch.json"
 #endif
 
+#define ZMT_HTTP_API_BASE_PATH "http://106.13.7.202:8080"
+#define ZMT_HTTP_DIAL_URL_PATH "/front/watch/dial/list"
+
+#define ZMT_DIAL_WATCH_BASE_PATH "D:\\zmt_dial\\%s\\%s.dial"
+#define ZMT_DIAL_PREVIEW_FILE_BASE_PATH "D:\\zmt_dial\\%s\\%s.png"
+
+#define WATCH_MAX_DIAL_LIST_COUNT 20
 #define WATCH_MAX_ARRAY_COUNT 10
 #define WATCH_MAX_PATH_LEN 80
 #define WATCH_MAX_DIAL_NAME_LEN 20
@@ -226,6 +233,16 @@ typedef struct
     uint8*          data_ptr;
     uint32          data_size;
 }IMG_PROCESS_DATA_T;
+
+typedef struct
+{
+    char name[WATCH_MAX_DIAL_NAME_LEN];
+    char name_chn[WATCH_MAX_DIAL_NAME_LEN];
+    int type;
+    char preview[WATCH_IMAGE_FULL_PATH_MAX_LEN];
+    char bg[WATCH_IMAGE_FULL_PATH_MAX_LEN];
+    char file[WATCH_IMAGE_FULL_PATH_MAX_LEN];
+}ZMT_DIAL_STORE_INFO_T;
 
 typedef struct
 {
