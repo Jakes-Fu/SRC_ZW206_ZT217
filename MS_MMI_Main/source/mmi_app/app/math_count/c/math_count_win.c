@@ -62,43 +62,45 @@
 #define MATCH_COUNT_KEYBOARD_HIGHT MMI_MAINSCREEN_HEIGHT/12
 
 LOCAL GUI_RECT_T math_win_rect = {0, 0, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT};
-LOCAL GUI_RECT_T math_title_rect = {0, 0, MMI_MAINSCREEN_WIDTH, MATCH_COUNT_LINE_HIGHT};
+LOCAL GUI_RECT_T math_title_rect = {0, 2, MMI_MAINSCREEN_WIDTH, MATCH_COUNT_LINE_HIGHT+5};
 
 LOCAL GUI_RECT_T set_time_txt_rect = {MATCH_COUNT_TEXT_START, MATCH_COUNT_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-10, 2*MATCH_COUNT_LINE_HIGHT};
+LOCAL GUI_RECT_T set_time_que_rect  = {MATCH_COUNT_BLANK_START+8, 2*MATCH_COUNT_LINE_HIGHT+2, MATCH_COUNT_BLANK_START+15, 3*MATCH_COUNT_LINE_HIGHT};
 LOCAL GUI_RECT_T set_time_black_rect  = {MATCH_COUNT_BLANK_START,2*MATCH_COUNT_LINE_HIGHT,MATCH_COUNT_BLANK_START,3*MATCH_COUNT_LINE_HIGHT};
-LOCAL GUI_RECT_T set_time_ctl_rect  = {MATCH_COUNT_BLANK_START,2*MATCH_COUNT_LINE_HIGHT,MMI_MAINSCREEN_WIDTH-MATCH_COUNT_BLANK_START,3*MATCH_COUNT_LINE_HIGHT};
-LOCAL GUI_RECT_T set_time_reduce_btn_rect  = {MATCH_COUNT_TEXT_START,2*MATCH_COUNT_LINE_HIGHT,MATCH_COUNT_BLANK_START,3*(MMI_MAINSCREEN_HEIGHT/12)};
+LOCAL GUI_RECT_T set_time_ctl_rect  = {MATCH_COUNT_BLANK_START+5,2*MATCH_COUNT_LINE_HIGHT,MMI_MAINSCREEN_WIDTH-MATCH_COUNT_BLANK_START-5,3*MATCH_COUNT_LINE_HIGHT};
+LOCAL GUI_RECT_T set_time_reduce_btn_rect  = {MATCH_COUNT_TEXT_START-8,2*MATCH_COUNT_LINE_HIGHT,MATCH_COUNT_BLANK_START,3*(MMI_MAINSCREEN_HEIGHT/12)};
 LOCAL GUI_RECT_T set_time_add_btn_rect  = {MMI_MAINSCREEN_WIDTH-MATCH_COUNT_BLANK_START,2*MATCH_COUNT_LINE_HIGHT,MMI_MAINSCREEN_WIDTH,3*MATCH_COUNT_LINE_HIGHT};
 
 LOCAL GUI_RECT_T set_range_txt_rect = {MATCH_COUNT_TEXT_START, 3*MATCH_COUNT_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-10, 4*MATCH_COUNT_LINE_HIGHT};
+LOCAL GUI_RECT_T set_question_range_que_rect = {MATCH_COUNT_BLANK_START+8, 4*MATCH_COUNT_LINE_HIGHT+2, MATCH_COUNT_BLANK_START+15, 5*MATCH_COUNT_LINE_HIGHT};
 LOCAL GUI_RECT_T set_question_range_black_rect  = {MATCH_COUNT_BLANK_START,4*MATCH_COUNT_LINE_HIGHT,MMI_MAINSCREEN_WIDTH-MATCH_COUNT_BLANK_START,5*MATCH_COUNT_LINE_HIGHT};
-LOCAL GUI_RECT_T set_question_range_ctl_rect  = {MATCH_COUNT_BLANK_START,4*MATCH_COUNT_LINE_HIGHT,MMI_MAINSCREEN_WIDTH-MATCH_COUNT_BLANK_START,5*MATCH_COUNT_LINE_HIGHT};
-LOCAL GUI_RECT_T set_question_range_reduce_btn_rect  = {MATCH_COUNT_TEXT_START,4*MATCH_COUNT_LINE_HIGHT,MATCH_COUNT_BLANK_START,5*MATCH_COUNT_LINE_HIGHT};
+LOCAL GUI_RECT_T set_question_range_ctl_rect  = {MATCH_COUNT_BLANK_START+5,4*MATCH_COUNT_LINE_HIGHT,MMI_MAINSCREEN_WIDTH-MATCH_COUNT_BLANK_START-5,5*MATCH_COUNT_LINE_HIGHT};
+LOCAL GUI_RECT_T set_question_range_reduce_btn_rect  = {MATCH_COUNT_TEXT_START-8,4*MATCH_COUNT_LINE_HIGHT,MATCH_COUNT_BLANK_START,5*MATCH_COUNT_LINE_HIGHT};
 LOCAL GUI_RECT_T set_question_range_add_btn_rect  = {MMI_MAINSCREEN_WIDTH-MATCH_COUNT_BLANK_START,4*MATCH_COUNT_LINE_HIGHT,MMI_MAINSCREEN_WIDTH,5*MATCH_COUNT_LINE_HIGHT};
 
 LOCAL GUI_RECT_T set_symbol_txt_rect = {MATCH_COUNT_TEXT_START, 5*MATCH_COUNT_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-10, 6*MATCH_COUNT_LINE_HIGHT};
-LOCAL GUI_RECT_T set_add_txt_rect = {MATCH_COUNT_BLANK_START, 6*MATCH_COUNT_LINE_HIGHT+10, 2*MATCH_COUNT_BLANK_START, 7*MATCH_COUNT_LINE_HIGHT+10};
-LOCAL GUI_RECT_T set_add_but_rect = {2*MATCH_COUNT_BLANK_START, 6*MATCH_COUNT_LINE_HIGHT+10, 3*MATCH_COUNT_BLANK_START, 7*MATCH_COUNT_LINE_HIGHT+10};
-LOCAL GUI_RECT_T set_minus_txt_rect = {4*MATCH_COUNT_BLANK_START, 6*MATCH_COUNT_LINE_HIGHT+10, 5*MATCH_COUNT_BLANK_START, 7*MATCH_COUNT_LINE_HIGHT+10};
-LOCAL GUI_RECT_T set_minus_but_rect = {5*MATCH_COUNT_BLANK_START, 6*MATCH_COUNT_LINE_HIGHT+10, 6*MATCH_COUNT_BLANK_START, 7*MATCH_COUNT_LINE_HIGHT+10};
+LOCAL GUI_RECT_T set_add_but_rect = {MATCH_COUNT_TEXT_START+5, 6*MATCH_COUNT_LINE_HIGHT+5, 1.5*MATCH_COUNT_BLANK_START, 8*MATCH_COUNT_LINE_HIGHT+5};
+LOCAL GUI_RECT_T set_add_txt_rect = {1.5*MATCH_COUNT_BLANK_START, 6.2*MATCH_COUNT_LINE_HIGHT, 3*MATCH_COUNT_BLANK_START, 7.5*MATCH_COUNT_LINE_HIGHT};
+LOCAL GUI_RECT_T set_minus_but_rect = {4.5*MATCH_COUNT_BLANK_START, 6*MATCH_COUNT_LINE_HIGHT+5, 5.5*MATCH_COUNT_BLANK_START, 8*MATCH_COUNT_LINE_HIGHT+5};
+LOCAL GUI_RECT_T set_minus_txt_rect = {5.5*MATCH_COUNT_BLANK_START+5, 6.2*MATCH_COUNT_LINE_HIGHT, 7*MATCH_COUNT_BLANK_START, 7.5*MATCH_COUNT_LINE_HIGHT};
 
-LOCAL GUI_RECT_T set_multi_txt_rect = {MATCH_COUNT_BLANK_START, 8*MATCH_COUNT_LINE_HIGHT, 2*MATCH_COUNT_BLANK_START, 9*MATCH_COUNT_LINE_HIGHT};
-LOCAL GUI_RECT_T set_multi_but_rect = {2*MATCH_COUNT_BLANK_START, 8*MATCH_COUNT_LINE_HIGHT, 3*MATCH_COUNT_BLANK_START, 9*MATCH_COUNT_LINE_HIGHT};
-LOCAL GUI_RECT_T set_division_txt_rect = {4*MATCH_COUNT_BLANK_START, 8*MATCH_COUNT_LINE_HIGHT, 5*MATCH_COUNT_BLANK_START, 9*MATCH_COUNT_LINE_HIGHT};
-LOCAL GUI_RECT_T set_division_but_rect = {5*MATCH_COUNT_BLANK_START, 8*MATCH_COUNT_LINE_HIGHT, 6*MATCH_COUNT_BLANK_START, 9*MATCH_COUNT_LINE_HIGHT};
+LOCAL GUI_RECT_T set_multi_but_rect = {MATCH_COUNT_TEXT_START+5, 8*MATCH_COUNT_LINE_HIGHT, 1.5*MATCH_COUNT_BLANK_START, 9.5*MATCH_COUNT_LINE_HIGHT};
+LOCAL GUI_RECT_T set_multi_txt_rect = {1.5*MATCH_COUNT_BLANK_START, 8*MATCH_COUNT_LINE_HIGHT, 3*MATCH_COUNT_BLANK_START, 9.3*MATCH_COUNT_LINE_HIGHT};
+LOCAL GUI_RECT_T set_division_but_rect = {4.5*MATCH_COUNT_BLANK_START, 8*MATCH_COUNT_LINE_HIGHT, 5.5*MATCH_COUNT_BLANK_START, 9.5*MATCH_COUNT_LINE_HIGHT};
+LOCAL GUI_RECT_T set_division_txt_rect = {5.5*MATCH_COUNT_BLANK_START+5, 8*MATCH_COUNT_LINE_HIGHT, 7*MATCH_COUNT_BLANK_START, 9.3*MATCH_COUNT_LINE_HIGHT};
 
 LOCAL GUI_RECT_T math_count_page_rect = {MATCH_COUNT_BLANK_START, 10*MATCH_COUNT_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-MATCH_COUNT_BLANK_START, MMI_MAINSCREEN_HEIGHT-10};
-LOCAL GUI_RECT_T math_count_action_rect = {MATCH_COUNT_BLANK_START, 10*MATCH_COUNT_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-MATCH_COUNT_BLANK_START, MMI_MAINSCREEN_HEIGHT-10};
+LOCAL GUI_RECT_T math_count_action_rect = {8, 9.8*MATCH_COUNT_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-8, MMI_MAINSCREEN_HEIGHT};
 
-LOCAL GUI_RECT_T show_time_text_rect = {0, MATCH_COUNT_LINE_HIGHT, MATCH_COUNT_BLANK_START, 2*MATCH_COUNT_LINE_HIGHT};
-LOCAL GUI_RECT_T show_time_bar_blank_rect = {MATCH_COUNT_BLANK_START, MATCH_COUNT_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-MATCH_COUNT_BLANK_START, 2*MATCH_COUNT_LINE_HIGHT};
-LOCAL GUI_RECT_T show_time_bar_rect = {MATCH_COUNT_BLANK_START, MATCH_COUNT_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-MATCH_COUNT_BLANK_START, 2*MATCH_COUNT_LINE_HIGHT};
+LOCAL GUI_RECT_T show_time_text_rect = {0, 0.5*MATCH_COUNT_LINE_HIGHT, MATCH_COUNT_BLANK_START, 1.2*MATCH_COUNT_LINE_HIGHT};
+LOCAL GUI_RECT_T show_time_bar_blank_rect = {0,  MATCH_COUNT_LINE_HIGHT+5, MMI_MAINSCREEN_WIDTH,  MATCH_COUNT_LINE_HIGHT+8};
+LOCAL GUI_RECT_T show_time_bar_rect = {0,  MATCH_COUNT_LINE_HIGHT+5, 0,  MATCH_COUNT_LINE_HIGHT+8};
 LOCAL GUI_RECT_T show_index_text_rect = {MMI_MAINSCREEN_WIDTH-MATCH_COUNT_BLANK_START, MATCH_COUNT_LINE_HIGHT, MMI_MAINSCREEN_WIDTH, 2*MATCH_COUNT_LINE_HIGHT};
 LOCAL GUI_RECT_T correct_wrong_img_rect = {MATCH_COUNT_BLANK_START, 5*MATCH_COUNT_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-MATCH_COUNT_BLANK_START, MMI_MAINSCREEN_HEIGHT-10};
-LOCAL GUI_RECT_T show_formula_rect = {MATCH_COUNT_BLANK_START,2*MATCH_COUNT_LINE_HIGHT,MMI_MAINSCREEN_WIDTH-MATCH_COUNT_BLANK_START,5*MATCH_COUNT_LINE_HIGHT};
+LOCAL GUI_RECT_T show_formula_rect = {MATCH_COUNT_TEXT_START,2*MATCH_COUNT_LINE_HIGHT,MMI_MAINSCREEN_WIDTH-MATCH_COUNT_TEXT_START,4*MATCH_COUNT_LINE_HIGHT};
 
-LOCAL GUI_RECT_T math_count_back_rect = {MATCH_COUNT_KEYBOARD_WIDTH-10, 9*MATCH_COUNT_LINE_HIGHT, 5*MATCH_COUNT_KEYBOARD_WIDTH-10, 11*MATCH_COUNT_LINE_HIGHT};
-LOCAL GUI_RECT_T math_count_again_rect = {5*MATCH_COUNT_KEYBOARD_WIDTH+10, 9*MATCH_COUNT_LINE_HIGHT, 9*MATCH_COUNT_KEYBOARD_WIDTH+10, 11*MATCH_COUNT_LINE_HIGHT};
+LOCAL GUI_RECT_T math_count_back_rect = {9, 9.8*MATCH_COUNT_LINE_HIGHT, 115, MMI_MAINSCREEN_HEIGHT};
+LOCAL GUI_RECT_T math_count_again_rect = {125, 9.8*MATCH_COUNT_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-9, MMI_MAINSCREEN_HEIGHT};
 
 LOCAL GUI_RECT_T math_count_keyboard_rect[MATCH_COUNT_KEYBOARD_NUM] = {0};
 LOCAL uint8 is_can_click=0;
@@ -135,6 +137,10 @@ LOCAL rank_info_struct_struct rank_name_score_info[7]={0};
 LOCAL int math_count_task_total = -1;
 LOCAL uint8 math_count_task_cur_page = 1;
 LOCAL uint8 math_count_page_index = 0;
+
+LOCAL GUI_COLOR_T math_count_win_color = GUI_RGB2RGB565(50, 162, 254);
+LOCAL GUI_COLOR_T math_count_title_color = GUI_RGB2RGB565(108, 181, 255);
+LOCAL GUI_COLOR_T math_count_button_color = GUI_RGB2RGB565(60, 161, 250);
 
 LOCAL uint8 check_prime_number_under_100[25]={2,3,5,7,11,13,17,19,23,29,31,37,41,45,47,53,59,61,67,71,73,79,83,89,97};
 LOCAL uint8 check_prime_number_under_200[21]={1,3,7,9,13,27,31,37,39,49,51,57,63,67,73,79,81,91,93,97,99};
@@ -450,6 +456,105 @@ LOCAL int MathCount_GetClickIndex(GUI_POINT_T point)
 	return click_num;
 }
 
+LOCAL void MathCount_ShowKeyboardImg(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_dev_info)
+{
+    MMI_STRING_T text_string = {0};
+    GUISTR_STATE_T text_state = GUISTR_STATE_ALIGN;
+    GUISTR_STYLE_T text_style = {0};
+    uint16 tmp[5] = {0};
+    char tmp_char[5] = {0};
+    uint8 i,j,k = 0;
+    uint8 img_width = 50;
+    uint8 img_height = 50;
+    uint8 img_hor_space = 7;
+    uint8 img_ver_space = 10;
+    uint8 num_str[MATCH_COUNT_KEYBOARD_VER_NUM][MATCH_COUNT_KEYBOARD_HOR_NUM] = {"1230","456X","789"};
+    GUI_RECT_T init_rect = {10, 4.5*MATCH_COUNT_LINE_HIGHT, 10 + img_width, 4.5*MATCH_COUNT_LINE_HIGHT + img_height};
+    GUI_RECT_T bg_rect = {0};
+    GUI_RECT_T num_rect = {0};
+
+    text_style.align = ALIGN_HVMIDDLE;
+    text_style.font = SONG_FONT_28;
+    text_style.font_color = math_count_button_color;
+    bg_rect = init_rect;
+    for(i = 0;i < MATCH_COUNT_KEYBOARD_VER_NUM;i++){
+        for(j = 0;j < MATCH_COUNT_KEYBOARD_HOR_NUM;j++){
+            memset(&tmp, 0, 5);
+            memset(&tmp_char, 0, 5);
+            GUIRES_DisplayImg(PNULL, &bg_rect, PNULL, win_id, MATH_COUNT_NUM_UNCLICK_BG, &lcd_dev_info);
+            if(i == MATCH_COUNT_KEYBOARD_VER_NUM - 1 && j == MATCH_COUNT_KEYBOARD_HOR_NUM - 1)
+            {
+                sprintf(tmp_char,"%s", "OK");
+            }
+            else
+            {
+                sprintf(tmp_char,"%c", num_str[i][j]);
+            }
+            GUI_GBToWstr(tmp,tmp_char,strlen(tmp_char));
+            text_string.wstr_ptr = tmp;
+            text_string.wstr_len= (MMIAPICOM_Wstrlen(tmp));
+            num_rect = bg_rect;
+            num_rect.top += 1;
+            GUISTR_DrawTextToLCDInRect(
+                (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
+                &num_rect,
+                &num_rect,
+                &text_string,
+                &text_style,
+                text_state,
+                GUISTR_TEXT_DIR_AUTO
+            );
+            math_count_keyboard_rect[k] = bg_rect;
+            k++;
+            bg_rect.left = bg_rect.right + img_hor_space;
+            bg_rect.right = bg_rect.left +img_width;
+        }
+        bg_rect.left = init_rect.left;
+        bg_rect.right = init_rect.right;
+        bg_rect.top = bg_rect.bottom + img_ver_space;
+        bg_rect.bottom = bg_rect.top + img_height;
+    }
+}
+
+LOCAL void MathCount_ClickKeyboardUpdateBg(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_dev_info, uint8 index, BOOLEAN is_press)
+{
+    MMI_STRING_T text_string = {0};
+    GUISTR_STATE_T text_state = GUISTR_STATE_ALIGN;
+    GUISTR_STYLE_T text_style = {0};
+    uint16 tmp[5] = {0};
+    char tmp_char[5] = {0};
+    uint8 num_str[MATCH_COUNT_KEYBOARD_NUM] = {"1230456X789O"};
+    GUI_RECT_T num_rect = {0};
+
+    text_style.align = ALIGN_HVMIDDLE;
+    text_style.font = SONG_FONT_28;
+    text_style.font_color = math_count_button_color;
+    if(is_press){
+        GUIRES_DisplayImg(PNULL, &math_count_keyboard_rect[index], PNULL, win_id, MATH_COUNT_NUM_CLICK_BG, &lcd_dev_info);
+    }else{
+        GUIRES_DisplayImg(PNULL, &math_count_keyboard_rect[index], PNULL, win_id, MATH_COUNT_NUM_UNCLICK_BG, &lcd_dev_info);
+    }
+    if(index == MATCH_COUNT_KEYBOARD_NUM - 1){
+        strcpy(tmp_char, "OK");
+    }else{
+        sprintf(tmp_char,"%c", num_str[index]);
+    }
+    GUI_GBToWstr(tmp,tmp_char,strlen(tmp_char));
+    text_string.wstr_ptr = tmp;
+    text_string.wstr_len= (MMIAPICOM_Wstrlen(tmp));
+    num_rect = math_count_keyboard_rect[index];
+    num_rect.top += 1;
+    GUISTR_DrawTextToLCDInRect(
+        (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
+        &num_rect,
+        &num_rect,
+        &text_string,
+        &text_style,
+        text_state,
+        GUISTR_TEXT_DIR_AUTO
+    );
+}
+
 LOCAL void MathCount_ShowKeyboard(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_dev_info)
 {
 	MMI_STRING_T text_string = {0};
@@ -572,11 +677,13 @@ LOCAL MMI_RESULT_E HandleCountingWinMsg(
 				char time_and_index_text_temp_char[200]={0};
 				MMI_STRING_T time_and_index_text_str = {0};
 				uint16 time_and_index_tmp[100] = {0};
-				uint8 times_total_width = MMI_MAINSCREEN_WIDTH-2*MATCH_COUNT_BLANK_START;
+				uint8 times_total_width = MMI_MAINSCREEN_WIDTH;
 
-				GUI_FillRect(&lcd_dev_info, math_win_rect, MMI_WHITE_COLOR);
+				GUI_FillRect(&lcd_dev_info, math_win_rect, math_count_win_color);
+				GUI_FillRect(&lcd_dev_info, math_title_rect, math_count_title_color);
 				
-				MathCount_ShowKeyboard(win_id, lcd_dev_info);
+				//MathCount_ShowKeyboard(win_id, lcd_dev_info);
+				MathCount_ShowKeyboardImg(win_id, lcd_dev_info);
 
 				if(show_correct_wrong_status){
 					switch(show_correct_wrong_status){
@@ -657,7 +764,7 @@ LOCAL MMI_RESULT_E HandleCountingWinMsg(
 					text_str.wstr_len= (MMIAPICOM_Wstrlen(tmp));
 					formula_text_style.align = ALIGN_HVMIDDLE;
 					formula_text_style.font = SONG_FONT_28;
-					formula_text_style.font_color = MMI_BLACK_COLOR;
+					formula_text_style.font_color = MMI_WHITE_COLOR;
 					GUISTR_DrawTextToLCDInRect(
 						(const GUI_LCD_DEV_INFO *)&lcd_dev_info,
 						&show_formula_rect,
@@ -669,18 +776,17 @@ LOCAL MMI_RESULT_E HandleCountingWinMsg(
 						);
 				}
 
-
-				LCD_DrawRect(&lcd_dev_info, show_time_bar_blank_rect, MMI_BLACK_COLOR);
+				GUI_FillRect(&lcd_dev_info, show_time_bar_blank_rect, GUI_RGB2RGB565(43,121,208));
 				if(set_question_time != counting_used_time){
-					show_time_bar_rect.right = MMI_MAINSCREEN_WIDTH-MATCH_COUNT_BLANK_START - (((set_question_time-counting_used_time)*times_total_width)/set_question_time);
+					show_time_bar_rect.right = MMI_MAINSCREEN_WIDTH - (((set_question_time-counting_used_time)*times_total_width)/set_question_time);
 				}else{
-					show_time_bar_rect.right = MMI_MAINSCREEN_WIDTH-MATCH_COUNT_BLANK_START;
+					show_time_bar_rect.right = MMI_MAINSCREEN_WIDTH;
 				}
-				GUI_FillRect(&lcd_dev_info, show_time_bar_rect, MMI_BLACK_COLOR);
+				GUI_FillRect(&lcd_dev_info, show_time_bar_rect, GUI_RGB2RGB565(71,235,255));
 				
 				text_style.align = ALIGN_HVMIDDLE;
 				text_style.font = SONG_FONT_16;
-				text_style.font_color = MMI_BLACK_COLOR;
+				text_style.font_color = MMI_WHITE_COLOR;
 				text_state = GUISTR_STATE_ALIGN;
 				sprintf(time_and_index_text_temp_char,"%dS",(set_question_time-counting_used_time));
 				GUI_GBToWstr(time_and_index_tmp,time_and_index_text_temp_char,strlen(time_and_index_text_temp_char));
@@ -696,7 +802,8 @@ LOCAL MMI_RESULT_E HandleCountingWinMsg(
 					text_state,
 					GUISTR_TEXT_DIR_AUTO
 					);
-
+                
+				text_style.font = SONG_FONT_24;
 				show_index_text_rect = math_title_rect;
 				SCI_MEMSET(time_and_index_tmp,0,200);
 				sprintf(time_and_index_text_temp_char,"%d/%d",(counting_question_index+1), math_learn_count);
@@ -721,13 +828,14 @@ LOCAL MMI_RESULT_E HandleCountingWinMsg(
 		case MSG_TP_PRESS_UP:
 			{
 				GUI_POINT_T point = {0};
+				uint8 click_num = 0;
 				int16 tp_offset_x;
 				int16 tp_offset_y;
 				point.x = MMK_GET_TP_X(param);
 				point.y = MMK_GET_TP_Y(param);
 				tp_offset_x =  point.x- main_tp_down_x;
 				tp_offset_y = point.y - main_tp_down_y;
-
+				
 				if(ABS(tp_offset_x) <20&&ABS(tp_offset_y)<20){//属于静态点击
 					if(point.x < math_count_keyboard_rect[0].left
 						|| point.x > math_count_keyboard_rect[MATCH_COUNT_KEYBOARD_NUM-1].right
@@ -736,8 +844,9 @@ LOCAL MMI_RESULT_E HandleCountingWinMsg(
 					{
 						SCI_TRACE_LOW("%s: not click keyboard!!", __FUNCTION__);
 						break;
-					}
-					switch(MathCount_GetClickIndex(point))
+					}//
+					click_num = MathCount_GetClickIndex(point);
+					switch(click_num)
 						{
 							case 1:///1
 							{
@@ -751,6 +860,7 @@ LOCAL MMI_RESULT_E HandleCountingWinMsg(
 										MMK_PostMsg(win_id, MSG_FULL_PAINT, PNULL, 0);
 									}
 								}
+								MathCount_ClickKeyboardUpdateBg(win_id, lcd_dev_info, click_num-1, FALSE);
 							}
 							break;
 							case 2:///2
@@ -765,6 +875,7 @@ LOCAL MMI_RESULT_E HandleCountingWinMsg(
 										MMK_PostMsg(win_id, MSG_FULL_PAINT, PNULL, 0);
 									}
 								}
+								MathCount_ClickKeyboardUpdateBg(win_id, lcd_dev_info, click_num-1, FALSE);
 							}
 							break;
 							case 3:///3
@@ -779,6 +890,7 @@ LOCAL MMI_RESULT_E HandleCountingWinMsg(
 										MMK_PostMsg(win_id, MSG_FULL_PAINT, PNULL, 0);
 									}
 								}
+								MathCount_ClickKeyboardUpdateBg(win_id, lcd_dev_info, click_num-1, FALSE);
 							}
 							break;
 							case 4:///0
@@ -793,6 +905,7 @@ LOCAL MMI_RESULT_E HandleCountingWinMsg(
 										MMK_PostMsg(win_id, MSG_FULL_PAINT, PNULL, 0);
 									}
 								}
+								MathCount_ClickKeyboardUpdateBg(win_id, lcd_dev_info, click_num-1, FALSE);
 							}
 							break;
 							case 5:///4
@@ -807,6 +920,7 @@ LOCAL MMI_RESULT_E HandleCountingWinMsg(
 										MMK_PostMsg(win_id, MSG_FULL_PAINT, PNULL, 0);
 									}
 								}
+								MathCount_ClickKeyboardUpdateBg(win_id, lcd_dev_info, click_num-1, FALSE);
 							}
 							break;
 							case 6:///5
@@ -821,6 +935,7 @@ LOCAL MMI_RESULT_E HandleCountingWinMsg(
 										MMK_PostMsg(win_id, MSG_FULL_PAINT, PNULL, 0);
 									}
 								}
+								MathCount_ClickKeyboardUpdateBg(win_id, lcd_dev_info, click_num-1, FALSE);
 							}
 							break;
 							case 7:///6
@@ -835,6 +950,7 @@ LOCAL MMI_RESULT_E HandleCountingWinMsg(
 										MMK_PostMsg(win_id, MSG_FULL_PAINT, PNULL, 0);
 									}
 								}
+								MathCount_ClickKeyboardUpdateBg(win_id, lcd_dev_info, click_num-1, FALSE);
 							}
 							break;
 							case 8:///删除
@@ -849,6 +965,7 @@ LOCAL MMI_RESULT_E HandleCountingWinMsg(
 										MMK_PostMsg(win_id, MSG_FULL_PAINT, PNULL, 0);
 									}
 								}
+								MathCount_ClickKeyboardUpdateBg(win_id, lcd_dev_info, click_num-1, FALSE);
 							}
 							break;
 							case 9:///7
@@ -863,6 +980,7 @@ LOCAL MMI_RESULT_E HandleCountingWinMsg(
 										MMK_PostMsg(win_id, MSG_FULL_PAINT, PNULL, 0);
 									}
 								}
+								MathCount_ClickKeyboardUpdateBg(win_id, lcd_dev_info, click_num-1, FALSE);
 							}
 							break;
 							case 10:///8
@@ -877,6 +995,7 @@ LOCAL MMI_RESULT_E HandleCountingWinMsg(
 										MMK_PostMsg(win_id, MSG_FULL_PAINT, PNULL, 0);
 									}
 								}
+								MathCount_ClickKeyboardUpdateBg(win_id, lcd_dev_info, click_num-1, FALSE);
 							}
 							break;
 							case 11:///9
@@ -890,10 +1009,11 @@ LOCAL MMI_RESULT_E HandleCountingWinMsg(
 										user_input_number = user_input_number*10 +9;
 										MMK_PostMsg(win_id, MSG_FULL_PAINT, PNULL, 0);
 									}
-								}
+								}//
+								MathCount_ClickKeyboardUpdateBg(win_id, lcd_dev_info, click_num-1, FALSE);
 							}
 							break;
-							case 12:///确定
+							case 12:///OK
 							{
 								if(counting_question_index >= math_learn_count-1){
 									//todo 答完30题了 展示结算画面 排行榜
@@ -904,7 +1024,8 @@ LOCAL MMI_RESULT_E HandleCountingWinMsg(
 									MMK_CloseWin(MATH_COUNT_COUNTING_WIN_ID);
 								}else{
 									Judge_correct_or_wrong();
-								}
+								}//
+								MathCount_ClickKeyboardUpdateBg(win_id, lcd_dev_info, click_num-1, FALSE);
 							}
 							break;
 							default:
@@ -915,8 +1036,18 @@ LOCAL MMI_RESULT_E HandleCountingWinMsg(
 			break;
 		case MSG_TP_PRESS_DOWN:
 			{
-				main_tp_down_x = MMK_GET_TP_X(param);
-				main_tp_down_y = MMK_GET_TP_Y(param);
+			    GUI_POINT_T point = {0};
+			    uint8 click_num = 0;
+			    point.x = MMK_GET_TP_X(param);
+			    point.y = MMK_GET_TP_Y(param);
+			    main_tp_down_x = point.x;
+			    main_tp_down_y = point.y;
+			    if(point.y > 114 && point.x > 10){
+			        click_num = MathCount_GetClickIndex(point);
+			        if(click_num > 0){
+			            MathCount_ClickKeyboardUpdateBg(win_id, lcd_dev_info, click_num-1, TRUE);
+			        }
+			    }
 			}
 			break;
 		case MSG_KEYDOWN_RED:
@@ -969,12 +1100,13 @@ LOCAL MMI_RESULT_E HandleScoreWinMsg(
 				GUI_RECT_T show_score_text_rect = {0, 2*MATCH_COUNT_LINE_HIGHT, MMI_MAINSCREEN_WIDTH, 4*MATCH_COUNT_LINE_HIGHT};
 				uint8 for_i = 0;
 
-				GUI_FillRect(&lcd_dev_info, math_win_rect, MMI_WHITE_COLOR);
+				GUI_FillRect(&lcd_dev_info, math_win_rect, math_count_win_color);
+				GUI_FillRect(&lcd_dev_info, math_title_rect, math_count_title_color);
 
 				MMIRES_GetText(MATH_COUNT_TITLE, win_id, &text_string);
 				text_style.align = ALIGN_HVMIDDLE;
-				text_style.font = SONG_FONT_24;
-				text_style.font_color = MMI_BLACK_COLOR;
+				text_style.font = SONG_FONT_22;
+				text_style.font_color = MMI_WHITE_COLOR;
 				GUISTR_DrawTextToLCDInRect(
 					(const GUI_LCD_DEV_INFO *)&lcd_dev_info,
 					&math_title_rect,
@@ -985,7 +1117,7 @@ LOCAL MMI_RESULT_E HandleScoreWinMsg(
 					GUISTR_TEXT_DIR_AUTO
 					);
 
-				text_style.font = SONG_FONT_22;
+				text_style.font = SONG_FONT_24;
 				sprintf(total_score_temp_char,"答对:%d题",correct_answer_num);
 				GUI_GBToWstr(wchar_tmp,total_score_temp_char,strlen(total_score_temp_char));
 				temp_mmi_string_str.wstr_ptr=wchar_tmp;
@@ -1018,15 +1150,15 @@ LOCAL MMI_RESULT_E HandleScoreWinMsg(
 					GUISTR_TEXT_DIR_AUTO
 					);
 
-				text_style.font = SONG_FONT_26;
+				text_style.font = SONG_FONT_28;
 				SCI_MEMSET(wchar_tmp,0,100);
 				SCI_MEMSET(total_score_temp_char,0,100);
 				sprintf(total_score_temp_char,"总分:%d分",(set_question_range*(35 - set_question_time)*(choose_add_symbol+choose_minus_symbol+choose_multi_symbol+choose_division_symbol)*correct_answer_num)/10);
 				GUI_GBToWstr(wchar_tmp,total_score_temp_char,strlen(total_score_temp_char));
 				temp_mmi_string_str.wstr_ptr=wchar_tmp;
 				temp_mmi_string_str.wstr_len= MMIAPICOM_Wstrlen(wchar_tmp);
-				show_score_text_rect.top += 2*MATCH_COUNT_LINE_HIGHT;
-				show_score_text_rect.bottom = show_score_text_rect.top+2*MATCH_COUNT_LINE_HIGHT;
+				show_score_text_rect.top += 2.5*MATCH_COUNT_LINE_HIGHT;
+				show_score_text_rect.bottom = show_score_text_rect.top+2.5*MATCH_COUNT_LINE_HIGHT;
 				GUISTR_DrawTextToLCDInRect(
 					(const GUI_LCD_DEV_INFO *)&lcd_dev_info,
 					&show_score_text_rect,
@@ -1037,8 +1169,10 @@ LOCAL MMI_RESULT_E HandleScoreWinMsg(
 					GUISTR_TEXT_DIR_AUTO
 					);
 
-				text_style.font = SONG_FONT_24;
-				LCD_DrawRect(&lcd_dev_info, math_count_back_rect, MMI_BLACK_COLOR);
+				text_style.font = SONG_FONT_20;
+				//LCD_DrawRect(&lcd_dev_info, math_count_back_rect, MMI_BLACK_COLOR);
+				GUIRES_DisplayImg(PNULL, &math_count_back_rect, PNULL, win_id, MATH_COUNT_BOTTOM_BG, &lcd_dev_info);
+				text_style.font_color = math_count_button_color;
 				MMIRES_GetText(MATH_COUNT_COUNTING_BACK, win_id, &text_string);
 				GUISTR_DrawTextToLCDInRect(
 					(const GUI_LCD_DEV_INFO *)&lcd_dev_info,
@@ -1050,7 +1184,8 @@ LOCAL MMI_RESULT_E HandleScoreWinMsg(
 					GUISTR_TEXT_DIR_AUTO
 					);
 
-				LCD_DrawRect(&lcd_dev_info, math_count_again_rect, MMI_BLACK_COLOR);
+				//LCD_DrawRect(&lcd_dev_info, math_count_again_rect, MMI_BLACK_COLOR);
+				GUIRES_DisplayImg(PNULL, &math_count_again_rect, PNULL, win_id, MATH_COUNT_BOTTOM_BG, &lcd_dev_info);
 				MMIRES_GetText(MATH_COUNT_AGAIN, win_id, &text_string);
 				GUISTR_DrawTextToLCDInRect(
 					(const GUI_LCD_DEV_INFO *)&lcd_dev_info,
@@ -1233,14 +1368,16 @@ LOCAL MMI_RESULT_E HandleMathCountWinMsg(
 				char set_time_and_range_temp_char[200]={0};				
 				GUI_RECT_T page_rect = {0};
 				GUI_RECT_T action_rect = {0};
+				GUI_FONT_ALL_T font_all = {0};
 
 				MMIRES_GetText(MATH_COUNT_TITLE, win_id, &text_string);
 
-				GUI_FillRect(&lcd_dev_info, math_win_rect, MMI_WHITE_COLOR);
+				GUI_FillRect(&lcd_dev_info, math_win_rect, math_count_win_color);
 				
+				GUI_FillRect(&lcd_dev_info, math_title_rect, math_count_title_color);
 				text_style.align = ALIGN_HVMIDDLE;
-				text_style.font = SONG_FONT_24;
-				text_style.font_color = MMI_BLACK_COLOR;
+				text_style.font = SONG_FONT_22;
+				text_style.font_color = MMI_WHITE_COLOR;
 				GUISTR_DrawTextToLCDInRect(
 					(const GUI_LCD_DEV_INFO *)&lcd_dev_info,
 					&math_title_rect,
@@ -1266,7 +1403,7 @@ LOCAL MMI_RESULT_E HandleMathCountWinMsg(
 				set_time_and_range_text_str.wstr_len = MMIAPICOM_Wstrlen(set_time_and_range_tmp);
 				LCD_DrawRect(&lcd_dev_info, math_count_page_rect, MMI_BLACK_COLOR);
 				page_rect = math_count_page_rect;
-				page_rect.top += 4; 
+				page_rect.top += 4;
 				GUISTR_DrawTextToLCDInRect(
 					(const GUI_LCD_DEV_INFO *)&lcd_dev_info,
 					&page_rect,
@@ -1277,31 +1414,41 @@ LOCAL MMI_RESULT_E HandleMathCountWinMsg(
 					GUISTR_TEXT_DIR_AUTO
 					);
 			#endif
+                font_all.font = SONG_FONT_22;//
+                font_all.color = MMI_WHITE_COLOR;
                 
 				GUIBUTTON_SetRect(MMI_MATH_COUNT_SET_TIME_ADD_BTN,&set_time_add_btn_rect);
 				GUIBUTTON_SetCallBackFunc(MMI_MATH_COUNT_SET_TIME_ADD_BTN,SetTimeAdd);
+                GUIBUTTON_SetTextId(MMI_MATH_COUNT_SET_TIME_ADD_BTN, MATH_COUNT_ADD_SIGNAL);
+                GUIBUTTON_SetFont(MMI_MATH_COUNT_SET_TIME_ADD_BTN, &font_all);
 				
 				GUIBUTTON_SetRect(MMI_MATH_COUNT_SET_TIME_REDUCE_BTN,&set_time_reduce_btn_rect);
 				GUIBUTTON_SetCallBackFunc(MMI_MATH_COUNT_SET_TIME_REDUCE_BTN,SetTimeReduce);
+                GUIBUTTON_SetTextId(MMI_MATH_COUNT_SET_TIME_REDUCE_BTN, MATH_COUNT_REDUCE_SIGNAL);
+                GUIBUTTON_SetFont(MMI_MATH_COUNT_SET_TIME_REDUCE_BTN, &font_all);
 
 				GUIBUTTON_SetRect(MMI_MATH_COUNT_SET_RANGE_ADD_BTN,&set_question_range_add_btn_rect);
 				GUIBUTTON_SetCallBackFunc(MMI_MATH_COUNT_SET_RANGE_ADD_BTN,SetRangeAdd);
+                GUIBUTTON_SetTextId(MMI_MATH_COUNT_SET_RANGE_ADD_BTN, MATH_COUNT_ADD_SIGNAL);
+                GUIBUTTON_SetFont(MMI_MATH_COUNT_SET_RANGE_ADD_BTN, &font_all);
 
 				GUIBUTTON_SetRect(MMI_MATH_COUNT_SET_RANGE_REDUCE_BTN,&set_question_range_reduce_btn_rect);
-				GUIBUTTON_SetCallBackFunc(MMI_MATH_COUNT_SET_RANGE_REDUCE_BTN,SetRangeReduce);				
+				GUIBUTTON_SetCallBackFunc(MMI_MATH_COUNT_SET_RANGE_REDUCE_BTN,SetRangeReduce);
+                GUIBUTTON_SetTextId(MMI_MATH_COUNT_SET_RANGE_REDUCE_BTN, MATH_COUNT_REDUCE_SIGNAL);
+                GUIBUTTON_SetFont(MMI_MATH_COUNT_SET_RANGE_REDUCE_BTN, &font_all);
 
-				text_style.font = SONG_FONT_16;
+                text_style.font_color = math_count_button_color;
+				text_style.font = SONG_FONT_24;
 				memset(&set_time_and_range_tmp, 0, 100);
 				GUI_GBToWstr(set_time_and_range_tmp,"开始挑战",strlen("开始挑战"));
 				set_time_and_range_text_str.wstr_ptr = set_time_and_range_tmp;
 				set_time_and_range_text_str.wstr_len = MMIAPICOM_Wstrlen(set_time_and_range_tmp);
-				LCD_DrawRect(&lcd_dev_info, math_count_action_rect, MMI_BLACK_COLOR);
-				action_rect = math_count_action_rect;
-				action_rect.top += 4;
+                GUIRES_DisplayImg(PNULL,&math_count_action_rect, PNULL,win_id, MATH_COUNT_ACTION_BG, &lcd_dev_info);
+				//LCD_DrawRect(&lcd_dev_info, math_count_action_rect, MMI_BLACK_COLOR);
 				GUISTR_DrawTextToLCDInRect(
 					(const GUI_LCD_DEV_INFO *)&lcd_dev_info,
-					&action_rect,
-					&action_rect,
+					&math_count_action_rect,
+					&math_count_action_rect,
 					&set_time_and_range_text_str,
 					&text_style,
 					text_state,
@@ -1310,55 +1457,82 @@ LOCAL MMI_RESULT_E HandleMathCountWinMsg(
 			#if MATCH_COUNT_USE_TWO_PAGE != 0
 				if(math_count_page_index == 0)
                     #endif
-				{		
+				{
 					uint8 blank_range_total = MMI_MAINSCREEN_WIDTH-2*MATCH_COUNT_BLANK_START;
 					uint8 blank_time_range_item = blank_range_total/20;
 					uint8 blank_question_range_item = blank_range_total/7;
-					LCD_DrawRect(&lcd_dev_info, set_time_ctl_rect, MMI_BLACK_COLOR);
-					LCD_DrawRect(&lcd_dev_info, set_question_range_ctl_rect, MMI_BLACK_COLOR);
+					uint8 question_range = 0;
+					//LCD_DrawRect(&lcd_dev_info, set_time_ctl_rect, MMI_BLACK_COLOR);
+					LCD_FillRoundedRect(&lcd_dev_info, set_time_ctl_rect, set_time_ctl_rect, GUI_RGB2RGB565(43, 121, 208));
+					LCD_DrawRoundedRect(&lcd_dev_info, set_time_ctl_rect, set_time_ctl_rect, GUI_RGB2RGB565(43, 121, 208));
+					//LCD_DrawRect(&lcd_dev_info, set_question_range_ctl_rect, MMI_BLACK_COLOR);
+					LCD_FillRoundedRect(&lcd_dev_info, set_question_range_ctl_rect, set_question_range_ctl_rect, GUI_RGB2RGB565(43, 121, 208));
+					LCD_DrawRoundedRect(&lcd_dev_info, set_question_range_ctl_rect, set_question_range_ctl_rect, GUI_RGB2RGB565(43, 121, 208));
 
 					if(set_question_time < 3)set_question_time = 3;
 					if(set_question_time > 20)set_question_time = 20;
-					
-					if(set_question_time == 20){
-						set_time_black_rect.right = MMI_MAINSCREEN_WIDTH-MATCH_COUNT_BLANK_START;
-					}else if(set_question_time == 3){
-						set_time_black_rect.right=MATCH_COUNT_BLANK_START;
-					}else{
-						set_time_black_rect.right=MATCH_COUNT_BLANK_START+blank_time_range_item*set_question_time;
-					}
 					if(set_question_range < 10)set_question_range = 10;
-					if(set_question_range > 1000)set_question_range = 1000;
-					switch(set_question_range){
+					if(set_question_range > 1000)set_question_range = 1000;					
+					switch(set_question_range)
+					{
 						case 10:
-							set_question_range_black_rect.right = MATCH_COUNT_BLANK_START;
+							question_range = 1;
 						break;
 						case 15:
-							set_question_range_black_rect.right = blank_question_range_item*2;
+							question_range = 2;
 						break;
 						case 25:
-							set_question_range_black_rect.right = blank_question_range_item*3;
+							question_range = 3;
 						break;
 						case 50:
-							set_question_range_black_rect.right = blank_question_range_item*4;
+							question_range = 4;
 						break;
 						case 100:
-							set_question_range_black_rect.right = blank_question_range_item*5;
+							question_range = 5;
 						break;
 						case 200:
-							set_question_range_black_rect.right = blank_question_range_item*6;
+							question_range = 6;
 						break;
 						case 500:
-							set_question_range_black_rect.right = blank_question_range_item*7;
+							question_range = 7;
 						break;
 						case 1000:
-							set_question_range_black_rect.right = MMI_MAINSCREEN_WIDTH-MATCH_COUNT_BLANK_START;
+							question_range = 8;
 						break;
 					}
-					GUI_FillRect(&lcd_dev_info, set_time_black_rect, MMI_BLACK_COLOR);
-					GUI_FillRect(&lcd_dev_info, set_question_range_black_rect, MMI_BLACK_COLOR);
+					{
+					    uint8 i = 0;
+					    uint8 j = 0;//
+					    uint8 j_num = 3;
+					    GUI_RECT_T rect = set_question_range_que_rect;
+					    for(i = 0; i < question_range;i++)
+					    {
+					        if(i == 0 || i == 7){
+					            j_num = 3;
+					        }else{
+					            j_num = 2;
+					        }
+					        for(j = 0; j < j_num;j++)
+					        {					            
+    					            GUIRES_DisplayImg(PNULL,&rect, PNULL,win_id, MATH_COUNT_PROCESS_IMG, &lcd_dev_info);
+    					            rect.left = rect.right + 2;
+    					            rect.right += 9;
+					        }
+					    }
+					    rect = set_time_que_rect;
+					    for(i = 2; i < set_question_time;i++)
+					    {
+					        GUIRES_DisplayImg(PNULL,&rect, PNULL,win_id, MATH_COUNT_PROCESS_IMG, &lcd_dev_info);
+					        rect.left = rect.right + 2;
+					        rect.right += 9;
+					    }
+					}
+					//GUI_FillRect(&lcd_dev_info, set_time_black_rect, MMI_BLACK_COLOR);
+					//GUI_FillRect(&lcd_dev_info, set_question_range_black_rect, MMI_BLACK_COLOR);
 
 					text_style.align = ALIGN_BOTTOM;
+					text_style.font = SONG_FONT_16;
+					text_style.font_color = MMI_WHITE_COLOR;
 					sprintf(set_time_and_range_temp_char,"答题时间:%d S",set_question_time);
 					GUI_GBToWstr(set_time_and_range_tmp,set_time_and_range_temp_char,strlen(set_time_and_range_temp_char));
 					set_time_and_range_text_str.wstr_ptr=set_time_and_range_tmp;
@@ -1411,12 +1585,13 @@ LOCAL MMI_RESULT_E HandleMathCountWinMsg(
 						);
 
 					text_style.align = ALIGN_HVMIDDLE;
+					text_style.font = SONG_FONT_22;
 					SCI_MEMSET(set_time_and_range_tmp,0,200);
 					text_state = GUISTR_STATE_ALIGN;
 					GUI_GBToWstr(set_time_and_range_tmp,"加法",strlen("加法"));
 					set_time_and_range_text_str.wstr_ptr=set_time_and_range_tmp;
 					set_time_and_range_text_str.wstr_len= MMIAPICOM_Wstrlen(set_time_and_range_tmp);
-					LCD_DrawRect(&lcd_dev_info, set_add_but_rect, MMI_BLACK_COLOR);
+					//LCD_DrawRect(&lcd_dev_info, set_add_but_rect, MMI_BLACK_COLOR);
 					GUISTR_DrawTextToLCDInRect(
 						(const GUI_LCD_DEV_INFO *)&lcd_dev_info,
 						&set_add_txt_rect,
@@ -1430,7 +1605,7 @@ LOCAL MMI_RESULT_E HandleMathCountWinMsg(
 					GUI_GBToWstr(set_time_and_range_tmp,"减法",strlen("减法"));
 					set_time_and_range_text_str.wstr_ptr=set_time_and_range_tmp;
 					set_time_and_range_text_str.wstr_len= MMIAPICOM_Wstrlen(set_time_and_range_tmp);
-					LCD_DrawRect(&lcd_dev_info, set_minus_but_rect, MMI_BLACK_COLOR);
+					//LCD_DrawRect(&lcd_dev_info, set_minus_but_rect, MMI_BLACK_COLOR);
 					GUISTR_DrawTextToLCDInRect(
 						(const GUI_LCD_DEV_INFO *)&lcd_dev_info,
 						&set_minus_txt_rect,
@@ -1444,7 +1619,7 @@ LOCAL MMI_RESULT_E HandleMathCountWinMsg(
 					GUI_GBToWstr(set_time_and_range_tmp,"乘法",strlen("乘法"));
 					set_time_and_range_text_str.wstr_ptr=set_time_and_range_tmp;
 					set_time_and_range_text_str.wstr_len= MMIAPICOM_Wstrlen(set_time_and_range_tmp);
-					LCD_DrawRect(&lcd_dev_info, set_multi_but_rect, MMI_BLACK_COLOR);
+					//LCD_DrawRect(&lcd_dev_info, set_multi_but_rect, MMI_BLACK_COLOR);
 					GUISTR_DrawTextToLCDInRect(
 						(const GUI_LCD_DEV_INFO *)&lcd_dev_info,
 						&set_multi_txt_rect,
@@ -1458,7 +1633,7 @@ LOCAL MMI_RESULT_E HandleMathCountWinMsg(
 					GUI_GBToWstr(set_time_and_range_tmp,"除法",strlen("除法"));
 					set_time_and_range_text_str.wstr_ptr=set_time_and_range_tmp;
 					set_time_and_range_text_str.wstr_len= MMIAPICOM_Wstrlen(set_time_and_range_tmp);
-					LCD_DrawRect(&lcd_dev_info, set_division_but_rect, MMI_BLACK_COLOR);
+					//LCD_DrawRect(&lcd_dev_info, set_division_but_rect, MMI_BLACK_COLOR);
 					GUISTR_DrawTextToLCDInRect(
 						(const GUI_LCD_DEV_INFO *)&lcd_dev_info,
 						&set_division_txt_rect,
@@ -1470,18 +1645,29 @@ LOCAL MMI_RESULT_E HandleMathCountWinMsg(
 						);	
 				#endif
 					if(choose_add_symbol){
-						GUI_FillRect(&lcd_dev_info, set_add_but_rect, MMI_BLACK_COLOR);
+						//GUI_FillRect(&lcd_dev_info, set_add_but_rect, MMI_BLACK_COLOR);
+						GUIRES_DisplayImg(PNULL, &set_add_but_rect, PNULL, win_id, MATH_COUNT_CHOOSE_IMG, &lcd_dev_info);
+					}else{
+						GUIRES_DisplayImg(PNULL, &set_add_but_rect, PNULL, win_id, MATH_COUNT_UNCHOOSE_IMG, &lcd_dev_info);
 					}
 					if(choose_minus_symbol){
-						GUI_FillRect(&lcd_dev_info, set_minus_but_rect, MMI_BLACK_COLOR);
+						//GUI_FillRect(&lcd_dev_info, set_minus_but_rect, MMI_BLACK_COLOR);
+						GUIRES_DisplayImg(PNULL, &set_minus_but_rect, PNULL, win_id, MATH_COUNT_CHOOSE_IMG, &lcd_dev_info);
+					}else{
+					       GUIRES_DisplayImg(PNULL, &set_minus_but_rect, PNULL, win_id, MATH_COUNT_UNCHOOSE_IMG, &lcd_dev_info);
 					}
 				#if OPEN_CHENGFA_CHUFA
 					if(choose_multi_symbol){
-						GUI_FillRect(&lcd_dev_info, set_multi_but_rect, MMI_BLACK_COLOR);
+						//GUI_FillRect(&lcd_dev_info, set_multi_but_rect, MMI_BLACK_COLOR);
+						GUIRES_DisplayImg(PNULL, &set_multi_but_rect, PNULL, win_id, MATH_COUNT_CHOOSE_IMG, &lcd_dev_info);
+					}else{
+					       GUIRES_DisplayImg(PNULL, &set_multi_but_rect, PNULL, win_id, MATH_COUNT_UNCHOOSE_IMG, &lcd_dev_info);
 					}
-
 					if(choose_division_symbol){
-						GUI_FillRect(&lcd_dev_info, set_division_but_rect, MMI_BLACK_COLOR);
+						//GUI_FillRect(&lcd_dev_info, set_division_but_rect, MMI_BLACK_COLOR);
+						GUIRES_DisplayImg(PNULL, &set_division_but_rect, PNULL, win_id, MATH_COUNT_CHOOSE_IMG, &lcd_dev_info);
+					}else{
+					       GUIRES_DisplayImg(PNULL, &set_division_but_rect, PNULL, win_id, MATH_COUNT_UNCHOOSE_IMG, &lcd_dev_info);
 					}
 				#endif
 				}
@@ -1498,7 +1684,7 @@ LOCAL MMI_RESULT_E HandleMathCountWinMsg(
 				point.y = MMK_GET_TP_Y(param);
 				if(GUI_PointIsInRect(point, math_count_action_rect))
 				{
-					math_learn_count = 5;
+					math_learn_count = 30;
 					MMIZMT_CreateCountingWin();
 				}
 			#if MATCH_COUNT_USE_TWO_PAGE != 0      
@@ -1622,10 +1808,6 @@ PUBLIC void MMIZMT_CreateMathCountWin(void)
 	if (MMK_IsOpenWin(win_id))
 	{
 		MMK_CloseWin(win_id);
-	}
-	if(GetCanntClick(1))
-	{
-		return;
 	}
 	win_handle = MMK_CreateWin((uint32*)MMI_MATH_COUNT_WIN_TAB, PNULL);
 }
