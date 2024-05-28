@@ -216,10 +216,10 @@ PUBLIC void ZmtGptZuoWen_RecvSelfResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_
             SCI_TRACE_LOW("%s: gpt_zuowen_talk_size = %d", __FUNCTION__, gpt_zuowen_talk_size);
             if(gpt_zuowen_talk_info[gpt_zuowen_talk_size] == NULL){
                 gpt_zuowen_talk_info[gpt_zuowen_talk_size] = SCI_ALLOC_APPZ(sizeof(gpt_talk_info_t));
-            }           
+            }
             memset(gpt_zuowen_talk_info[gpt_zuowen_talk_size], 0, sizeof(gpt_talk_info_t));
             gpt_zuowen_talk_info[gpt_zuowen_talk_size]->is_user = FALSE;
-				
+
             gpt_zuowen_talk_info[gpt_zuowen_talk_size]->str = SCI_ALLOC_APPZ(strlen(data->valuestring)+1);
             memset(gpt_zuowen_talk_info[gpt_zuowen_talk_size]->str, 0, strlen(data->valuestring)+1);
             strcpy(gpt_zuowen_talk_info[gpt_zuowen_talk_size]->str, data->valuestring);
