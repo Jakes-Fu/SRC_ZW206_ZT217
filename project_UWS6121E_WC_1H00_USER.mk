@@ -136,9 +136,9 @@ endif
 ZDT_VIBRATE_SUPPORT = TRUE					### 振动
 
 # 7789P3 240X284
-DRV_LCD_7789P3_240X284 = TRUE
+#DRV_LCD_7789P3_240X284 = TRUE
 # TP 6133 series
-DRV_TP_6133_ZW206_K1_240X284 = TRUE
+DRV_TP_6133_ZW206_K1_240X284 = FALSE
 
 #MMI LCD SIZE
 ZTE_SUPPORT = 240X284								 ### ZTE_SUPPORT:
@@ -199,7 +199,8 @@ APP_ITEM_NAME = FALSE
 endif
 
 endif
-MAINLCD_DEV_SIZE_240X284 = TRUE
+#MAINLCD_DEV_SIZE_240X284 = FALSE
+MAINLCD_DEV_SIZE_240X320 = TRUE
 
 # BF20A6 camera
 DRV_CAMERA_BF20A6_CUSTOM = TRUE
@@ -600,9 +601,13 @@ ENGPC_W217 = TRUE                                    ### Switch ENGPC_W217 Suppo
 LCD_INSTALL_ANGLE = 0    #90
 
 TRACE_INFO_SUPPORT = FALSE
+
 MSDC_CARD_SUPPORT = TRUE                             ### SD Card Support:
                                                      # Option1:TRUE
                                                      # Option2:FALSE
+
+ZT217_LISENNING_PAD = TRUE
+DRV_TP_6133_ZT217_240X320 = TRUE
 
 DYNAMIC_WATCHFACE_SUPPORT = FALSE	#原表盘商城
 

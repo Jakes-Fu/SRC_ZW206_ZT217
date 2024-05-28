@@ -5,7 +5,11 @@
 #ifdef DRV_TP_6133_ZW206_K1_240X284
 #define     TP_BL6133_I2C_WRITE_ADDR		0x58//0x5A//0x2C//0x5A//7bit (0x2D) // defined(DRV_TP_6133_ZW206_K1_240X284)//wuxx add --0X58(I2C=0X2C)
 #else
+#ifdef ZT217_LISENNING_PAD
 #define     TP_BL6133_I2C_WRITE_ADDR		0x58//0x2C//0x5A//7bit (0x2D)
+#else
+#define     TP_BL6133_I2C_WRITE_ADDR		0x5A//0x2C//0x5A//7bit (0x2D)
+#endif
 #endif
 #define     BTL_CHECK_CHIPID
 #define     CTP_USE_HW_I2C

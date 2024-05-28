@@ -38,7 +38,7 @@ extern   "C"
 /**---------------------------------------------------------------------------*
  **                           Macros & Enums                                  *
  **---------------------------------------------------------------------------*/
-#define TIMER_PERIOD_TPCHECK         9000
+#define TIMER_PERIOD_TPCHECK         13000
 
 #define TP_MOVE_INTRVAL	3
 typedef struct {                    

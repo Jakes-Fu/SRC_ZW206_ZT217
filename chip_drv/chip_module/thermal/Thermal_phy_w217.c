@@ -131,8 +131,11 @@ PUBLIC int32 THERMAL_Skin_Temp_Read(void)
     int32           temp = 0;
     uint32          table_size = sizeof(skin_temp_table)/sizeof(skin_temp_table[0]);
 
-   // vol =  _CHGMNG_GetChannelVol(ADC_CHANNEL_ADCI2, ADC_SCALE_2V444);  //Tianyu.Yang
-    vol =  _CHGMNG_GetChannelVol(ADC_CHANNEL_ADCI1, ADC_SCALE_2V444);  //Tianyu.Yang
+#ifdef ZT217_LISENNING_PAD
+	vol =  _CHGMNG_GetChannelVol(ADC_CHANNEL_ADCI1, ADC_SCALE_2V444);  //Tianyu.Yang
+#else
+    vol =  _CHGMNG_GetChannelVol(ADC_CHANNEL_ADCI2, ADC_SCALE_2V444);  //Tianyu.Yang
+#endif
 
     for  (i = 0; i < table_size; i++)
     {

@@ -92,7 +92,11 @@ LOCAL char g_is_have_tp = 0;
 
 LOCAL I2C_DEV BL6133_I2C_cfg =
 {
-    3,
+#ifdef DRV_TP_6133_ZT217_240X320
+	3,
+#else
+    4,
+#endif
     400000,                   // freq is standard for BL6133
     0,                          // bus
     TP_BL6133_I2C_WRITE_ADDR,  // slave_addr

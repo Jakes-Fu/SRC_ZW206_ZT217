@@ -420,119 +420,121 @@ LOCAL ERR_LCD_E GC9307_Init(void)
 	LCD_CtrlWrite_GC9307(0x29);
 	LCD_CtrlWrite_GC9307(0x2c);
 #else //9307BOE 1.4
-	LCD_CtrlWrite_GC9307(0xfe);
-LCD_CtrlWrite_GC9307(0xef);// REG enable
-LCD_CtrlWrite_GC9307(0x36);
-LCD_DataWrite_GC9307(0x48); //direction RGB/BGR Select
-LCD_CtrlWrite_GC9307(0x3a);
-LCD_DataWrite_GC9307(0x05); // rgb565
 
-LCD_CtrlWrite_GC9307(0x88);
-LCD_DataWrite_GC9307(0x02);
+#ifdef ZT217_LISENNING_PAD
+    LCD_CtrlWrite_GC9307(0xfe);
+    LCD_CtrlWrite_GC9307(0xef);// REG enable
+    LCD_CtrlWrite_GC9307(0x36);
+    LCD_DataWrite_GC9307(0x48); //direction RGB/BGR Select
+    LCD_CtrlWrite_GC9307(0x3a);
+    LCD_DataWrite_GC9307(0x05); // rgb565
 
-		
-LCD_CtrlWrite_GC9307(0x86);	
-LCD_DataWrite_GC9307(0x98);//c9/c3/c7 en
-LCD_CtrlWrite_GC9307(0x89);	
-LCD_DataWrite_GC9307(0x03);//e8/e9 en
-LCD_CtrlWrite_GC9307(0x8b);	
-LCD_DataWrite_GC9307(0x80);//ff en	
-LCD_CtrlWrite_GC9307(0x8d);	
-LCD_DataWrite_GC9307(0x33);//99/9d en	
-LCD_CtrlWrite_GC9307(0x8e);	 
-LCD_DataWrite_GC9307(0x0f);//f0~f3 en 	
+    LCD_CtrlWrite_GC9307(0x88);
+    LCD_DataWrite_GC9307(0x02);
 
-
-LCD_CtrlWrite_GC9307(0xe1);
-LCD_DataWrite_GC9307(0x01);
-LCD_DataWrite_GC9307(0x26);
+    		
+    LCD_CtrlWrite_GC9307(0x86);	
+    LCD_DataWrite_GC9307(0x98);//c9/c3/c7 en
+    LCD_CtrlWrite_GC9307(0x89);	
+    LCD_DataWrite_GC9307(0x03);//e8/e9 en
+    LCD_CtrlWrite_GC9307(0x8b);	
+    LCD_DataWrite_GC9307(0x80);//ff en	
+    LCD_CtrlWrite_GC9307(0x8d);	
+    LCD_DataWrite_GC9307(0x33);//99/9d en	
+    LCD_CtrlWrite_GC9307(0x8e);	 
+    LCD_DataWrite_GC9307(0x0f);//f0~f3 en 	
 
 
-LCD_CtrlWrite_GC9307(0xe8);
-LCD_DataWrite_GC9307(0x12);
-LCD_DataWrite_GC9307(0x00);// inversion & frame rate
+    LCD_CtrlWrite_GC9307(0xe1);
+    LCD_DataWrite_GC9307(0x01);
+    LCD_DataWrite_GC9307(0x26);
+
+
+    LCD_CtrlWrite_GC9307(0xe8);
+    LCD_DataWrite_GC9307(0x12);
+    LCD_DataWrite_GC9307(0x00);// inversion & frame rate
+    	
+    	
+    LCD_CtrlWrite_GC9307(0xff);
+    LCD_DataWrite_GC9307(0x62);
+
+    LCD_CtrlWrite_GC9307(0x99);	
+    LCD_DataWrite_GC9307(0x3e);
+    LCD_CtrlWrite_GC9307(0x9d);	
+    LCD_DataWrite_GC9307(0x4b);
+    LCD_CtrlWrite_GC9307(0x98);  //V1 ADD	bvdd 3x
+    LCD_DataWrite_GC9307(0x3e);
+    LCD_CtrlWrite_GC9307(0x9c);	
+    LCD_DataWrite_GC9307(0x4b);//V1 ADD 20211004
+    LCD_CtrlWrite_GC9307(0xc3);	
+    LCD_DataWrite_GC9307(0x30);//vbp for vreg1a/1b
+    LCD_CtrlWrite_GC9307(0xc4);	
+    LCD_DataWrite_GC9307(0x18);//vbn for 2a/2b
+    LCD_CtrlWrite_GC9307(0xc9);	
+    LCD_DataWrite_GC9307(0x0A);
+
+    //分辨率240*320
+    LCD_CtrlWrite_GC9307(0x2a);   
+    LCD_DataWrite_GC9307(0x00);
+    LCD_DataWrite_GC9307(0x00);
+    LCD_DataWrite_GC9307(0x00);
+    LCD_DataWrite_GC9307(0xEF);
+
+    LCD_CtrlWrite_GC9307(0x2b);   
+    LCD_DataWrite_GC9307(0x00);
+    LCD_DataWrite_GC9307(0x00);
+    LCD_DataWrite_GC9307(0x01);
+    LCD_DataWrite_GC9307(0x3F);
+
+    LCD_CtrlWrite_GC9307(0x2c);
+
+    ///gamma
+    LCD_CtrlWrite_GC9307(0xF0);
+    LCD_DataWrite_GC9307(0x85);
+    LCD_DataWrite_GC9307(0x0C);
+    LCD_DataWrite_GC9307(0x09);
+    LCD_DataWrite_GC9307(0x07);
+    LCD_DataWrite_GC9307(0x03);
+    LCD_DataWrite_GC9307(0x33);
+                        
+    LCD_CtrlWrite_GC9307(0xF2);
+    LCD_DataWrite_GC9307(0x85);
+    LCD_DataWrite_GC9307(0x0C);
+    LCD_DataWrite_GC9307(0x09);
+    LCD_DataWrite_GC9307(0x07);
+    LCD_DataWrite_GC9307(0x03);
+    LCD_DataWrite_GC9307(0x33);
+                        
+    LCD_CtrlWrite_GC9307(0xF1);
+    LCD_DataWrite_GC9307(0x4b);
+    LCD_DataWrite_GC9307(0x72);
+    LCD_DataWrite_GC9307(0x91);
+    LCD_DataWrite_GC9307(0x34);
+    LCD_DataWrite_GC9307(0x3E);
+    LCD_DataWrite_GC9307(0x3F);
+                        
+                                           
+    LCD_CtrlWrite_GC9307(0xF3);
+    LCD_DataWrite_GC9307(0x4b);
+    LCD_DataWrite_GC9307(0x72);
+    LCD_DataWrite_GC9307(0x91);
+    LCD_DataWrite_GC9307(0x34);
+    LCD_DataWrite_GC9307(0x3E);
+    LCD_DataWrite_GC9307(0x3F);
+
+    LCD_CtrlWrite_GC9307(0x35);
+    LCD_DataWrite_GC9307(0x00);
+    LCD_CtrlWrite_GC9307(0x44);
+    LCD_DataWrite_GC9307(0x00);
+    LCD_DataWrite_GC9307(0x0a);
 	
-	
-LCD_CtrlWrite_GC9307(0xff);
-LCD_DataWrite_GC9307(0x62);
+    //LCD_CtrlWrite_GC9307(0xfe);
+    //LCD_CtrlWrite_GC9307(0xee);
+    //open two lane mode
+    LCD_CtrlWrite_GC9307(0xe9);
+    LCD_DataWrite_GC9307(0x08);
 
-LCD_CtrlWrite_GC9307(0x99);	
-LCD_DataWrite_GC9307(0x3e);
-LCD_CtrlWrite_GC9307(0x9d);	
-LCD_DataWrite_GC9307(0x4b);
-LCD_CtrlWrite_GC9307(0x98);  //V1 ADD	bvdd 3x
-LCD_DataWrite_GC9307(0x3e);
-LCD_CtrlWrite_GC9307(0x9c);	
-LCD_DataWrite_GC9307(0x4b);//V1 ADD 20211004
-LCD_CtrlWrite_GC9307(0xc3);	
-LCD_DataWrite_GC9307(0x30);//vbp for vreg1a/1b
-LCD_CtrlWrite_GC9307(0xc4);	
-LCD_DataWrite_GC9307(0x18);//vbn for 2a/2b
-LCD_CtrlWrite_GC9307(0xc9);	
-LCD_DataWrite_GC9307(0x0A);
-
-//分辨率240*320
-LCD_CtrlWrite_GC9307(0x2a);   
-LCD_DataWrite_GC9307(0x00);
-LCD_DataWrite_GC9307(0x00);
-LCD_DataWrite_GC9307(0x00);
-LCD_DataWrite_GC9307(0xEF);
-
-LCD_CtrlWrite_GC9307(0x2b);   
-LCD_DataWrite_GC9307(0x00);
-LCD_DataWrite_GC9307(0x00);
-LCD_DataWrite_GC9307(0x01);
-LCD_DataWrite_GC9307(0x3F);
-
-LCD_CtrlWrite_GC9307(0x2c);
-
-///gamma
-LCD_CtrlWrite_GC9307(0xF0);
-LCD_DataWrite_GC9307(0x85);
-LCD_DataWrite_GC9307(0x0C);
-LCD_DataWrite_GC9307(0x09);
-LCD_DataWrite_GC9307(0x07);
-LCD_DataWrite_GC9307(0x03);
-LCD_DataWrite_GC9307(0x33);
-                    
-LCD_CtrlWrite_GC9307(0xF2);
-LCD_DataWrite_GC9307(0x85);
-LCD_DataWrite_GC9307(0x0C);
-LCD_DataWrite_GC9307(0x09);
-LCD_DataWrite_GC9307(0x07);
-LCD_DataWrite_GC9307(0x03);
-LCD_DataWrite_GC9307(0x33);
-                    
-LCD_CtrlWrite_GC9307(0xF1);
-LCD_DataWrite_GC9307(0x4b);
-LCD_DataWrite_GC9307(0x72);
-LCD_DataWrite_GC9307(0x91);
-LCD_DataWrite_GC9307(0x34);
-LCD_DataWrite_GC9307(0x3E);
-LCD_DataWrite_GC9307(0x3F);
-                    
-                                       
-LCD_CtrlWrite_GC9307(0xF3);
-LCD_DataWrite_GC9307(0x4b);
-LCD_DataWrite_GC9307(0x72);
-LCD_DataWrite_GC9307(0x91);
-LCD_DataWrite_GC9307(0x34);
-LCD_DataWrite_GC9307(0x3E);
-LCD_DataWrite_GC9307(0x3F);
-
-LCD_CtrlWrite_GC9307(0x35);
-LCD_DataWrite_GC9307(0x00);
-LCD_CtrlWrite_GC9307(0x44);
-LCD_DataWrite_GC9307(0x00);
-LCD_DataWrite_GC9307(0x0a);
-	
-	//LCD_CtrlWrite_GC9307(0xfe);
-	//LCD_CtrlWrite_GC9307(0xee);
-	 //open two lane mode
-        LCD_CtrlWrite_GC9307(0xe9);
-        LCD_DataWrite_GC9307(0x08);
-
-	LCD_CtrlWrite_GC9307(0x11);
+    LCD_CtrlWrite_GC9307(0x11);
     hal_LcdDelay(120);
     LCD_CtrlWrite_GC9307(0x29);
     //hal_LcdDelay(20);
@@ -547,6 +549,111 @@ LCD_DataWrite_GC9307(0x0a);
         LCD_CtrlWrite_GC9307(0xe9);
         LCD_DataWrite_GC9307(0x08);
     }*/
+#else
+	LCD_CtrlWrite_GC9307(0xfe);
+	LCD_CtrlWrite_GC9307(0xef);
+	LCD_CtrlWrite_GC9307(0x36);
+	LCD_DataWrite_GC9307(0x48); 
+	LCD_CtrlWrite_GC9307(0x3a);
+	LCD_DataWrite_GC9307(0x05);
+	
+			
+	LCD_CtrlWrite_GC9307(0x86); 
+	LCD_DataWrite_GC9307(0x98);
+	LCD_CtrlWrite_GC9307(0x89); 
+	LCD_DataWrite_GC9307(0x03);
+	LCD_CtrlWrite_GC9307(0x8b); 
+	LCD_DataWrite_GC9307(0x80); 
+	LCD_CtrlWrite_GC9307(0x8d); 
+	LCD_DataWrite_GC9307(0x22);
+	LCD_CtrlWrite_GC9307(0x8e);   
+	LCD_DataWrite_GC9307(0x0f);
+	
+	
+	LCD_CtrlWrite_GC9307(0xe8);
+	LCD_DataWrite_GC9307(0x12);
+	LCD_DataWrite_GC9307(0x00);
+		
+	
+		
+	LCD_CtrlWrite_GC9307(0xff);
+	LCD_DataWrite_GC9307(0x62);
+	
+	LCD_CtrlWrite_GC9307(0x99); 
+	LCD_DataWrite_GC9307(0x3e);
+	LCD_CtrlWrite_GC9307(0x9d); 
+	LCD_DataWrite_GC9307(0x4b);
+	
+	
+	
+	LCD_CtrlWrite_GC9307(0xc3); 
+	LCD_DataWrite_GC9307(0x45);
+	LCD_CtrlWrite_GC9307(0xc4); 
+	LCD_DataWrite_GC9307(0x20);
+	
+	
+	
+	LCD_CtrlWrite_GC9307(0xc9); 
+	LCD_DataWrite_GC9307(0x0a);
+	
+	LCD_CtrlWrite_GC9307(0xf0);
+	LCD_DataWrite_GC9307(0x84);
+	LCD_DataWrite_GC9307(0x05);
+	LCD_DataWrite_GC9307(0x08);
+	LCD_DataWrite_GC9307(0x07);
+	LCD_DataWrite_GC9307(0x04);
+	LCD_DataWrite_GC9307(0x29);
+	
+	LCD_CtrlWrite_GC9307(0xf2);
+	LCD_DataWrite_GC9307(0x44);
+	LCD_DataWrite_GC9307(0x05);
+	LCD_DataWrite_GC9307(0x08);
+	LCD_DataWrite_GC9307(0x07);
+	LCD_DataWrite_GC9307(0x04);
+	LCD_DataWrite_GC9307(0x29);
+	
+	LCD_CtrlWrite_GC9307(0xf1);
+	LCD_DataWrite_GC9307(0x43);
+	LCD_DataWrite_GC9307(0x75);
+	LCD_DataWrite_GC9307(0x78);
+	LCD_DataWrite_GC9307(0x32);
+	LCD_DataWrite_GC9307(0x33);
+	LCD_DataWrite_GC9307(0x6f);
+	
+	LCD_CtrlWrite_GC9307(0xf3);
+	LCD_DataWrite_GC9307(0x43);
+	LCD_DataWrite_GC9307(0x75);
+	LCD_DataWrite_GC9307(0x78);
+	LCD_DataWrite_GC9307(0x32);
+	LCD_DataWrite_GC9307(0x33);
+	LCD_DataWrite_GC9307(0x6f);
+	
+	LCD_CtrlWrite_GC9307(0x35);
+	LCD_DataWrite_GC9307(0x00);
+	
+	LCD_CtrlWrite_GC9307(0x44);
+	LCD_DataWrite_GC9307(0x00);
+	LCD_DataWrite_GC9307(0x0a);
+	
+	LCD_CtrlWrite_GC9307(0xfe);
+	LCD_CtrlWrite_GC9307(0xee);
+
+	LCD_CtrlWrite_GC9307(0x11);
+    hal_LcdDelay(120);
+    LCD_CtrlWrite_GC9307(0x29);
+    //hal_LcdDelay(20);
+    LCD_CtrlWrite_GC9307(0x2c);
+
+
+    
+    //open two lane mode
+    if(hal_gouda_is_2_date_line() == SCI_TRUE)
+    {
+        //open two lane mode
+        LCD_CtrlWrite_GC9307(0xe9);
+        LCD_DataWrite_GC9307(0x08);
+    }
+	#endif
 #endif
 
     return ERR_LCD_NONE;

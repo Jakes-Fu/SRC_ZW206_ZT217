@@ -698,7 +698,11 @@ PUBLIC void GPIO_SetHeadsetDetectFlag(uint8 ucFlag)
     ucHeadsetdet = ucFlag;
 }
 
-
+/*****************************************************************************/
+//  Description:    Headset button detection handler function.
+//  Author:         BenjaminWang
+//  Note:
+/*****************************************************************************/
 PUBLIC void GPIO_HeadsetButtonIntHandler (uint32 gpio_id, uint32 gpio_state)
 {
     TB_MSG  gpio_msg = {0};
@@ -710,7 +714,12 @@ PUBLIC void GPIO_HeadsetButtonIntHandler (uint32 gpio_id, uint32 gpio_state)
    //SCI_ASSERT(0);
     if (PNULL != cfg_ptr)
     {
-
+       /*   The available condition of Headset Button:
+            1.     Headset had connected
+            2.  The time of headset button interrupt raised should be lated more than 1000ms
+                after headset detected interrupt raised
+            3.  The pin status of headset button is available
+       */
 
     SCI_TRACE_LOW("{xx}GPIO_HeadsetButtonIntHandler (PNULL != cfg_ptr)");
 
@@ -1013,7 +1022,6 @@ PUBLIC void GPIO_BackendICIntHandler (uint32 gpio_id, uint32 gpio_state)
 
 #ifndef MODEM_PLATFORM
 #ifdef MSDC_CARD_SUPPORT
-
 /*****************************************************************************/
 //  Description:    SDCard detection handler function.
 //  Author:         juan.zhang
@@ -1339,32 +1347,12 @@ BOOLEAN GPIO_PROD_RegGpio (
                     SCI_TRACE_LOW("{xx}GPIO_PROD_RegGpio GPIO_INT_LEVEL_HIGH lichao");
                         HAL_SetGPIOInterruptSense (cfg_ptr->gpio_num, GPIO_INT_LEVEL_HIGH);
                         g_gpio_inttype[cfg_ptr->gpio_num] = GPIO_INT_LEVEL_HIGH;
-                        /*if (!cfg_ptr->valid_level)
-                        {
-                            HAL_SetGPIOInterruptSense (cfg_ptr->gpio_num, GPIO_INT_LEVEL_LOW);
-                            g_gpio_inttype[cfg_ptr->gpio_num] = GPIO_INT_LEVEL_LOW;
-                        }
-                        else
-                        {
-                            HAL_SetGPIOInterruptSense (cfg_ptr->gpio_num, GPIO_INT_LEVEL_HIGH);
-                            g_gpio_inttype[cfg_ptr->gpio_num] = GPIO_INT_LEVEL_HIGH;
-                        }*/
                     }
                     else
                     {
                     SCI_TRACE_LOW("{xx}GPIO_PROD_RegGpio GPIO_INT_LEVEL_LOW lichao");
                         HAL_SetGPIOInterruptSense (cfg_ptr->gpio_num, GPIO_INT_LEVEL_LOW);
                         g_gpio_inttype[cfg_ptr->gpio_num] = GPIO_INT_LEVEL_LOW;
-                        /*if (!cfg_ptr->valid_level)
-                        {
-                            HAL_SetGPIOInterruptSense (cfg_ptr->gpio_num, GPIO_INT_LEVEL_LOW);
-                            g_gpio_inttype[cfg_ptr->gpio_num] = GPIO_INT_LEVEL_LOW;
-                        }
-                        else
-                        {
-                            HAL_SetGPIOInterruptSense (cfg_ptr->gpio_num, GPIO_INT_LEVEL_HIGH);
-                            g_gpio_inttype[cfg_ptr->gpio_num] = GPIO_INT_LEVEL_HIGH;
-                        }*/
                     }
                     break;
 

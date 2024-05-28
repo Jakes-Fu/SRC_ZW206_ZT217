@@ -77,9 +77,14 @@ LOCAL const GPIO_CFG_INFO_T s_gpio_prod_cfg_cus_table[] =
     {GPIO_PROD_VIBRATIOR_EN_ID,            GPIO_PROD_TYPE_MAX, GPIO_PROD_HIGH_LEVEL,      GPIO_PROD_NUM_INVALID,    _GPIO_OpenVibrator},
     {GPIO_PROD_FLASH_EN_ID,                GPIO_PROD_TYPE_MAX, GPIO_PROD_HIGH_LEVEL,      GPIO_PROD_NUM_INVALID,    _GPIO_OpenFlashLight},
 
-    {GPIO_PROD_HEADSET_BUTTON_ID,        GPIO_PROD_TYPE_BB0, GPIO_PROD_HIGH_LEVEL,     GPIO_PROD_NUM_INVALID,  PNULL },
-    {GPIO_PROD_HEADSET_DETECT_ID,        GPIO_PROD_TYPE_BB0, GPIO_PROD_HIGH_LEVEL,     21,             PNULL   }, // GPIO_69
-    //   {GPIO_PROD_HEADSET_DETECT_ID,        GPIO_PROD_TYPE_EIC_DBNC, GPIO_PROD_HIGH_LEVEL,     EIC_AUD_HEAD_INSERT_ALL,             PNULL   }, // GPIO_69
+    {GPIO_PROD_HEADSET_BUTTON_ID,        GPIO_PROD_TYPE_EIC_DBNC, GPIO_PROD_HIGH_LEVEL,     EICA_AUD_HEAD_BUTTON,  PNULL },
+	#ifdef ZT217_LISENNING_PAD
+	{GPIO_PROD_HEADSET_DETECT_ID,        GPIO_PROD_TYPE_BB0, GPIO_PROD_HIGH_LEVEL,     21,             PNULL   }, // GPIO_21
+	#else
+    //{GPIO_PROD_HEADSET_DETECT_ID,        GPIO_PROD_TYPE_BB0, GPIO_PROD_LOW_LEVEL,     69,             PNULL   }, // GPIO_69
+	   
+    {GPIO_PROD_HEADSET_DETECT_ID,        GPIO_PROD_TYPE_EIC_DBNC, GPIO_PROD_HIGH_LEVEL,     EIC_AUD_HEAD_INSERT_ALL,             PNULL   }, // GPIO_69
+	#endif
 
     //{GPIO_PROD_SENSOR_RESET_ID,            GPIO_PROD_TYPE_BB0, GPIO_PROD_HIGH_LEVEL,     33,               PNULL    }, // 53--33
      //{GPIO_PROD_SENSOR_PWDN_ID,            GPIO_PROD_TYPE_BB0, GPIO_PROD_HIGH_LEVEL,     44,                PNULL    },// 52--44
@@ -98,7 +103,11 @@ LOCAL const GPIO_CFG_INFO_T s_gpio_prod_cfg_cus_table[] =
 
 #ifdef ZDT_PCBA_ZW201_SUPPORT
     #ifdef AUDIO_EXTPA_TYPE_AW87390
+	#ifdef ZT217_LISENNING_PAD
 	{GPIO_PROD_SPEAKER_PA_EN_ID,        GPIO_PROD_TYPE_BB0, GPIO_PROD_HIGH_LEVEL,     11,                               PNULL                   }, // use GPIO // wuxx 18--27 CODEC_1V8_EN
+	#else
+	{GPIO_PROD_SPEAKER_PA_EN_ID,        GPIO_PROD_TYPE_BB0, GPIO_PROD_HIGH_LEVEL,     27,                               PNULL                   }, // use GPIO // wuxx 18--27 CODEC_1V8_EN
+	#endif
 	#else
 	{GPIO_PROD_SPEAKER_PA_EN_ID,        GPIO_PROD_TYPE_BB0, GPIO_PROD_HIGH_LEVEL,     18,                               PNULL                   }, // use GPIO
 	#endif
@@ -119,15 +128,21 @@ LOCAL const GPIO_CFG_INFO_T s_gpio_prod_cfg_cus_table[] =
     {GPIO_PROD_GSENSOR_INT_2_ID,			GPIO_PROD_TYPE_BB0, GPIO_PROD_HIGH_LEVEL, 	5,  PNULL},	//G-SENSOR INT1
 #else
 #ifdef MOTION_SENSOR_TYPE
-    // {GPIO_PROD_GSENSOR_INT_ID,            GPIO_PROD_TYPE_BB0, GPIO_PROD_LOW_LEVEL,     8,             (GPIO_CB)MSensor_IntHandler    },    //G-SENSOR INT1 USE GPIO8
+#ifndef ZT217_LISENNING_PAD
+     {GPIO_PROD_GSENSOR_INT_ID,            GPIO_PROD_TYPE_BB0, GPIO_PROD_LOW_LEVEL,     8,             (GPIO_CB)MSensor_IntHandler    },    //G-SENSOR INT1 USE GPIO8
+	 #endif
 #endif
 #endif
 
 #ifdef SIM_PLUG_IN_SUPPORT
 #ifdef ZDT_PCBA_ZW201_SUPPORT
-    {GPIO_PROD_SIM_PLUG_IN_ID,          GPIO_PROD_TYPE_BB0,    GPIO_PROD_HIGH_LEVEL,    8,  PNULL},
+	#ifdef ZT217_LISENNING_PAD
+	{GPIO_PROD_SIM_PLUG_IN_ID,          GPIO_PROD_TYPE_BB0,    GPIO_PROD_HIGH_LEVEL,    8,  PNULL},
+	#else
+    {GPIO_PROD_SIM_PLUG_IN_ID,          GPIO_PROD_TYPE_BB0,    GPIO_PROD_HIGH_LEVEL,    31,  PNULL},
+	#endif
 #else
-    {GPIO_PROD_SIM_PLUG_IN_ID,          GPIO_PROD_TYPE_BB0,    GPIO_PROD_HIGH_LEVEL,    8,  PNULL},
+    {GPIO_PROD_SIM_PLUG_IN_ID,          GPIO_PROD_TYPE_BB0,    GPIO_PROD_HIGH_LEVEL,    4,  PNULL},
 #endif
 #endif
 
@@ -140,8 +155,9 @@ LOCAL const GPIO_CFG_INFO_T s_gpio_prod_cfg_cus_table[] =
 #endif
 
     {GPIO_PROD_USB_DETECT_ID,             GPIO_PROD_TYPE_MAX, GPIO_PROD_HIGH_LEVEL,   GPIO_PROD_NUM_INVALID, _GPIO_IsUsbOrAdapter },
-
-    //{GPIO_PROD_2720_INT_ID,             GPIO_PROD_TYPE_BB0, GPIO_PROD_LOW_LEVEL,    6 ,       PNULL},
+#ifndef ZT217_LISENNING_PAD
+    {GPIO_PROD_2720_INT_ID,             GPIO_PROD_TYPE_BB0, GPIO_PROD_LOW_LEVEL,    6 ,       PNULL},
+	#endif
     {GPIO_PROD_CALIB_SEL_ID,            GPIO_PROD_TYPE_BB0, GPIO_PROD_LOW_LEVEL,    13 ,       PNULL},
 
     {GPIO_PROD_TEST_ID,GPIO_PROD_TYPE_BB0,GPIO_PROD_LOW_LEVEL,29,PNULL},
@@ -150,22 +166,30 @@ LOCAL const GPIO_CFG_INFO_T s_gpio_prod_cfg_cus_table[] =
 #endif
 
     //{GPIO_PROD_SDCARD_DETECT_ID,        GPIO_PROD_TYPE_BB0, GPIO_PROD_LOW_LEVEL,     97,             PNULL    },
-    {GPIO_PROD_SDCARD_DETECT_ID,        GPIO_PROD_TYPE_BB0, GPIO_PROD_LOW_LEVEL,     1,             PNULL    },
+	#ifdef ZT217_LISENNING_PAD
+	{GPIO_PROD_SDCARD_DETECT_ID,        GPIO_PROD_TYPE_BB0, GPIO_PROD_LOW_LEVEL,     1,             PNULL    },
+	#endif
 #ifdef LOCK_KEY_SUPPORT
     //{GPIO_PROD_LOCKKEY_INT_ID,          GPIO_PROD_TYPE_BB0,    GPIO_PROD_HIGH_LEVEL,    4,  PNULL},
 #endif
 
 #ifdef ZDT_PCBA_ZW201_SUPPORT
 	#ifdef DRV_TP_6133_ZW206_K1_240X284
-     {GPIO_PROD_TP_INT_ID, GPIO_PROD_TYPE_BB0, GPIO_PROD_LOW_LEVEL, 6, PNULL},//macrosky //defined(DRV_TP_6133_ZW206_K1_240X284)//wuxx add, ZW206 GPIO--12---42	
+     {GPIO_PROD_TP_INT_ID, GPIO_PROD_TYPE_BB0, GPIO_PROD_LOW_LEVEL, 42, PNULL},//macrosky //defined(DRV_TP_6133_ZW206_K1_240X284)//wuxx add, ZW206 GPIO--12---42	
 	#else
-	 {GPIO_PROD_TP_INT_ID, GPIO_PROD_TYPE_BB0, GPIO_PROD_LOW_LEVEL, 6, PNULL},//macrosky
+	#ifdef ZT217_LISENNING_PAD
+	{GPIO_PROD_TP_INT_ID, GPIO_PROD_TYPE_BB0, GPIO_PROD_LOW_LEVEL, 6, PNULL},//macrosky
+	#else
+	 {GPIO_PROD_TP_INT_ID, GPIO_PROD_TYPE_BB0, GPIO_PROD_LOW_LEVEL, 12, PNULL},//macrosky
+	 #endif
 	#endif
-     {GPIO_PROD_TP_WAKE_ID, GPIO_PROD_TYPE_BB0, GPIO_PROD_HIGH_LEVEL, 7, PNULL},
-     //{GPIO_PROD_MIC_SW_EN_ID,GPIO_PROD_TYPE_BB0, GPIO_PROD_HIGH_LEVEL, 19, PNULL},//MIC_SW_EN
+	#ifdef ZT217_LISENNING_PAD
+	{GPIO_PROD_TP_WAKE_ID, GPIO_PROD_TYPE_BB0, GPIO_PROD_HIGH_LEVEL, 7, PNULL},
+	#else
+     {GPIO_PROD_TP_WAKE_ID, GPIO_PROD_TYPE_BB0, GPIO_PROD_HIGH_LEVEL, 43, PNULL},
+	 #endif
 #else
-     {GPIO_PROD_TP_INT_ID, GPIO_PROD_TYPE_BB0, GPIO_PROD_LOW_LEVEL, 6, PNULL},
-     {GPIO_PROD_TP_WAKE_ID, GPIO_PROD_TYPE_BB0, GPIO_PROD_HIGH_LEVEL, 7, PNULL},
+     {GPIO_PROD_TP_INT_ID, GPIO_PROD_TYPE_BB0, GPIO_PROD_LOW_LEVEL, 42, PNULL},
 #endif
 
       // End flag, must be here !!!!!
@@ -317,7 +341,7 @@ PUBLIC void GPIO_CustomizeInit(void)
 
     /* GPIO_PROD_2720_INT_ID 的真实GPIO是6， 设置LISR 使得GPIO_R2720IntHandler 在低级中断中处理 */
     GPIO_SetLisrInt(6, TRUE);
-
+#ifdef ZT217_LISENNING_PAD
      // headset plug detect
     GPIO_PROD_RegGpio(
         GPIO_PROD_HEADSET_DETECT_ID,
@@ -327,7 +351,7 @@ PUBLIC void GPIO_CustomizeInit(void)
         HEADSET_DETECT_SHAKING_TIME*4,
         (GPIO_PROD_CALLBACK)GPIO_HeadsetDetectIntHandler
         );
-        
+#endif
     // Charge plug detect
     GPIO_PROD_RegGpio(
         GPIO_PROD_CHARGE_PLUG_DETECT_ID,
@@ -443,6 +467,7 @@ PUBLIC void GPIO_CustomizeInit(void)
     SCI_TRACE_ID(TRACE_TOOL_CONVERT,GPIO_CFG_265_112_2_18_0_26_25_35,(uint8*)"");
 #endif
 
+#ifdef ZT217_LISENNING_PAD
         // SDCARD plug detect
         GPIO_PROD_RegGpio(
         GPIO_PROD_SDCARD_DETECT_ID,
@@ -452,6 +477,7 @@ PUBLIC void GPIO_CustomizeInit(void)
         SDCARD_DETECT_SHAKING_TIME,
         (GPIO_PROD_CALLBACK)GPIO_SdcardDetectIntHandler
         );
+#endif
 
 	 GPIO_PROD_RegGpio(
         GPIO_PROD_TEST_ID,

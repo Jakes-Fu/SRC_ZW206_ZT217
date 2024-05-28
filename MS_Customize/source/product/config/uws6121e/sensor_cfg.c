@@ -124,9 +124,9 @@ LOCAL const SENSOR_INFO_T* main_sensor_infor_tab[]=
     //&g_OV9660_yuv_info,
     //&g_BF3903_yuv_info,
 #ifdef DRV_CAMERA_BF20A6_CUSTOM
-  //  &g_BF20A6_yuv_info,
+    &g_BF20A6_yuv_info,
 #else
-   // &g_bf30a2_yuv_info,
+    &g_bf30a2_yuv_info,
 #endif
     //&g_GC0310_yuv_info,
     &g_GC032A_yuv_info,

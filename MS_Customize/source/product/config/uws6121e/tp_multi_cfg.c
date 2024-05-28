@@ -52,7 +52,7 @@ extern  TPC_OPERATION_T tpc_bl6133_ops;
  **---------------------------------------------------------------------------*/
 LOCAL const TPC_OPERATION_T * TPC_OPS_TAB[]=
 {
-/*#if defined (CAP_TP_SUPPORT_FT5206)
+#if defined (CAP_TP_SUPPORT_FT5206)
     &tpc_ft5206_ops,
 #endif
 #if defined (CAP_TP_SUPPORT_FT6336)
@@ -60,8 +60,7 @@ LOCAL const TPC_OPERATION_T * TPC_OPS_TAB[]=
 #endif
 #if defined (CAP_TP_SUPPORT_BL6133)
     &tpc_bl6133_ops,
-#endif*/
-    &tpc_bl6133_ops,
+#endif
     PNULL
 };
 /**---------------------------------------------------------------------------*

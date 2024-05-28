@@ -112,8 +112,8 @@
 //#include "bl_fw_usd10_dw168_a2_240.h"
 #include "bl_fw_usd10_dw168_rq_a2_240.h"
 #elif defined(DRV_TP_6133_ZW206_K1_240X284)//wuxx add 
-//#include "BL6XX3_ZW206_K1_YH-183_P1F4A1_20230905.h"
-//#include "BL6XX3_ZW206_K1_YH-183_P1F4A18__20240110.h"
+#include "BL6XX3_ZW206_K1_YH-183_P1F4A1_20230905.h"
+#elif defined(DRV_TP_6133_ZT217_240X320)
 #include "BL6XX3_ZT217-HJ24305T-A_P0F4A1__20240417.h"
 #else
 //#include "bl_fw.h"
@@ -123,7 +123,11 @@
 #ifdef BL_UPDATE_FIRMWARE_ENABLE
 LOCAL I2C_DEV BL6133_I2C_fm_cfg =
 {
-    3,
+#ifdef DRV_TP_6133_ZT217_240X320
+	3,
+#else
+    4,
+#endif
     400000,                   // freq is standard for BL6133
     0,                          // bus
     BL_FLASH_I2C_ADDR,  // slave_addr

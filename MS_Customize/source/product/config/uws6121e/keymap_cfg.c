@@ -15,6 +15,8 @@
 #include "tb_dal.h" 
 
 #ifdef ZDT_PCBA_ZW201_SUPPORT
+
+#ifdef ZT217_LISENNING_PAD
 LOCAL const uint16 keymap[] = {
        /*			KEYIN0					KEYIN1					KEYIN2					KEYIN3					KEYIN4					KEYIN5					KEYIN6					KEYIN7					   */
 	/*				|						|						|						|						|						|						|						|                                     */
@@ -40,6 +42,33 @@ LOCAL const uint16 keymap[] = {
 	/*				|						|						|						|						|						|						|						|                                     */
 
 };
+#else
+LOCAL const uint16 keymap[] = {
+       /*			KEYIN0					KEYIN1					KEYIN2					KEYIN3					KEYIN4					KEYIN5					KEYIN6					KEYIN7					   */
+	/*				|						|						|						|						|						|						|						|                                     */
+	/*KEYOUT0------o-----------------------o-----------------------o-----------------------o-----------------------o-----------------------o----------------------  o-----------------------o--------------------  */
+	/*				|						|						|						|						|						|						|						|				           */
+					SCI_VK_SHORTCUT,	SCI_VK_INVALID_KEY,	SCI_VK_INVALID_KEY,      SCI_VK_INVALID_KEY,	SCI_VK_INVALID_KEY,  	SCI_VK_INVALID_KEY,      SCI_VK_INVALID_KEY,      SCI_VK_INVALID_KEY,
+	/*				|						|						|						|						|						|						|						|                                     */
+	/*				|						|						|						|						|						|						|						|                                    */
+	/*KEYOUT1------o-----------------------o-----------------------o-----------------------o-----------------------o-----------------------o----------------------- o----------------------o----------------------*/
+	/*				|						|						|						|						|						|						|						|                                    */
+					SCI_VK_INVALID_KEY,	SCI_VK_INVALID_KEY,	SCI_VK_INVALID_KEY,	SCI_VK_INVALID_KEY,	SCI_VK_INVALID_KEY,      SCI_VK_INVALID_KEY,      SCI_VK_INVALID_KEY,      SCI_VK_INVALID_KEY,
+	/*				|						|						|						|						|						|						|						|                                     */
+	/*				|						|						|						|						|						|						|						|                                     */
+	/*KEYOUT2------o-----------------------o-----------------------o-----------------------o-----------------------o-----------------------o----------------------  o-----------------------o---------------------*/
+	/*				|						|						|						|						|						|						|						|                                     */
+					SCI_VK_INVALID_KEY,	SCI_VK_INVALID_KEY,	SCI_VK_INVALID_KEY,	SCI_VK_INVALID_KEY,	SCI_VK_INVALID_KEY,      SCI_VK_INVALID_KEY,      SCI_VK_INVALID_KEY,      SCI_VK_INVALID_KEY,
+	/*				|						|						|						|						|						|						|						|                                     */
+	/*				|						|						|						|						|						|						|						|                                      */
+	/*KEYOUT3------o-----------------------o-----------------------o-----------------------o-----------------------o-----------------------o----------------------  o-----------------------o---------------------*/
+	/*				|						|						|						|						|						|						|						|                                     */
+					SCI_VK_INVALID_KEY,	SCI_VK_INVALID_KEY,	SCI_VK_INVALID_KEY,	SCI_VK_INVALID_KEY,	SCI_VK_INVALID_KEY,      SCI_VK_INVALID_KEY,      SCI_VK_INVALID_KEY,      SCI_VK_INVALID_KEY,
+	/*				|						|						|						|						|						|						|						|                                      */
+	/*				|						|						|						|						|						|						|						|                                     */
+
+};
+#endif
 #else
 #ifdef HW_6121_pre_w217
 // For uws6121e openphone
