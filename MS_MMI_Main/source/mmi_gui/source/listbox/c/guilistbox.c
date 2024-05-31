@@ -315,7 +315,11 @@ LOCAL BOOLEAN SetItemStyle(
     case GUIITEM_STYLE_GPT_AI_6LINE_TEXT_MS:
     case GUIITEM_STYLE_GPT_MINE_7LINE_TEXT_MS:
     case GUIITEM_STYLE_GPT_AI_7LINE_TEXT_MS:
-#endif        
+#endif
+#ifdef POETRY_LISTEN_SUPPORT
+    case GUIITEM_STYLE_POETRY_GRADE_LIST_MS:
+    case GUIITEM_STYLE_POETRY_ITEM_LIST_MS:
+#endif
         break;
         
     default:

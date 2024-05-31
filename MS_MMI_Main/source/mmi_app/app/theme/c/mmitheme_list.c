@@ -77,6 +77,9 @@
 #ifdef ZMT_GPT_SUPPORT
 #include "zmt_gpt.h"
 #endif
+#ifdef POETRY_LISTEN_SUPPORT
+#include "dsl_poetry_main.h"
+#endif
 /**---------------------------------------------------------------------------*
  **                         Macro Declaration                                 *
  **---------------------------------------------------------------------------*/
@@ -5836,19 +5839,19 @@ LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_1_icon_and_1_text_ms =
 //GUIITEM_SYTLE_DSL_ENGLISH_BOOK,
 LOCAL THEMELIST_ITEM_STYLE_T const dsl_english_book_item =
 {
-    2*WORD_CARD_LINE_HIGHT, 2*WORD_CARD_LINE_HIGHT,
+    2.5*WORD_CARD_LINE_HIGHT, 2.5*WORD_CARD_LINE_HIGHT,
     {
         {
             0,
-            { 2, 0.5*WORD_CARD_LINE_HIGHT, WORD_CARD_LINE_WIDTH, 1.5*WORD_CARD_LINE_HIGHT},
-            { 2, 0.5*WORD_CARD_LINE_HIGHT, WORD_CARD_LINE_WIDTH, 1.5*WORD_CARD_LINE_HIGHT},
+            { 2, 0.3*WORD_CARD_LINE_HIGHT, WORD_CARD_LINE_WIDTH, 1.8*WORD_CARD_LINE_HIGHT},
+            { 2, 0.3*WORD_CARD_LINE_HIGHT, WORD_CARD_LINE_WIDTH, 1.8*WORD_CARD_LINE_HIGHT},
             0, 0,
             0, 0
         },
         {
             GUIITEM_CONTENT_STATE_NONE,
-            {20,  0.8*WORD_CARD_LINE_HIGHT,  36, 1.5*WORD_CARD_LINE_HIGHT},
-            {20,  0.8*WORD_CARD_LINE_HIGHT,  36, 1.5*WORD_CARD_LINE_HIGHT},
+            {20,  0.3*WORD_CARD_LINE_HIGHT,  36, 1.8*WORD_CARD_LINE_HIGHT},
+            {20,  0.3*WORD_CARD_LINE_HIGHT,  36, 1.8*WORD_CARD_LINE_HIGHT},
             SONG_FONT_16, SONG_FONT_16,
             0, 100
         },
@@ -5861,8 +5864,8 @@ LOCAL THEMELIST_ITEM_STYLE_T const dsl_english_book_item =
         },
      {
             GUIITEM_CONTENT_STATE_NONE,
-            {42, WORD_CARD_LINE_HIGHT+11, MMI_MAINSCREEN_WIDTH, 2*WORD_CARD_LINE_HIGHT-10},
-            {42, WORD_CARD_LINE_HIGHT+11, MMI_MAINSCREEN_WIDTH, 2*WORD_CARD_LINE_HIGHT-10},
+            {42, WORD_CARD_LINE_HIGHT+11, MMI_MAINSCREEN_WIDTH, 2*WORD_CARD_LINE_HIGHT},
+            {42, WORD_CARD_LINE_HIGHT+11, MMI_MAINSCREEN_WIDTH, 2*WORD_CARD_LINE_HIGHT},
             SONG_FONT_20, SONG_FONT_20,
             0, 0
         },     
@@ -6369,6 +6372,57 @@ LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_gpt_ai_7line_ms =
     0, MMILIST_INVALID_ITEM_INDEX
 };
 #endif
+
+#ifdef POETRY_LISTEN_SUPPORT
+//GUIITEM_STYLE_POETRY_GRADE_LIST_MS
+LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_poetry_grade_list_ms =
+{
+    2*POETRY_LINE_HIGHT, 2*POETRY_LINE_HIGHT,
+    {
+        //icon
+        {
+            0,
+            {0.2*POETRY_LINE_WIDTH, 0, 1.2*POETRY_LINE_WIDTH, 2*POETRY_LINE_HIGHT},
+            {0.2*POETRY_LINE_WIDTH, 0, 1.2*POETRY_LINE_WIDTH, 2*POETRY_LINE_HIGHT},
+            0, 0
+        }, 
+        //text
+        {
+            0,
+            {1.2*POETRY_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH - POETRY_LINE_WIDTH, 2*POETRY_LINE_HIGHT},
+            {1.2*POETRY_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH - POETRY_LINE_WIDTH, 2*POETRY_LINE_HIGHT},
+            SONG_FONT_16, SONG_FONT_16,
+            0, 0
+        },    
+        {0},
+        {0},
+        {0},
+        {0},
+    },
+    0, MMILIST_INVALID_ITEM_INDEX
+};
+//GUIITEM_STYLE_POETRY_ITEM_LIST_MS
+LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_poetry_item_list_ms =
+{
+    2*POETRY_LINE_HIGHT, 2*POETRY_LINE_HIGHT,
+    {
+        //text
+        {
+            0,
+            {0.2*POETRY_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH - 1.2*POETRY_LINE_WIDTH, 2*POETRY_LINE_HIGHT},
+            {0.2*POETRY_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH - 1.2*POETRY_LINE_WIDTH, 2*POETRY_LINE_HIGHT},
+            SONG_FONT_20, SONG_FONT_20,
+            0, 0
+        },   
+        {0},
+        {0},
+        {0},
+        {0},
+        {0},
+    },
+    0, MMILIST_INVALID_ITEM_INDEX
+};
+#endif
 //============================================================================//
 //                                  End For engineer mode                     //
 //============================================================================//
@@ -6681,6 +6735,10 @@ LOCAL THEMELIST_STYLE_TABLE_T const s_style_table[] =
     {GUIITEM_STYLE_GPT_AI_6LINE_TEXT_MS, &s_item_style_gpt_ai_6line_ms},
     {GUIITEM_STYLE_GPT_MINE_7LINE_TEXT_MS, &s_item_style_gpt_mine_7line_ms},
     {GUIITEM_STYLE_GPT_AI_7LINE_TEXT_MS, &s_item_style_gpt_ai_7line_ms},
+#endif
+#ifdef POETRY_LISTEN_SUPPORT
+    {GUIITEM_STYLE_POETRY_GRADE_LIST_MS, &s_item_style_poetry_grade_list_ms},
+    {GUIITEM_STYLE_POETRY_ITEM_LIST_MS, &s_item_style_poetry_item_list_ms},
 #endif
 //============================================================================//
 //                                   For watch                                //

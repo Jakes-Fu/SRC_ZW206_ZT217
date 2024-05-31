@@ -1,6 +1,6 @@
 #include "dsl_main_file.h"
 
-/*PUBLIC BOOLEAN dsl_tfcard_exist(void)
+PUBLIC BOOLEAN dsl_tfcard_exist(void)
 {
     MMIFILE_DEVICE_E sd_type             = MMI_DEVICE_SDCARD;
     
@@ -10,7 +10,7 @@
         return TRUE;
     }
     return FALSE;
-}*/
+}
 
 PUBLIC uint32 dsl_tfcard_get_free_kb(void)
 {

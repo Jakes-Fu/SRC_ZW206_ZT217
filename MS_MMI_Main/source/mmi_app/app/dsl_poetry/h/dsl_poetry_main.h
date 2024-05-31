@@ -37,144 +37,85 @@ extern "C"
 #define DEPOSIT_TEST_API 0
 
 #define MAX_POETRY_LIST_SIZE 350
+#define MAX_POETRY_SENTENCES_SIZE 30
 
-#define POETRY_TIME_DIFF_FROM_1970_TO_1980     ((365*10+2)*24*3600)//315619200-86400(1970-1979)
+#define POETRY_TIME_DIFF_FROM_1970_TO_1980     ((365*10+2)*24*3600)
+
 
 typedef struct
 {
 	char name[100];
 }DSL_POETRY_GRADE_NAME;
 
-typedef struct dsl_poetry_page_info{
+typedef struct
+{
     uint8 curPage;
     int16 total;
     uint8 curIndex;
     uint8 selectedIndex;
-	GUI_RECT_T btn_rect_1;
-	GUI_RECT_T btn_rect_2;
+    GUI_RECT_T btn_rect_1;
+    GUI_RECT_T btn_rect_2;
 }DSL_POETRY_PAGE_T;
 
-
-typedef struct dsl_poetry_info{
+typedef struct
+{
     char id[15];
-	char title[100];
-	char author[10];
+    char title[100];
+    char author[10];
     char years[10];
-	//char *origin_content;
-	//char *note_content;
-	//char *trans_content;
-	//char *appre_content;
-	//uint8 isfavorite;
 } DSL_POETRY_T;
-typedef struct DSL_POETRY {
-  DSL_POETRY_T poetry[MAX_POETRY_LIST_SIZE];
+typedef struct
+{
+    DSL_POETRY_T poetry[MAX_POETRY_LIST_SIZE];
 } DSL_POETRY_LIST_T;
 
-typedef struct dsl_poetry_origin_content{
-    char content[1500];
-} DSL_POETRY_CONTENT_T;
-
-typedef struct dsl_poetry_trans_content{
-    char trans[2500];
-} DSL_POETRY_TRANS_CONTENT_T;
-
-typedef struct dsl_poetry_audio_content{
-    char audio[200];
-} DSL_POETRY_AUDIO_CONTENT_T;
-
-
-typedef struct dsl_poetry_audio_data{
-	char *audio_data;
-	int audio_data_len;
+typedef struct
+{
+    char *audio_data;
+    int audio_data_len;
 }DSL_POETRY_AUDIO_DATA_T;
 
-typedef struct dsl_poetry_datail_info{
-    char id[15];
-	char title[100];
-	char titleAudio[200];
-	char author[80];
-    char years[80];
-	char appre[18000];
-	char note[7000];
-	int32 version;
-	uint8 is_wenyanwen;//ндятнд
-	DSL_POETRY_TRANS_CONTENT_T trans[25];
-	DSL_POETRY_CONTENT_T content[25];
-	DSL_POETRY_AUDIO_CONTENT_T audio[25];
+typedef struct
+{
+    char audio[200];
+}DSL_POETRY_DETAIL_AUDIO_T;
+
+typedef struct
+{
+    char * id;
+    char * title;
+    char * titleAudio;
+    char * type;
+    char * title_content;
+    char * content;
+    char * comment;
+    char * translation;
+    char * appreciation;
+    uint8 sentences_num;
+    DSL_POETRY_DETAIL_AUDIO_T *sen_audio[MAX_POETRY_SENTENCES_SIZE];
 } DSL_POETRY_DETAIL_T;
 
-
-typedef struct dsl_poetry_update_datail_info{
-    char id[15];
-	char titleAudio[200];
-	uint16 version;
-	DSL_POETRY_AUDIO_CONTENT_T audio[25];
-	uint16 mp3num;
-} DSL_POETRY_UPDATE_DETAIL_T;
-
-
-
-typedef struct dsl_poetry_grade_info{
+typedef struct
+{
     uint16 id;
-	char title[100];
-	// char author[10];
-    // char years[10];
-	//char *origin_content;
-	//char *note_content;
-	//char *trans_content;
-	//char *appre_content;
-	//uint8 isfavorite;
+    char title[100];
 } DSL_POETRY_GRADE_INFO_T;
-typedef struct dsl_poetry_grade_list{
-    // uint16 id;
-	// char title[100];
-	DSL_POETRY_GRADE_INFO_T grade_info[30];
-	// char author[10];
-    // char years[10];
-	//char *origin_content;
-	//char *note_content;
-	//char *trans_content;
-	//char *appre_content;
-	//uint8 isfavorite;
+
+typedef struct
+{
+    DSL_POETRY_GRADE_INFO_T grade_info[30];
 } DSL_POETRY_GRADE_LIST_T;
 
-typedef struct dsl_poetry_all_grade_list{
-    // uint16 id;
-	// char title[100];
-	DSL_POETRY_GRADE_LIST_T all_grade[18];
-	// char author[10];
-    // char years[10];
-	//char *origin_content;
-	//char *note_content;
-	//char *trans_content;
-	//char *appre_content;
-	//uint8 isfavorite;
+typedef struct
+{
+    DSL_POETRY_GRADE_LIST_T all_grade[18];
 } DSL_POETRY_ALL_GRADE_LIST_T;
 
-typedef struct dsl_temp_favorite_status_list{
-    // uint16 id;
-	// char title[100];
+typedef struct
+{
 	uint8 favorite[9000];
-	// char author[10];
-    // char years[10];
-	//char *origin_content;
-	//char *note_content;
-	//char *trans_content;
-	//char *appre_content;
-	//uint8 isfavorite;
 } DSL_POETRY_TEMP_FAVORITE_STATUS_LIST_T;
 
-// typedef struct dsl_poetry_encrypt{
-// 	char firstpart[25];
-// 	char secondpart[25];
-// } DSL_POETRY_ENCRYPT_T;
-// typedef enum
-// {
-//     AUDIO_NOT_PLAYING,
-//     AUDIO_IS_DOWNLOADING_TITILE,
-//     AUDIO_IS_PLAYING,
-//     AUDIO_NOT_PLAYING
-// }POETRY_AUDIO_STATUS;
 #ifdef _cplusplus
 }
 #endif

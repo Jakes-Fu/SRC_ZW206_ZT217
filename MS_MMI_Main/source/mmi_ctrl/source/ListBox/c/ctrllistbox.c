@@ -3092,15 +3092,14 @@ LOCAL void ListDrawItem(
                 is_single_line = !(i == style_ptr->sub_index
                                    && (GUIITEM_CONTENT_STATE_MULTILINE & style_ptr->content[i].state));
 
-            #ifdef ZMT_GPT_SUPPORT
-                if(ZMTGPT_GetGPTListStyle(item_ptr->item.style_id))
+            #ifdef POETRY_LISTEN_SUPPORT
+                if(item_ptr->item.style_id == GUIITEM_STYLE_POETRY_ITEM_LIST_MS)
                 {
-                    ZMTGPT_ListDrawBgString(list_ctrl_ptr, lcd_dev_info_ptr, text_info.wstr_ptr, text_info.wstr_len, &con_rect, &con_disp_rect, index, i, is_single_line);
+                    ListDrawString(list_ctrl_ptr, lcd_dev_info_ptr, text_info.wstr_ptr, text_info.wstr_len, &con_rect, &con_disp_rect, index, i, is_single_line);
                 }
                 else if(need_scrolling)
             #else
-                /* draw scroll string */
-                if(need_scrolling)
+                 if(need_scrolling)
             #endif
                 {
                     GUISTR_STYLE_T str_style = {0}; /*lint !e64*/                    
@@ -3310,13 +3309,7 @@ LOCAL void ListDrawString(
     }
 
 	item_ptr =  LIST_GetItemInfoPtr(list_ctrl_ptr, item_index);
-/*#ifdef ZMT_GPT_SUPPORT
-    if(ZMTGPT_GetGPTListStyle(item_ptr->item.style_id))
-    {
-        ZMTGPT_ListDrawBgString(list_ctrl_ptr, dev_info_ptr, wstr_ptr, wstr_len, disp_rect_ptr, clip_rect_ptr, item_index, content_index, is_single_line);
-        return;
-    }
-#endif*/
+
     ListGetTextStyle(list_ctrl_ptr, &str_style, item_index, content_index);
 
     LIST_GetItemContentEffectStr(list_ctrl_ptr, &str_style, item_index, content_index);
@@ -3351,6 +3344,11 @@ LOCAL void ListDrawString(
         if(item_ptr->item.data_ptr->item_content[content_index].is_custom_font_color){
             str_style.font_color = item_ptr->item.data_ptr->item_content[content_index].custom_font_color;
         }
+    }
+
+    if(item_ptr->item.style_id == GUIITEM_STYLE_POETRY_ITEM_LIST_MS)
+    {
+        str_style.align = ALIGN_HVMIDDLE;
     }
 
     GUISTR_DrawTextToLCDInRect(dev_info_ptr,

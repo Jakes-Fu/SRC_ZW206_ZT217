@@ -1121,6 +1121,10 @@ ADULTWATCH
     GUIITEM_STYLE_GPT_MINE_7LINE_TEXT_MS,
     GUIITEM_STYLE_GPT_AI_7LINE_TEXT_MS,
 #endif
+#ifdef POETRY_LISTEN_SUPPORT
+    GUIITEM_STYLE_POETRY_GRADE_LIST_MS,
+    GUIITEM_STYLE_POETRY_ITEM_LIST_MS,
+#endif
 //============================================================================//
 //                                   For watch                                //
 //============================================================================//
