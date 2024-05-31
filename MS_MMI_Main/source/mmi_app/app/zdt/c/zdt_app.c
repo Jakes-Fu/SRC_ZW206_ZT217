@@ -3228,21 +3228,25 @@ void MMIZDTWIFI_Stop(void);
 // ZDT_WIFI_Get_Data
 BOOLEAN  ZDT_WIFI_RF_AM_IS_OK(void)
 {
+#ifndef WIN32
     SCI_TRACE_LOW("ZDT_WIFI_RF_AM_IS_OK rm_status=%d,g_gnss_handle_running=%d",ual_rf_am_get_current_status(),g_gnss_handle_running);
     if(g_gnss_handle_running == 0 && (RF_AM_STATE_IDLE == ual_rf_am_get_current_status() || RF_AM_STATE_WIFISCAN_WORK == ual_rf_am_get_current_status()))
     {
         return TRUE;
     }
+#endif
     return FALSE;
 }
 
 BOOLEAN  ZDT_GPS_RF_AM_IS_OK(void)
 {
+#ifndef WIN32
     SCI_TRACE_LOW("ZDT_GPS_RF_AM_IS_OK rm_status=%d",ual_rf_am_get_current_status());
     if(RF_AM_STATE_IDLE == ual_rf_am_get_current_status())
     {
         return TRUE;
     }
+#endif
     return FALSE;
 }
 
