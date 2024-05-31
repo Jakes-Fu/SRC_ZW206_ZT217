@@ -30,6 +30,7 @@ extern "C"
 #define BASE_URL_PATH "http://api.ebag.readboy.com/wisdom-school/"
 #define LOCAL_AUDIO_PATH "E:/Word/audio/%s.mp3"
 #define LOCAL_BOOK_DIR "E:\\Word"
+#define LOCAL_BOOK_INFO_BATH "book_info.json"
 typedef struct word_audio{
 	char *audio_data_url;
 	char *audio_data;
@@ -38,13 +39,13 @@ typedef struct word_audio{
 typedef struct word{
     char *word;
     char *us;
-	uint us_audio_request_idx;
+	int us_audio_request_idx;
 	char *us_audio_data;
-	uint32 us_audio_data_len;
+	int32 us_audio_data_len;
     char *uk;
-	uint uk_audio_request_idx;
+	int uk_audio_request_idx;
 	char *uk_audio_data;
-	uint32 uk_audio_data_len;
+	int32 uk_audio_data_len;
     char *explain;
 }DSL_WORD_T;
 typedef struct book{

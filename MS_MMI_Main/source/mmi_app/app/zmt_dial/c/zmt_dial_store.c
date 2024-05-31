@@ -856,6 +856,7 @@ LOCAL void ZmtDialStore_UpdateIconlist(uint8 idx)
         file_info.full_path_wstr_len = MMIAPICOM_Wstrlen(name);
         GUIICONLIST_AppendIcon(icon_index, ctrl_id, PNULL, &file_info);
 
+        memset(name, 0, 100);
         length = strlen(dial_store_list[icon_index]->name_chn);
     #ifdef WIN32
         GUI_GBToWstr(name, dial_store_list[icon_index]->name_chn, length);
@@ -986,7 +987,7 @@ LOCAL void ZmtDialStore_OPEN_WINDOW(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
     GUI_FONT_ALL_T font_all = {0};
     GUIICONLIST_MARGINSPACE_INFO_T margin_space = {20,10,0,0};
 
-    GUIICONLIST_SetTotalIcon(ctrl_id, dial_store_count);
+    GUIICONLIST_SetTotalIcon(ctrl_id, 0);
     GUIICONLIST_SetCurIconIndex(0,ctrl_id);
     GUIICONLIST_SetStyle(ctrl_id,GUIICONLIST_STYLE_ICON_UIDT);
     GUIICONLIST_SetIconWidthHeight(ctrl_id,90,100);
@@ -1028,7 +1029,7 @@ LOCAL MMI_RESULT_E HandleZmtDialStoreWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
                 uint16 icon_index = *((uint16 *)param);
                 wchar name[20] = {0};
                 //SCI_TRACE_LOW("%s: APPEND_TEXT, icon_index = %d, dial_store_count = %d", __FUNCTION__, icon_index, dial_store_count);
-                if(dial_store_count > 0)
+                if(dial_store_count > 0 && dial_store_list[icon_index] != NULL)
                 {
                     uint8 length = strlen(dial_store_list[icon_index]->name_chn);
                 #ifdef WIN32
@@ -1050,13 +1051,15 @@ LOCAL MMI_RESULT_E HandleZmtDialStoreWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
                 wchar name[100] = {0};
                 GUIANIM_FILE_INFO_T file_info = {0};
                 //SCI_TRACE_LOW("%s: APPEND_ICON, icon_index = %d, dial_store_count = %d", __FUNCTION__, icon_index, dial_store_count);
-                if(dial_store_count > 0)
+                if(dial_store_count > 0 && dial_store_list[icon_index] != NULL)
                 {
                     sprintf(file_str, ZMT_DIAL_PREVIEW_FILE_BASE_PATH, dial_store_list[icon_index]->name, dial_store_list[icon_index]->name);
                     MMIAPICOM_StrToWstr(file_str, name);
-                    file_info.full_path_wstr_ptr = name;
-                    file_info.full_path_wstr_len = MMIAPICOM_Wstrlen(name);
-                    GUIICONLIST_AppendIcon(icon_index, ctrl_id, PNULL, &file_info);
+                    if(dsl_file_exist(file_str)){
+                        file_info.full_path_wstr_ptr = name;
+                        file_info.full_path_wstr_len = MMIAPICOM_Wstrlen(name);
+                        GUIICONLIST_AppendIcon(icon_index, ctrl_id, PNULL, &file_info);
+                    }
                 }
             }
             break;

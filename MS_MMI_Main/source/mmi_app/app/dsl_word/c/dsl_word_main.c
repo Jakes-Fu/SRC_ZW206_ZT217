@@ -1717,12 +1717,23 @@ LOCAL void loadLocalBook(void)
 	}
 }
 
-LOCAL void requestBookInfo() {
-	char url[255]={0};
-	sprintf(url, "v1/card/bookList?F_card_id=%s", BASE_DEVICE_IMEI);
-	SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
-	request_http_win_main_idx++;
-	MMIZDT_HTTP_AppSend(TRUE, BASE_URL_PATH, url, strlen(url), 1000, 0, 0, 0, 0, 0, parseBookResponse);
+LOCAL void requestBookInfo()
+{
+    char file_path[30] = {0};
+    char * data_buf = NULL;
+    uint32 data_size = 0;
+    char url[255]={0};
+    sprintf(url, "v1/card/bookList?F_card_id=%s", BASE_DEVICE_IMEI);
+    SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
+
+    sprintf(file_path, "%s\\%s", LOCAL_BOOK_DIR, LOCAL_BOOK_INFO_BATH);
+    if(dsl_file_exist(file_path)){
+        data_buf = dsl_file_data_read(file_path, &data_size);
+        parseBookResponse(1, data_buf, data_size, 0);
+    }else{
+        MMIZDT_HTTP_AppSend(TRUE, BASE_URL_PATH, url, strlen(url), 1000, 0, 0, 0, 0, 0, parseBookResponse);
+    }
+    request_http_win_main_idx++;
 }
 
 LOCAL void parseBookResponse(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id) 
@@ -2640,9 +2651,9 @@ LOCAL void addWordInfo(uint8 position, char *word,char *sentence,char *sentence_
 	GUI_WstrToUTF8(tmp1,20,wtmp1,MMIAPICOM_Wstrlen(wtmp1));
 	words[position] = SCI_ALLOCA(sizeof(DSL_WORD_T));
 	SCI_MEMSET(words[position],0,sizeof(DSL_WORD_T));
-	size=strlen(word) +1;
-	words[position]->word = SCI_ALLOCA(size);
-	SCI_MEMSET(words[position]->word, 0, size);
+	size=strlen(word);
+	words[position]->word = SCI_ALLOCA(size+1);
+	SCI_MEMSET(words[position]->word, 0, size+1);
 	SCI_MEMCPY(words[position]->word, word, size);
 
 	if(is_homework_task && (strlen(homework_task_id) > 0 || word_task_msg_id != NULL)){
@@ -2655,9 +2666,9 @@ LOCAL void addWordInfo(uint8 position, char *word,char *sentence,char *sentence_
 	}
 	if(us!=PNULL)
 	{
-		size=strlen(us)+1;
-		words[position]->us = SCI_ALLOCA(size);
-		SCI_MEMSET(words[position]->us, 0, size);
+		size=strlen(us);
+		words[position]->us = SCI_ALLOCA(size+1);
+		SCI_MEMSET(words[position]->us, 0, size+1);
 		SCI_MEMCPY(words[position]->us, us, size);
 		if(us_sound!=PNULL)
 		{
@@ -2668,9 +2679,9 @@ LOCAL void addWordInfo(uint8 position, char *word,char *sentence,char *sentence_
 			MMIZDT_HTTP_AppSend(TRUE, us_sound, PNULL, 0, 1000, 0, 0, 8000, 0, 0, parseMp3Response);
 			//StartAbslutoUrlHttpRequest(us_sound, 8000, words[position]->us_audio_request_idx, parseMp3Response);
 			words[position]->uk_audio_data_len=-1;
-			size=strlen(us_sound)+1;
-			words[position]->uk_audio_data = SCI_ALLOCA(size);
-			SCI_MEMSET(words[position]->uk_audio_data, 0, size);
+			size=strlen(us_sound);
+			words[position]->uk_audio_data = SCI_ALLOCA(size+1);
+			SCI_MEMSET(words[position]->uk_audio_data, 0, size+1);
 			SCI_MEMCPY(words[position]->uk_audio_data, us_sound, size);
 
 			if(is_homework_task && (strlen(homework_task_id) > 0 || word_task_msg_id != NULL)){
@@ -2684,9 +2695,9 @@ LOCAL void addWordInfo(uint8 position, char *word,char *sentence,char *sentence_
 	
 	if(uk!=PNULL)
 	{
-		size=strlen(uk)+1;
-		words[position]->uk = SCI_ALLOCA(size);
-		SCI_MEMSET(words[position]->uk, 0, size);
+		size=strlen(uk);
+		words[position]->uk = SCI_ALLOCA(size+1);
+		SCI_MEMSET(words[position]->uk, 0, size+1);
 		SCI_MEMCPY(words[position]->uk, uk, size);
 		if(uk_sound!=PNULL)
 		{
@@ -2698,9 +2709,9 @@ LOCAL void addWordInfo(uint8 position, char *word,char *sentence,char *sentence_
 			//StartAbslutoUrlHttpRequest(uk_sound, 8000, words[position]->uk_audio_request_idx, parseMp3Response);
 
 			words[position]->uk_audio_data_len=-1;
-			size=strlen(uk_sound)+1;
-			words[position]->uk_audio_data = SCI_ALLOCA(size);
-			SCI_MEMSET(words[position]->uk_audio_data, 0, size);
+			size=strlen(uk_sound);
+			words[position]->uk_audio_data = SCI_ALLOCA(size+1);
+			SCI_MEMSET(words[position]->uk_audio_data, 0, size+1);
 			SCI_MEMCPY(words[position]->uk_audio_data, uk_sound, size);
 
 			if(is_homework_task && (strlen(homework_task_id) > 0 || word_task_msg_id != NULL)){
@@ -2711,17 +2722,31 @@ LOCAL void addWordInfo(uint8 position, char *word,char *sentence,char *sentence_
 			}
 		}
 	}
-	size=strlen(explain)+strlen(sentence)+strlen(sentence_explain) +20;
-	words[position]->explain = SCI_ALLOCA(size);
-	SCI_MEMSET(words[position]->explain, 0, size);
-	strcat(words[position]->explain,explain);
-	if(sentence!=PNULL&&sentence_explain!=PNULL)
-	{
-		strcat(words[position]->explain,tmp);
-		strcat(words[position]->explain,sentence);
-		strcat(words[position]->explain,tmp1);
-		strcat(words[position]->explain,sentence_explain);
-	}
+    if(explain != PNULL)
+    {
+        size = strlen(explain) + 10;
+    }
+    if(sentence != PNULL)
+    {
+        size += strlen(sentence) + 10;
+    }
+    if(sentence_explain != PNULL)
+    {
+        size += strlen(sentence_explain) + 10;
+    }
+    words[position]->explain = SCI_ALLOCA(size);
+    SCI_MEMSET(words[position]->explain, 0, size);
+    if(explain != PNULL){
+        strcat(words[position]->explain,explain);
+    }
+    if(sentence != PNULL){
+        strcat(words[position]->explain,tmp);
+        strcat(words[position]->explain,sentence);
+    }
+    if(sentence_explain != PNULL){
+        strcat(words[position]->explain,tmp1);
+        strcat(words[position]->explain,sentence_explain);
+    }
 }
 LOCAL void releaseWords() {
   int i = 0;

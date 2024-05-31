@@ -469,10 +469,12 @@ LOCAL void MathCount_ShowKeyboardImg(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_d
     uint8 img_hor_space = 7;
     uint8 img_ver_space = 10;
     uint8 num_str[MATCH_COUNT_KEYBOARD_VER_NUM][MATCH_COUNT_KEYBOARD_HOR_NUM] = {"1230","456X","789"};
-    GUI_RECT_T init_rect = {10, 4.5*MATCH_COUNT_LINE_HIGHT, 10 + img_width, 4.5*MATCH_COUNT_LINE_HIGHT + img_height};
+	GUI_RECT_T init_rect = {10, 4.5*MATCH_COUNT_LINE_HIGHT, 10, 4.5*MATCH_COUNT_LINE_HIGHT};
     GUI_RECT_T bg_rect = {0};
     GUI_RECT_T num_rect = {0};
 
+    init_rect.left += img_width;
+    init_rect.bottom += img_height;
     text_style.align = ALIGN_HVMIDDLE;
     text_style.font = SONG_FONT_28;
     text_style.font_color = math_count_button_color;
