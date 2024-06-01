@@ -98,12 +98,12 @@
 #ifdef ZTE_WATCH
     #ifdef ZTE_WATCH_K1
         #define WATCH_NAME      "ZTE Watch Z12"
-        #define WATCH_CTA_MODEL      "ZW35"
-        #define WATCH_CMIIT_ID      "CMIIT ID:2023CP18922"
+        #define WATCH_CTA_MODEL      "LT-T01" //"ZW35"
+        #define WATCH_CMIIT_ID      "  " //"CMIIT ID:2023CP18922"
     #elif ZTE_WATCH_K1_ENTRY
         #define WATCH_NAME      "ZTE Watch Z11"
-        #define WATCH_CTA_MODEL      "ZW22"
-        #define WATCH_CMIIT_ID      "CMIIT ID:2023CP19082"
+        #define WATCH_CTA_MODEL      "LT-T01" //"ZW22"
+        #define WATCH_CMIIT_ID      "  " //"CMIIT ID:2023CP19082"
     #else
         #define WATCH_NAME      "ZTE Watch"
     #endif

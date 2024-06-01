@@ -43,20 +43,20 @@
 #ifdef ZTE_WATCH_K1
 #define ZDT_SFR_TYPE 			"EW2302"//"ZW35" //app 视频画面用这个名称判断240X284
 //软件版本号
-#define ZDT_SFR_SW_VER 			"ZTE_ZW35V1.0.0B17.0"//"ZW206_K1_RDA_240X284_V01"
+#define ZDT_SFR_SW_VER 			"ZT217_LT-T01V1.0.1"//"ZTE_ZW35V1.0.0B17.0"//"ZW206_K1_RDA_240X284_V01"
 //自注册编码
 #define ZDT_SFR_MODEL 			"NM-ESC-A"
 //硬件版本号
-#define ZDT_SFR_HW_VER 			"ZW206" // UWS6121E
+#define ZDT_SFR_HW_VER 			"ZT217_MB_V1.01" // UWS6121E
 #else
 //型号
 #define ZDT_SFR_TYPE 			"EW2303"//"ZW22" //app 视频画面用这个名称判断240X240
 //自注册编码
 #define ZDT_SFR_MODEL 			"NM-ESC-A"
 //软件版本号
-#define ZDT_SFR_SW_VER 			"ZTE_ZW22V1.0.0B17.0"//"ZW202_K1_ENTRY_RDA_240X240_V01"//"ZW202_K1_ENTRY_V01"//"NM-ESC-A_V2.3"
+#define ZDT_SFR_SW_VER 			"ZT217_LT-T01V1.0.1"////"ZTE_ZW22V1.0.0B17.0""ZW202_K1_ENTRY_RDA_240X240_V01"//"ZW202_K1_ENTRY_V01"//"NM-ESC-A_V2.3"
 //硬件版本号
-#define ZDT_SFR_HW_VER 			"ZW202" // UWS6121E
+#define ZDT_SFR_HW_VER 			"ZT217_MB_V1.01" // UWS6121E
 #endif
 
 #else
@@ -69,7 +69,7 @@
 //软件版本号
 #define ZDT_SFR_SW_VER 			"1.0.0"
 //硬件版本号
-#define ZDT_SFR_HW_VER 			"1.0.0"
+#define ZDT_SFR_HW_VER 			"ZT217_MB_V1.01"
 
 #endif
 
