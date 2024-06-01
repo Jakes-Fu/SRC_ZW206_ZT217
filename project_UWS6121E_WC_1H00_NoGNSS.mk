@@ -3,42 +3,40 @@
 #  易赛 增加的宏添加到这里
 # 
 # *************************************************************************************************************************************
+ZDT_RAM_MEM_CUST = TRUE					## 精减内存
+                                                     # Option1:TRUE
+                                                     # Option2:FALSE
+
+ZYB_APP_SUPPORT = TRUE                                 ### 流媒体播放接口，微聊使用
+                                                     # Option1:TRUE
+                                                     # Option2:FALSE
+
 ZDT_PCBA_ZW201_SUPPORT = TRUE                                 ### ZDT 主板驱动宏控
                                                      # Option1:TRUE
                                                      # Option2:FALSE
+						     
+# 基于GNSS的PATCH ,为了代码NOGNSS共用,注意 GNSS版本的添加宏控制
+#W217_UWS6121EG_GNSS_PATCH_20231019 = TRUE
+						                                                          
 
-BEACON_APP_SUPPORT = FALSE                                 ### BEACON_APP_SUPPORT
-                                                     # Option1:TRUE
-                                                     # Option2:FALSE
-                                                     
-ZDT_SUPPORT_BEACON_SUNRI = FALSE					## 支持 钰创 蓝牙跳绳
-                                                     # Option1:TRUE
-                                                     # Option2:FALSE
-                                                     
-ZDT_SUPPORT_BEACON = FALSE					## 蓝牙信标
-                                                     # Option1:TRUE
-                                                     # Option2:FALSE
-
-ZDT_LCD_NOT_SUPPORT = FALSE                                 ### 不带屏幕
-                                                     # Option1:TRUE
-                                                     # Option2:FALSE
 
 #UI界面宏义开始
 _SW_ZDT_PRODUCT_ = TRUE                                 ### 使用ZDT的UI
-MAIN_MENU_FOUR_GRID_STYLE = FALSE			### 使用4宫格主菜单
-ZDT_MAINMENU_ADD_CL_REMOVE_ALIPAY  = TRUE		### 是否支持通话记录
 ZDT_NEW_BIND_STYLE = FALSE  				### 新的绑定流程。  第一步提示下载app，第二步骤提示扫IMEI号绑定。
 ZDT_MMI_USE_SMALL_FONT  = FALSE  			### 小字体支持 128x128可用
 ADD_TITLE_IN_ALL_SETTING_MENU = TRUE
 #UI界面宏义结束
-
 #第三方应用开始
+
 ZDT_ZFB_SUPPORT = FALSE                                  ### 支付宝 需要开启 ZDT_HTTP_APP_SUPPORT
-TULING_AI_SUPPORT = TRUE				### 图灵AI						     
+TULING_AI_SUPPORT = FALSE				### 图灵AI						     
 BAIRUI_VIDEOCHAT_SUPPORT = FALSE				### 百锐视频通话
 LEBAO_MUSIC_SUPPORT = FALSE				### 乐宝音乐
 XYSDK_SUPPORT = FALSE					### 喜马拉雅
 XYSDK_SRC_SUPPORT = FALSE				### 喜马拉雅源码支持
+
+BAIDU_VIDEOCHAT_SUPPORT = TRUE				### 百度视频通话
+BAIDU_AI_SUPPORT = TRUE				### 百度AI
 #第三方应用结束
 
 
@@ -69,23 +67,9 @@ FILE_LOG_SUPPORT = FALSE                                 ### 文件Log支持
 ZDT_APP_SUPPORT = TRUE					### 易赛应用总宏
                                                      # Option1:TRUE
                                                      # Option2:FALSE
-						     
-ZDT_LED_SUPPORT = FALSE					### LED 灯支持
-                                                     # Option1:TRUE
-                                                     # Option2:FALSE
-                                                     
 ZDT_WIFI_SUPPORT = TRUE					### WIFI 支持
                                                      # Option1:TRUE
                                                      # Option2:FALSE
-                                                     
-ZDT_NFC_SUPPORT = FALSE					### NFC 支持
-                                                     # Option1:TRUE
-                                                     # Option2:FALSE
-
-ZDT_RFID_SPI_SUPPORT = FALSE					### RFID 写号 支持
-                                                     # Option1:TRUE
-                                                     # Option2:FALSE
-
 ZDT_GPS_SUPPORT = FALSE					### GPS 支持
                                                      # Option1:TRUE
                                                      # Option2:FALSE
@@ -94,30 +78,19 @@ ZDT_GPS_SUPPORT_AGPS = FALSE				### GPS 辅助定位
                                                      # Option1:TRUE
                                                      # Option2:FALSE
 
-ZDT_GSENSOR_SUPPORT = FALSE			      ### 重力加速度传感器
+ZDT_GSENSOR_SUPPORT = TRUE#FALSE			      ### 重力加速度传感器
                                                      # Option1:TRUE
                                                      # Option2:FALSE
-						     
-ZDT_HSENSOR_SUPPORT = FALSE			     ### 心率
-                                                     # Option1:TRUE
-                                                     # Option2:FALSE
-                                                     
-ZDT_HSENSOR_TYPE = NONE					    ### 心率芯片选择
-								# Option0:NONE  #define ZDT_HSENSOR_TYPE_NONE //没有心率只带体温
-								# Option1:HRS3300  #define ZDT_HSENSOR_TYPE_HRS3300
-								# Option2:VCHR02   #define ZDT_HSENSOR_TYPE_VCHR02
-								# Option3:PAH8009   #define ZDT_HSENSOR_TYPE_PAH8009                                                 
-								# Option4:AUTO      #define ZDT_HSENSOR_TYPE_AUTO  自动识别                                             
 
-ZDT_HSENSOR_SUPPORT_TW = FALSE				### 体温t1711  触摸式需要开启 ZDT_HSENSOR_SUPPORT
-ZDT_SUPPORT_TW_GD609 = FALSE				### 体温GD609 红外
-ZDT_SUPPORT_TW_FM78102 = FALSE				### 体温FM78102 红外
-                                                     
-ZDT_SMS_SUPPORT = TRUE					      ### 短信支持
+ZDT_SMS_SUPPORT = TRUE 	     ### 短信支持
+												  # Option1:TRUE
+												  # Option2:FALSE
+																										  
+ZDT_NET_SUPPORT = TRUE					      ### 4G网络支持
                                                      # Option1:TRUE
                                                      # Option2:FALSE
                                                      
-ZDT_NET_SUPPORT = TRUE					      ### 4G网络支持
+ZDT_NET_SUPPORT_FLYMODE_RESET = FALSE					      ### 复位平台网络时需要开启关闭飞行模式
                                                      # Option1:TRUE
                                                      # Option2:FALSE
 
@@ -132,13 +105,6 @@ ZDT_TCP_SUPPORT = TRUE					      ### TCP 协议支持
 ZDT_HTTP_APP_SUPPORT = TRUE					      ### HTTP 协议支持
                                                      # Option1:TRUE
                                                      # Option2:FALSE
-						     
-ZDT_PLAT_SHB_SUPPORT = FALSE					      ### 中兴守护宝后台配置,需要开启 ZDT_HTTP_APP_SUPPORT
-                                                     # Option1:TRUE
-                                                     # Option2:FALSE
-                                                     
-
-						     
 ZDT_PLAT_YX_SUPPORT = TRUE					      ### 易赛通信后台配置,需要开启 ZDT_NET_SUPPORT ZDT_TCP_SUPPORT ZDT_HTTP_APP_SUPPORT
                                                      # Option1:TRUE
                                                      # Option2:FALSE
@@ -147,9 +113,12 @@ ifeq ($(strip $(ZDT_PLAT_YX_SUPPORT)),TRUE)
 ####************后台支持列表，同时只能开启一个************
 ZDT_PLAT_YX_SUPPORT_FZD = FALSE					      ### 防走丢
 ZDT_PLAT_YX_SUPPORT_YS = TRUE					      ### 易赛安康守护
+ZDT_PLAT_YX_SUPPORT_YS_AES = TRUE					      ### AES CBC 加密传输支持
 ZDT_PLAT_YX_SUPPORT_TX = FALSE					      ### 音信百合后台
 ZDT_PLAT_YX_SUPPORT_LZ = FALSE					      ### 乐智后台
 ZDT_PLAT_YX_SUPPORT_CY = FALSE					      ### 成研云南移动后台
+
+ZDT_PLAT_YX_SUPPORT_ZTE = TRUE					      ### 易赛改ZTE NUBIA 中兴努比亚后台
 
 ifeq ($(strip $(ZDT_PLAT_YX_SUPPORT_LZ)),TRUE)
 ZDT_PLAT_YX_SUPPORT_VOICE = FALSE				### 微聊
@@ -159,64 +128,21 @@ ZDT_PLAT_YX_SUPPORT_VOICE = FALSE				### 微聊
 else
 ZDT_PLAT_YX_SUPPORT_VOICE = TRUE				### 微聊
 endif
-endif                                                              
+endif 
 
 ZDT_PLAT_YX_SUPPORT_FRIEND = TRUE					      ### 碰碰交友
                                                      
 ZDT_PLAT_YX_SUPPORT_SOS = TRUE				### SOS设置
 endif
 
-ZDT_VIBRATE_SUPPORT = FALSE					### 振动
+ZDT_VIBRATE_SUPPORT = TRUE					### 振动
 
-ZDT_AUTO_SHUTDOWN_WHEN_NO_SIM_NO_ACTION_15_MINUTES = FALSE	### 没插卡，15分钟没操作则自动关机。
+# 7789P3 240X284
+#DRV_LCD_7789P3_240X284 = TRUE
+# TP 6133 series
+DRV_TP_6133_ZW206_K1_240X284 = FALSE
 
-ZDT_PICLIST_SAVE_ONLY_NUM = TRUE		### 限制拍照的总张数
-
-MMI_ADD_STUDENT_INFO = FALSE		### 学生证信息
-
-ZDT_BH_W9_FEATRUE = TRUE		### 百合W9项目UI  学生证以此UI为基础扩展
-
-ifeq ($(strip $(ZDT_PLAT_YX_SUPPORT_LZ)),TRUE)
-ZDT_ADD_LOCK_FEATRUE = FALSE				### 锁屏
-ZDT_MESSAGE_DELETE_FEATRUE = FALSE
-
-ZDT_ADD_FIRST_POWER_RECORD = FALSE			### 电子保卡
-
-ZDT_ClASS_ANSWER_SUPPORT = FALSE                      ### 课堂答题
-else
-ifeq ($(strip $(ZDT_PLAT_YX_SUPPORT_CY)),TRUE)
-ZDT_ADD_LOCK_FEATRUE = FALSE				### 锁屏
-ZDT_MESSAGE_DELETE_FEATRUE = FALSE
-
-ZDT_ADD_FIRST_POWER_RECORD = FALSE			### 电子保卡
-
-ZDT_ClASS_ANSWER_SUPPORT = FALSE                      ### 课堂答题
-
-ZDT_CYHEALTH_SUPPORT = FALSE                      ### 成研健康码
-else
-ZDT_ADD_LOCK_FEATRUE = FALSE				### 锁屏
-
-ZDT_ADD_FIRST_POWER_RECORD = FALSE			### 电子保卡
-
-ZDT_ClASS_ANSWER_SUPPORT = FALSE                      ### 课堂答题
-endif
-endif
-
-ifeq ($(strip $(ZDT_ClASS_ANSWER_SUPPORT)),TRUE)
-WLDT_APP_SUPPORT = TRUE                                 ### 网络答题App
-WLDT_NET_SUPPORT = TRUE					      ### 网络支持                                                     
-WLDT_TCP_SUPPORT = TRUE					      ### TCP支持
-WLDT_PLAT_CY_SUPPORT = TRUE				      ### 成研后台支持
-endif
-
-LOCAL_ALARM_CLOCK_SUPPORT = TRUE   ###本地闹钟
-
-ZTE_PEDOMETER_SUPPORT = TRUE		###计步
-
-ZTE_WEATHER_SUPPORT = TRUE			###天气
-
-ZTE_STOPWATCH_SUPPORT = TRUE              			      ### 秒表
-
+#MMI LCD SIZE
 ZTE_SUPPORT = 240X284								 ### ZTE_SUPPORT:
 													 # Option1:NONE
                                                      # Option2:240X240 	#define ZTE_SUPPORT_240X240
@@ -238,46 +164,111 @@ ZDT_MAIN_MENU_SUPPORT = FALSE #旧的菜单资源，节省空间
 AUTO_FACTORY_TEST_WITH_WIFI_SCAN = FALSE #扫描到指定wifi ssid自动启动工厂测试 还没实现
 
 ZDT_VIDEOCHAT_SUPPORT = TRUE  #视频通话
-VIDEO_CALL_AGORA_SUPPORT = TRUE #声网视频通话
-
+###VIDEO_CALL_AGORA_SUPPORT = TRUE #声网视频通话
+#声网视频在相机界面来电时,接听挂断会死机
+VIDEO_CALL_AGORA_IN_CAMERA_SCREEN_INCOMMING_ERR = TRUE
 
 
 # 工具箱菜单,可以放菜单用于展示测试
 ZDT_TOOLS_MENU_SUPPORT = TRUE
 
+ZTE_WATCH = TRUE
+ifeq ($(strip $(ZTE_WATCH)),TRUE)
+LAUNCHER_ONE_APP_IN_PAGE = FALSE    #一页一个应用
+LAUNCHER_FOUR_APP_IN_PAGE  = FALSE  #一页4个应用 4宫格
+LAUNCHER_ALL_APP_IN_PAGE = TRUE    #一页显示所有应用
+ZTE_WATCH_K1 = TRUE  #努比亚手表K1
 
-############################################HERO######################################################
-HERO_ENGINE_SUPPORT=FALSE # 平台总宏
+LOCAL_ALARM_CLOCK_SUPPORT = TRUE    ###本地闹钟
+#HOME_LOCATION_INQUIRE_SUPPORT = CODE
 
-ifeq ($(strip $(HERO_ENGINE_SUPPORT)),TRUE)
 
-HERO_ENGINE_SUPPORT_CLIENT_INFO=TRUE  #支持客户自定义集成商+机型的配置宏
-      ifeq ($(strip $(HERO_ENGINE_SUPPORT_CLIENT_INFO)),TRUE)
-      ##/*集成商最多3个小写字符,切记不可超过字符个数限制*/
-	HERO_ENGINE_CFG_VAR_HANDSETID_FIRST = XSZ
-      ##/*机型标识，最多4个小写字符,切记不可超过字符个数限制*/
-	HERO_ENGINE_CFG_VAR_HANDSETID_SEC   = 8910
-      endif
+ZTE_PEDOMETER_SUPPORT = TRUE		###计步
 
-HERO_APP_READER_OPEN=FALSE 		# 电子书
-HERO_APP_WEATHER_OPEN=TRUE 		# 天气预报此宏不开TTS无作用
-#HERO_ENGINE_HMGS_SUPPORT= FULL_ROM	# 来电归属地 NONE,MIN_ROM,FULL_ROM,TCARD
-#HERO_APP_SMART_OPEN=FALSE 		# 语音助手
-#HERO_APP_SMART_OPEN_INROM = FALSE 	# 语音助手内置
-#HERO_ENGINE_FM_SUPPORT=TRUE 		# 网络FM
-#HERO_APP_BROWSER_OPEN=TRUE 		# 浏览器
+ZTE_WEATHER_SUPPORT = TRUE			###天气
 
-################## 语音王#####
-HERO_ENGINE_TTS_SUPPORT= TRUE
-HERO_ENGINE_TTS_INROM_SUPPORT= TRUE
-HERO_ENGINE_TTS_AKEY_TIME = KEY_0_TIME #一键报时 KEY_7_TIME,KEY_8_TIME,KEY_9_TIME,KEY_0_TIME,KEY_STAR_TIME
-HERO_ENGINE_TTS_SWTICH_SUPPORT = TRUE
-HERO_ENGINE_TTS_TIME_BROADCAST_NO_WEEK_LUNAR = TRUE
-################## 语音王#####
+ZTE_STOPWATCH_SUPPORT = TRUE              			      ### 秒表
+
 endif
-############################################HERO######################################################
-						     
-						                                                          
+
+ifeq ($(strip $(LAUNCHER_ALL_APP_IN_PAGE)),TRUE)
+APP_COLUMNS = 2     #菜单列表有多少列 
+                    # Option1:2    #define APP_COLUMNS_2
+                    # Option2:3    #define APP_COLUMNS_3
+APP_ITEM_NAME = TRUE #是否显示应用名称
+
+ifeq ($(strip $(APP_COLUMNS)),3)
+APP_ITEM_NAME = FALSE
+endif
+
+endif
+#MAINLCD_DEV_SIZE_240X284 = FALSE
+MAINLCD_DEV_SIZE_240X320 = TRUE
+
+# BF20A6 camera
+DRV_CAMERA_BF20A6_CUSTOM = TRUE
+
+#AUDIO PARAM 音频参数控制, Nv_parameter.mk
+ZW206_AUDIO_PARAM = TRUE
+
+# modem config for ZW206 ZW202 
+ZDT_MODEM_CONFIG_XO_MODE_FOR_ZW206_ZW202 = FALSE
+
+# W217 WIFI TEST
+ZDT_W217_FACTORY_WIFI = TRUE
+
+# W217 ZW206 KEY TEST
+ZDT_W206_FACTORY_KEY_TEST = TRUE
+
+# W217 GPS TEST, AND NET DATA
+ZDT_W217_FACTORY_GPS = FALSE
+#静止时不启动周期定位
+ZDT_NO_LOC_LBS_WIFI_OR_GPS_WHEN_STILLNESS = TRUE
+
+
+#持久测试, 老化测试
+W217_AGING_TEST_CUSTOM = TRUE
+
+# OCR 语音播放, 可做为DEBUG 调音频参数用
+###MMI_OCR_AUDIO_PLAY_TEST_LONG = TRUE
+
+#Shipping mode, 船运模式指令 "#*880088#"
+ZDT_SHIPPING_MODE_CMD = TRUE
+
+
+#指令解除绑定 #*915368#
+ZDT_UNBIND_APP_CMD = TRUE
+
+
+
+# ZW206 资源控制,未插SIM 卡提示图片等
+ZDT_ZW206_240X284_RES_CUSTOM = FALSE
+
+# 未插卡提示图片用动画
+ZDT_NO_SIM_ICON_GIF = FALSE
+
+#HOME_LOCATION_INQUIRE_SUPPORT = CODE
+
+#w217 表盘1
+
+#############至少一个为TRUE############## ZTE有自己的表盘不需要公版表盘
+WATCH_PANEL_SPACE_SHIP_SUPPORT = FALSE     #宇宙飞船数字表盘
+WATCH_PANEL_DOLPHIN_SUPPORT = FALSE        #海豚
+WATCH_PANEL_ASTRONAUT_SUPPORT = FALSE      #太空人
+WATCH_PANEL_PANDA_SUPPORT = FALSE          #熊猫
+WATCH_PANEL_BLACK_GREEN_SUPPORT = FALSE    #黑绿色模拟时钟
+WATCH_PANEL_DEER_SUPPORT = FALSE           #小鹿
+WATCH_PANEL_SPACE_STATION_SUPPORT = FALSE  #空间站宇航员
+#############至少一个为TRUE##############
+
+POWER_OFF_CHARGE_TEXT_SHOW = FALSE  #关机充电显示电量
+BATTERY_CHARGE_FULL_REMAIN = TRUE   #电池充电98显示100%电量
+BATTERY_PERCENT_TEXT_SHOW = FALSE   #显示电池电量百分比
+WECHAT_SEND_EMOJI = TRUE #支持手表发送表情
+KEYUP_RED_GOTO_IDLE = TRUE #按power键返回表盘待机界面
+PLAY_NEW_SMS_RING = FALSE #接收短信播放铃声或者震动
+
+
 
 # *************************************************************************************************************************************
 #  大部分公共的配置选项在 uws6121e_watch_base_config.cfg 中，
@@ -443,7 +434,7 @@ VIRTUAL_VIBRATE_FUNC = FALSE                         ### VIRTUAL VIBRATE FUNCTIO
 RF_BAND_SELFADAPTIVE = FALSE                    		### OPEN/CLOSE RF BAND SELFADAPTIVE FUNCTION
 													# Option0:TRUE     
 													# Option1:FALSE 
-CHGMNG_PSE_SUPPORT = FALSE                    		### OPEN/CLOSE CHGMNG_PSE_SUPPORT
+CHGMNG_PSE_SUPPORT = FALSE #TRUE                    		### OPEN/CLOSE CHGMNG_PSE_SUPPORT
 													# Option0:TRUE     
 
 DEBUG_VERSION  = TRUE                                ### DEBUG_VERSION:
@@ -519,7 +510,7 @@ AUDIO_CODEC_TYPE = ES8311                            ### audio codec selection
                                                      # Option1:ES8311     #define ES8311
                                                      # Option2:ES8374     #define ES8374
 
-AUDIO_EXTPA_TYPE = GPIO                              ### audio codec extpa selection
+AUDIO_EXTPA_TYPE = GPIO #AW87390 #                              ### audio codec extpa selection
                                                      # Option1:AW87390      #define AW87390
                                                      # Option2:GPIO         #define GPIO
 												 
@@ -563,10 +554,6 @@ TP_VK_SUPPORT = FALSE                                ### touch panel virtual key
 PMIC_CHARGER_DETECT_SUPPORT = FALSE                  ### support charger type detect by pmic
                                                      # Option1:FALSE      #6121E is not support right now
                                                      # Option2:TRUE       #for extend in the future
-
-UAL_GNSS_SUPPORT = FALSE                            ### ual gnss
-                                                    # Option1:TRUE
-                                                    # Option2:FALSE
 
 AT_CMD_OP_SUPPORT = TRUE                             ### support ATC cmd to test daps function
                                                      # Option1:FALSE      not support
@@ -613,3 +600,26 @@ ENGPC_W217 = FALSE                                   ### Switch ENGPC_W217 Suppo
                                                      # Option2:FALSE	
 													 
 LCD_INSTALL_ANGLE = 0    #90
+
+MSDC_CARD_SUPPORT = TRUE                             ### SD Card Support:
+                                                     # Option1:TRUE
+                                                     # Option2:FALSE
+
+ZT217_LISENNING_PAD = TRUE
+DRV_TP_6133_ZT217_240X320 = TRUE
+
+DYNAMIC_WATCHFACE_SUPPORT = FALSE	#原表盘商城
+
+ZMT_DIAL_STORE_SUPPORT = TRUE		#表盘商城
+
+MATH_COUNT_SUPPORT = TRUE 			#口算达人
+
+LISTENING_PRATICE_SUPPORT = TRUE	#听力练习
+
+WORD_CARD_SUPPORT = TRUE			#单词卡
+
+POETRY_LISTEN_SUPPORT = TRUE		#古诗词
+
+HANZI_CARD_SUPPORT = TRUE			#汉字卡
+
+ZMT_GPT_SUPPORT = FALSE				#对话GPT
