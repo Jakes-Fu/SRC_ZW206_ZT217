@@ -1,1 +1,1 @@
-make p=UWS6121E_WC_1H00_NoGNSS new job=8
+make p=UWS6121E_WC_1H00_NoGNSS new job=32
