@@ -113,7 +113,11 @@ LOCAL const GPIO_CFG_INFO_T s_gpio_prod_cfg_cus_table[] =
 	#endif
 #else
 #ifdef AUDIO_EXTPA_TYPE_GPIO
+#ifndef ZT217_LISENNING_PAD
+    {GPIO_PROD_SPEAKER_PA_EN_ID,        GPIO_PROD_TYPE_BB0, GPIO_PROD_HIGH_LEVEL,     18,                               PNULL                   }, // use GPIO
+    #else
     {GPIO_PROD_SPEAKER_PA_EN_ID,        GPIO_PROD_TYPE_BB0, GPIO_PROD_HIGH_LEVEL,     39,                               PNULL                   }, // use GPIO
+    #endif
 #else
     {GPIO_PROD_SPEAKER_PA_EN_ID,        GPIO_PROD_TYPE_BB0, GPIO_PROD_HIGH_LEVEL,     GPIO_PROD_NUM_INVALID,            PNULL                   },// unused
 #endif

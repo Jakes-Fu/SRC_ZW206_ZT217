@@ -142,8 +142,8 @@ LOCAL const SENSOR_INFO_T* sub_sensor_infor_tab[]=
 {
 #if defined(AUTOTEST_DEVICE_SUPPORT)
 
-  &g_at_parallel_sensor_yuv_info,
-  &g_at_spi_sensor_yuv_info,
+ // &g_at_parallel_sensor_yuv_info,
+  //&g_at_spi_sensor_yuv_info,
 
 #endif
     //&g_OV7670_yuv_info,
@@ -152,6 +152,7 @@ LOCAL const SENSOR_INFO_T* sub_sensor_infor_tab[]=
     //&g_GC0306_yuv_info,
     //&g_GC0310_yuv_info,
     //&g_GC6113_yuv_info,
+    &g_GC032A_yuv_info,
     PNULL
 };
 
