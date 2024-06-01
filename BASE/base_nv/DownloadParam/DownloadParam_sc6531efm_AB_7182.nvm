@@ -4177,7 +4177,7 @@
     ITEM_NAME    = UART_log_switch
     ITEM_ID      = 1
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x1
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 416
     ITEM_PARENT  = 415
     ITEM_DESC    = uart log switch.0x0:ARM9;0x1:DSP;0x2:CM4

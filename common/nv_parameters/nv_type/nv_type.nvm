@@ -1778,7 +1778,7 @@
     ITEM_NAME    = assert_mode
     ITEM_ID      = 21
     ITEM_TYPE    = 1 (CHAR)
-    ITEM_CONTENT = 0x1
+    ITEM_CONTENT = 0x35
     ITEM_INDEX   = 173
     ITEM_PARENT  = 71
     ITEM_DESC    = 0x35:release   1:debug
@@ -2978,7 +2978,7 @@
     ITEM_NAME    = enable_arm_log
     ITEM_ID      = 22
     ITEM_TYPE    = 1 (CHAR)
-    ITEM_CONTENT = 0x1
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 283
     ITEM_PARENT  = 274
     ITEM_DESC    = 1:enable   0:disable
@@ -3739,7 +3739,7 @@
     ITEM_NAME    = enable_seine_log
     ITEM_ID      = 22
     ITEM_TYPE    = 1 (CHAR)
-    ITEM_CONTENT = 0x1
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 358
     ITEM_PARENT  = 274
     ITEM_DESC    = not usefull in SC880xG
@@ -4564,7 +4564,7 @@
     ITEM_NAME    = gps_log_set
     ITEM_ID      = 22
     ITEM_TYPE    = 1 (CHAR)
-    ITEM_CONTENT = 0x1
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 434
     ITEM_PARENT  = 274
     ITEM_DESC    = GPS LOG Enable: 1.Enable 0.Disable

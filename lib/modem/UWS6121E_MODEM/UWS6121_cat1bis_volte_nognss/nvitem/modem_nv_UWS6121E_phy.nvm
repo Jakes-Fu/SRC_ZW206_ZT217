@@ -399,22 +399,12 @@
   END_ITEM
 
   BEGIN_ITEM
-    ITEM_NAME    = u16_pa_ctrl
-    ITEM_ID      = 602
-    ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x1
-    ITEM_INDEX   = 39
-    ITEM_PARENT  = 11
-    ITEM_DESC    =  
-  END_ITEM
-
-  BEGIN_ITEM
     ITEM_NAME    = u16_reserved
     ITEM_ID      = 602
     ITEM_TYPE    = 5 (ARRAY)
-    ITEM_SIZE    = 7
+    ITEM_SIZE    = 8
     ITEM_CONTENT = 
-    ITEM_INDEX   = 40
+    ITEM_INDEX   = 39
     ITEM_PARENT  = 11
     ITEM_DESC    =  
   END_ITEM
@@ -424,8 +414,8 @@
     ITEM_ID      = 602
     ITEM_TYPE    = 2 (SHORT)
     ITEM_CONTENT = 0xFFFF
-    ITEM_INDEX   = 41
-    ITEM_PARENT  = 40
+    ITEM_INDEX   = 40
+    ITEM_PARENT  = 39
     ITEM_DESC    =  
   END_ITEM
 
@@ -434,8 +424,8 @@
     ITEM_ID      = 602
     ITEM_TYPE    = 2 (SHORT)
     ITEM_CONTENT = 0xFFFF
-    ITEM_INDEX   = 42
-    ITEM_PARENT  = 40
+    ITEM_INDEX   = 41
+    ITEM_PARENT  = 39
     ITEM_DESC    =  
   END_ITEM
 
@@ -444,8 +434,8 @@
     ITEM_ID      = 602
     ITEM_TYPE    = 2 (SHORT)
     ITEM_CONTENT = 0xFFFF
-    ITEM_INDEX   = 43
-    ITEM_PARENT  = 40
+    ITEM_INDEX   = 42
+    ITEM_PARENT  = 39
     ITEM_DESC    =  
   END_ITEM
 
@@ -454,8 +444,8 @@
     ITEM_ID      = 602
     ITEM_TYPE    = 2 (SHORT)
     ITEM_CONTENT = 0xFFFF
-    ITEM_INDEX   = 44
-    ITEM_PARENT  = 40
+    ITEM_INDEX   = 43
+    ITEM_PARENT  = 39
     ITEM_DESC    =  
   END_ITEM
 
@@ -464,8 +454,8 @@
     ITEM_ID      = 602
     ITEM_TYPE    = 2 (SHORT)
     ITEM_CONTENT = 0xFFFF
-    ITEM_INDEX   = 45
-    ITEM_PARENT  = 40
+    ITEM_INDEX   = 44
+    ITEM_PARENT  = 39
     ITEM_DESC    =  
   END_ITEM
 
@@ -474,8 +464,8 @@
     ITEM_ID      = 602
     ITEM_TYPE    = 2 (SHORT)
     ITEM_CONTENT = 0xFFFF
-    ITEM_INDEX   = 46
-    ITEM_PARENT  = 40
+    ITEM_INDEX   = 45
+    ITEM_PARENT  = 39
     ITEM_DESC    =  
   END_ITEM
 
@@ -484,8 +474,18 @@
     ITEM_ID      = 602
     ITEM_TYPE    = 2 (SHORT)
     ITEM_CONTENT = 0xFFFF
+    ITEM_INDEX   = 46
+    ITEM_PARENT  = 39
+    ITEM_DESC    =  
+  END_ITEM
+
+  BEGIN_ITEM
+    ITEM_NAME    = u16_reserved[7]
+    ITEM_ID      = 602
+    ITEM_TYPE    = 2 (SHORT)
+    ITEM_CONTENT = 0xFFFF
     ITEM_INDEX   = 47
-    ITEM_PARENT  = 40
+    ITEM_PARENT  = 39
     ITEM_DESC    =  
   END_ITEM
 

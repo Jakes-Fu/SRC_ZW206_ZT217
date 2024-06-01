@@ -72,27 +72,27 @@
     ITEM_NAME    = recharge_voltage
     ITEM_ID      = 400
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x10AE
+    ITEM_CONTENT = 0x104A
     ITEM_INDEX   = 6
     ITEM_PARENT  = 1
-    ITEM_DESC    = 4.27V
+    ITEM_DESC    = 4.170V
   END_ITEM
 
   BEGIN_ITEM
     ITEM_NAME    = charge_end_voltage
     ITEM_ID      = 400
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x1130
+    ITEM_CONTENT = 0x1068
     ITEM_INDEX   = 7
     ITEM_PARENT  = 1
-    ITEM_DESC    = 4.40V
+    ITEM_DESC    = 4.20V
   END_ITEM
 
   BEGIN_ITEM
     ITEM_NAME    = bat_safety_vol
     ITEM_ID      = 400
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x1194
+    ITEM_CONTENT = 0x1068
     ITEM_INDEX   = 8
     ITEM_PARENT  = 1
     ITEM_DESC    = safety battery voltage when charging
@@ -102,7 +102,7 @@
     ITEM_NAME    = standard_current_type
     ITEM_ID      = 400
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x190
+    ITEM_CONTENT = 0x1F4
     ITEM_INDEX   = 9
     ITEM_PARENT  = 1
     ITEM_DESC    = standard adapter charge current,400mA,600mA,800mA,1000mA Please be very careful to use 800mA and 1000mA
@@ -112,7 +112,7 @@
     ITEM_NAME    = usb_current_type
     ITEM_ID      = 400
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x190
+    ITEM_CONTENT = 0x1C2
     ITEM_INDEX   = 10
     ITEM_PARENT  = 1
     ITEM_DESC    = pc charge current, 300mA 400mA 500mA
@@ -243,120 +243,120 @@
     ITEM_NAME    = dischg_bat_tab[0]
     ITEM_ID      = 400
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x10B8
+    ITEM_CONTENT = 0x1036
     ITEM_INDEX   = 23
     ITEM_PARENT  = 22
-    ITEM_DESC    = 4.280V capacity 100%
+    ITEM_DESC    = 4.150V capacity 100%
   END_ITEM
 
   BEGIN_ITEM
     ITEM_NAME    = dischg_bat_tab[1]
     ITEM_ID      = 400
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x103F
+    ITEM_CONTENT = 0xFD2
     ITEM_INDEX   = 24
     ITEM_PARENT  = 22
-    ITEM_DESC    = 4.159V capacity 90%
+    ITEM_DESC    = 4.050V capacity 90%
   END_ITEM
 
   BEGIN_ITEM
     ITEM_NAME    = dischg_bat_tab[2]
     ITEM_ID      = 400
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x1008
+    ITEM_CONTENT = 0xFA0
     ITEM_INDEX   = 25
     ITEM_PARENT  = 22
-    ITEM_DESC    = 4.104V capacity 80%
+    ITEM_DESC    = 4.000V capacity 80%
   END_ITEM
 
   BEGIN_ITEM
     ITEM_NAME    = dischg_bat_tab[3]
     ITEM_ID      = 400
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xFA4
+    ITEM_CONTENT = 0xF64
     ITEM_INDEX   = 26
     ITEM_PARENT  = 22
-    ITEM_DESC    = 4.004V capacity 70%
+    ITEM_DESC    = 3.940V capacity 70%
   END_ITEM
 
   BEGIN_ITEM
     ITEM_NAME    = dischg_bat_tab[4]
     ITEM_ID      = 400
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xF47
+    ITEM_CONTENT = 0xF28
     ITEM_INDEX   = 27
     ITEM_PARENT  = 22
-    ITEM_DESC    = 3.911V capacity 60%
+    ITEM_DESC    = 3.880V capacity 60%
   END_ITEM
 
   BEGIN_ITEM
     ITEM_NAME    = dischg_bat_tab[5]
     ITEM_ID      = 400
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xF06
+    ITEM_CONTENT = 0xEEC
     ITEM_INDEX   = 28
     ITEM_PARENT  = 22
-    ITEM_DESC    = 3.846V capacity 50%
+    ITEM_DESC    = 3.820V capacity 50%
   END_ITEM
 
   BEGIN_ITEM
     ITEM_NAME    = dischg_bat_tab[6]
     ITEM_ID      = 400
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xEDE
+    ITEM_CONTENT = 0xEBA
     ITEM_INDEX   = 29
     ITEM_PARENT  = 22
-    ITEM_DESC    = 3.806V capacity 40%
+    ITEM_DESC    = 3.770V capacity 40%
   END_ITEM
 
   BEGIN_ITEM
     ITEM_NAME    = dischg_bat_tab[7]
     ITEM_ID      = 400
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xEB2
+    ITEM_CONTENT = 0xEA6
     ITEM_INDEX   = 30
     ITEM_PARENT  = 22
-    ITEM_DESC    = 3.762V capacity 30%
+    ITEM_DESC    = 3.750V capacity 30%
   END_ITEM
 
   BEGIN_ITEM
     ITEM_NAME    = dischg_bat_tab[8]
     ITEM_ID      = 400
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xE89
+    ITEM_CONTENT = 0xE60
     ITEM_INDEX   = 31
     ITEM_PARENT  = 22
-    ITEM_DESC    = 3.721V capacity 20%
+    ITEM_DESC    = 3.680V capacity 20%
   END_ITEM
 
   BEGIN_ITEM
     ITEM_NAME    = dischg_bat_tab[9]
     ITEM_ID      = 400
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xE6F
+    ITEM_CONTENT = 0xE42
     ITEM_INDEX   = 32
     ITEM_PARENT  = 22
-    ITEM_DESC    = 3.695V capacity 15%
+    ITEM_DESC    = 3.650V capacity 15%
   END_ITEM
 
   BEGIN_ITEM
     ITEM_NAME    = dischg_bat_tab[10]
     ITEM_ID      = 400
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xE1F
+    ITEM_CONTENT = 0xDB6
     ITEM_INDEX   = 33
     ITEM_PARENT  = 22
-    ITEM_DESC    = 3.615V capacity 5%
+    ITEM_DESC    = 3.510V capacity 5%
   END_ITEM
 
   BEGIN_ITEM
     ITEM_NAME    = dischg_bat_tab[11]
     ITEM_ID      = 400
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xD16
+    ITEM_CONTENT = 0xD48
     ITEM_INDEX   = 34
     ITEM_PARENT  = 22
-    ITEM_DESC    = 3.350V capacity 0%
+    ITEM_DESC    = 3.400V capacity 0%
   END_ITEM
 
   BEGIN_ITEM
@@ -384,80 +384,80 @@
     ITEM_NAME    = chg_bat_tab[0]
     ITEM_ID      = 400
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x10BD
+    ITEM_CONTENT = 0x1044
     ITEM_INDEX   = 37
     ITEM_PARENT  = 36
-    ITEM_DESC    = 4.285V 100%
+    ITEM_DESC    = 4.164V 100%
   END_ITEM
 
   BEGIN_ITEM
     ITEM_NAME    = chg_bat_tab[1]
     ITEM_ID      = 400
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x1041
+    ITEM_CONTENT = 0xFDA
     ITEM_INDEX   = 38
     ITEM_PARENT  = 36
-    ITEM_DESC    = 4.161V 90%
+    ITEM_DESC    = 4.058V 90%
   END_ITEM
 
   BEGIN_ITEM
     ITEM_NAME    = chg_bat_tab[2]
     ITEM_ID      = 400
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x100D
+    ITEM_CONTENT = 0xF8C
     ITEM_INDEX   = 39
     ITEM_PARENT  = 36
-    ITEM_DESC    = 4.109V 80%
+    ITEM_DESC    = 3.980V 80%
   END_ITEM
 
   BEGIN_ITEM
     ITEM_NAME    = chg_bat_tab[3]
     ITEM_ID      = 400
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xFA9
+    ITEM_CONTENT = 0xF4F
     ITEM_INDEX   = 40
     ITEM_PARENT  = 36
-    ITEM_DESC    = 4.009V 70%
+    ITEM_DESC    = 3.919V 70%
   END_ITEM
 
   BEGIN_ITEM
     ITEM_NAME    = chg_bat_tab[4]
     ITEM_ID      = 400
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xF4C
+    ITEM_CONTENT = 0xF12
     ITEM_INDEX   = 41
     ITEM_PARENT  = 36
-    ITEM_DESC    = 3.916V 60%
+    ITEM_DESC    = 3.858V 60%
   END_ITEM
 
   BEGIN_ITEM
     ITEM_NAME    = chg_bat_tab[5]
     ITEM_ID      = 400
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xF0B
+    ITEM_CONTENT = 0xEDC
     ITEM_INDEX   = 42
     ITEM_PARENT  = 36
-    ITEM_DESC    = 3.851V 50%
+    ITEM_DESC    = 3.804V 50%
   END_ITEM
 
   BEGIN_ITEM
     ITEM_NAME    = chg_bat_tab[6]
     ITEM_ID      = 400
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xEE3
+    ITEM_CONTENT = 0xEC4
     ITEM_INDEX   = 43
     ITEM_PARENT  = 36
-    ITEM_DESC    = 3.811V 40%
+    ITEM_DESC    = 3.780V 40%
   END_ITEM
 
   BEGIN_ITEM
     ITEM_NAME    = chg_bat_tab[7]
     ITEM_ID      = 400
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xEB7
+    ITEM_CONTENT = 0xEB3
     ITEM_INDEX   = 44
     ITEM_PARENT  = 36
-    ITEM_DESC    = 3.767V 30%
+    ITEM_DESC    = 3.763V 30%
   END_ITEM
 
   BEGIN_ITEM
@@ -474,30 +474,30 @@
     ITEM_NAME    = chg_bat_tab[9]
     ITEM_ID      = 400
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xE74
+    ITEM_CONTENT = 0xE6E
     ITEM_INDEX   = 46
     ITEM_PARENT  = 36
-    ITEM_DESC    = 3.700V 15%
+    ITEM_DESC    = 3.694V 15%
   END_ITEM
 
   BEGIN_ITEM
     ITEM_NAME    = chg_bat_tab[10]
     ITEM_ID      = 400
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xE24
+    ITEM_CONTENT = 0xDD8
     ITEM_INDEX   = 47
     ITEM_PARENT  = 36
-    ITEM_DESC    = 3.620V 5%
+    ITEM_DESC    = 3.544V 5%
   END_ITEM
 
   BEGIN_ITEM
     ITEM_NAME    = chg_bat_tab[11]
     ITEM_ID      = 400
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xD16
+    ITEM_CONTENT = 0xD48
     ITEM_INDEX   = 48
     ITEM_PARENT  = 36
-    ITEM_DESC    = 3.350V 0%
+    ITEM_DESC    = 3.400V 0%
   END_ITEM
 
   BEGIN_ITEM

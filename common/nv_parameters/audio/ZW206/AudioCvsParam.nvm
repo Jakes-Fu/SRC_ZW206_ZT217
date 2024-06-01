@@ -123,7 +123,7 @@
     ITEM_NAME    = ucModeName[8]
     ITEM_ID      = 428
     ITEM_TYPE    = 1 (CHAR)
-    ITEM_CONTENT = 0x50
+    ITEM_CONTENT = 0x40
     ITEM_INDEX   = 11
     ITEM_PARENT  = 2
     ITEM_DESC    =  
@@ -163,7 +163,7 @@
     ITEM_NAME    = ucModeName[12]
     ITEM_ID      = 428
     ITEM_TYPE    = 1 (CHAR)
-    ITEM_CONTENT = 0x2B
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 15
     ITEM_PARENT  = 2
     ITEM_DESC    =  
@@ -183,7 +183,7 @@
     ITEM_NAME    = ucModeName[14]
     ITEM_ID      = 428
     ITEM_TYPE    = 1 (CHAR)
-    ITEM_CONTENT = 0x53
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 17
     ITEM_PARENT  = 2
     ITEM_DESC    =  
@@ -7024,7 +7024,7 @@
     ITEM_NAME    = EQBin0
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 701
     ITEM_PARENT  = 700
     ITEM_DESC    =  
@@ -7034,7 +7034,7 @@
     ITEM_NAME    = EQBin1
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 702
     ITEM_PARENT  = 700
     ITEM_DESC    =  
@@ -7044,7 +7044,7 @@
     ITEM_NAME    = EQBin2
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 703
     ITEM_PARENT  = 700
     ITEM_DESC    =  
@@ -7054,7 +7054,7 @@
     ITEM_NAME    = EQBin3
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 704
     ITEM_PARENT  = 700
     ITEM_DESC    =  
@@ -7064,7 +7064,7 @@
     ITEM_NAME    = EQBin4
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 705
     ITEM_PARENT  = 700
     ITEM_DESC    =  
@@ -7074,7 +7074,7 @@
     ITEM_NAME    = EQBin5
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 706
     ITEM_PARENT  = 700
     ITEM_DESC    =  
@@ -7084,7 +7084,7 @@
     ITEM_NAME    = EQBin6
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 707
     ITEM_PARENT  = 700
     ITEM_DESC    =  
@@ -7094,7 +7094,7 @@
     ITEM_NAME    = EQBin7
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 708
     ITEM_PARENT  = 700
     ITEM_DESC    =  
@@ -7104,7 +7104,7 @@
     ITEM_NAME    = EQBin8
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 709
     ITEM_PARENT  = 700
     ITEM_DESC    =  
@@ -7114,7 +7114,7 @@
     ITEM_NAME    = EQBin9
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 710
     ITEM_PARENT  = 700
     ITEM_DESC    =  
@@ -7124,7 +7124,7 @@
     ITEM_NAME    = EQBin10
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 711
     ITEM_PARENT  = 700
     ITEM_DESC    =  
@@ -7134,7 +7134,7 @@
     ITEM_NAME    = EQBin11
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 712
     ITEM_PARENT  = 700
     ITEM_DESC    =  
@@ -7144,7 +7144,7 @@
     ITEM_NAME    = EQBin12
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 713
     ITEM_PARENT  = 700
     ITEM_DESC    =  
@@ -7154,7 +7154,7 @@
     ITEM_NAME    = EQBin13
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 714
     ITEM_PARENT  = 700
     ITEM_DESC    =  
@@ -7164,7 +7164,7 @@
     ITEM_NAME    = EQBin14
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 715
     ITEM_PARENT  = 700
     ITEM_DESC    =  
@@ -7174,7 +7174,7 @@
     ITEM_NAME    = EQBin15
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 716
     ITEM_PARENT  = 700
     ITEM_DESC    =  
@@ -7184,7 +7184,7 @@
     ITEM_NAME    = EQBin16
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 717
     ITEM_PARENT  = 700
     ITEM_DESC    =  
@@ -7194,7 +7194,7 @@
     ITEM_NAME    = EQBin17
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 718
     ITEM_PARENT  = 700
     ITEM_DESC    =  
@@ -7204,7 +7204,7 @@
     ITEM_NAME    = EQBin18
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 719
     ITEM_PARENT  = 700
     ITEM_DESC    =  
@@ -7214,7 +7214,7 @@
     ITEM_NAME    = EQBin19
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 720
     ITEM_PARENT  = 700
     ITEM_DESC    =  
@@ -7224,7 +7224,7 @@
     ITEM_NAME    = EQBin20
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 721
     ITEM_PARENT  = 700
     ITEM_DESC    =  
@@ -7234,7 +7234,7 @@
     ITEM_NAME    = EQBin21
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 722
     ITEM_PARENT  = 700
     ITEM_DESC    =  
@@ -7244,7 +7244,7 @@
     ITEM_NAME    = EQBin22
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 723
     ITEM_PARENT  = 700
     ITEM_DESC    =  
@@ -7254,7 +7254,7 @@
     ITEM_NAME    = EQBin23
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 724
     ITEM_PARENT  = 700
     ITEM_DESC    =  
@@ -7264,7 +7264,7 @@
     ITEM_NAME    = EQBin24
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 725
     ITEM_PARENT  = 700
     ITEM_DESC    =  
@@ -7274,7 +7274,7 @@
     ITEM_NAME    = EQBin25
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 726
     ITEM_PARENT  = 700
     ITEM_DESC    =  
@@ -7284,7 +7284,7 @@
     ITEM_NAME    = EQBin26
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 727
     ITEM_PARENT  = 700
     ITEM_DESC    =  
@@ -7294,7 +7294,7 @@
     ITEM_NAME    = EQBin27
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 728
     ITEM_PARENT  = 700
     ITEM_DESC    =  
@@ -7314,7 +7314,7 @@
     ITEM_NAME    = EQBin0
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1800
     ITEM_INDEX   = 730
     ITEM_PARENT  = 729
     ITEM_DESC    =  
@@ -7324,7 +7324,7 @@
     ITEM_NAME    = EQBin1
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1800
     ITEM_INDEX   = 731
     ITEM_PARENT  = 729
     ITEM_DESC    =  
@@ -7334,7 +7334,7 @@
     ITEM_NAME    = EQBin2
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1800
     ITEM_INDEX   = 732
     ITEM_PARENT  = 729
     ITEM_DESC    =  
@@ -7344,7 +7344,7 @@
     ITEM_NAME    = EQBin3
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xD800
+    ITEM_CONTENT = 0x1800
     ITEM_INDEX   = 733
     ITEM_PARENT  = 729
     ITEM_DESC    =  
@@ -7354,7 +7354,7 @@
     ITEM_NAME    = EQBin4
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1800
     ITEM_INDEX   = 734
     ITEM_PARENT  = 729
     ITEM_DESC    =  
@@ -7364,7 +7364,7 @@
     ITEM_NAME    = EQBin5
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1800
     ITEM_INDEX   = 735
     ITEM_PARENT  = 729
     ITEM_DESC    =  
@@ -7374,7 +7374,7 @@
     ITEM_NAME    = EQBin6
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1800
     ITEM_INDEX   = 736
     ITEM_PARENT  = 729
     ITEM_DESC    =  
@@ -7384,7 +7384,7 @@
     ITEM_NAME    = EQBin7
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1800
     ITEM_INDEX   = 737
     ITEM_PARENT  = 729
     ITEM_DESC    =  
@@ -7394,7 +7394,7 @@
     ITEM_NAME    = EQBin8
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1800
     ITEM_INDEX   = 738
     ITEM_PARENT  = 729
     ITEM_DESC    =  
@@ -7404,7 +7404,7 @@
     ITEM_NAME    = EQBin9
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1800
     ITEM_INDEX   = 739
     ITEM_PARENT  = 729
     ITEM_DESC    =  
@@ -7414,7 +7414,7 @@
     ITEM_NAME    = EQBin10
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xEC00
+    ITEM_CONTENT = 0x1800
     ITEM_INDEX   = 740
     ITEM_PARENT  = 729
     ITEM_DESC    =  
@@ -7424,7 +7424,7 @@
     ITEM_NAME    = EQBin11
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xEC00
+    ITEM_CONTENT = 0x1800
     ITEM_INDEX   = 741
     ITEM_PARENT  = 729
     ITEM_DESC    =  
@@ -7434,7 +7434,7 @@
     ITEM_NAME    = EQBin12
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1800
     ITEM_INDEX   = 742
     ITEM_PARENT  = 729
     ITEM_DESC    =  
@@ -7444,7 +7444,7 @@
     ITEM_NAME    = EQBin13
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1800
     ITEM_INDEX   = 743
     ITEM_PARENT  = 729
     ITEM_DESC    =  
@@ -7454,7 +7454,7 @@
     ITEM_NAME    = EQBin14
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1800
     ITEM_INDEX   = 744
     ITEM_PARENT  = 729
     ITEM_DESC    =  
@@ -7464,7 +7464,7 @@
     ITEM_NAME    = EQBin15
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1800
     ITEM_INDEX   = 745
     ITEM_PARENT  = 729
     ITEM_DESC    =  
@@ -7474,7 +7474,7 @@
     ITEM_NAME    = EQBin16
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1800
     ITEM_INDEX   = 746
     ITEM_PARENT  = 729
     ITEM_DESC    =  
@@ -7484,7 +7484,7 @@
     ITEM_NAME    = EQBin17
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xE400
+    ITEM_CONTENT = 0x1800
     ITEM_INDEX   = 747
     ITEM_PARENT  = 729
     ITEM_DESC    =  
@@ -7494,7 +7494,7 @@
     ITEM_NAME    = EQBin18
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xE400
+    ITEM_CONTENT = 0x1800
     ITEM_INDEX   = 748
     ITEM_PARENT  = 729
     ITEM_DESC    =  
@@ -7504,7 +7504,7 @@
     ITEM_NAME    = EQBin19
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1800
     ITEM_INDEX   = 749
     ITEM_PARENT  = 729
     ITEM_DESC    =  
@@ -7514,7 +7514,7 @@
     ITEM_NAME    = EQBin20
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1800
     ITEM_INDEX   = 750
     ITEM_PARENT  = 729
     ITEM_DESC    =  
@@ -7524,7 +7524,7 @@
     ITEM_NAME    = EQBin21
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1800
     ITEM_INDEX   = 751
     ITEM_PARENT  = 729
     ITEM_DESC    =  
@@ -7534,7 +7534,7 @@
     ITEM_NAME    = EQBin22
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1800
     ITEM_INDEX   = 752
     ITEM_PARENT  = 729
     ITEM_DESC    =  
@@ -7544,7 +7544,7 @@
     ITEM_NAME    = EQBin23
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0xB400
     ITEM_INDEX   = 753
     ITEM_PARENT  = 729
     ITEM_DESC    =  
@@ -7554,7 +7554,7 @@
     ITEM_NAME    = EQBin24
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0xB400
     ITEM_INDEX   = 754
     ITEM_PARENT  = 729
     ITEM_DESC    =  
@@ -7564,7 +7564,7 @@
     ITEM_NAME    = EQBin25
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0xB400
     ITEM_INDEX   = 755
     ITEM_PARENT  = 729
     ITEM_DESC    =  
@@ -7574,7 +7574,7 @@
     ITEM_NAME    = EQBin26
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0xB400
     ITEM_INDEX   = 756
     ITEM_PARENT  = 729
     ITEM_DESC    =  
@@ -7584,7 +7584,7 @@
     ITEM_NAME    = EQBin27
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xB000
+    ITEM_CONTENT = 0xB400
     ITEM_INDEX   = 757
     ITEM_PARENT  = 729
     ITEM_DESC    =  
@@ -7714,7 +7714,7 @@
     ITEM_NAME    = drc_p1_pos
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x666
+    ITEM_CONTENT = 0x1CA7
     ITEM_INDEX   = 770
     ITEM_PARENT  = 769
     ITEM_DESC    =  
@@ -7784,7 +7784,7 @@
     ITEM_NAME    = drc_gain
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x400
+    ITEM_CONTENT = 0x1400
     ITEM_INDEX   = 777
     ITEM_PARENT  = 769
     ITEM_DESC    =  
@@ -8084,7 +8084,7 @@
     ITEM_NAME    = reserved026
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x82
+    ITEM_CONTENT = 0x80
     ITEM_INDEX   = 807
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8094,7 +8094,7 @@
     ITEM_NAME    = reserved027
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x1CA7
+    ITEM_CONTENT = 0x50F4
     ITEM_INDEX   = 808
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8154,7 +8154,7 @@
     ITEM_NAME    = reserved033
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xA
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 814
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8284,7 +8284,7 @@
     ITEM_NAME    = reserved046
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x4
     ITEM_INDEX   = 827
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8294,7 +8294,7 @@
     ITEM_NAME    = reserved047
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x62
     ITEM_INDEX   = 828
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8304,7 +8304,7 @@
     ITEM_NAME    = reserved048
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x7AE
     ITEM_INDEX   = 829
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8314,7 +8314,7 @@
     ITEM_NAME    = reserved049
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x500
     ITEM_INDEX   = 830
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8324,7 +8324,7 @@
     ITEM_NAME    = reserved050
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x800
     ITEM_INDEX   = 831
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8334,7 +8334,7 @@
     ITEM_NAME    = reserved051
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x2000
+    ITEM_CONTENT = 0xF5C
     ITEM_INDEX   = 832
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8344,7 +8344,7 @@
     ITEM_NAME    = reserved052
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x8000
+    ITEM_CONTENT = 0x10
     ITEM_INDEX   = 833
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8354,7 +8354,7 @@
     ITEM_NAME    = reserved053
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC000
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 834
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8364,7 +8364,7 @@
     ITEM_NAME    = reserved054
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x8000
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 835
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8374,7 +8374,7 @@
     ITEM_NAME    = reserved055
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x2000
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 836
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8384,7 +8384,7 @@
     ITEM_NAME    = reserved056
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x2000
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 837
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8394,7 +8394,7 @@
     ITEM_NAME    = reserved057
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x8000
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 838
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8404,7 +8404,7 @@
     ITEM_NAME    = reserved058
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC000
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 839
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8414,7 +8414,7 @@
     ITEM_NAME    = reserved059
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x8000
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 840
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8424,7 +8424,7 @@
     ITEM_NAME    = reserved060
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x2000
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 841
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8584,7 +8584,7 @@
     ITEM_NAME    = reserved076
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x8000
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 857
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8594,7 +8594,7 @@
     ITEM_NAME    = reserved077
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x8000
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 858
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8604,7 +8604,7 @@
     ITEM_NAME    = reserved078
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x8000
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 859
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8614,7 +8614,7 @@
     ITEM_NAME    = reserved079
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x8000
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 860
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8624,7 +8624,7 @@
     ITEM_NAME    = reserved080
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x8000
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 861
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8644,7 +8644,7 @@
     ITEM_NAME    = reserved082
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x8000
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 863
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8654,7 +8654,7 @@
     ITEM_NAME    = reserved083
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x8000
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 864
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8664,7 +8664,7 @@
     ITEM_NAME    = reserved084
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x8000
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 865
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8674,7 +8674,7 @@
     ITEM_NAME    = reserved085
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x8000
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 866
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8684,7 +8684,7 @@
     ITEM_NAME    = reserved086
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x8000
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 867
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8704,7 +8704,7 @@
     ITEM_NAME    = reserved088
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x8000
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 869
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8714,7 +8714,7 @@
     ITEM_NAME    = reserved089
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x8000
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 870
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8724,7 +8724,7 @@
     ITEM_NAME    = reserved090
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x8000
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 871
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8734,7 +8734,7 @@
     ITEM_NAME    = reserved091
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x8000
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 872
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8744,7 +8744,7 @@
     ITEM_NAME    = reserved092
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x8000
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 873
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8764,7 +8764,7 @@
     ITEM_NAME    = reserved094
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x8000
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 875
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8944,7 +8944,7 @@
     ITEM_NAME    = reserved112
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 893
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8954,7 +8954,7 @@
     ITEM_NAME    = reserved113
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 894
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8964,7 +8964,7 @@
     ITEM_NAME    = reserved114
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 895
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8974,7 +8974,7 @@
     ITEM_NAME    = reserved115
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 896
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8984,7 +8984,7 @@
     ITEM_NAME    = reserved116
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 897
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -8994,7 +8994,7 @@
     ITEM_NAME    = reserved117
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 898
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -9004,7 +9004,7 @@
     ITEM_NAME    = reserved118
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 899
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -9014,7 +9014,7 @@
     ITEM_NAME    = reserved119
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2400
     ITEM_INDEX   = 900
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -9024,7 +9024,7 @@
     ITEM_NAME    = reserved120
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xB000
+    ITEM_CONTENT = 0xB400
     ITEM_INDEX   = 901
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -9034,7 +9034,7 @@
     ITEM_NAME    = reserved121
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xB000
+    ITEM_CONTENT = 0xB400
     ITEM_INDEX   = 902
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -9044,7 +9044,7 @@
     ITEM_NAME    = reserved122
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xB000
+    ITEM_CONTENT = 0xB400
     ITEM_INDEX   = 903
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -9054,7 +9054,7 @@
     ITEM_NAME    = reserved123
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xB000
+    ITEM_CONTENT = 0xB400
     ITEM_INDEX   = 904
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -9064,7 +9064,7 @@
     ITEM_NAME    = reserved124
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xB000
+    ITEM_CONTENT = 0xB400
     ITEM_INDEX   = 905
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -9074,7 +9074,7 @@
     ITEM_NAME    = reserved125
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xB000
+    ITEM_CONTENT = 0xB400
     ITEM_INDEX   = 906
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -9084,7 +9084,7 @@
     ITEM_NAME    = reserved126
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xB000
+    ITEM_CONTENT = 0xB400
     ITEM_INDEX   = 907
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -9094,7 +9094,7 @@
     ITEM_NAME    = reserved127
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xB000
+    ITEM_CONTENT = 0xB400
     ITEM_INDEX   = 908
     ITEM_PARENT  = 780
     ITEM_DESC    =  
@@ -18307,7 +18307,7 @@
     ITEM_NAME    = ucModeName[10]
     ITEM_ID      = 428
     ITEM_TYPE    = 1 (CHAR)
-    ITEM_CONTENT = 0x37
+    ITEM_CONTENT = 0x30
     ITEM_INDEX   = 1829
     ITEM_PARENT  = 1818
     ITEM_DESC    =  
@@ -25188,7 +25188,7 @@
     ITEM_NAME    = EQBin0
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2517
     ITEM_PARENT  = 2516
     ITEM_DESC    =  
@@ -25198,7 +25198,7 @@
     ITEM_NAME    = EQBin1
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2518
     ITEM_PARENT  = 2516
     ITEM_DESC    =  
@@ -25208,7 +25208,7 @@
     ITEM_NAME    = EQBin2
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2519
     ITEM_PARENT  = 2516
     ITEM_DESC    =  
@@ -25218,7 +25218,7 @@
     ITEM_NAME    = EQBin3
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2520
     ITEM_PARENT  = 2516
     ITEM_DESC    =  
@@ -25228,7 +25228,7 @@
     ITEM_NAME    = EQBin4
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2521
     ITEM_PARENT  = 2516
     ITEM_DESC    =  
@@ -25238,7 +25238,7 @@
     ITEM_NAME    = EQBin5
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2522
     ITEM_PARENT  = 2516
     ITEM_DESC    =  
@@ -25248,7 +25248,7 @@
     ITEM_NAME    = EQBin6
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2523
     ITEM_PARENT  = 2516
     ITEM_DESC    =  
@@ -25258,7 +25258,7 @@
     ITEM_NAME    = EQBin7
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2524
     ITEM_PARENT  = 2516
     ITEM_DESC    =  
@@ -25268,7 +25268,7 @@
     ITEM_NAME    = EQBin8
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2525
     ITEM_PARENT  = 2516
     ITEM_DESC    =  
@@ -25278,7 +25278,7 @@
     ITEM_NAME    = EQBin9
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2526
     ITEM_PARENT  = 2516
     ITEM_DESC    =  
@@ -25288,7 +25288,7 @@
     ITEM_NAME    = EQBin10
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2527
     ITEM_PARENT  = 2516
     ITEM_DESC    =  
@@ -25298,7 +25298,7 @@
     ITEM_NAME    = EQBin11
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2528
     ITEM_PARENT  = 2516
     ITEM_DESC    =  
@@ -25308,7 +25308,7 @@
     ITEM_NAME    = EQBin12
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2529
     ITEM_PARENT  = 2516
     ITEM_DESC    =  
@@ -25318,7 +25318,7 @@
     ITEM_NAME    = EQBin13
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2530
     ITEM_PARENT  = 2516
     ITEM_DESC    =  
@@ -25328,7 +25328,7 @@
     ITEM_NAME    = EQBin14
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2531
     ITEM_PARENT  = 2516
     ITEM_DESC    =  
@@ -25338,7 +25338,7 @@
     ITEM_NAME    = EQBin15
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2532
     ITEM_PARENT  = 2516
     ITEM_DESC    =  
@@ -25348,7 +25348,7 @@
     ITEM_NAME    = EQBin16
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2533
     ITEM_PARENT  = 2516
     ITEM_DESC    =  
@@ -25358,7 +25358,7 @@
     ITEM_NAME    = EQBin17
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2534
     ITEM_PARENT  = 2516
     ITEM_DESC    =  
@@ -25368,7 +25368,7 @@
     ITEM_NAME    = EQBin18
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2535
     ITEM_PARENT  = 2516
     ITEM_DESC    =  
@@ -25378,7 +25378,7 @@
     ITEM_NAME    = EQBin19
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2536
     ITEM_PARENT  = 2516
     ITEM_DESC    =  
@@ -25388,7 +25388,7 @@
     ITEM_NAME    = EQBin20
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2537
     ITEM_PARENT  = 2516
     ITEM_DESC    =  
@@ -25398,7 +25398,7 @@
     ITEM_NAME    = EQBin21
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2538
     ITEM_PARENT  = 2516
     ITEM_DESC    =  
@@ -25408,7 +25408,7 @@
     ITEM_NAME    = EQBin22
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2539
     ITEM_PARENT  = 2516
     ITEM_DESC    =  
@@ -25418,7 +25418,7 @@
     ITEM_NAME    = EQBin23
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2540
     ITEM_PARENT  = 2516
     ITEM_DESC    =  
@@ -25428,7 +25428,7 @@
     ITEM_NAME    = EQBin24
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2541
     ITEM_PARENT  = 2516
     ITEM_DESC    =  
@@ -25438,7 +25438,7 @@
     ITEM_NAME    = EQBin25
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2542
     ITEM_PARENT  = 2516
     ITEM_DESC    =  
@@ -25448,7 +25448,7 @@
     ITEM_NAME    = EQBin26
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2543
     ITEM_PARENT  = 2516
     ITEM_DESC    =  
@@ -25458,7 +25458,7 @@
     ITEM_NAME    = EQBin27
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2544
     ITEM_PARENT  = 2516
     ITEM_DESC    =  
@@ -25478,7 +25478,7 @@
     ITEM_NAME    = EQBin0
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1000
     ITEM_INDEX   = 2546
     ITEM_PARENT  = 2545
     ITEM_DESC    =  
@@ -25488,7 +25488,7 @@
     ITEM_NAME    = EQBin1
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1000
     ITEM_INDEX   = 2547
     ITEM_PARENT  = 2545
     ITEM_DESC    =  
@@ -25498,7 +25498,7 @@
     ITEM_NAME    = EQBin2
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xEC00
+    ITEM_CONTENT = 0x1000
     ITEM_INDEX   = 2548
     ITEM_PARENT  = 2545
     ITEM_DESC    =  
@@ -25508,7 +25508,7 @@
     ITEM_NAME    = EQBin3
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xD800
+    ITEM_CONTENT = 0x1000
     ITEM_INDEX   = 2549
     ITEM_PARENT  = 2545
     ITEM_DESC    =  
@@ -25518,7 +25518,7 @@
     ITEM_NAME    = EQBin4
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1000
     ITEM_INDEX   = 2550
     ITEM_PARENT  = 2545
     ITEM_DESC    =  
@@ -25528,7 +25528,7 @@
     ITEM_NAME    = EQBin5
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1000
     ITEM_INDEX   = 2551
     ITEM_PARENT  = 2545
     ITEM_DESC    =  
@@ -25538,7 +25538,7 @@
     ITEM_NAME    = EQBin6
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1000
     ITEM_INDEX   = 2552
     ITEM_PARENT  = 2545
     ITEM_DESC    =  
@@ -25548,7 +25548,7 @@
     ITEM_NAME    = EQBin7
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1000
     ITEM_INDEX   = 2553
     ITEM_PARENT  = 2545
     ITEM_DESC    =  
@@ -25558,7 +25558,7 @@
     ITEM_NAME    = EQBin8
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1000
     ITEM_INDEX   = 2554
     ITEM_PARENT  = 2545
     ITEM_DESC    =  
@@ -25568,7 +25568,7 @@
     ITEM_NAME    = EQBin9
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xE800
+    ITEM_CONTENT = 0x1000
     ITEM_INDEX   = 2555
     ITEM_PARENT  = 2545
     ITEM_DESC    =  
@@ -25578,7 +25578,7 @@
     ITEM_NAME    = EQBin10
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xEC00
+    ITEM_CONTENT = 0x1000
     ITEM_INDEX   = 2556
     ITEM_PARENT  = 2545
     ITEM_DESC    =  
@@ -25588,7 +25588,7 @@
     ITEM_NAME    = EQBin11
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xEC00
+    ITEM_CONTENT = 0x1000
     ITEM_INDEX   = 2557
     ITEM_PARENT  = 2545
     ITEM_DESC    =  
@@ -25598,7 +25598,7 @@
     ITEM_NAME    = EQBin12
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1000
     ITEM_INDEX   = 2558
     ITEM_PARENT  = 2545
     ITEM_DESC    =  
@@ -25608,7 +25608,7 @@
     ITEM_NAME    = EQBin13
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1000
     ITEM_INDEX   = 2559
     ITEM_PARENT  = 2545
     ITEM_DESC    =  
@@ -25618,7 +25618,7 @@
     ITEM_NAME    = EQBin14
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1000
     ITEM_INDEX   = 2560
     ITEM_PARENT  = 2545
     ITEM_DESC    =  
@@ -25628,7 +25628,7 @@
     ITEM_NAME    = EQBin15
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1000
     ITEM_INDEX   = 2561
     ITEM_PARENT  = 2545
     ITEM_DESC    =  
@@ -25638,7 +25638,7 @@
     ITEM_NAME    = EQBin16
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1000
     ITEM_INDEX   = 2562
     ITEM_PARENT  = 2545
     ITEM_DESC    =  
@@ -25648,7 +25648,7 @@
     ITEM_NAME    = EQBin17
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xE400
+    ITEM_CONTENT = 0x1000
     ITEM_INDEX   = 2563
     ITEM_PARENT  = 2545
     ITEM_DESC    =  
@@ -25658,7 +25658,7 @@
     ITEM_NAME    = EQBin18
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xE400
+    ITEM_CONTENT = 0x1000
     ITEM_INDEX   = 2564
     ITEM_PARENT  = 2545
     ITEM_DESC    =  
@@ -25668,7 +25668,7 @@
     ITEM_NAME    = EQBin19
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1000
     ITEM_INDEX   = 2565
     ITEM_PARENT  = 2545
     ITEM_DESC    =  
@@ -25678,7 +25678,7 @@
     ITEM_NAME    = EQBin20
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1000
     ITEM_INDEX   = 2566
     ITEM_PARENT  = 2545
     ITEM_DESC    =  
@@ -25688,7 +25688,7 @@
     ITEM_NAME    = EQBin21
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1000
     ITEM_INDEX   = 2567
     ITEM_PARENT  = 2545
     ITEM_DESC    =  
@@ -25698,7 +25698,7 @@
     ITEM_NAME    = EQBin22
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1000
     ITEM_INDEX   = 2568
     ITEM_PARENT  = 2545
     ITEM_DESC    =  
@@ -25708,7 +25708,7 @@
     ITEM_NAME    = EQBin23
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1000
     ITEM_INDEX   = 2569
     ITEM_PARENT  = 2545
     ITEM_DESC    =  
@@ -25718,7 +25718,7 @@
     ITEM_NAME    = EQBin24
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1000
     ITEM_INDEX   = 2570
     ITEM_PARENT  = 2545
     ITEM_DESC    =  
@@ -25728,7 +25728,7 @@
     ITEM_NAME    = EQBin25
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1000
     ITEM_INDEX   = 2571
     ITEM_PARENT  = 2545
     ITEM_DESC    =  
@@ -25738,7 +25738,7 @@
     ITEM_NAME    = EQBin26
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1000
     ITEM_INDEX   = 2572
     ITEM_PARENT  = 2545
     ITEM_DESC    =  
@@ -25748,7 +25748,7 @@
     ITEM_NAME    = EQBin27
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xB000
+    ITEM_CONTENT = 0x1000
     ITEM_INDEX   = 2573
     ITEM_PARENT  = 2545
     ITEM_DESC    =  
@@ -25878,7 +25878,7 @@
     ITEM_NAME    = drc_p1_pos
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x666
+    ITEM_CONTENT = 0x1CA7
     ITEM_INDEX   = 2586
     ITEM_PARENT  = 2585
     ITEM_DESC    =  
@@ -25948,7 +25948,7 @@
     ITEM_NAME    = drc_gain
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x1400
     ITEM_INDEX   = 2593
     ITEM_PARENT  = 2585
     ITEM_DESC    =  
@@ -27108,7 +27108,7 @@
     ITEM_NAME    = reserved112
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2709
     ITEM_PARENT  = 2596
     ITEM_DESC    =  
@@ -27118,7 +27118,7 @@
     ITEM_NAME    = reserved113
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2710
     ITEM_PARENT  = 2596
     ITEM_DESC    =  
@@ -27128,7 +27128,7 @@
     ITEM_NAME    = reserved114
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2711
     ITEM_PARENT  = 2596
     ITEM_DESC    =  
@@ -27138,7 +27138,7 @@
     ITEM_NAME    = reserved115
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2712
     ITEM_PARENT  = 2596
     ITEM_DESC    =  
@@ -27148,7 +27148,7 @@
     ITEM_NAME    = reserved116
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2713
     ITEM_PARENT  = 2596
     ITEM_DESC    =  
@@ -27158,7 +27158,7 @@
     ITEM_NAME    = reserved117
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2714
     ITEM_PARENT  = 2596
     ITEM_DESC    =  
@@ -27168,7 +27168,7 @@
     ITEM_NAME    = reserved118
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2715
     ITEM_PARENT  = 2596
     ITEM_DESC    =  
@@ -27178,7 +27178,7 @@
     ITEM_NAME    = reserved119
     ITEM_ID      = 428
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x2000
     ITEM_INDEX   = 2716
     ITEM_PARENT  = 2596
     ITEM_DESC    =  
@@ -27409,7 +27409,7 @@
     ITEM_NAME    = ucModeName[12]
     ITEM_ID      = 428
     ITEM_TYPE    = 1 (CHAR)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x30
     ITEM_INDEX   = 2739
     ITEM_PARENT  = 2726
     ITEM_DESC    =  
@@ -27429,7 +27429,7 @@
     ITEM_NAME    = ucModeName[14]
     ITEM_ID      = 428
     ITEM_TYPE    = 1 (CHAR)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x30
     ITEM_INDEX   = 2741
     ITEM_PARENT  = 2726
     ITEM_DESC    =  
@@ -31950,7 +31950,7 @@
     ITEM_NAME    = ucModeName[12]
     ITEM_ID      = 428
     ITEM_TYPE    = 1 (CHAR)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x30
     ITEM_INDEX   = 3193
     ITEM_PARENT  = 3180
     ITEM_DESC    =  
@@ -31970,7 +31970,7 @@
     ITEM_NAME    = ucModeName[14]
     ITEM_ID      = 428
     ITEM_TYPE    = 1 (CHAR)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x30
     ITEM_INDEX   = 3195
     ITEM_PARENT  = 3180
     ITEM_DESC    =  
@@ -36491,7 +36491,7 @@
     ITEM_NAME    = ucModeName[12]
     ITEM_ID      = 428
     ITEM_TYPE    = 1 (CHAR)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x30
     ITEM_INDEX   = 3647
     ITEM_PARENT  = 3634
     ITEM_DESC    =  
@@ -36511,7 +36511,7 @@
     ITEM_NAME    = ucModeName[14]
     ITEM_ID      = 428
     ITEM_TYPE    = 1 (CHAR)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x30
     ITEM_INDEX   = 3649
     ITEM_PARENT  = 3634
     ITEM_DESC    =  
@@ -41052,7 +41052,7 @@
     ITEM_NAME    = ucModeName[14]
     ITEM_ID      = 428
     ITEM_TYPE    = 1 (CHAR)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x44
     ITEM_INDEX   = 4103
     ITEM_PARENT  = 4088
     ITEM_DESC    =  
@@ -45593,7 +45593,7 @@
     ITEM_NAME    = ucModeName[14]
     ITEM_ID      = 428
     ITEM_TYPE    = 1 (CHAR)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0x30
     ITEM_INDEX   = 4557
     ITEM_PARENT  = 4542
     ITEM_DESC    =  
@@ -98158,7 +98158,7 @@
     ITEM_NAME    = cutoff_rx
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC8
+    ITEM_CONTENT = 0xB4
     ITEM_INDEX   = 9812
     ITEM_PARENT  = 9809
     ITEM_DESC    =  
@@ -98288,7 +98288,7 @@
     ITEM_NAME    = EQF
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x1
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 9825
     ITEM_PARENT  = 9822
     ITEM_DESC    =  
@@ -98308,7 +98308,7 @@
     ITEM_NAME    = DRC
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x1
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 9827
     ITEM_PARENT  = 9822
     ITEM_DESC    =  
@@ -99208,7 +99208,7 @@
     ITEM_NAME    = EQBin0
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 9917
     ITEM_PARENT  = 9916
     ITEM_DESC    =  
@@ -99218,7 +99218,7 @@
     ITEM_NAME    = EQBin1
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 9918
     ITEM_PARENT  = 9916
     ITEM_DESC    =  
@@ -99228,7 +99228,7 @@
     ITEM_NAME    = EQBin2
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 9919
     ITEM_PARENT  = 9916
     ITEM_DESC    =  
@@ -99238,7 +99238,7 @@
     ITEM_NAME    = EQBin3
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 9920
     ITEM_PARENT  = 9916
     ITEM_DESC    =  
@@ -99248,7 +99248,7 @@
     ITEM_NAME    = EQBin4
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 9921
     ITEM_PARENT  = 9916
     ITEM_DESC    =  
@@ -99258,7 +99258,7 @@
     ITEM_NAME    = EQBin5
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 9922
     ITEM_PARENT  = 9916
     ITEM_DESC    =  
@@ -99268,7 +99268,7 @@
     ITEM_NAME    = EQBin6
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 9923
     ITEM_PARENT  = 9916
     ITEM_DESC    =  
@@ -99278,7 +99278,7 @@
     ITEM_NAME    = EQBin7
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 9924
     ITEM_PARENT  = 9916
     ITEM_DESC    =  
@@ -99288,7 +99288,7 @@
     ITEM_NAME    = EQBin8
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 9925
     ITEM_PARENT  = 9916
     ITEM_DESC    =  
@@ -99298,7 +99298,7 @@
     ITEM_NAME    = EQBin9
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 9926
     ITEM_PARENT  = 9916
     ITEM_DESC    =  
@@ -99308,7 +99308,7 @@
     ITEM_NAME    = EQBin10
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 9927
     ITEM_PARENT  = 9916
     ITEM_DESC    =  
@@ -99318,7 +99318,7 @@
     ITEM_NAME    = EQBin11
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 9928
     ITEM_PARENT  = 9916
     ITEM_DESC    =  
@@ -99328,7 +99328,7 @@
     ITEM_NAME    = EQBin12
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 9929
     ITEM_PARENT  = 9916
     ITEM_DESC    =  
@@ -99338,7 +99338,7 @@
     ITEM_NAME    = EQBin13
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 9930
     ITEM_PARENT  = 9916
     ITEM_DESC    =  
@@ -99348,7 +99348,7 @@
     ITEM_NAME    = EQBin14
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 9931
     ITEM_PARENT  = 9916
     ITEM_DESC    =  
@@ -99358,7 +99358,7 @@
     ITEM_NAME    = EQBin15
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 9932
     ITEM_PARENT  = 9916
     ITEM_DESC    =  
@@ -99368,7 +99368,7 @@
     ITEM_NAME    = EQBin16
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 9933
     ITEM_PARENT  = 9916
     ITEM_DESC    =  
@@ -99378,7 +99378,7 @@
     ITEM_NAME    = EQBin17
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 9934
     ITEM_PARENT  = 9916
     ITEM_DESC    =  
@@ -99388,7 +99388,7 @@
     ITEM_NAME    = EQBin18
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 9935
     ITEM_PARENT  = 9916
     ITEM_DESC    =  
@@ -99398,7 +99398,7 @@
     ITEM_NAME    = EQBin19
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 9936
     ITEM_PARENT  = 9916
     ITEM_DESC    =  
@@ -99408,7 +99408,7 @@
     ITEM_NAME    = EQBin20
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 9937
     ITEM_PARENT  = 9916
     ITEM_DESC    =  
@@ -99418,7 +99418,7 @@
     ITEM_NAME    = EQBin21
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 9938
     ITEM_PARENT  = 9916
     ITEM_DESC    =  
@@ -99428,7 +99428,7 @@
     ITEM_NAME    = EQBin22
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 9939
     ITEM_PARENT  = 9916
     ITEM_DESC    =  
@@ -99438,7 +99438,7 @@
     ITEM_NAME    = EQBin23
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 9940
     ITEM_PARENT  = 9916
     ITEM_DESC    =  
@@ -99448,7 +99448,7 @@
     ITEM_NAME    = EQBin24
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 9941
     ITEM_PARENT  = 9916
     ITEM_DESC    =  
@@ -99458,7 +99458,7 @@
     ITEM_NAME    = EQBin25
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 9942
     ITEM_PARENT  = 9916
     ITEM_DESC    =  
@@ -99468,7 +99468,7 @@
     ITEM_NAME    = EQBin26
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 9943
     ITEM_PARENT  = 9916
     ITEM_DESC    =  
@@ -99478,7 +99478,7 @@
     ITEM_NAME    = EQBin27
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 9944
     ITEM_PARENT  = 9916
     ITEM_DESC    =  
@@ -100998,7 +100998,7 @@
     ITEM_NAME    = reserved120
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 10096
     ITEM_PARENT  = 9975
     ITEM_DESC    =  
@@ -101008,7 +101008,7 @@
     ITEM_NAME    = reserved121
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 10097
     ITEM_PARENT  = 9975
     ITEM_DESC    =  
@@ -101018,7 +101018,7 @@
     ITEM_NAME    = reserved122
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 10098
     ITEM_PARENT  = 9975
     ITEM_DESC    =  
@@ -101028,7 +101028,7 @@
     ITEM_NAME    = reserved123
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 10099
     ITEM_PARENT  = 9975
     ITEM_DESC    =  
@@ -101038,7 +101038,7 @@
     ITEM_NAME    = reserved124
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x2A
     ITEM_INDEX   = 10100
     ITEM_PARENT  = 9975
     ITEM_DESC    =  
@@ -101048,7 +101048,7 @@
     ITEM_NAME    = reserved125
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x7
     ITEM_INDEX   = 10101
     ITEM_PARENT  = 9975
     ITEM_DESC    =  
@@ -101058,7 +101058,7 @@
     ITEM_NAME    = reserved126
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 10102
     ITEM_PARENT  = 9975
     ITEM_DESC    =  
@@ -101068,7 +101068,7 @@
     ITEM_NAME    = reserved127
     ITEM_ID      = 426
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC00
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 10103
     ITEM_PARENT  = 9975
     ITEM_DESC    =  
@@ -122293,7 +122293,7 @@
     ITEM_NAME    = ana
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xB9
+    ITEM_CONTENT = 0x5
     ITEM_INDEX   = 12224
     ITEM_PARENT  = 12223
     ITEM_DESC    =  
@@ -122303,7 +122303,7 @@
     ITEM_NAME    = dac
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x19
+    ITEM_CONTENT = 0x3
     ITEM_INDEX   = 12225
     ITEM_PARENT  = 12223
     ITEM_DESC    =  
@@ -134185,7 +134185,7 @@
     ITEM_NAME    = adc
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xBF
+    ITEM_CONTENT = 0x4B0
     ITEM_INDEX   = 13412
     ITEM_PARENT  = 13410
     ITEM_DESC    = bit7:0 adc volume
@@ -134265,7 +134265,7 @@
     ITEM_NAME    = ana
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x9E
+    ITEM_CONTENT = 0xAF
     ITEM_INDEX   = 13420
     ITEM_PARENT  = 13419
     ITEM_DESC    =  
@@ -134275,7 +134275,7 @@
     ITEM_NAME    = dac
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC
+    ITEM_CONTENT = 0x19
     ITEM_INDEX   = 13421
     ITEM_PARENT  = 13419
     ITEM_DESC    =  
@@ -134315,7 +134315,7 @@
     ITEM_NAME    = ana
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x9E
+    ITEM_CONTENT = 0xAF
     ITEM_INDEX   = 13425
     ITEM_PARENT  = 13424
     ITEM_DESC    =  
@@ -134325,7 +134325,7 @@
     ITEM_NAME    = dac
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC
+    ITEM_CONTENT = 0x19
     ITEM_INDEX   = 13426
     ITEM_PARENT  = 13424
     ITEM_DESC    =  
@@ -134365,7 +134365,7 @@
     ITEM_NAME    = ana
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x9E
+    ITEM_CONTENT = 0xAF
     ITEM_INDEX   = 13430
     ITEM_PARENT  = 13429
     ITEM_DESC    =  
@@ -134375,7 +134375,7 @@
     ITEM_NAME    = dac
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC
+    ITEM_CONTENT = 0x19
     ITEM_INDEX   = 13431
     ITEM_PARENT  = 13429
     ITEM_DESC    =  
@@ -134415,7 +134415,7 @@
     ITEM_NAME    = ana
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x9E
+    ITEM_CONTENT = 0xAF
     ITEM_INDEX   = 13435
     ITEM_PARENT  = 13434
     ITEM_DESC    =  
@@ -134425,7 +134425,7 @@
     ITEM_NAME    = dac
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC
+    ITEM_CONTENT = 0x19
     ITEM_INDEX   = 13436
     ITEM_PARENT  = 13434
     ITEM_DESC    =  
@@ -134465,7 +134465,7 @@
     ITEM_NAME    = ana
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x9E
+    ITEM_CONTENT = 0xAF
     ITEM_INDEX   = 13440
     ITEM_PARENT  = 13439
     ITEM_DESC    =  
@@ -134475,7 +134475,7 @@
     ITEM_NAME    = dac
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC
+    ITEM_CONTENT = 0x19
     ITEM_INDEX   = 13441
     ITEM_PARENT  = 13439
     ITEM_DESC    =  
@@ -134515,7 +134515,7 @@
     ITEM_NAME    = ana
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x9E
+    ITEM_CONTENT = 0xAF
     ITEM_INDEX   = 13445
     ITEM_PARENT  = 13444
     ITEM_DESC    =  
@@ -134525,7 +134525,7 @@
     ITEM_NAME    = dac
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC
+    ITEM_CONTENT = 0x19
     ITEM_INDEX   = 13446
     ITEM_PARENT  = 13444
     ITEM_DESC    =  
@@ -134565,7 +134565,7 @@
     ITEM_NAME    = ana
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x9E
+    ITEM_CONTENT = 0xAF
     ITEM_INDEX   = 13450
     ITEM_PARENT  = 13449
     ITEM_DESC    =  
@@ -134575,7 +134575,7 @@
     ITEM_NAME    = dac
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC
+    ITEM_CONTENT = 0x19
     ITEM_INDEX   = 13451
     ITEM_PARENT  = 13449
     ITEM_DESC    =  
@@ -134615,7 +134615,7 @@
     ITEM_NAME    = ana
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x9E
+    ITEM_CONTENT = 0xAF
     ITEM_INDEX   = 13455
     ITEM_PARENT  = 13454
     ITEM_DESC    =  
@@ -134625,7 +134625,7 @@
     ITEM_NAME    = dac
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC
+    ITEM_CONTENT = 0x19
     ITEM_INDEX   = 13456
     ITEM_PARENT  = 13454
     ITEM_DESC    =  
@@ -134665,7 +134665,7 @@
     ITEM_NAME    = ana
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x9E
+    ITEM_CONTENT = 0xAF
     ITEM_INDEX   = 13460
     ITEM_PARENT  = 13459
     ITEM_DESC    =  
@@ -134675,7 +134675,7 @@
     ITEM_NAME    = dac
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xC
+    ITEM_CONTENT = 0x19
     ITEM_INDEX   = 13461
     ITEM_PARENT  = 13459
     ITEM_DESC    =  
