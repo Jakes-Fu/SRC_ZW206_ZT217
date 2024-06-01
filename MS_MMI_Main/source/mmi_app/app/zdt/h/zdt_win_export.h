@@ -144,7 +144,7 @@ PUBLIC void MMIZMT_CreateMathCountWin(void);
 #endif
 
 #ifdef LISTENING_PRATICE_SUPPORT
-PUBLIC void MMIREADBOY_CreateListeningLocalWin(void);
+PUBLIC void MMI_CreateListeningLocalWin(void);
 #endif
 
 #ifdef WORD_CARD_SUPPORT
@@ -152,7 +152,7 @@ PUBLIC void MMI_CreateWordWin(void);
 #endif
 
 #ifdef POETRY_LISTEN_SUPPORT
-PUBLIC void MMIREADBOY_CreatePoetryWin(void);
+PUBLIC void MMI_CreatePoetryWin(void);
 #endif
 
 #ifdef HANZI_CARD_SUPPORT
@@ -188,177 +188,124 @@ PUBLIC BOOLEAN MMIZDT_CheckSimStatus();
 //右下菜单点击区域
 #define RIGHT_BOMTTOM_RECT {130,130,230,230}
 //第一个元素代表是否需要检测插卡提示 第二个点击范围，第三点击回调函数
-#define MEUN_PHONEBOOK {1,LEFT_TOP_RECT,MMIZDT_OpenPBWin} //通讯录
-#define MEUN_DIAL {0,RIGHT_TOP_RECT,MMIZDT_OpenDialWin/*WatchCL_ListWin_Enter*//*WatchCC_DialpadWin_Enter*/} //拨号
-#define MEUN_AICHART {1,LEFT_BOTTOM_RECT,MMIAPIMENU_EnterAiChat} //机器人
-#define MEUN_VIDEO_CALL {1,RIGHT_BOMTTOM_RECT,MMIVideo_Call_MainWin} //视频通话
+#define MENU_PHONEBOOK {1,LEFT_TOP_RECT,MMIZDT_OpenPBWin} //通讯录
+#define MENU_DIAL {0,RIGHT_TOP_RECT,MMIZDT_OpenDialWin/*WatchCL_ListWin_Enter*//*WatchCC_DialpadWin_Enter*/} //拨号
+#define MENU_AICHART {1,LEFT_BOTTOM_RECT,MMIAPIMENU_EnterAiChat} //机器人
+#define MENU_VIDEO_CALL {1,RIGHT_BOMTTOM_RECT,MMIVideo_Call_MainWin} //视频通话
 
-#define MEUN_WECHART {1,LEFT_TOP_RECT,MMIAPIMENU_EnterTinyChat} //微聊
-#define MEUN_CAMERA {0,RIGHT_TOP_RECT,MMIAPIDC_OpenPhotoWin} //相机
-#define MEUN_GALLERY {0,LEFT_BOTTOM_RECT,WatchGallery_MainWin_Enter} //相册
-#define MEUN_BIND_DEVICE {0,RIGHT_BOMTTOM_RECT,MMIZDT_Open2VMSelectWin} //绑定流程
+#define MENU_WECHART {1,LEFT_TOP_RECT,MMIAPIMENU_EnterTinyChat} //微聊
+#define MENU_CAMERA {0,RIGHT_TOP_RECT,MMIAPIDC_OpenPhotoWin} //相机
+#define MENU_GALLERY {0,LEFT_BOTTOM_RECT,WatchGallery_MainWin_Enter} //相册
+#define MENU_BIND_DEVICE {0,RIGHT_BOMTTOM_RECT,MMIZDT_Open2VMSelectWin} //绑定流程
 
-#define MEUN_SETTINGS {0,LEFT_TOP_RECT,WatchSET_MainWin_Enter} //设置
-#define MEUN_STOPWATCH {0,RIGHT_TOP_RECT,WatchStopWatch_MainWin_Enter} //秒表
-#define MEUN_CALCULATOR {0,LEFT_BOTTOM_RECT,MMIAPICALC_OpenMainWin} //计算器
-#define MEUN_ALARM {0,RIGHT_BOMTTOM_RECT,WatchAlarm_MainWin_Enter} //闹钟
+#define MENU_SETTINGS {0,LEFT_TOP_RECT,WatchSET_MainWin_Enter} //设置
+#define MENU_STOPWATCH {0,RIGHT_TOP_RECT,WatchStopWatch_MainWin_Enter} //秒表
+#define MENU_CALCULATOR {0,LEFT_BOTTOM_RECT,MMIAPICALC_OpenMainWin} //计算器
+#define MENU_ALARM {0,RIGHT_BOMTTOM_RECT,WatchAlarm_MainWin_Enter} //闹钟
 
-#define MEUN_WEATHER {0,LEFT_TOP_RECT,MMIZDT_OpenWeatherWin} //天气
-#define MEUN_PEDOMETER {0,RIGHT_BOMTTOM_RECT,MMIZDT_OpenPedometerWin} //计步
-#define MEUN_MANUAL {0,LEFT_BOTTOM_RECT,MMIZDT_OpenManualWin} //说明书
+#define MENU_WEATHER {0,LEFT_TOP_RECT,MMIZDT_OpenWeatherWin} //天气
+#define MENU_PEDOMETER {0,RIGHT_BOMTTOM_RECT,MMIZDT_OpenPedometerWin} //计步
+#define MENU_MANUAL {0,LEFT_BOTTOM_RECT,MMIZDT_OpenManualWin} //说明书
 #ifdef LEBAO_MUSIC_SUPPORT
-#define MEUN_MUISE {0,RIGHT_TOP_RECT,MMIAPIMENU_EnterLebao} //乐宝音乐
+#define MENU_MUISE {0,RIGHT_TOP_RECT,MMIAPIMENU_EnterLebao} //乐宝音乐
 #endif
-#define MEUN_CALLLOG {1,RIGHT_TOP_RECT,WatchCL_ListWin_Enter} //通话记录
-#define MEUN_FIND_FRIEND {1,RIGHT_TOP_RECT,MMIZDT_OpenFriendPPWin/*MMIZDT_OpenFindFriendWin*/} //加好友
+#define MENU_CALLLOG {1,RIGHT_TOP_RECT,WatchCL_ListWin_Enter} //通话记录
+#define MENU_FIND_FRIEND {1,RIGHT_TOP_RECT,MMIZDT_OpenFriendPPWin/*MMIZDT_OpenFindFriendWin*/} //加好友
 
 
 
 #ifdef WIN32
 extern PUBLIC uint8 Video_Call_Incoming_Test();
-#define MEUN_VIDEO_INCOMING_TEST {0,RIGHT_BOMTTOM_RECT,Video_Call_Incoming_Test} //视频通话来电
+#define MENU_VIDEO_INCOMING_TEST {0,RIGHT_BOMTTOM_RECT,Video_Call_Incoming_Test} //视频通话来电
 #endif
-#define MEUN_SCHEDULE {0,LEFT_TOP_RECT,MMIZDT_OpenScheduleWin} //课程表
+#define MENU_SCHEDULE {0,LEFT_TOP_RECT,MMIZDT_OpenScheduleWin} //课程表
 
 
 #if defined(ZDT_TOOLS_MENU_SUPPORT)// wuxx add.
-#define MEUN_WATCH_TOOLS {0,LEFT_BOTTOM_RECT,WatchTools_MainWin_Enter} //工具箱
+#define MENU_WATCH_TOOLS {0,LEFT_BOTTOM_RECT,WatchTools_MainWin_Enter} //工具箱
 #endif
 
 
 #if defined(HERO_ENGINE_SUPPORT)
 #if defined(HERO_APP_WSTORE_OPEN)
-#define MEUN_HERO_APPSTORE {0,LEFT_TOP_RECT,launcher_hero_appstore} //应用商城,应用市场
-#define MEUN_HERO_APPSTORE_MANAGER {0,RIGHT_TOP_RECT,launcher_hero_appstore_manager} //应用管理,应用中心
+#define MENU_HERO_APPSTORE {0,LEFT_TOP_RECT,launcher_hero_appstore} //应用商城,应用市场
+#define MENU_HERO_APPSTORE_MANAGER {0,RIGHT_TOP_RECT,launcher_hero_appstore_manager} //应用管理,应用中心
 #endif
 #endif
 
 #ifdef ZDT_ZFB_SUPPORT
-#define MEUN_ALIPAY {1,LEFT_BOTTOM_RECT,MMIZFB_OpenMainWin} //支付宝
+#define MENU_ALIPAY {1,LEFT_BOTTOM_RECT,MMIZFB_OpenMainWin} //支付宝
 #endif
 
 extern PUBLIC uint8 Video_Call_Incoming_Test();
-#define MEUN_VIDEO_INCOMING_TEST {0,RIGHT_BOMTTOM_RECT,Video_Call_Incoming_Test} //视频通话来电
+#define MENU_VIDEO_INCOMING_TEST {0,RIGHT_BOMTTOM_RECT,Video_Call_Incoming_Test} //视频通话来电
 
 
-//****四宫格菜单**************//
+//****菜单**************//
 //1-绑定，2-拨号，3-计算器，4-计步，5-交友，6-秒表，7-闹钟，8-设置，9-视频通话，10-天气，11-通话记录，12-通讯录，13-微聊，14-喜马拉雅，15-相册，16-相机，17-小度，18-支付宝
 //****** 列表菜单***************//
-#ifdef LAUNCHER_ALL_APP_IN_PAGE
-    #ifdef APP_ITEM_NAME//是否显示菜单名称
-		#define MEUN_PHONEBOOK {12, 1, TXT_CONTACT, res_app_ic_contact,  MMIZDT_OpenPBWin}
-		#define MEUN_CAMERA {16, 0, TXT_LAUNCHER_CAMERA_TITLE, res_app_ic_camera,  MMIAPIDC_OpenPhotoWin} //相机
-        #ifdef ZDT_PLAT_YX_SUPPORT_VOICE
-            #ifdef ZDT_PLAT_YX_SUPPORT_FRIEND
-		    #define MEUN_WECHART {13, 1, TXT_WECHART, res_app_ic_wechat,  MMIZDT_OpenChatGroupWin}//微聊
-            #else       //ZDT_PLAT_YX_SUPPORT_FRIEND
-            #define MEUN_WECHART {13, 1, TXT_WECHART, res_app_ic_wechat,  MMIAPIMENU_EnterTinyChat}//微聊
-            #endif      // end ZDT_PLAT_YX_SUPPORT_FRIEND
-        #endif // end ZDT_PLAT_YX_SUPPORT_VOICE
-		#define MEUN_GALLERY {15, 0, TXT_GALLERY, res_app_ic_gallery, WatchGallery_MainWin_Enter} //相册
+#define MENU_TEXTBOOK {12, 1, textbook_text, res_app_ic_contact, textbook_bg, MMIZDT_OpenPBWin}
+#define MENU_PHONEBOOK {12, 1, contact_text, res_app_ic_contact, dark_orange_bg, MMIZDT_OpenPBWin}
+#define MENU_CAMERA {16, 0, camera_text, res_app_ic_camera, light_cyan_bg, MMIAPIDC_OpenPhotoWin} //相机
+#ifdef ZDT_PLAT_YX_SUPPORT_VOICE
+    #ifdef ZDT_PLAT_YX_SUPPORT_FRIEND
+	#define MENU_WECHART {13, 1, wechat_text, res_app_ic_wechat, bright_yellow_bg, MMIZDT_OpenChatGroupWin}//微聊
+    #else       //ZDT_PLAT_YX_SUPPORT_FRIEND
+    #define MENU_WECHART {13, 1, wechat_text, res_app_ic_wechat, bright_yellow_bg, MMIAPIMENU_EnterTinyChat}//微聊
+    #endif      // end ZDT_PLAT_YX_SUPPORT_FRIEND
+#endif // end ZDT_PLAT_YX_SUPPORT_VOICE
+#define MENU_GALLERY {15, 0, gallery_text, res_app_ic_gallery,bright_purple_bg, WatchGallery_MainWin_Enter} //相册
 
-		#define MEUN_SETTINGS {8, 0, TXT_LAUNCHER_SETTINGS_TITLE, res_app_ic_settings,WatchSET_MainWin_Enter}
-		#define MEUN_VIDEO_CALL {9, 1, TXT_VIDEO_CALL, res_app_ic_video_call, MMIVideo_Call_MainWin} //视频通话
-		//#ifdef LOCAL_ALARM_CLOCK_SUPPORT
-		//#define MEUN_ALARM  {0, TXT_ALARM_CLOCK, res_app_ic_alarm, MMIALARMCLOCK_CreateMainWin}
-		//#else
-		#define MEUN_ALARM  {7,0, TXT_ALARM_CLOCK, res_app_ic_alarm, WatchAlarm_MainWin_Enter}
-		//#endif
-		#define MEUN_CALCULATOR {3, 0, TXT_CALCULATOR, res_app_ic_calculator, MMIAPICALC_OpenMainWin} //计算器
-		#ifdef ZTE_WATCH
-		#define MEUN_PEDOMETER {4, 0, TXT_PEDOMETE, res_app_ic_pedometer, MMIPEDOMETER_CreateTodayWin} //计步
-		#define MEUN_WEATHER  {10, 1, TXT_WEATHER, res_app_ic_weather,ZTEWEATHER_CreateMainWin} //天气
-		#define MEUN_STOPWATCH  {6, 0, TXT_LAUNCHER_STOPWATCH_TITLE, res_app_ic_stopwatch, ZTE_STOPWATCH_OpenMainWin}
-		#define MEUN_QRCODE {1, 0, TXT_QRCODE, res_app_ic_qrcode,MMIZDT_Open2VMWin}
-		#else
-		#define MEUN_PEDOMETER {4, 0, TXT_PEDOMETE, res_app_ic_pedometer, MMIZDT_OpenPedometerWin} //计步
-		#define MEUN_WEATHER  {10, 1, TXT_WEATHER, res_app_ic_weather,MMIZDT_OpenWeatherWin} //天气
-		#define MEUN_STOPWATCH  {6, 0, TXT_LAUNCHER_STOPWATCH_TITLE, res_app_ic_stopwatch, WatchStopWatch_MainWin_Enter} 
-		#define MEUN_QRCODE {1, 0, TXT_QRCODE, res_app_ic_qrcode,MMIZDT_Open2VMSelectWin}
-		#endif
-		#define MEUN_CALLLOG {11, 0, TXT_CALL_LOG, res_app_ic_calllog, WatchCL_ListWin_Enter} //通话记录 
-		#define MEUN_FIND_FRIEND  {5, 1, TXT_FIND_FRIEND, res_app_ic_find_friend, MMIZDT_OpenFriendPPWin} //加好友
-		#define MEUN_DIAL   {2, 0, TXT_DIALER, res_app_ic_dailer, MMIZDT_OpenDialWin}//拨号盘
-        #ifdef ZDT_ZFB_SUPPORT
-        #define MEUN_ALIPAY  {18, 1, TXT_ALIPAY, res_app_ic_alipay, MMIZFB_OpenMainWin} //支付宝
-        #endif
-		#ifdef TULING_AI_SUPPORT
-        #define MEUN_AI_CHAT   {0, 1, TXT_AI_CHAT, res_app_ic_ai_chat, MMIAPIMENU_EnterAiChat}//图灵AI
-        #endif
-        #ifdef BAIDU_AI_SUPPORT
-        #define MEUN_XIAODU   {17, 1, TXT_XIAODU, res_app_ic_xiaodu, MMIAPIMENU_EnterAiChat}//小度
-        #endif
-        #if defined(XYSDK_SUPPORT)|| defined(XYSDK_SRC_SUPPORT)
-        #define MEUN_XMLY {14, 1,TXT_XMLY, res_xmla_icon,LIBXMLYAPI_CreateXysdkMainWin}//喜马拉雅
-        #endif
-        #ifdef LEBAO_MUSIC_SUPPORT
-        #define MEUN_MUSIC {0, 1,TXT_MIGU_MUSIC,res_music_icon,MMIAPIMENU_EnterLebao}//咪咕音乐
-        #endif
-		#ifdef WIN32
-		extern PUBLIC uint8 Video_Call_Incoming_Test();
-		#define MEUN_VIDEO_INCOMING_TEST {9, 0,TXT_VIDEO_CALL,res_app_ic_video_call,Video_Call_Incoming_Test} //视频通话来电
+#define MENU_SETTINGS {8, 0, settings_text, res_app_ic_settings, light_gray_bg, WatchSET_MainWin_Enter}
+#define MENU_VIDEO_CALL {9, 1, video_call_text, res_app_ic_video_call, dark_red_bg, MMIVideo_Call_MainWin} //视频通话
+#define MENU_WEATHER  {10, 1, weather_text, res_app_ic_weather,dark_red_bg, ZTEWEATHER_CreateMainWin} //天气
+#define MENU_CALLLOG {11, 0, calllog_text, res_app_ic_calllog, light_pink_bg, WatchCL_ListWin_Enter} //通话记录 
+#define MENU_FIND_FRIEND  {5, 1, find_friend_text, res_app_ic_find_friend, bright_green_bg, MMIZDT_OpenFriendPPWin} //加好友
+#define MENU_DIAL   {2, 0, dialer_text, res_app_ic_dailer, dark_blue_bg, MMIZDT_OpenDialWin}//拨号盘
+#ifdef ZDT_ZFB_SUPPORT
+#define MENU_ALIPAY  {18, 1, alipay_text, res_app_ic_alipay, light_blue_bg, MMIZFB_OpenMainWin} //支付宝
 #endif
-    #else
-        #define MEUN_PHONEBOOK {1, res_app_ic_contact,  MMIZDT_OpenPBWin}
-        #define MEUN_CAMERA {0, res_app_ic_camera,  MMIAPIDC_OpenPhotoWin} //相机
-        #ifdef ZDT_PLAT_YX_SUPPORT_VOICE
-        #ifdef ZDT_PLAT_YX_SUPPORT_FRIEND
-            #define MEUN_WECHART {1, res_app_ic_wechat,  MMIZDT_OpenChatGroupWin}//微聊
-        #else       //ZDT_PLAT_YX_SUPPORT_FRIEND
-            #define MEUN_WECHART {1, res_app_ic_wechat,  MMIAPIMENU_EnterTinyChat}//微聊
-        #endif      //ZDT_PLAT_YX_SUPPORT_FRIEND
-        #endif
-        #define MEUN_GALLERY {0, res_app_ic_gallery, WatchGallery_MainWin_Enter} //相册
-        #define MEUN_QRCODE {0, res_app_ic_qrcode,MMIZDT_Open2VMSelectWin}
-        #define MEUN_ALARM  {0, res_app_ic_alarm, WatchAlarm_MainWin_Enter}
-        #define MEUN_SETTINGS {0, res_app_ic_settings,WatchSET_MainWin_Enter}
-        #ifdef ZTE_STOPWATCH_SUPPORT
-        #define MEUN_STOPWATCH  {0, res_app_ic_stopwatch, ZTE_STOPWATCH_OpenMainWin}
-        #else
-        #define MEUN_STOPWATCH  {0, res_app_ic_stopwatch, WatchStopWatch_MainWin_Enter}
-        #endif
-          
-        #define MEUN_VIDEO_CALL {1, res_app_ic_video_call, MMIVideo_Call_MainWin} //视频通话
-        #define MEUN_PEDOMETER {0, res_app_ic_pedometer, MMIZDT_OpenPedometerWin} //计步
-        #define MEUN_CALCULATOR {0, res_app_ic_calculator, MMIAPICALC_OpenMainWin} //计算器
-        #define MEUN_WEATHER  {1, res_app_ic_weather,MMIZDT_OpenWeatherWin} //天气
-        #define MEUN_CALLLOG {0, res_app_ic_calllog, WatchCL_ListWin_Enter} //通话记录 
-        #define MEUN_FIND_FRIEND  {1, res_app_ic_find_friend, MMIZDT_OpenFriendPPWin} //加好友
-        #define MEUN_DIAL   {0, res_app_ic_dailer, MMIZDT_OpenDialWin}//拨号盘
-        #ifdef ZDT_ZFB_SUPPORT
-        #define MEUN_ALIPAY  {1, res_app_ic_alipay, MMIZFB_OpenMainWin} //支付宝
-        #endif
-        #ifdef TULING_AI_SUPPORT
-        #define MEUN_AI_CHAT {1, res_app_ic_ai_chat, MMIAPIMENU_EnterAiChat}//图灵AI
-        #endif
-        #ifdef LEBAO_MUSIC_SUPPORT
-        #define MEUN_MUSIC {1,res_music_icon,MMIAPIMENU_EnterLebao}//咪咕音乐
-        #endif
-        #if defined(XYSDK_SUPPORT)|| defined(XYSDK_SRC_SUPPORT)
-        #define MEUN_XMLY {1,res_xmla_icon,LIBXMLYAPI_CreateXysdkMainWin}//喜马拉雅
-        #endif
-        #ifdef MAINMENU_STYLE_SUPPORT
-        #define MEUN_STYLE  {0, res_menu_style_icon, WatchSET_MenuStyle_Enter}//主菜单风格切换
-        #endif
-        #define MEUN_PANEL_SWITCH {0, res_panel_switch_icon, WatchOpen_Panel_SelectWin}//表盘切换
-        #define MEUN_BRIGHTNESS {0, res_brightness_icon,MMIAPISET_ZdtBrightnessWin} //亮度调节
-        #define MEUN_DEVICE_ABOUT  {0, res_device_about_icon, Settings_RegardWin_Enter}//关于设备  
-        #define MEUN_FACTORY_RESET {0, res_factory_reset_icon, MMIAPISET_ZdtPowerRestoreWin} //恢复出厂
-		#if defined(FOTA_SUPPORT)
-        #define MEUN_FOTA {0, res_fota_icon, MMIAPISET_EnterFotaWin} //fota升级
-		#endif
-        #define MEUN_POWER_OFF {0, res_power_off_icon, MMIAPISET_ZdtPowerOffWin} //关机
-        #define MEUN_POWER_RESTART  {0, res_power_restart_icon,MMIAPISET_ZdtPowerRestartWin} //重启
-        #define MEUN_RING {0, res_ring_icon, Settings_CallRingSelectWin_Enter} //铃声
-        #define MEUN_VOLUME {0, res_volume_icon, MMIAPISET_ZdtVolumeWin} //音量
-        #define MEUN_SCREEN_TIMEOUT {0, res_screen_timeout_icon,Settings_BackLight_Enter} //息屏时间
-        #ifdef WIN32
-        extern PUBLIC uint8 Video_Call_Incoming_Test();
-        #define MEUN_VIDEO_INCOMING_TEST {0,res_app_ic_video_call,Video_Call_Incoming_Test} //视频通话来电
-        #endif
-    #endif
+#ifdef TULING_AI_SUPPORT
+#define MENU_AI_CHAT   {0, 1, ai_assistant_text, res_app_ic_ai_chat, bright_yellow_bg, MMIAPIMENU_EnterAiChat}//图灵AI
 #endif
-//*******列表菜单***************//
+#ifdef BAIDU_AI_SUPPORT
+#define MENU_XIAODU   {17, 1, xiaodu_text, res_app_ic_xiaodu, bright_yellow_bg, MMIAPIMENU_EnterAiChat}//小度
+#endif
+#if defined(XYSDK_SUPPORT)|| defined(XYSDK_SRC_SUPPORT)
+#define MENU_XMLY {14, 1,xmla_text, res_xmla_icon, dark_orange_bg, LIBXMLYAPI_CreateXysdkMainWin}//喜马拉雅
+#endif
+#ifdef LEBAO_MUSIC_SUPPORT
+#define MENU_MUSIC {0, 1,migu_music_text,res_music_icon, dark_red_bg, MMIAPIMENU_EnterLebao}//咪咕音乐
+#endif
+#ifdef WIN32
+extern PUBLIC uint8 Video_Call_Incoming_Test();
+#define MENU_VIDEO_INCOMING_TEST {9, 0,video_call_text,res_app_ic_video_call, dark_red_bg, Video_Call_Incoming_Test} //视频通话来电
+#endif
+
+#ifdef MATH_COUNT_SUPPORT
+#define MENU_MNEMONICS {19, 0, mnemonics_text, res_app_ic_mnemonics, light_pink_bg, MMIZMT_CreateMathCountWin} 
+#endif
+
+#ifdef LISTENING_PRATICE_SUPPORT
+#define MENU_LISTEN {20, 0, listen_text, res_app_ic_listen, bright_yellow_bg, MMI_CreateListeningLocalWin} 
+#endif
+
+#ifdef WORD_CARD_SUPPORT
+#define MENU_LEARN_WORD {21, 0, learn_word_text, res_app_ic_learn_word, dark_red_bg, MMI_CreateWordWin} 
+#endif
+
+#ifdef POETRY_LISTEN_SUPPORT
+#define MENU_POETRY {22, 0, poetry_text, res_app_ic_poetry, bright_green_bg, MMI_CreatePoetryWin} 
+#endif
+
+#ifdef HANZI_CARD_SUPPORT
+#define MENU_HANZI {23, 0, hanzi_text, res_app_ic_hanzi, bright_purple_bg, MMI_CreateHanziWin}
+#endif
+
+#ifdef ZMT_GPT_SUPPORT
+#define MENU_AI {24, 0, ai_text, res_app_ic_ai, light_pink_bg, MMIZMT_CreateZmtGptWin} 
+#endif
+//*******菜单***************//
 
 #ifdef __cplusplus
     }

@@ -1,4 +1,6 @@
 
+#ifdef WATCH_PANEL
+
 //#include "mmiwatchidle.h"
 #include "mmidisplay_data.h"
 
@@ -3588,3 +3590,5 @@ LOCAL void TimeTeacherClock(MMI_WIN_ID_T  win_id,
 #endif
 
 }
+
+#endif

@@ -2582,28 +2582,28 @@ SOURCES			+=  math_count_win.c
 endif
 
 ifeq ($(strip $(LISTENING_PRATICE_SUPPORT)), TRUE)
-MINCPATH		+=  MS_MMI_Main/source/mmi_app/app/dsl_listening/h
-MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/dsl_listening/c
-SOURCES			+=  dsl_listening_win.c dsl_listening_http.c dsl_listening_parse.c dsl_listening_player.c
-SOURCES			+=  dsl_listening_download.c dsl_listening_local.c dsl_listening_nv.c dsl_main_file.c corepush_md5.c
+MINCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_listening/h
+MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_listening/c
+SOURCES			+=  zmt_listening_win.c zmt_listening_http.c zmt_listening_parse.c zmt_listening_player.c
+SOURCES			+=  zmt_listening_download.c zmt_listening_local.c zmt_listening_nv.c zmt_main_file.c corepush_md5.c
 endif
 
 ifeq ($(strip $(WORD_CARD_SUPPORT)), TRUE)
-MINCPATH		+=  MS_MMI_Main/source/mmi_app/app/dsl_word/h
-MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/dsl_word/c
-SOURCES			+=  dsl_word_main.c dsl_word_id.c
+MINCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_word/h
+MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_word/c
+SOURCES			+=  zmt_word_main.c zmt_word_id.c
 endif
 
 ifeq ($(strip $(POETRY_LISTEN_SUPPORT)), TRUE)
-MINCPATH		+=  MS_MMI_Main/source/mmi_app/app/dsl_poetry/h
-MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/dsl_poetry/c
-SOURCES			+=  dsl_poetry_win.c
+MINCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_poetry/h
+MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_poetry/c
+SOURCES			+=  zmt_poetry_win.c
 endif
 
 ifeq ($(strip $(HANZI_CARD_SUPPORT)), TRUE)
-MINCPATH		+=  MS_MMI_Main/source/mmi_app/app/dsl_hanzi/h
-MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/dsl_hanzi/c
-SOURCES			+=  dsl_hanzi_main.c dsl_hanzi_data.c 
+MINCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_hanzi/h
+MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_hanzi/c
+SOURCES			+=  zmt_hanzi_main.c zmt_hanzi_data.c 
 endif
 
 ifeq ($(strip $(ZMT_GPT_SUPPORT)), TRUE)

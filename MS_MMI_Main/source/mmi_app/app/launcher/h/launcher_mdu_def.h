@@ -1,106 +1,87 @@
 
-#ifdef LAUNCHER_ALL_APP_IN_PAGE
-#ifdef ZTE_WATCH
-RES_ADD_IMG(res_app_ic_contact,"\\MMI_RES_##\\IMAG\\zte\\res_app_ic_contact.png",IMG_CMP_PNG_ARGB_RLE,0)
-RES_ADD_IMG(res_app_ic_camera,"\\MMI_RES_##\\IMAG\\zte\\res_app_ic_camera.png",IMG_CMP_PNG_ARGB_RLE,0)
-RES_ADD_IMG(res_app_ic_wechat,"\\MMI_RES_##\\IMAG\\zte\\res_app_ic_wechat.png",IMG_CMP_PNG_ARGB_RLE,0)
-RES_ADD_IMG(res_app_ic_gallery,"\\MMI_RES_##\\IMAG\\zte\\res_app_ic_gallery.png",IMG_CMP_PNG_ARGB_RLE,0)
-RES_ADD_IMG(res_app_ic_settings,"\\MMI_RES_##\\IMAG\\zte\\res_app_ic_settings.png",IMG_CMP_PNG_ARGB_RLE,0)
-RES_ADD_IMG(res_app_ic_stopwatch,"\\MMI_RES_##\\IMAG\\zte\\res_app_ic_stopwatch.png",IMG_CMP_PNG_ARGB_RLE,0)
-RES_ADD_IMG(res_app_ic_calculator,"\\MMI_RES_##\\IMAG\\zte\\res_app_ic_calculator.png",IMG_CMP_PNG_ARGB_RLE,0)
-RES_ADD_IMG(res_app_ic_qrcode,"\\MMI_RES_##\\IMAG\\zte\\res_app_ic_qrcode.png",IMG_CMP_PNG_ARGB_RLE,0)
-RES_ADD_IMG(res_app_ic_alarm,"\\MMI_RES_##\\IMAG\\zte\\res_app_ic_alarm.png",IMG_CMP_PNG_ARGB_RLE,0)
-RES_ADD_IMG(res_app_ic_pedometer,"\\MMI_RES_##\\IMAG\\zte\\res_app_ic_pedometer.png",IMG_CMP_PNG_ARGB_RLE,0)
-RES_ADD_IMG(res_app_ic_calllog,"\\MMI_RES_##\\IMAG\\zte\\res_app_ic_calllog.png",IMG_CMP_PNG_ARGB_RLE,0)
-RES_ADD_IMG(res_app_ic_dailer,"\\MMI_RES_##\\IMAG\\zte\\res_app_ic_dailer.png",IMG_CMP_PNG_ARGB_RLE,0)
-RES_ADD_IMG(res_app_ic_find_friend,"\\MMI_RES_##\\IMAG\\zte\\res_app_ic_find_friend.png",IMG_CMP_PNG_ARGB_RLE,0)
-RES_ADD_IMG(res_app_ic_video_call,"\\MMI_RES_##\\IMAG\\zte\\res_app_ic_video_call.png",IMG_CMP_PNG_ARGB_RLE,0)
-RES_ADD_IMG(res_app_ic_weather,"\\MMI_RES_##\\IMAG\\zte\\res_app_ic_weather.png",IMG_CMP_PNG_ARGB_RLE,0)
-RES_ADD_IMG(res_wechat_page,"\\MMI_RES_##\\IMAG\\zte\\res_wechat_page.png",IMG_CMP_PNG_ARGB_RLE,0)
-RES_ADD_IMG(res_new_messgae_tip,"\\MMI_RES_##\\IMAG\\zte\\res_new_messgae_tip.png",IMG_CMP_PNG_ARGB_RLE,0)
+
+RES_ADD_IMG(res_app_ic_contact,"\\MMI_RES_##\\IMAG\\res_app_ic_contact.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(res_app_ic_camera,"\\MMI_RES_##\\IMAG\\res_app_ic_camera.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(res_app_ic_wechat,"\\MMI_RES_##\\IMAG\\res_app_ic_wechat.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(res_app_ic_gallery,"\\MMI_RES_##\\IMAG\\res_app_ic_gallery.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(res_app_ic_settings,"\\MMI_RES_##\\IMAG\\res_app_ic_settings.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(res_app_ic_stopwatch,"\\MMI_RES_##\\IMAG\\res_app_ic_stopwatch.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(res_app_ic_qrcode,"\\MMI_RES_##\\IMAG\\res_app_ic_qrcode.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(res_app_ic_alarm,"\\MMI_RES_##\\IMAG\\res_app_ic_alarm.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(res_app_ic_pedometer,"\\MMI_RES_##\\IMAG\\res_app_ic_pedometer.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(res_app_ic_calllog,"\\MMI_RES_##\\IMAG\\res_app_ic_calllog.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(res_app_ic_dailer,"\\MMI_RES_##\\IMAG\\res_app_ic_dailer.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(res_app_ic_find_friend,"\\MMI_RES_##\\IMAG\\res_app_ic_find_friend.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(res_app_ic_video_call,"\\MMI_RES_##\\IMAG\\res_app_ic_video_call.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(res_app_ic_weather,"\\MMI_RES_##\\IMAG\\res_app_ic_weather.png",IMG_CMP_PNG_ARGB_RLE,0)
+
+RES_ADD_IMG(textbook_text,"\\MMI_RES_##\\IMAG\\textbook_text.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(contact_text,"\\MMI_RES_##\\IMAG\\contact_text.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(camera_text,"\\MMI_RES_##\\IMAG\\camera_text.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(wechat_text,"\\MMI_RES_##\\IMAG\\wechat_text.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(gallery_text,"\\MMI_RES_##\\IMAG\\gallery_text.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(settings_text,"\\MMI_RES_##\\IMAG\\settings_text.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(calllog_text,"\\MMI_RES_##\\IMAG\\calllog_text.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(dialer_text,"\\MMI_RES_##\\IMAG\\dialer_text.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(find_friend_text,"\\MMI_RES_##\\IMAG\\find_friend_text.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(video_call_text,"\\MMI_RES_##\\IMAG\\video_call_text.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(weather_text,"\\MMI_RES_##\\IMAG\\weather_text.png",IMG_CMP_PNG_ARGB_RLE,0)
+
 #ifdef ZDT_ZFB_SUPPORT
-RES_ADD_IMG(res_app_ic_alipay,"\\MMI_RES_##\\IMAG\\zte\\res_app_ic_alipay.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(res_app_ic_alipay,"\\MMI_RES_##\\IMAG\\res_app_ic_alipay.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(alipay_text,"\\MMI_RES_##\\IMAG\\alipay_text.png",IMG_CMP_PNG_ARGB_RLE,0)
 #endif
 #ifdef TULING_AI_SUPPORT
-RES_ADD_IMG(res_app_ic_ai_chat,"\\MMI_RES_##\\IMAG\\zte\\res_app_ic_ai_chat.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(res_app_ic_assistant,"\\MMI_RES_##\\IMAG\\res_app_ic_assistant.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(ai_assistant_text,"\\MMI_RES_##\\IMAG\\ai_assistant_text.png",IMG_CMP_PNG_ARGB_RLE,0)
 #endif
 #ifdef LEBAO_MUSIC_SUPPORT
-RES_ADD_IMG(res_music_icon,"\\MMI_RES_##\\IMAG\\zte\\res_app_ic_music.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(res_app_ic_music,"\\MMI_RES_##\\IMAG\\res_app_ic_music.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(migu_music_text,"\\MMI_RES_##\\IMAG\\migu_music_text.png",IMG_CMP_PNG_ARGB_RLE,0)
 #endif
 #if defined(XYSDK_SUPPORT)|| defined(XYSDK_SRC_SUPPORT)
-RES_ADD_IMG(res_xmla_icon,"\\MMI_RES_##\\IMAG\\zte\\res_app_ic_xmla.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(res_app_ic_ximalaya,"\\MMI_RES_##\\IMAG\\res_app_ic_ximalaya.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(xmla_text,"\\MMI_RES_##\\IMAG\\xmla_text.png",IMG_CMP_PNG_ARGB_RLE,0)
 #endif	
 #ifdef BAIDU_AI_SUPPORT
-RES_ADD_IMG(res_app_ic_xiaodu,"\\MMI_RES_##\\IMAG\\zte\\res_app_ic_xiaodu.png",IMG_CMP_PNG_ARGB_RLE,0)
-#endif	
-#else
-    #ifdef APP_COLUMNS_3
-        RES_ADD_IMG(res_app_ic_contact,"\\MMI_RES_##\\IMAG\\three_columns\\res_contact_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
-        RES_ADD_IMG(res_app_ic_camera,"\\MMI_RES_##\\IMAG\\three_columns\\res_camera_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
-        RES_ADD_IMG(res_app_ic_wechat,"\\MMI_RES_##\\IMAG\\three_columns\\res_wechat-icon.png",IMG_CMP_PNG_ARGB_RLE,0)
-        RES_ADD_IMG(res_app_ic_gallery,"\\MMI_RES_##\\IMAG\\three_columns\\res_gallery_iocn.png",IMG_CMP_PNG_ARGB_RLE,0)
-        RES_ADD_IMG(res_app_ic_settings,"\\MMI_RES_##\\IMAG\\three_columns\\res_settings_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
-        RES_ADD_IMG(res_app_ic_stopwatch,"\\MMI_RES_##\\IMAG\\three_columns\\res_stopwatch_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
-        RES_ADD_IMG(res_app_ic_qrcode,"\\MMI_RES_##\\IMAG\\three_columns\\res_bind_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
-        RES_ADD_IMG(res_app_ic_alarm,"\\MMI_RES_##\\IMAG\\three_columns\\res_alarm_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
-        RES_ADD_IMG(res_app_ic_pedometer,"\\MMI_RES_##\\IMAG\\three_columns\\res_pedometer_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
-        RES_ADD_IMG(res_app_ic_dailer,"\\MMI_RES_##\\IMAG\\three_columns\\res_dialer_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
-        RES_ADD_IMG(res_app_ic_find_friend,"\\MMI_RES_##\\IMAG\\three_columns\\res_make_friend_iocn.png",IMG_CMP_PNG_ARGB_RLE,0)
-        RES_ADD_IMG(res_app_ic_video_call,"\\MMI_RES_##\\IMAG\\three_columns\\res_video_call_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
-        RES_ADD_IMG(res_app_ic_weather,"\\MMI_RES_##\\IMAG\\three_columns\\res_weather_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
-        RES_ADD_IMG(res_app_ic_schedule,"\\MMI_RES_##\\IMAG\\three_columns\\res_schedule_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
-        #ifdef ZDT_ZFB_SUPPORT
-        RES_ADD_IMG(res_app_ic_alipay,"\\MMI_RES_##\\IMAG\\three_columns\\res_alipay_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
-        #endif
-		#if defined(BAIDU_AI_SUPPORT) || defined(TULING_AI_SUPPORT)
-        RES_ADD_IMG(res_app_ic_ai_chat,"\\MMI_RES_##\\IMAG\\three_columns\\res_ai_chat_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
-        #endif
-        #ifdef LEBAO_MUSIC_SUPPORT
-        RES_ADD_IMG(res_music_icon,"\\MMI_RES_##\\IMAG\\three_columns\\res_music_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
-        #endif
-        #if defined(XYSDK_SUPPORT)|| defined(XYSDK_SRC_SUPPORT)
-        RES_ADD_IMG(res_xmla_icon,"\\MMI_RES_##\\IMAG\\three_columns\\res_xmla_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
-        #endif
-        #ifdef MAINMENU_STYLE_SUPPORT
-        RES_ADD_IMG(res_menu_style_icon,"\\MMI_RES_##\\IMAG\\three_columns\\res_menu_style_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
-        #endif
-        RES_ADD_IMG(res_panel_switch_icon,"\\MMI_RES_##\\IMAG\\three_columns\\res_panel_switch_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
-        RES_ADD_IMG(res_brightness_icon,"\\MMI_RES_##\\IMAG\\three_columns\\res_brightness_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
-        RES_ADD_IMG(res_device_about_icon,"\\MMI_RES_##\\IMAG\\three_columns\\res_device_about_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
-        RES_ADD_IMG(res_factory_reset_icon,"\\MMI_RES_##\\IMAG\\three_columns\\res_factory_reset_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
-        RES_ADD_IMG(res_fota_icon,"\\MMI_RES_##\\IMAG\\three_columns\\res_fota_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
-        RES_ADD_IMG(res_power_off_icon,"\\MMI_RES_##\\IMAG\\three_columns\\res_power_off_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
-        RES_ADD_IMG(res_power_restart_icon,"\\MMI_RES_##\\IMAG\\three_columns\\res_power_restart_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
-        RES_ADD_IMG(res_ring_icon,"\\MMI_RES_##\\IMAG\\three_columns\\res_ring_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
-        RES_ADD_IMG(res_volume_icon,"\\MMI_RES_##\\IMAG\\three_columns\\res_volume_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
-        RES_ADD_IMG(res_screen_timeout_icon,"\\MMI_RES_##\\IMAG\\three_columns\\res_screen_timeout_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
-    #endif
-	#ifdef APP_COLUMNS_2
-	RES_ADD_IMG(res_app_ic_telephone,"\\MMI_RES_##\\IMAG\\res_app_ic_telephone.png",IMG_CMP_PNG_ARGB_RLE,0)
-	RES_ADD_IMG(res_app_ic_camera,"\\MMI_RES_##\\IMAG\\res_app_ic_camera.png",IMG_CMP_PNG_ARGB_RLE,0)
-	RES_ADD_IMG(res_app_ic_wechat,"\\MMI_RES_##\\IMAG\\res_app_ic_wechat.png",IMG_CMP_PNG_ARGB_RLE,0)
-	RES_ADD_IMG(res_app_ic_gallery,"\\MMI_RES_##\\IMAG\\res_app_ic_gallery.png",IMG_CMP_PNG_ARGB_RLE,0)
-	RES_ADD_IMG(res_app_ic_settings,"\\MMI_RES_##\\IMAG\\res_app_ic_settings.png",IMG_CMP_PNG_ARGB_RLE,0)
-	RES_ADD_IMG(res_app_ic_stopwatch,"\\MMI_RES_##\\IMAG\\res_app_ic_stopwatch.png",IMG_CMP_PNG_ARGB_RLE,0)
-	RES_ADD_IMG(res_app_ic_timer,"\\MMI_RES_##\\IMAG\\res_app_ic_timer.png",IMG_CMP_PNG_ARGB_RLE,0)
-	RES_ADD_IMG(res_app_ic_qrcode,"\\MMI_RES_##\\IMAG\\res_app_ic_qrcode.png",IMG_CMP_PNG_ARGB_RLE,0)
-	RES_ADD_IMG(res_app_ic_alarm,"\\MMI_RES_##\\IMAG\\res_app_ic_alarm.png",IMG_CMP_PNG_ARGB_RLE,0)
-	RES_ADD_IMG(res_app_ic_pedometer,"\\MMI_RES_##\\IMAG\\res_app_ic_pedometer.png",IMG_CMP_PNG_ARGB_RLE,0)	
-    #endif
+RES_ADD_IMG(res_app_ic_xiaodu,"\\MMI_RES_##\\IMAG\\res_app_ic_xiaodu.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(xiaodu_text,"\\MMI_RES_##\\IMAG\\xiaodu_text.png",IMG_CMP_PNG_ARGB_RLE,0)
 #endif
 
+//ËãÊõ¿Ú¾÷
+#ifdef MATH_COUNT_SUPPORT
+RES_ADD_IMG(res_app_ic_mnemonics,"\\MMI_RES_##\\IMAG\\res_app_ic_mnemonics.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(mnemonics_text,"\\MMI_RES_##\\IMAG\\mnemonics_text.png",IMG_CMP_PNG_ARGB_RLE,0)
 #endif
 
-#ifdef LAUNCHER_FOUR_APP_IN_PAGE
-RES_ADD_IMG(res_app_page1,"\\MMI_RES_##\\IMAG\\zdt\\res_app_page1.png",IMG_CMP_PNG_ARGB_RLE,0)
-RES_ADD_IMG(res_app_page2,"\\MMI_RES_##\\IMAG\\zdt\\res_app_page2.png",IMG_CMP_PNG_ARGB_RLE,0)
-RES_ADD_IMG(res_app_page3,"\\MMI_RES_##\\IMAG\\zdt\\res_app_page3.png",IMG_CMP_PNG_ARGB_RLE,0)
-RES_ADD_IMG(res_app_page4,"\\MMI_RES_##\\IMAG\\zdt\\res_app_page4.png",IMG_CMP_PNG_ARGB_RLE,0)
+//ÌýÁ¦Á·Ï°
+#ifdef LISTENING_PRATICE_SUPPORT
+RES_ADD_IMG(res_app_ic_listen,"\\MMI_RES_##\\IMAG\\res_app_ic_listen.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(listen_text,"\\MMI_RES_##\\IMAG\\listen_text.png",IMG_CMP_PNG_ARGB_RLE,0)
 #endif
 
-#ifdef ZTE_WATCH
-RES_ADD_IMG(res_contact_icon,"\\MMI_RES_##\\IMAG\\zte\\res_contact_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
-RES_ADD_IMG(res_dialer_icon,"\\MMI_RES_##\\IMAG\\zte\\res_dialer_icon.png",IMG_CMP_PNG_ARGB_RLE,0)
+//±³µ¥´Ê
+#ifdef WORD_CARD_SUPPORT
+RES_ADD_IMG(res_app_ic_learn_word,"\\MMI_RES_##\\IMAG\\res_app_ic_learn_word.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(learn_word_text,"\\MMI_RES_##\\IMAG\\learn_word_text.png",IMG_CMP_PNG_ARGB_RLE,0)
+#endif
+
+//¹ÅÊ«´Ê
+#ifdef POETRY_LISTEN_SUPPORT
+RES_ADD_IMG(res_app_ic_poetry,"\\MMI_RES_##\\IMAG\\res_app_ic_poetry.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(poetry_text,"\\MMI_RES_##\\IMAG\\poetry_text.png",IMG_CMP_PNG_ARGB_RLE,0)
+#endif
+
+//ºº×ÖÑ§Ï°
+#ifdef HANZI_CARD_SUPPORT
+RES_ADD_IMG(res_app_ic_hanzi,"\\MMI_RES_##\\IMAG\\res_app_ic_hanzi.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(hanzi_text,"\\MMI_RES_##\\IMAG\\hanzi_text.png",IMG_CMP_PNG_ARGB_RLE,0)
+#endif
+
+//AI ¿ÚÓï ×÷ÎÄÐøÐ´
+#ifdef ZMT_GPT_SUPPORT
+RES_ADD_IMG(res_app_ic_ai,"\\MMI_RES_##\\IMAG\\res_app_ic_ai.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(ai_text,"\\MMI_RES_##\\IMAG\\ai_text.png",IMG_CMP_PNG_ARGB_RLE,0)
 #endif
 
 RES_ADD_STRING(TXT_CONTACT,"Contact")
@@ -116,19 +97,19 @@ RES_ADD_STRING(TXT_CALL_LOG,"Call log")
 RES_ADD_STRING(TXT_FIND_FRIEND,"Make friend")
 RES_ADD_STRING(TXT_DIALER,"Dialer")
 RES_ADD_STRING(TXT_WEATHER,"Weather")
-RES_ADD_STRING(TXT_TO_CALL,"To call")
-#ifdef ZDT_ZFB_SUPPORT
-RES_ADD_STRING(TXT_ALIPAY,"Alipay")
-#endif
-#ifdef TULING_AI_SUPPORT
-RES_ADD_STRING(TXT_AI_CHAT,"AI chat")
-#endif
-#ifdef LEBAO_MUSIC_SUPPORT
-RES_ADD_STRING(TXT_MIGU_MUSIC,"Mi gu music")
-#endif
-#if defined(XYSDK_SUPPORT)|| defined(XYSDK_SRC_SUPPORT)
-RES_ADD_STRING(TXT_XMLY,"xmly")
-#endif	
-#ifdef BAIDU_AI_SUPPORT
-RES_ADD_STRING(TXT_XIAODU,"Xiaodu ai")
-#endif	
+
+RES_ADD_IMG(bright_green_bg,"\\MMI_RES_##\\IMAG\\card_bg\\bright_green.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(bright_purple_bg,"\\MMI_RES_##\\IMAG\\card_bg\\bright_purple.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(bright_yellow_bg,"\\MMI_RES_##\\IMAG\\card_bg\\bright_yellow.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(cherry_bg,"\\MMI_RES_##\\IMAG\\card_bg\\cherry.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(dark_pink_bg,"\\MMI_RES_##\\IMAG\\card_bg\\dark_pink.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(dark_red_bg,"\\MMI_RES_##\\IMAG\\card_bg\\dark_red.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(dark_blue_bg,"\\MMI_RES_##\\IMAG\\card_bg\\dark_blue.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(dark_orange_bg,"\\MMI_RES_##\\IMAG\\card_bg\\dark_orange.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(light_blue_bg,"\\MMI_RES_##\\IMAG\\card_bg\\light_blue.png",IMG_CMP_PNG_ARGB_RLE,0)	
+RES_ADD_IMG(light_cyan_bg,"\\MMI_RES_##\\IMAG\\card_bg\\light_cyan.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(light_gray_bg,"\\MMI_RES_##\\IMAG\\card_bg\\light_gray.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(light_orange_bg,"\\MMI_RES_##\\IMAG\\card_bg\\light_orange.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(light_pink_bg,"\\MMI_RES_##\\IMAG\\card_bg\\light_pink.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(sky_blue_bg,"\\MMI_RES_##\\IMAG\\card_bg\\sky_blue.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(textbook_bg,"\\MMI_RES_##\\IMAG\\card_bg\\textbook.png",IMG_CMP_PNG_ARGB_RLE,0)

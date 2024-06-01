@@ -390,7 +390,7 @@
 #endif
 
 #ifdef LISTENING_PRATICE_SUPPORT
-#include "dsl_listening_nv.h"
+#include "zmt_listening_nv.h"
 #endif
 
 /**--------------------------------------------------------------------------*
@@ -2250,7 +2250,7 @@ LOCAL void InitMMIModule(void)
 #endif
 
 #ifdef LISTENING_PRATICE_SUPPORT
-    MMI_RegDslListeningNv();
+    MMI_RegZmtisteningNv();
 #endif
 
 #ifdef HERO_ENGINE_SUPPORT

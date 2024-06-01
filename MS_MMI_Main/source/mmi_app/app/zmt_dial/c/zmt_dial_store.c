@@ -31,7 +31,7 @@
 #include "mmk_timer.h"
 #include "watch_slidepage.h"
 #ifdef LISTENING_PRATICE_SUPPORT
-#include "dsl_main_file.h"
+#include "zmt_main_file.h"
 #endif
 #include "http_api.h"
 
@@ -72,9 +72,9 @@ PUBLIC ZMT_DIAL_LIST_INFO_T * ZmtWatch_GetPanelList(void)
     ZMT_DIAL_LIST_INFO_T * dial_list = NULL;
     
     sprintf(file_path, "%s", ZMT_DIAL_FILE_DB_PATH);
-    if(dsl_file_exist(file_path))
+    if(zmt_file_exist(file_path))
     {
-        data_buf = dsl_file_data_read(file_path, &data_len);
+        data_buf = zmt_file_data_read(file_path, &data_len);
         if(data_buf && data_len > 2){
             dial_list = (ZMT_DIAL_LIST_INFO_T *)SCI_ALLOC_APPZ(sizeof(ZMT_DIAL_LIST_INFO_T));
             memset(dial_list, 0, sizeof(ZMT_DIAL_LIST_INFO_T));
@@ -183,9 +183,9 @@ PUBLIC void ZmtDial_AddDialToWatchDB(char * name, int type)
     uint16 count = 0;
     
     sprintf(file_path, "%s", ZMT_DIAL_FILE_DB_PATH);
-    if(dsl_file_exist(file_path))
+    if(zmt_file_exist(file_path))
     {
-        data_buf = dsl_file_data_read(file_path, &file_len);
+        data_buf = zmt_file_data_read(file_path, &file_len);
         if(dial_list_info == NULL){
             dial_list_info = (ZMT_DIAL_LIST_INFO_T *)SCI_ALLOC_APPZ(sizeof(ZMT_DIAL_LIST_INFO_T));
             memset(dial_list_info, 0, sizeof(ZMT_DIAL_LIST_INFO_T));
@@ -255,10 +255,10 @@ PUBLIC void ZmtDial_AddDialToWatchDB(char * name, int type)
 
         out = cJSON_Print(json_root);
         cJSON_Delete(json_root);
-        if(dsl_file_exist(file_path)){
-            dsl_file_delete(file_path);
+        if(zmt_file_exist(file_path)){
+            zmt_file_delete(file_path);
         }
-        dsl_file_data_write(out, strlen(out), file_path);
+        zmt_file_data_write(out, strlen(out), file_path);
 
         if(dial_list_info == NULL){
             dial_list_info = (ZMT_DIAL_LIST_INFO_T *)SCI_ALLOC_APPZ(sizeof(ZMT_DIAL_LIST_INFO_T));
@@ -287,7 +287,7 @@ LOCAL void ZmtDialStore_ParseDialBuf(char * file_path)
     {
         SCI_TRACE_LOW("%s: ok", __FUNCTION__);
     }*/
-     buf = dsl_file_data_read(file_path, &size);
+     buf = zmt_file_data_read(file_path, &size);
      if (buf != PNULL && size > 2)
      {
         for(i = 0;i < 8;i++)
@@ -298,7 +298,7 @@ LOCAL void ZmtDialStore_ParseDialBuf(char * file_path)
         byte_read = 8;
         buf = SCI_ALLOC_APPZ(8);
         memset(buf, 0, 8);
-        dsl_file_read(file_path, &buf, 4, &byte_read);*/
+        zmt_file_read(file_path, &buf, 4, &byte_read);*/
         
     }
    /*MMIAPICOM_StrToWstr(file_path, file_str);
@@ -317,8 +317,8 @@ PUBLIC void ZmtDialStore_RecDownlaodResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 R
         char file[100] = {0};
         sprintf(file, ZMT_DIAL_FILE_BASE_PATH, dial_store_list[dial_store_cur_idx]->name, dial_store_list[dial_store_cur_idx]->name);
         SCI_TRACE_LOW("%s: file = %s", __FUNCTION__, file);
-        if(!dsl_file_exist(file)){
-            dsl_file_data_write(pRcv, Rcv_len, file);
+        if(!zmt_file_exist(file)){
+            zmt_file_data_write(pRcv, Rcv_len, file);
          }   
         //ZmtDialStore_ParseDialBuf(file);
         
@@ -375,7 +375,7 @@ LOCAL void ZmtDialStorePreview_ShowPreview(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO
     uint8 i = 0;
 
     sprintf(img_str, ZMT_DIAL_PREVIEW_FILE_BASE_PATH, dial_store_list[dial_store_cur_idx]->name, dial_store_list[dial_store_cur_idx]->name);
-    if(dsl_file_exist(img_str))
+    if(zmt_file_exist(img_str))
     {
         MMIAPICOM_StrToWstr(img_str, img_path);
         ZMT_GetImgInfoByPath(img_path, &img_info);
@@ -613,6 +613,7 @@ LOCAL MMI_RESULT_E HandleZmtDialStorePreviewWinMsg(MMI_WIN_ID_T win_id,MMI_MESSA
             }
             break;
         default:
+            recode = MMI_RESULT_FALSE;
             break;
     }
 }
@@ -877,7 +878,7 @@ PUBLIC void ZmtDialStore_RecPreviewIconResultCb(BOOLEAN is_ok,uint8 * pRcv,uint3
         char file[100] = {0};
         sprintf(file, ZMT_DIAL_PREVIEW_FILE_BASE_PATH, dial_store_list[dial_store_download_idx]->name, dial_store_list[dial_store_download_idx]->name);
         SCI_TRACE_LOW("%s: file = %s", __FUNCTION__, file);
-        dsl_file_data_write(pRcv, Rcv_len, file);
+        zmt_file_data_write(pRcv, Rcv_len, file);
         ZmtDialStore_UpdateIconlist(dial_store_download_idx);
         SCI_TRACE_LOW("%s: dial_store_download_idx = %d", __FUNCTION__, dial_store_download_idx);
         if(dial_store_download_idx < dial_store_count){
@@ -906,7 +907,7 @@ LOCAL void ZmtDialStore_RequestPreviewIcon(uint8 idx)
         sprintf(url, "%s%s", ZMT_HTTP_API_BASE_PATH, dial_store_list[idx]->preview);
         SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
         sprintf(file_str, ZMT_DIAL_PREVIEW_FILE_BASE_PATH, dial_store_list[idx]->name, dial_store_list[idx]->name);
-        if(dsl_file_exist(file_str)){
+        if(zmt_file_exist(file_str)){
             ZmtDialStore_UpdateIconlist(dial_store_download_idx);
             dial_store_download_idx++;
             ZmtDialStore_RequestPreviewIcon(dial_store_download_idx);
@@ -961,6 +962,7 @@ PUBLIC void ZmtDialStore_RecResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,u
         {
             dial_store_status = 1;
         }
+        cJSON_Delete(root);
     }
     else
     {
@@ -1055,7 +1057,7 @@ LOCAL MMI_RESULT_E HandleZmtDialStoreWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
                 {
                     sprintf(file_str, ZMT_DIAL_PREVIEW_FILE_BASE_PATH, dial_store_list[icon_index]->name, dial_store_list[icon_index]->name);
                     MMIAPICOM_StrToWstr(file_str, name);
-                    if(dsl_file_exist(file_str)){
+                    if(zmt_file_exist(file_str)){
                         file_info.full_path_wstr_ptr = name;
                         file_info.full_path_wstr_len = MMIAPICOM_Wstrlen(name);
                         GUIICONLIST_AppendIcon(icon_index, ctrl_id, PNULL, &file_info);
@@ -1086,6 +1088,7 @@ LOCAL MMI_RESULT_E HandleZmtDialStoreWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
             }
             break;
         default:
+            recode = MMI_RESULT_FALSE;
             break;
     }
     return recode;

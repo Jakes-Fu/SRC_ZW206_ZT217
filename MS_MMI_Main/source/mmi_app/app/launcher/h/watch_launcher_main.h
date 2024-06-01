@@ -14,12 +14,9 @@
 #define WATCH_LAUNCHER_MAIN_H
 
 #include "watch_launcher_common.h"
-
-#if defined(LAUNCHER_FOUR_APP_IN_PAGE) || defined(LAUNCHER_ALL_APP_IN_PAGE)
 #include "launcher_id.h"
 #include "launcher_image.h"
 #include "launcher_text.h"
-#endif
 
 
 /*****************************************************************************/

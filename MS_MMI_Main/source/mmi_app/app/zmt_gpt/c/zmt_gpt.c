@@ -32,7 +32,7 @@
 #include "mmk_timer.h"
 #include "mmisrvrecord_export.h"
 #ifdef LISTENING_PRATICE_SUPPORT
-#include "dsl_main_file.h"
+#include "zmt_main_file.h"
 #endif
 #include "graphics_draw.h"
 #include "img_dec_interface.h"
@@ -388,6 +388,7 @@ LOCAL MMI_RESULT_E HandleZmtGptWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_i
                 ZmtGpt_CTL_PENOK(win_id);
             }
             break;
+        case MSG_APP_RED:
         case MSG_KEYUP_CANCEL:
             {
                 MMK_CloseWin(win_id);
@@ -399,6 +400,7 @@ LOCAL MMI_RESULT_E HandleZmtGptWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_i
             }
             break;
         default:
+            recode = MMI_RESULT_FALSE;
             break;
     }
     return recode;
@@ -437,7 +439,7 @@ LOCAL void gpt_baidu_access_token_result_cb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rc
         memset(gpt_baidu_access_token, 0, strlen(access_token->valuestring)+1);
         strcpy(gpt_baidu_access_token, access_token->valuestring);
         SCI_TRACE_LOW("%s: token = %s", __FUNCTION__, gpt_baidu_access_token);
-
+        cJSON_Delete(root);
         TM_GetSysTime(&sys_time);
         TM_GetSysDate(&sys_date);
         baidu_access_token_times = MMIAPICOM_GetCurTime() + ZMT_GPT_TIMES_DIFF_FROM_1978_TO_1980;

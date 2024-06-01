@@ -10045,6 +10045,8 @@ RES_ADD_IMG(res_common_set_cancel,"\\MMI_RES_##\\IMAG\\Common\\res_common_set_ca
 RES_ADD_IMG(res_common_set_confirm,"\\MMI_RES_##\\IMAG\\Common\\res_common_set_confirm.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(IMAGE_COMMON_ONEBTN_KBBG_IMAG,"\\MMI_RES_##\\IMAG\\Common\\one_btn_kbbg.png",IMG_CMP_PNG_ARGB_RLE,0)
 
+#ifdef WATCH_PANEL
+
 //±Ì≈Ã
 RES_ADD_IMG(panel_message_tip,"\\MMI_RES_##\\IMAG\\watch\\zte\\message_tip.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(panel_message_tip_num_bg,"\\MMI_RES_##\\IMAG\\watch\\zte\\message_tip_num_bg.png",IMG_CMP_PNG_ARGB_RLE,0)
@@ -10188,6 +10190,7 @@ RES_ADD_IMG(panel_cat_cat,"\\MMI_RES_##\\IMAG\\watch\\zte\\cat\\cat_240x240.png"
 RES_ADD_IMG(panel_cat_preview,"\\MMI_RES_##\\IMAG\\watch\\zte\\cat\\zte_cat_preview.png",IMG_CMP_PNG_ARGB_RLE,0)
 //cat end
 
+#endif
 
 #endif
 //add by James li end
@@ -10829,4 +10832,7 @@ RES_ADD_STRING(TXT_SET_LONGMODE_TIPS3, "Effectively extending standby time")
 RES_ADD_STRING(TXT_SET_LONGMODE_LBTIPS, "Low battery state, unable to exit")
 RES_ADD_STRING(TXT_CHARGE_OVER_TEMP2,"Charge temperature over threshold")
 RES_ADD_STRING(TXT_CHARGE_LOW_TEMP2,"Charge temperature lower threshold")
+
+
+RES_ADD_IMG(IMAGE_APP_COMMON_BG,"\\MMI_RES_##\\IMAG\\Bg\\common_bg.png",IMG_CMP_PNG_ARGB_RLE,0)
 

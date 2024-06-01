@@ -32,7 +32,7 @@
 #include "mmk_timer.h"
 #include "mmisrvrecord_export.h"
 #ifdef LISTENING_PRATICE_SUPPORT
-#include "dsl_main_file.h"
+#include "zmt_main_file.h"
 #endif
 #include "graphics_draw.h"
 #include "img_dec_interface.h"
@@ -163,6 +163,7 @@ PUBLIC void ZmtGptZuoWen_RecAiTextResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv
                     gpt_zuowen_record_type = GPT_RECORD_TYPE_FAIL;
                 }
             }       
+            cJSON_Delete(root);
         }
         else
         {
@@ -195,8 +196,8 @@ PUBLIC void ZmtGptZuoWen_RecvSelfResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_
     uint8 * buf = NULL;
     uint32 len = 0;
     {
-        if(dsl_file_exist(ZMT_GPT_SELF_ZUOWEN_TALK_PATH)){
-            buf = dsl_file_data_read(ZMT_GPT_SELF_ZUOWEN_TALK_PATH, &len);
+        if(zmt_file_exist(ZMT_GPT_SELF_ZUOWEN_TALK_PATH)){
+            buf = zmt_file_data_read(ZMT_GPT_SELF_ZUOWEN_TALK_PATH, &len);
             is_ok = TRUE;
         }
     }
@@ -234,6 +235,7 @@ PUBLIC void ZmtGptZuoWen_RecvSelfResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_
         {
             gpt_zuowen_record_type = GPT_RECORD_TYPE_FAIL;
         }
+        cJSON_Delete(root);
     }
     else
     {
@@ -259,8 +261,8 @@ PUBLIC void ZmtGptZuoWen_RecvResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,
     uint8 * buf = NULL;
     uint32 len = 0;
     {
-        if(dsl_file_exist(ZMT_GPT_ZUOWEN_TALK_PATH)){
-            buf = dsl_file_data_read(ZMT_GPT_ZUOWEN_TALK_PATH, &len);
+        if(zmt_file_exist(ZMT_GPT_ZUOWEN_TALK_PATH)){
+            buf = zmt_file_data_read(ZMT_GPT_ZUOWEN_TALK_PATH, &len);
             is_ok = TRUE;
         }
     }
@@ -301,6 +303,7 @@ PUBLIC void ZmtGptZuoWen_RecvResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,
         {
             zmt_gpt_zuowen_status = 1;
         }
+        cJSON_Delete(root);
     }
     else
     {
@@ -352,12 +355,12 @@ LOCAL void ZmtGptZuoWen_StopRecord(MMI_WIN_ID_T win_id, BOOLEAN is_send)
         uint8 * data_buf = NULL;
         uint32 data_size = 0;
         uint32 size;
-        data_buf = dsl_file_data_read(ZMT_GPT_RECORD_FILE_C, &data_size);
+        data_buf = zmt_file_data_read(ZMT_GPT_RECORD_FILE_C, &data_size);
         SCI_TRACE_LOW("%s: data_size = %d", __FUNCTION__, data_size);
         if(data_buf != NULL && data_size > 2){
             ZmtGpt_SendRecord(1537, data_buf, data_size);
         }
-        dsl_file_delete(ZMT_GPT_RECORD_FILE_C);
+        zmt_file_delete(ZMT_GPT_RECORD_FILE_C);
     #if ZMT_GPT_USE_FOR_TEST != 0
         gpt_zuowen_record_type = GPT_RECORD_TYPE_SUCCESS;
     #else
@@ -365,7 +368,7 @@ LOCAL void ZmtGptZuoWen_StopRecord(MMI_WIN_ID_T win_id, BOOLEAN is_send)
     #endif
         MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
     }else{
-        dsl_file_delete(ZMT_GPT_RECORD_FILE_C);
+        zmt_file_delete(ZMT_GPT_RECORD_FILE_C);
         gpt_zuowen_record_type = GPT_RECORD_TYPE_NONE; 
         MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);       
     }
@@ -1243,6 +1246,7 @@ LOCAL MMI_RESULT_E HandleZmtGptZuoWenWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
             }
             break;
         default:
+            recode = MMI_RESULT_FALSE;
             break;
     }
     return recode;

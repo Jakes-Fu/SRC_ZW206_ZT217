@@ -32,7 +32,7 @@
 #include "mmk_timer.h"
 #include "mmisrvrecord_export.h"
 #ifdef LISTENING_PRATICE_SUPPORT
-#include "dsl_main_file.h"
+#include "zmt_main_file.h"
 #endif
 #include "graphics_draw.h"
 #include "img_dec_interface.h"
@@ -277,7 +277,8 @@ PUBLIC void ZmtGptKouYuTalk_RecAiTextResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 
                 gpt_kouyu_record_text = NULL;
             }
             gpt_kouyu_record_type = GPT_RECORD_TYPE_FAIL;
-        }
+        }
+        cJSON_Delete(root);
     }
     else
     {
@@ -300,8 +301,8 @@ PUBLIC void ZmtGptKouYuTalk_RecvSelfResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 R
     uint8 * buf = NULL;
     uint32 len = 0;
     {
-        if(dsl_file_exist(ZMT_GPT_SELF_KOUYU_TALK_PATH)){
-            buf = dsl_file_data_read(ZMT_GPT_SELF_KOUYU_TALK_PATH, &len);
+        if(zmt_file_exist(ZMT_GPT_SELF_KOUYU_TALK_PATH)){
+            buf = zmt_file_data_read(ZMT_GPT_SELF_KOUYU_TALK_PATH, &len);
             is_ok = TRUE;
         }
     }
@@ -345,6 +346,7 @@ PUBLIC void ZmtGptKouYuTalk_RecvSelfResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 R
         {
             gpt_kouyu_record_type = GPT_RECORD_TYPE_FAIL;
         }
+        cJSON_Delete(root);
     }
     else
     {
@@ -370,8 +372,8 @@ PUBLIC void ZmtGptKouYuTalk_RecvResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_l
     uint8 * buf = NULL;
     uint32 len = 0;
     {
-        if(dsl_file_exist(ZMT_GPT_KOUYU_TALK_PATH)){
-            buf = dsl_file_data_read(ZMT_GPT_KOUYU_TALK_PATH, &len);
+        if(zmt_file_exist(ZMT_GPT_KOUYU_TALK_PATH)){
+            buf = zmt_file_data_read(ZMT_GPT_KOUYU_TALK_PATH, &len);
             is_ok = TRUE;
         }
     }
@@ -413,6 +415,7 @@ PUBLIC void ZmtGptKouYuTalk_RecvResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_l
         {
             zmt_gpt_talk_status = 1;
         }
+        cJSON_Delete(root);
     }
     else
     {
@@ -525,16 +528,16 @@ LOCAL void ZmtGptKouYuTalk_StopRecord(MMI_WIN_ID_T win_id, BOOLEAN is_send)
         gpt_kouyu_record_type = GPT_RECORD_TYPE_VOICE_LOADING;
     #endif
         MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
-        data_buf = dsl_file_data_read(ZMT_GPT_RECORD_FILE_C, &data_size);
+        data_buf = zmt_file_data_read(ZMT_GPT_RECORD_FILE_C, &data_size);
         SCI_TRACE_LOW("%s: data_size = %d", __FUNCTION__, data_size);
         if(data_buf != NULL && data_size > 2){
             ZmtGpt_SendRecord(1737, data_buf, data_size);
         }
-        dsl_file_delete(ZMT_GPT_RECORD_FILE_C);
+        zmt_file_delete(ZMT_GPT_RECORD_FILE_C);
     }else{
         gpt_kouyu_record_type = GPT_RECORD_TYPE_NONE;
         MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
-        dsl_file_delete(ZMT_GPT_RECORD_FILE_C);
+        zmt_file_delete(ZMT_GPT_RECORD_FILE_C);
     }
 }
 
@@ -1376,6 +1379,7 @@ LOCAL MMI_RESULT_E HandleZmtGptKouYuTalkWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_I
             }
             break;
         default:
+            recode = MMI_RESULT_FALSE;
             break;
     }
     return recode;
@@ -1404,8 +1408,8 @@ LOCAL void ZmtGptTopic_ListResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,ui
     uint8 * buf = NULL;
     uint32 len = 0;
     {
-        if(dsl_file_exist(ZMT_GPT_TOPIC_LIST_PATH)){
-            buf = dsl_file_data_read(ZMT_GPT_TOPIC_LIST_PATH, &len);
+        if(zmt_file_exist(ZMT_GPT_TOPIC_LIST_PATH)){
+            buf = zmt_file_data_read(ZMT_GPT_TOPIC_LIST_PATH, &len);
             is_ok = TRUE;
         }
     }
@@ -1665,6 +1669,7 @@ LOCAL MMI_RESULT_E HandleZmtGptKouYuTopicWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_
             }
             break;
         default:
+            recode = MMI_RESULT_FALSE;
             break;
     }
     return recode;
