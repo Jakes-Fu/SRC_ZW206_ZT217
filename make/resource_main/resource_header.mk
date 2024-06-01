@@ -524,23 +524,23 @@ SRCPATH += $(MMI_DIR)/source/mmi_app/app/math_count/h
 endif
 
 ifeq ($(strip $(LISTENING_PRATICE_SUPPORT)), TRUE)
-SOURCES	 += dsl_listening_mdu_def.h 
-SRCPATH += $(MMI_DIR)/source/mmi_app/app/dsl_listening/h
+SOURCES	 += zmt_listening_mdu_def.h 
+SRCPATH += $(MMI_DIR)/source/mmi_app/app/zmt_listening/h
 endif
 
 ifeq ($(strip $(WORD_CARD_SUPPORT)), TRUE)
-SOURCES	 += dsl_word_mdu_def.h 
-SRCPATH += $(MMI_DIR)/source/mmi_app/app/dsl_word/h
+SOURCES	 += zmt_word_mdu_def.h 
+SRCPATH += $(MMI_DIR)/source/mmi_app/app/zmt_word/h
 endif
 
 ifeq ($(strip $(POETRY_LISTEN_SUPPORT)), TRUE)
-SOURCES	 += dsl_poetry_mdu_def.h 
-SRCPATH += $(MMI_DIR)/source/mmi_app/app/dsl_poetry/h
+SOURCES	 += zmt_poetry_mdu_def.h 
+SRCPATH += $(MMI_DIR)/source/mmi_app/app/zmt_poetry/h
 endif
 
 ifeq ($(strip $(HANZI_CARD_SUPPORT)), TRUE)
-SOURCES	 += dsl_hanzi_mdu_def.h 
-SRCPATH += $(MMI_DIR)/source/mmi_app/app/dsl_hanzi/h
+SOURCES	 += zmt_hanzi_mdu_def.h 
+SRCPATH += $(MMI_DIR)/source/mmi_app/app/zmt_hanzi/h
 endif
 
 ifeq ($(strip $(ZMT_GPT_SUPPORT)), TRUE)

@@ -469,11 +469,11 @@ LOCAL void MathCount_ShowKeyboardImg(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_d
     uint8 img_hor_space = 7;
     uint8 img_ver_space = 10;
     uint8 num_str[MATCH_COUNT_KEYBOARD_VER_NUM][MATCH_COUNT_KEYBOARD_HOR_NUM] = {"1230","456X","789"};
-	GUI_RECT_T init_rect = {10, 4.5*MATCH_COUNT_LINE_HIGHT, 10, 4.5*MATCH_COUNT_LINE_HIGHT};
+    GUI_RECT_T init_rect = {10, 4.5*MATCH_COUNT_LINE_HIGHT, 10, 4.5*MATCH_COUNT_LINE_HIGHT};
     GUI_RECT_T bg_rect = {0};
     GUI_RECT_T num_rect = {0};
 
-    init_rect.left += img_width;
+    init_rect.right += img_width;
     init_rect.bottom += img_height;
     text_style.align = ALIGN_HVMIDDLE;
     text_style.font = SONG_FONT_28;
@@ -1044,7 +1044,7 @@ LOCAL MMI_RESULT_E HandleCountingWinMsg(
 			    point.y = MMK_GET_TP_Y(param);
 			    main_tp_down_x = point.x;
 			    main_tp_down_y = point.y;
-			    if(point.y > 114 && point.x > 10){
+			    if(point.y > 5*MATCH_COUNT_LINE_HIGHT && point.x > 10){
 			        click_num = MathCount_GetClickIndex(point);
 			        if(click_num > 0){
 			            MathCount_ClickKeyboardUpdateBg(win_id, lcd_dev_info, click_num-1, TRUE);
@@ -1695,7 +1695,7 @@ LOCAL MMI_RESULT_E HandleMathCountWinMsg(
 					math_count_page_index++;
 					math_count_page_index %= 2;
 					MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
-				}              
+				}
 				if(math_count_page_index > 0)
 			#endif
 				{

@@ -66,19 +66,19 @@
 #include "mmicc_image.h"
 #include "mmi_position_listitem.h"
 #ifdef LISTENING_PRATICE_SUPPORT
-#include "dsl_listening_export.h"
+#include "zmt_listening_export.h"
 #endif
 #ifdef WORD_CARD_SUPPORT
-#include "dsl_word_main.h"
+#include "zmt_word_main.h"
 #endif
 #ifdef HANZI_CARD_SUPPORT
-#include "dsl_hanzi_main.h"
+#include "zmt_hanzi_main.h"
 #endif
 #ifdef ZMT_GPT_SUPPORT
 #include "zmt_gpt.h"
 #endif
 #ifdef POETRY_LISTEN_SUPPORT
-#include "dsl_poetry_main.h"
+#include "zmt_poetry_main.h"
 #endif
 /**---------------------------------------------------------------------------*
  **                         Macro Declaration                                 *

@@ -1410,19 +1410,19 @@ RES_ADD_MODULE(MMI_MODULE_MATH_COUNT,"\\math_count\\math_count_mdu_def.h")
 #endif
 
 #ifdef  LISTENING_PRATICE_SUPPORT
-RES_ADD_MODULE(MMI_MODULE_DSL_LISTENING,"\\dsl_listening\\dsl_listening_mdu_def.h")
+RES_ADD_MODULE(MMI_MODULE_ZMT_LISTENING,"\\zmt_listening\\zmt_listening_mdu_def.h")
 #endif
 
 #ifdef  WORD_CARD_SUPPORT
-RES_ADD_MODULE(MMI_MODULE_DSL_WORD,"\\dsl_word\\dsl_word_mdu_def.h")
+RES_ADD_MODULE(MMI_MODULE_ZMT_WORD,"\\zmt_word\\zmt_word_mdu_def.h")
 #endif
 
 #ifdef  POETRY_LISTEN_SUPPORT
-RES_ADD_MODULE(MMI_MODULE_DSL_POETRY,"\\dsl_poetry\\dsl_poetry_mdu_def.h")
+RES_ADD_MODULE(MMI_MODULE_ZMT_POETRY,"\\zmt_poetry\\zmt_poetry_mdu_def.h")
 #endif
 
 #ifdef  HANZI_CARD_SUPPORT
-RES_ADD_MODULE(MMI_MODULE_DSL_HANZI,"\\dsl_hanzi\\dsl_hanzi_mdu_def.h")
+RES_ADD_MODULE(MMI_MODULE_ZMT_HANZI,"\\zmt_hanzi\\zmt_hanzi_mdu_def.h")
 #endif
 
 #ifdef  ZMT_GPT_SUPPORT

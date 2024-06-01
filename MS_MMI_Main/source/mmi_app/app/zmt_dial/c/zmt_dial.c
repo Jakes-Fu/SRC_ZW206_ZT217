@@ -32,7 +32,7 @@
 #include "mmk_timer.h"
 #include "mmisrvrecord_export.h"
 #ifdef LISTENING_PRATICE_SUPPORT
-#include "dsl_main_file.h"
+#include "zmt_main_file.h"
 #endif
 #include "graphics_draw.h"
 #include "img_dec_interface.h"
@@ -1178,8 +1178,8 @@ PUBLIC void ZMT_DialPanelShow(MMI_WIN_ID_T win_id, char * watch_name)
 #endif
     //SCI_TRACE_LOW("%s: file_path = %s", __FUNCTION__, file_path);
     if(zmt_watch_dial == NULL){
-        if(dsl_file_exist(file_path)){
-            data_buf = dsl_file_data_read(file_path, &file_len);
+        if(zmt_file_exist(file_path)){
+            data_buf = zmt_file_data_read(file_path, &file_len);
         }else{
             SCI_TRACE_LOW("%s: file_path = %s not exist !!", __FUNCTION__, file_path);
             return;
