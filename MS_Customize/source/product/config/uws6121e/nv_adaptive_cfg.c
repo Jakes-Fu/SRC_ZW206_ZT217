@@ -170,9 +170,9 @@ PUBLIC crystal_type_t SCI_Get_Crystal_Type(void)
 {
 	uint32 result = 0;
 	#if defined(ZDT_MODEM_CONFIG_XO_MODE_FOR_ZW206_ZW202)
-	crystal_type_t crystal_type = 0; // bao modify for W206 W202 modem config, 0--DCXO.. wuxx add. 20231016
+	crystal_type_t crystal_type = DCXO; // bao modify for W206 W202 modem config, 0--DCXO.. wuxx add. 20231016
 	#else
-	crystal_type_t crystal_type = 0;
+	crystal_type_t crystal_type = DCXO;
 	#endif
 #ifdef FORCECHANGE_SUPPORT
 	result = PH_GetAdaptiveGpioValue();
