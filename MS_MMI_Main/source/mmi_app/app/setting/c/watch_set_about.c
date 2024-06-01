@@ -42,7 +42,7 @@
 
 #define SETTINGS_VERSION_INFO_MAX_LEN           (255)
 #ifdef ZTE_SUPPORT_240X284
-#define WATCH_ABOUT_RECT      DP2PX_RECT(20,46,220,283)
+#define WATCH_ABOUT_RECT      DP2PX_RECT(20,46,220,310)
 #else
 #ifdef SCREEN_SHAPE_CIRCULAR
 #define WATCH_ABOUT_RECT      DP2PX_RECT(20,46,220,239)
@@ -146,10 +146,10 @@ LOCAL void Settings_About_OPEN_WINDOW( MMI_WIN_ID_T win_id )
     MMIAPICOM_StrcatFromSTRINGToUCS2( pDisplayWStr, &displayWStrLen, &newLineStr );   //new line
     #endif
 
-    MMIAPICOM_StrcatFromTextIDToUCS2(pDisplayWStr,&displayWStrLen,TXT_WATCH_MODEL_ZTE);
-	MMIAPICOM_StrcatFromSTRINGToUCS2(pDisplayWStr, &displayWStrLen, &newLineStr);//换行
-    MMIAPICOM_StrcatFromStrToUCS2(pDisplayWStr, &displayWStrLen, WATCH_NAME, strlen(WATCH_NAME));
-    MMIAPICOM_StrcatFromSTRINGToUCS2(pDisplayWStr, &displayWStrLen, &newLineStr);//换行
+   // MMIAPICOM_StrcatFromTextIDToUCS2(pDisplayWStr,&displayWStrLen,TXT_WATCH_MODEL_ZTE);
+	//MMIAPICOM_StrcatFromSTRINGToUCS2(pDisplayWStr, &displayWStrLen, &newLineStr);//换行
+   // MMIAPICOM_StrcatFromStrToUCS2(pDisplayWStr, &displayWStrLen, WATCH_NAME, strlen(WATCH_NAME));
+  //  MMIAPICOM_StrcatFromSTRINGToUCS2(pDisplayWStr, &displayWStrLen, &newLineStr);//换行
 
 	MMIAPICOM_StrcatFromTextIDToUCS2(pDisplayWStr,&displayWStrLen,TXT_WATCH_MODEL_NAME);
 
@@ -186,7 +186,7 @@ LOCAL void Settings_About_OPEN_WINDOW( MMI_WIN_ID_T win_id )
     //MMI_GetLabelTextByLang(TXT_WATCH_SOFTWARE_VERSION, &title_str);
     //MMIAPICOM_StrcatFromSTRINGToUCS2(pDisplayWStr, &displayWStrLen, &title_str);
     MMIAPICOM_StrcatFromTextIDToUCS2(pDisplayWStr,&displayWStrLen,TXT_WATCH_SOFTWARE_VERSION);
-    //MMIAPICOM_StrcatFromSTRINGToUCS2(pDisplayWStr, &displayWStrLen, &newLineStr);//换行
+    MMIAPICOM_StrcatFromSTRINGToUCS2(pDisplayWStr, &displayWStrLen, &newLineStr);//换行
     //temp_ptr = ZDT_GetVersionInfo();
     temp_len = SCI_STRLEN((char*)temp_ptr);
     MMIAPICOM_StrcatFromStrToUCS2(pDisplayWStr, &displayWStrLen, (uint8*)temp_ptr, temp_len);
@@ -196,12 +196,12 @@ LOCAL void Settings_About_OPEN_WINDOW( MMI_WIN_ID_T win_id )
 		
     //MMI_GetLabelTextByLang(TXT_WATCH_HARDWARE_VERSION, &title_str);
     // MMIAPICOM_StrcatFromSTRINGToUCS2(pDisplayWStr, &displayWStrLen, &title_str);
-#ifndef ZTE_WATCH //努比亚要求去掉硬件版本
+//#ifndef ZTE_WATCH //努比亚要求去掉硬件版本
     MMIAPICOM_StrcatFromTextIDToUCS2(pDisplayWStr,&displayWStrLen,TXT_WATCH_HARDWARE_VERSION);
     // MMIAPICOM_StrcatFromSTRINGToUCS2(pDisplayWStr, &displayWStrLen, &newLineStr);//换行
     MMIAPICOM_StrcatFromStrToUCS2(pDisplayWStr, &displayWStrLen, WATCH_HARDWARE_VERSION, strlen(WATCH_HARDWARE_VERSION));
     //MMIAPICOM_StrcatFromSTRINGToUCS2(content_text, &uint16_str_len, &cr_s);//换行
-#endif	
+//#endif	
     //content_str.wstr_ptr = content_text;
     //content_str.wstr_len = MMIAPICOM_Wstrlen(content_text);
 		
