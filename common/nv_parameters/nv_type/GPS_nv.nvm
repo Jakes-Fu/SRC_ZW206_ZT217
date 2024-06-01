@@ -676,7 +676,7 @@
     ITEM_NAME    = cp_mode
     ITEM_ID      = 403
     ITEM_TYPE    = 1 (CHAR)
-    ITEM_CONTENT = 0x13
+    ITEM_CONTENT = 0x1D
     ITEM_INDEX   = 66
     ITEM_PARENT  = 0
     ITEM_DESC    = cp mode

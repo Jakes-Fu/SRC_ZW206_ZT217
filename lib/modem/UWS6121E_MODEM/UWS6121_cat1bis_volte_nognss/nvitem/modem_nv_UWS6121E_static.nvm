@@ -5494,7 +5494,7 @@
     ITEM_NAME    = bit_field
     ITEM_ID      = 601
     ITEM_TYPE    = 4 (LONG)
-    ITEM_CONTENT = 0xC
+    ITEM_CONTENT = 0xB
     ITEM_INDEX   = 547
     ITEM_PARENT  = 546
     ITEM_DESC    =  
@@ -5634,7 +5634,7 @@
     ITEM_NAME    = bit_field
     ITEM_ID      = 601
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x4C1C
+    ITEM_CONTENT = 0x4C22
     ITEM_INDEX   = 561
     ITEM_PARENT  = 560
     ITEM_DESC    =  
@@ -5654,7 +5654,7 @@
     ITEM_NAME    = bit_field
     ITEM_ID      = 601
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x4C22
+    ITEM_CONTENT = 0x4C26
     ITEM_INDEX   = 563
     ITEM_PARENT  = 562
     ITEM_DESC    =  
@@ -5674,7 +5674,7 @@
     ITEM_NAME    = bit_field
     ITEM_ID      = 601
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x4C26
+    ITEM_CONTENT = 0x4C27
     ITEM_INDEX   = 565
     ITEM_PARENT  = 564
     ITEM_DESC    =  
@@ -5694,7 +5694,7 @@
     ITEM_NAME    = bit_field
     ITEM_ID      = 601
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x4C27
+    ITEM_CONTENT = 0x4C28
     ITEM_INDEX   = 567
     ITEM_PARENT  = 566
     ITEM_DESC    =  
@@ -5714,7 +5714,7 @@
     ITEM_NAME    = bit_field
     ITEM_ID      = 601
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x4C28
+    ITEM_CONTENT = 0x4C29
     ITEM_INDEX   = 569
     ITEM_PARENT  = 568
     ITEM_DESC    =  
@@ -5734,7 +5734,7 @@
     ITEM_NAME    = bit_field
     ITEM_ID      = 601
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x4C29
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 571
     ITEM_PARENT  = 570
     ITEM_DESC    =  
