@@ -2661,7 +2661,9 @@ static MMI_RESULT_E  HandleZDTAppMsg (PWND app_ptr,
         case ZDT_APP_SIGNAL_YX_MDBC: 
             {
                 //用此消息处理GPS定位成功的消息
+                #ifdef ZDT_GPS_SUPPORT
                 MMIGPS_HanldePosOK(param);
+                #endif
             }
             break;
         case ZDT_APP_SIGNAL_FLYMODE_RESET:
@@ -3228,11 +3230,13 @@ void MMIZDTWIFI_Stop(void);
 // ZDT_WIFI_Get_Data
 BOOLEAN  ZDT_WIFI_RF_AM_IS_OK(void)
 {
+#ifdef GPS_SUPPORT
     SCI_TRACE_LOW("ZDT_WIFI_RF_AM_IS_OK rm_status=%d,g_gnss_handle_running=%d",ual_rf_am_get_current_status(),g_gnss_handle_running);
     if(g_gnss_handle_running == 0 && (RF_AM_STATE_IDLE == ual_rf_am_get_current_status() || RF_AM_STATE_WIFISCAN_WORK == ual_rf_am_get_current_status()))
     {
         return TRUE;
     }
+    #endif
     return FALSE;
 }
 
