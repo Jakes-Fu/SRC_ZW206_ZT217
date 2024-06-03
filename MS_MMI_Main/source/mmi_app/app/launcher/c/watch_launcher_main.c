@@ -1011,7 +1011,7 @@ LOCAL void Launcher_App_Start(GUI_POINT_T click_point, MMI_WIN_ID_T win_id)
                 rect.right = rect.left + app_menu_bg_img_width;
                 rect.bottom = rect.top + app_menu_bg_img_height;
             }
-            if( i >= APP_MENU_SIZE || g_app_list_info[menu_index].start_handle == NULL)
+            if( menu_index >= APP_MENU_SIZE || g_app_list_info[menu_index].start_handle == NULL)
             {
                 TRACE_APP_LAUNCHER("there is not app rect");
                 return;
