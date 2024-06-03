@@ -116,7 +116,7 @@ ZDT_PLAT_YX_SUPPORT_TX = FALSE					      ### 音信百合后台
 ZDT_PLAT_YX_SUPPORT_LZ = FALSE					      ### 乐智后台
 ZDT_PLAT_YX_SUPPORT_CY = FALSE					      ### 成研云南移动后台
 
-ZDT_PLAT_YX_SUPPORT_ZTE = TRUE					      ### 易赛改ZTE NUBIA 中兴努比亚后台
+ZDT_PLAT_YX_SUPPORT_ZTE = FALSE#TRUE					      ### 易赛改ZTE NUBIA 中兴努比亚后台
 
 ifeq ($(strip $(ZDT_PLAT_YX_SUPPORT_LZ)),TRUE)
 ZDT_PLAT_YX_SUPPORT_VOICE = FALSE				### 微聊
