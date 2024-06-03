@@ -6717,6 +6717,8 @@ LOCAL THEMELIST_STYLE_TABLE_T const s_style_table[] =
 #ifdef WORD_CARD_SUPPORT   
     {GUIITEM_SYTLE_DSL_ENGLISH_BOOK, &dsl_english_book_item},
     {GUIITEM_SYTLE_DSL_CHECK, &dsl_check_list},
+#endif
+#ifdef HANZI_CARD_SUPPORT
     {GUIITEM_DSL_HANZI_BOOK, &dsl_hanzi_book_list},
 #endif
 #ifdef ZMT_GPT_SUPPORT
