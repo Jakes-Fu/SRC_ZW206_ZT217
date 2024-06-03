@@ -702,8 +702,9 @@ PUBLIC BOOLEAN MMICC_UpdateCallStatusDisplay(MMICC_UPDATESTATUS_TYPE_E type)
                     return result;
                 }
             }
-
+        #ifdef ZDT_VIDEOCHAT_SUPPORT
             Video_Call_Check();//视频通话中先挂断视频
+        #endif
 
             MMIDEFAULT_TurnOnBackLight();
 #ifdef MMI_RECORD_SUPPORT

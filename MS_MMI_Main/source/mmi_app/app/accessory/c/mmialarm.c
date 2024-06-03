@@ -5184,7 +5184,9 @@ PUBLIC void StartRingOrVib(void)
         || MMIAPIVT_IsVtCalling()
 #endif
 		|| MMIAPIATV_IsRecording()
+    #ifdef ZDT_VIDEOCHAT_SUPPORT
         || VideoChat_IsInCall() //视频通话中不响铃
+    #endif
         ) //cr63879
     {
         if((MMISET_MSG_RING == opt_type)||(MMISET_MSG_VIBRA_AND_RING == opt_type))
@@ -14658,10 +14660,16 @@ LOCAL MMI_RESULT_E HandleAlarmClockWinMsg_FULL_PAINT(MMI_WIN_ID_T win_id)
 
 LOCAL BOOLEAN ShouldInBackground(MMI_HANDLE_T win_handle)
 {
-    if((MMK_GetWinPriority(win_handle)==WIN_LOWEST_LEVEL)||(MMIAPICC_IsInState(CC_IN_CALL_STATE))||(VideoChat_IsInCall()))//后台提醒情况
+    if((MMK_GetWinPriority(win_handle)==WIN_LOWEST_LEVEL)||(MMIAPICC_IsInState(CC_IN_CALL_STATE)))//后台提醒情况
     {
         return TRUE;
     }
+#ifdef ZDT_VIDEOCHAT_SUPPORT
+    if(VideoChat_IsInCall())
+    {
+        return TRUE;
+    }
+#endif
     return FALSE;
 }
 

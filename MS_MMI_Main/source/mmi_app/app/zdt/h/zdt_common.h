@@ -125,11 +125,13 @@ typedef struct _VIDEO_CALL_INFO_
     uint8 appId[65];
 #ifdef BAIDU_VIDEOCHAT_SUPPORT
     uint8 romId[65];
+#else
+    uint8 deviceId[65];
 #endif
     uint8 video_id[65];
     uint16 family_relative[17];
     uint8 channel_name[33];
-    VIDEO_CALL_TYPE_E call_type; // FALSE incoming TRUE out call 
+    VIDEO_CALL_TYPE_E call_type; // FALSE incoming TRUE out call
     
 }VIDEO_CALL_INFO;
 

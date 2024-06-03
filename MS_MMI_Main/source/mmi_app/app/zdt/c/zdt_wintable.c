@@ -67,8 +67,9 @@
 #include "libxmly_api.h"
 #endif
 
+#ifdef ZDT_VIDEOCHAT_SUPPORT
 #include "video_call.h"
-
+#endif
 
 #define SCALE  1
 
@@ -4049,10 +4050,12 @@ PUBLIC BOOLEAN MMIZDT_ShouldStayInChargingWin()
 
 PUBLIC void MMIZDT_CheckOpenChargingWin()
 {
+#ifdef ZDT_VIDEOCHAT_SUPPORT
     if(VideoChat_IsInCall())//解决视频通话中连接电源闪充电动画 更合理是挂断视频通话
     {
         return;
     }
+#endif
     if(ZDT_GetIsCharge() && !test_mark && STARTUP_NORMAL == MMIAPIPHONE_GetStartUpCondition() && !MMICC_IsInActiveCallWin())
     {
         if(MMK_GetFocusWinId() != MMIZDT_CHARGING_WIN_ID && !ZDT_IsInFactoryWin())//工厂测试不进充电界面
@@ -4084,10 +4087,12 @@ PUBLIC void MMIZDT_CheckOpenChargingWin()
 
 PUBLIC void MMIZDT_OpenChargingWin()
 {
+#ifdef ZDT_VIDEOCHAT_SUPPORT
    if(VideoChat_IsInCall())//解决视频通话中连接电源闪充电动画 更合理是挂断视频通话
    {
       return;
    }
+#endif
    if(MMK_GetFocusWinId() != MMIZDT_CHARGING_WIN_ID && !ZDT_IsInFactoryWin())//工厂测试不进充电界面
    {
 
@@ -5677,7 +5682,9 @@ PUBLIC void MMIZDT_CheckTempAlert(void)
             else
             {
                 MMK_ReturnIdleWin();
+            #ifdef ZDT_VIDEOCHAT_SUPPORT
                 Video_Call_Check();//视频通话不允许return idle 所以这里判断挂断一下
+            #endif
                 MMIPUB_OpenAlertTimerWin(TXT_TEMP_AERT_LONG);
             }
         }
