@@ -3345,12 +3345,12 @@ LOCAL void ListDrawString(
             str_style.font_color = item_ptr->item.data_ptr->item_content[content_index].custom_font_color;
         }
     }
-
+#ifdef POETRY_LISTEN_SUPPORT
     if(item_ptr->item.style_id == GUIITEM_STYLE_POETRY_ITEM_LIST_MS)
     {
         str_style.align = ALIGN_HVMIDDLE;
     }
-
+#endif
     GUISTR_DrawTextToLCDInRect(dev_info_ptr,
 	                               (const GUI_RECT_T *)disp_rect_ptr,
 	                               (const GUI_RECT_T *)clip_rect_ptr,
