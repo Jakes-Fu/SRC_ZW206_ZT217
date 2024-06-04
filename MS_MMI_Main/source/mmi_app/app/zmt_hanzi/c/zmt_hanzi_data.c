@@ -146,26 +146,22 @@ PUBLIC void HanziChapter_requestChapterInfo(uint16 book_id)
     char * data_buf = PNULL;
     uint32 file_len = 0;
     char *temp_file_path = HANZI_CARD_CHAPTER_PATH;
-#if HANZI_CARD_USE_OFF_DATA
     strcpy(file_path,temp_file_path);
     if(zmt_file_exist(file_path)){
         data_buf = zmt_file_data_read(file_path, &file_len);
-    }else{
-        SCI_TRACE_LOW("%s: file_path = %s not exist !!", __FUNCTION__, file_path);
-        return;
+        SCI_TRACE_LOW("%s: file_len = %d", __FUNCTION__, file_len);
+        if(data_buf != PNULL && file_len > 0)
+        {
+            Hanzi_ParseChapterInfo(1, data_buf, file_len,0);
+        }
     }
-    SCI_TRACE_LOW("%s: file_len = %d", __FUNCTION__, file_len);
-    if(data_buf != PNULL && file_len > 0)
+    else
     {
-        Hanzi_ParseChapterInfo(1, data_buf, file_len,0);
-    }
- #else
-    {
-        char url[200] = {0};
+        char url[100] = {0};
         sprintf(url, "v1/card/book/hanzi/chapters?F_book_id=%d", book_id);
+        SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
         MMIZDT_HTTP_AppSend(TRUE, HANZI_BOOK_HEADER_PATH, url, strlen(url), 1000, 0, 0, 0, 0, 0, Hanzi_ParseChapterInfo);
     }
-#endif    
 }
 
 PUBLIC void HanziDetail_InitDetailInfo(void)
@@ -373,28 +369,22 @@ PUBLIC void HanziDetail_requestDetailInfo(uint16 section_id)
     char * data_buf = PNULL;
     uint32 file_len = 0;
     char *temp_file_path = HANZI_CARD_CHAPTER_WORD_PATH;
-#if HANZI_CARD_USE_OFF_DATA
     strcpy(file_path,temp_file_path);
     if(zmt_file_exist(file_path)){
         data_buf = zmt_file_data_read(file_path, &file_len);
-    }else{
-        SCI_TRACE_LOW("%s: file_path = %s not exist !!", __FUNCTION__, file_path);
-        hanzi_detail_count = -2;
-        HanziDetail_TipTimeout(0, 0);
-        return;
+        SCI_TRACE_LOW("%s: file_len = %d", __FUNCTION__, file_len);
+        if(data_buf != PNULL && file_len > 0)
+        {
+            Hanzi_ParseDetailInfo(1, data_buf, file_len,0);
+        }
     }
-    SCI_TRACE_LOW("%s: file_len = %d", __FUNCTION__, file_len);
-    if(data_buf != PNULL && file_len > 0)
+    else
     {
-        Hanzi_ParseDetailInfo(1, data_buf, file_len,0);
-    }
- #else
-    {
-        char url[200] = {0};
+        char url[130] = {0};
         sprintf(url, "v1/card/chapters/hanzi?F_cardId=%s&&F_section_id=%d", HANZI_BASE_DEVICE_IMEI, section_id);
+        SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
         MMIZDT_HTTP_AppSend(TRUE, HANZI_BOOK_HEADER_PATH, url, strlen(url), 1000, 0, 0, 0, 0, 0, Hanzi_ParseDetailInfo);
     }
-#endif     
 }
 
 PUBLIC void HanziDetail_RequestNewWord(void)
@@ -403,28 +393,22 @@ PUBLIC void HanziDetail_RequestNewWord(void)
     char * data_buf = PNULL;
     uint32 file_len = 0;
     char *temp_file_path = HANZI_CARD_NEW_WORD_PATH;
-#if HANZI_CARD_USE_OFF_DATA
     strcpy(file_path,temp_file_path);
     if(zmt_file_exist(file_path)){
         data_buf = zmt_file_data_read(file_path, &file_len);
-    }else{
-        SCI_TRACE_LOW("%s: file_path = %s not exist !!", __FUNCTION__, file_path);
-        hanzi_detail_count = -2;
-        HanziDetail_TipTimeout(0, 0);
-        return;
+        SCI_TRACE_LOW("%s: file_len = %d", __FUNCTION__, file_len);
+        if(data_buf != PNULL && file_len > 0)
+        {
+            Hanzi_ParseDetailInfo(1, data_buf, file_len,0);
+        }
     }
-    SCI_TRACE_LOW("%s: file_len = %d", __FUNCTION__, file_len);
-    if(data_buf != PNULL && file_len > 0)
-    {
-        Hanzi_ParseDetailInfo(1, data_buf, file_len,0);
-    }
- #else
+    else
     {
         char url[200] = {0};
+        Hanzi_ParseDetailInfo(0, data_buf, file_len,0);
         //sprintf(url, "v1/card/chapters/hanzi?F_cardId=%s&&F_section_id=%d", HANZI_BASE_DEVICE_IMEI, section_id);
         //MMIZDT_HTTP_AppSend(TRUE, HANZI_BOOK_HEADER_PATH, url, strlen(url), 1000, 0, 0, 0, 0, 0, Hanzi_ParseDetailInfo);
     }
-#endif  
 }
 
 PUBLIC void HanziDetail_DeleteNewWordItem(uint16 cur_idx)
@@ -433,7 +417,6 @@ PUBLIC void HanziDetail_DeleteNewWordItem(uint16 cur_idx)
     char * data_buf = PNULL;
     uint32 file_len = 0;
     char *temp_file_path = HANZI_CARD_NEW_WORD_PATH;
-#if HANZI_CARD_USE_OFF_DATA
     strcpy(file_path,temp_file_path);
     if(hanzi_detail_count == 1 && cur_idx == 0){
         if(zmt_file_exist(file_path)){
@@ -497,13 +480,6 @@ PUBLIC void HanziDetail_DeleteNewWordItem(uint16 cur_idx)
             hanzi_detail_cur_idx--;
         }
     }
- #else
-    {
-        char url[200] = {0};
-        //sprintf(url, "v1/card/chapters/hanzi?F_cardId=%s&&F_section_id=%d", HANZI_BASE_DEVICE_IMEI, section_id);
-        //MMIZDT_HTTP_AppSend(TRUE, HANZI_BOOK_HEADER_PATH, url, strlen(url), 1000, 0, 0, 0, 0, 0, Hanzi_ParseDetailInfo);
-    }
-#endif     
 }
 
 PUBLIC void Hanzi_ParseMp3Response(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id)

@@ -111,11 +111,7 @@ LOCAL void Hanzi_DisplayBookList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
         memset(name_str, 0, 50);
 
         //book name
-        #ifdef WIN32
         GUI_GBToWstr(name_wchar, hanzi_book_name_str[index].name, length);
-        #else
-        GUI_UTF8ToWstr(name_wchar, length, hanzi_book_name_str[index].name, length);
-        #endif
         text_str.wstr_ptr = name_wchar;
         text_str.wstr_len = MMIAPICOM_Wstrlen(text_str.wstr_ptr);
         item_data.item_content[0].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
@@ -129,7 +125,7 @@ LOCAL void Hanzi_DisplayBookList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
         GUILIST_SetNeedPrgbarBlock(ctrl_id,FALSE);
 
         GUILIST_SetBgColor(ctrl_id,MMI_WHITE_COLOR);
-        GUILIST_SetTextFont(ctrl_id, SONG_FONT_16, MMI_BLACK_COLOR);
+        GUILIST_SetTextFont(ctrl_id, DP_FONT_16, MMI_BLACK_COLOR);
 
         GUILIST_AppendItem(ctrl_id, &item_t);
     }
@@ -144,7 +140,7 @@ LOCAL MMI_RESULT_E HandleHanziWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_id
             {
                 GUI_FONT_ALL_T font = {0};
 		
-                font.font = SONG_FONT_20;
+                font.font = DP_FONT_20;
                 font.color = MMI_BLACK_COLOR;
         
                 GUIBUTTON_SetRect(MMI_ZMT_HANZI_MAIN_LABEL_BACK_CTRL_ID, &hanzi_title_rect);
@@ -153,7 +149,7 @@ LOCAL MMI_RESULT_E HandleHanziWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_id
                 GUIBUTTON_SetTextAlign(MMI_ZMT_HANZI_MAIN_LABEL_BACK_CTRL_ID,ALIGN_HVMIDDLE);
 
                 GUILABEL_SetRect(MMI_ZMT_HANZI_MAIN_LABEL_NUM_CTRL_ID, &hanzi_dir_rect, FALSE);
-                GUILABEL_SetFont(MMI_ZMT_HANZI_MAIN_LABEL_NUM_CTRL_ID, SONG_FONT_16,MMI_BLACK_COLOR);
+                GUILABEL_SetFont(MMI_ZMT_HANZI_MAIN_LABEL_NUM_CTRL_ID, DP_FONT_16,MMI_BLACK_COLOR);
                 GUILABEL_SetAlign(MMI_ZMT_HANZI_MAIN_LABEL_NUM_CTRL_ID, GUILABEL_ALIGN_RIGHT);
 
                 hanzi_book_info.book_total = HANZI_BOOK_TOTAL;
@@ -171,7 +167,7 @@ LOCAL MMI_RESULT_E HandleHanziWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_id
                 GUIBUTTON_SetTextId(MMI_ZMT_HANZI_MAIN_LABEL_BACK_CTRL_ID, HANZI_CARD);              
 
                 text_style.align = ALIGN_HVMIDDLE;
-                text_style.font = SONG_FONT_20;
+                text_style.font = DP_FONT_20;
                 text_style.font_color = MMI_BLACK_COLOR;
                 
                 SCI_TRACE_LOW("%s: book_total = %d", __FUNCTION__, hanzi_book_info.book_total);
@@ -382,7 +378,7 @@ LOCAL void Hanzi_DisplayChapterList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
             GUILIST_SetNeedPrgbarBlock(ctrl_id,FALSE);
 
             GUILIST_SetBgColor(ctrl_id,MMI_WHITE_COLOR);
-            GUILIST_SetTextFont(ctrl_id, SONG_FONT_16, MMI_BLACK_COLOR);
+            GUILIST_SetTextFont(ctrl_id, DP_FONT_16, MMI_BLACK_COLOR);
 
             GUILIST_AppendItem(ctrl_id, &item_t);
         }
@@ -399,7 +395,7 @@ LOCAL MMI_RESULT_E HandleHanziChapterWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
                 GUI_FONT_ALL_T font = {0};
                 GUI_BORDER_T btn_border = {1, MMI_BLACK_COLOR, GUI_BORDER_SOLID};
 		
-                font.font = SONG_FONT_16;
+                font.font = DP_FONT_16;
                 font.color = MMI_BLACK_COLOR;
         
                 GUIBUTTON_SetRect(MMI_ZMT_HANZI_CHAPTER_LABEL_BACK_CTRL_ID, &hanzi_title_rect);
@@ -424,7 +420,7 @@ LOCAL MMI_RESULT_E HandleHanziChapterWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
                 GUIBUTTON_SetVisible(MMI_ZMT_HANZI_CHAPTER_RIGHT_CTRL_ID,FALSE,FALSE);
 
                 GUILABEL_SetRect(MMI_ZMT_HANZI_CHAPTER_LABEL_NUM_CTRL_ID, &hanzi_dir_rect, FALSE);
-                GUILABEL_SetFont(MMI_ZMT_HANZI_CHAPTER_LABEL_NUM_CTRL_ID, SONG_FONT_16,MMI_BLACK_COLOR);
+                GUILABEL_SetFont(MMI_ZMT_HANZI_CHAPTER_LABEL_NUM_CTRL_ID, DP_FONT_16,MMI_BLACK_COLOR);
                 GUILABEL_SetAlign(MMI_ZMT_HANZI_CHAPTER_LABEL_NUM_CTRL_ID, GUILABEL_ALIGN_RIGHT);
 
                 HanziChapter_requestChapterInfo(hanzi_book_name_str[hanzi_book_info.cur_book_idx].id);
@@ -448,7 +444,7 @@ LOCAL MMI_RESULT_E HandleHanziChapterWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
                 GUIBUTTON_SetText(MMI_ZMT_HANZI_CHAPTER_LABEL_BACK_CTRL_ID, text_string.wstr_ptr, text_string.wstr_len);              
 
                 text_style.align = ALIGN_HVMIDDLE;
-                text_style.font = SONG_FONT_20;
+                text_style.font = DP_FONT_20;
                 text_style.font_color = MMI_BLACK_COLOR;
                 
                 SCI_TRACE_LOW("%s: hanzi_chapter_count = %d", __FUNCTION__, hanzi_chapter_count);
@@ -493,7 +489,7 @@ LOCAL MMI_RESULT_E HandleHanziChapterWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
                 }
                 else
                 {
-                    int i = 0;
+                    /*int i = 0;
                     int count = 0;
                     int total_page = 0;
                     for(i = 0;i < hanzi_chapter_count;i++){
@@ -502,7 +498,7 @@ LOCAL MMI_RESULT_E HandleHanziChapterWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
                     total_page = count / HANZI_BOOK_LIST_MAX_SHOW;
                     if(count % HANZI_BOOK_LIST_MAX_SHOW != 0){
                         total_page += 1;
-                    }
+                    }*/
                     GUIBUTTON_SetVisible(MMI_ZMT_HANZI_CHAPTER_LEFT_CTRL_ID,TRUE,FALSE);
                     GUIBUTTON_SetVisible(MMI_ZMT_HANZI_CHAPTER_RIGHT_CTRL_ID,TRUE,FALSE);
                     //Hanzi_SetDiretionText(MMI_ZMT_HANZI_CHAPTER_LABEL_NUM_CTRL_ID, hanzi_book_info.cur_section_page, total_page);
@@ -812,7 +808,7 @@ LOCAL void HanziDetail_DisplayDtailInfo(MMI_WIN_ID_T win_id)
     GUI_UTF8ToWstr(wstr_pinyin, 64, hanzi_detail_info[hanzi_detail_cur_idx]->pingy, strlen(hanzi_detail_info[hanzi_detail_cur_idx]->pingy)+1);
     text_pinyin.wstr_len = MMIAPICOM_Wstrlen(wstr_pinyin);
     text_pinyin.wstr_ptr = wstr_pinyin;
-    text_width_piex = GUI_CalculateStringPiexlNum(text_pinyin.wstr_ptr, text_pinyin.wstr_len, SONG_FONT_16, 1);
+    text_width_piex = GUI_CalculateStringPiexlNum(text_pinyin.wstr_ptr, text_pinyin.wstr_len, DP_FONT_16, 1);
     pinyin_rect = hanzi_pinyin_rect;
     pinyin_rect.right = pinyin_rect.left + text_width_piex + 10;
     GUILABEL_SetRect(MMI_ZMT_HANZI_DETAIL_LABEL_PINYIN_CTRL_ID, &pinyin_rect, FALSE);
@@ -841,10 +837,10 @@ LOCAL MMI_RESULT_E HandleHanziDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
             {
                 GUI_FONT_ALL_T font = {0};
                 GUI_BORDER_T btn_border = {1, MMI_BLACK_COLOR, GUI_BORDER_SOLID};
-                GUI_FONT_T text_font = SONG_FONT_16;
+                GUI_FONT_T text_font = DP_FONT_16;
                 GUI_COLOR_T text_color = MMI_BLACK_COLOR;
 		
-                font.font = SONG_FONT_20;
+                font.font = DP_FONT_20;
                 font.color = MMI_BLACK_COLOR;
         
                 GUIBUTTON_SetRect(MMI_ZMT_HANZI_DETAIL_LABEL_BACK_CTRL_ID, &hanzi_title_rect);
@@ -859,7 +855,7 @@ LOCAL MMI_RESULT_E HandleHanziDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
                 GUITEXT_SetClipboardEnabled(MMI_ZMT_HANZI_DETAIL_TEXT_INFO_CTRL_ID,FALSE);
                 GUITEXT_IsSlide(MMI_ZMT_HANZI_DETAIL_TEXT_INFO_CTRL_ID,FALSE);
 
-                font.font = SONG_FONT_16;
+                font.font = DP_FONT_16;
                 if(is_open_new_hanzi){
                     GUIBUTTON_SetRect(MMI_ZMT_HANZI_DETAIL_LEFT_CTRL_ID, &hanzi_pre_rect);
                     GUIBUTTON_SetRect(MMI_ZMT_HANZI_DETAIL_RIGHT_CTRL_ID, &hanzi_next_rect);
@@ -881,7 +877,7 @@ LOCAL MMI_RESULT_E HandleHanziDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
                 GUIBUTTON_SetVisible(MMI_ZMT_HANZI_DETAIL_RIGHT_CTRL_ID,FALSE,FALSE);
 
                 GUILABEL_SetRect(MMI_ZMT_HANZI_DETAIL_LABEL_NUM_CTRL_ID, &hanzi_dir_rect, FALSE);
-                GUILABEL_SetFont(MMI_ZMT_HANZI_DETAIL_LABEL_NUM_CTRL_ID, SONG_FONT_16,MMI_BLACK_COLOR);
+                GUILABEL_SetFont(MMI_ZMT_HANZI_DETAIL_LABEL_NUM_CTRL_ID, DP_FONT_16,MMI_BLACK_COLOR);
                 GUILABEL_SetAlign(MMI_ZMT_HANZI_DETAIL_LABEL_NUM_CTRL_ID, GUILABEL_ALIGN_RIGHT);
 
                 if(is_open_new_hanzi){
@@ -927,7 +923,7 @@ LOCAL MMI_RESULT_E HandleHanziDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
                 GUIBUTTON_SetText(MMI_ZMT_HANZI_DETAIL_LABEL_BACK_CTRL_ID, text_string.wstr_ptr, text_string.wstr_len);
 
                 text_style.align = ALIGN_HVMIDDLE;
-                text_style.font = SONG_FONT_20;
+                text_style.font = DP_FONT_20;
                 text_style.font_color = MMI_BLACK_COLOR;
 
                 SCI_TRACE_LOW("%s: hanzi_detail_count = %d", __FUNCTION__, hanzi_detail_count);
@@ -1021,7 +1017,7 @@ LOCAL MMI_RESULT_E HandleHanziDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
                     LCD_DrawRect(&hanzi_tip_layer, hanzi_tip_rect, MMI_BLACK_COLOR);
 
                     text_style.align = ALIGN_HVMIDDLE;
-                    text_style.font = SONG_FONT_16;
+                    text_style.font = DP_FONT_16;
                     text_style.font_color = MMI_BLACK_COLOR;
 
                     if(hanzi_is_display_tip == 1)

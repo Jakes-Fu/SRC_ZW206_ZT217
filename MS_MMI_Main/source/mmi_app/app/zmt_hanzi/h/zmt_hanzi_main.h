@@ -13,7 +13,7 @@ extern "C"
 // Description : open hello sprd windows
 // Global resource dependence : 
 /******************************************************************/
-#define HANZI_CARD_USE_OFF_DATA 1
+#define HANZI_CARD_USE_OFF_DATA 0
 
 #define HANZI_CARD_LINE_WIDTH MMI_MAINSCREEN_WIDTH/6
 #define HANZI_CARD_LINE_HIGHT MMI_MAINSCREEN_HEIGHT/10
