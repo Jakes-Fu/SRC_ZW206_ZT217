@@ -11,8 +11,7 @@
 
 
 //[[define image information
-RES_ADD_IMG(IMG_DIS_AUTO_PLAY,"\\MMI_RES_##\\IMAG\\dsl_disautoplay.png",IMG_CMP_PNG_ARGB_RLE,0)
-RES_ADD_IMG(IMG_POETRY_AUTOPLAY,"\\MMI_RES_##\\IMAG\\poetry_autoplay.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(IMG_DISAUTO_PLAY,"\\MMI_RES_##\\IMAG\\dsl_disautoplay.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(IMG_AUTO_PLAY,"\\MMI_RES_##\\IMAG\\dsl_autoplay.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(WORD_DELETE_ICON,"\\MMI_RES_##\\IMAG\\word_delete.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(WORD_NEXT_ICON,"\\MMI_RES_##\\IMAG\\word_next.png",IMG_CMP_PNG_ARGB_RLE,0)

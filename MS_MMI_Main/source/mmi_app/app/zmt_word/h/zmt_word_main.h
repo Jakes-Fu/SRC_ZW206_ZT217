@@ -24,6 +24,7 @@ extern "C"
 /******************************************************************/
 #define WORD_CARD_LINE_WIDTH MMI_MAINSCREEN_WIDTH/6
 #define WORD_CARD_LINE_HIGHT MMI_MAINSCREEN_HEIGHT/10
+#define ENGLISE_BOOK_ITEM_PANDDING 10
 
 #define BASE_DEVICE_IMEI "868750061006384"
 #define BASE_URL_PATH "http://api.ebag.readboy.com/wisdom-school/"

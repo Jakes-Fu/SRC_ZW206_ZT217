@@ -25,6 +25,7 @@
 #include "mmisrvrecord_export.h"
 #ifdef LISTENING_PRATICE_SUPPORT
 #include "zmt_main_file.h"
+#include "zmt_listening_image.h"
 #endif
 /*****************************************************************/
 // Description : open hello sprd windows
@@ -35,18 +36,18 @@
 LOCAL GUI_RECT_T word_win_rect = {0, 0, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT};//窗口
 LOCAL GUI_RECT_T word_title_rect = {0, 0, MMI_MAINSCREEN_WIDTH, WORD_CARD_LINE_HIGHT};//顶部
 LOCAL GUI_RECT_T word_list_rect = {0, WORD_CARD_LINE_HIGHT, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT-5};//列表
-LOCAL GUI_RECT_T word_left_rect = {10, MMI_MAINSCREEN_HEIGHT-WORD_CARD_LINE_HIGHT, 3*WORD_CARD_LINE_WIDTH-10, MMI_MAINSCREEN_HEIGHT-2};//单词学习/掌握
-LOCAL GUI_RECT_T word_right_rect = {3*WORD_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-WORD_CARD_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-10, MMI_MAINSCREEN_HEIGHT-2};//生词本/未掌握
+LOCAL GUI_RECT_T word_left_rect = {10, MMI_MAINSCREEN_HEIGHT-WORD_CARD_LINE_HIGHT-5, 3*WORD_CARD_LINE_WIDTH-10, MMI_MAINSCREEN_HEIGHT-2};//单词学习/掌握
+LOCAL GUI_RECT_T word_right_rect = {3*WORD_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-WORD_CARD_LINE_HIGHT-5, MMI_MAINSCREEN_WIDTH-10, MMI_MAINSCREEN_HEIGHT-2};//生词本/未掌握
 LOCAL GUI_RECT_T word_pre_rect = {0.5*WORD_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-WORD_CARD_LINE_HIGHT, 1.5*WORD_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-2};//生词本-上一个
 LOCAL GUI_RECT_T word_del_rect = {3*WORD_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-WORD_CARD_LINE_HIGHT, 4*WORD_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-2};//生词本-删除
 LOCAL GUI_RECT_T word_next_rect = {4.5*WORD_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-WORD_CARD_LINE_HIGHT, 5.5*WORD_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-2};//生词本-下一个
-LOCAL GUI_RECT_T word_msg_rect = {WORD_CARD_LINE_WIDTH, WORD_CARD_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-WORD_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-WORD_CARD_LINE_HIGHT};//界面的信息提示
-LOCAL GUI_RECT_T word_tip_rect = {2*WORD_CARD_LINE_WIDTH,2*WORD_CARD_LINE_HIGHT,MMI_MAINSCREEN_WIDTH-2*WORD_CARD_LINE_WIDTH,4*WORD_CARD_LINE_HIGHT};//弹框提示
+LOCAL GUI_RECT_T word_msg_rect = {WORD_CARD_LINE_WIDTH, 3*WORD_CARD_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-WORD_CARD_LINE_WIDTH, 5*WORD_CARD_LINE_HIGHT};//界面的信息提示
+LOCAL GUI_RECT_T word_tip_rect = {WORD_CARD_LINE_WIDTH,3*WORD_CARD_LINE_HIGHT,MMI_MAINSCREEN_WIDTH-WORD_CARD_LINE_WIDTH,5*WORD_CARD_LINE_HIGHT};//弹框提示
 LOCAL GUI_RECT_T word_auto_tip_rect = {WORD_CARD_LINE_WIDTH, 2*WORD_CARD_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-WORD_CARD_LINE_WIDTH, 5*WORD_CARD_LINE_HIGHT};//自动播放提示
-LOCAL GUI_RECT_T word_auto_play_rect = {3*WORD_CARD_LINE_WIDTH, 0, 4*WORD_CARD_LINE_WIDTH, WORD_CARD_LINE_HIGHT};//自动播放图标
+LOCAL GUI_RECT_T word_auto_play_rect = {4*WORD_CARD_LINE_WIDTH, 0, 6*WORD_CARD_LINE_WIDTH, WORD_CARD_LINE_HIGHT};//自动播放图标
 LOCAL GUI_RECT_T word_word_rect = {5, WORD_CARD_LINE_HIGHT, MMI_MAINSCREEN_WIDTH, 2*WORD_CARD_LINE_HIGHT};//单词
 LOCAL GUI_RECT_T word_uk_rect = {5, 2*WORD_CARD_LINE_HIGHT, MMI_MAINSCREEN_WIDTH, 3*WORD_CARD_LINE_HIGHT};//音标
-LOCAL GUI_RECT_T word_text_rect = {5,3*WORD_CARD_LINE_HIGHT,MMI_MAINSCREEN_WIDTH-5,MMI_MAINSCREEN_HEIGHT-WORD_CARD_LINE_HIGHT};//单词释义
+LOCAL GUI_RECT_T word_text_rect = {5,3*WORD_CARD_LINE_HIGHT,MMI_MAINSCREEN_WIDTH-5,MMI_MAINSCREEN_HEIGHT-WORD_CARD_LINE_HIGHT-8};//单词释义
 
 #define MAX_WORD_NUM 10
 #define MAX_BOOK_NUM 20
@@ -176,7 +177,7 @@ LOCAL void saveRecord(void)
 {
 	char json[500]={0};
 	sprintf(json,"{\"bookid\": \"%s\" ,\"chapterIdx\": %d ,\"curPage\": %d ,\"realIdx\": %d ,\"curIdx\": %d }",
-	books[pageInfo->bookIdx+dsl_word_main_display_idx*DSL_WORD_MAIN_DISPLAY_NUM]->id,pageInfo->chapterIdx,pageInfo->curPage,pageInfo->realIdx,pageInfo->curIdx);
+	books[pageInfo->bookIdx]->id,pageInfo->chapterIdx,pageInfo->curPage,pageInfo->realIdx,pageInfo->curIdx);
 	if(!zmt_dir_exsit("E:/Word"))
 	{
 		zmt_dir_creat("E:/Word");
@@ -227,13 +228,10 @@ WINDOW_TABLE(MMI_WORD_CH_WIN_TAB) = {
     CREATE_BUTTON_CTRL(PNULL, MMI_ZMT_WORD_CH_BUTTON_REFRESH),
     CREATE_BUTTON_CTRL(PNULL, MMI_ZMT_WORD_CH_LABEL_BACK),
     CREATE_BUTTON_CTRL(PNULL, MMI_ZMT_WORD_CH_PAD_LABEL_BACK),
-    //CREATE_BUTTON_CTRL(IMG_BACK, MMI_ZMT_WORD_CH_BUTTON_BACK),
-	CREATE_BUTTON_CTRL(IMG_POETRY_AUTOPLAY,MMI_ZMT_WORD_CH_BUTTON_DISAUTOPLAY),
-    CREATE_BUTTON_CTRL(IMG_AUTO_PLAY,MMI_ZMT_WORD_CH_BUTTON_AUTOPLAY),
+    CREATE_BUTTON_CTRL(PNULL,MMI_ZMT_WORD_CH_BUTTON_AUTOPLAY),
     CREATE_LISTBOX_CTRL(GUILIST_TEXTLIST_E, MMI_ZMT_WORD_CH_LIST_CONTENT),
     CREATE_BUTTON_CTRL(PNULL, MMI_ZMT_WORD_CH_BUTTON_EXERCISE),
     CREATE_BUTTON_CTRL(PNULL, MMI_ZMT_WORD_CH_BUTTON_PACTISE),
-	CREATE_LABEL_CTRL(GUILABEL_ALIGN_RIGHT, MMI_ZMT_WORD_CH_LABEL_NUM_ID),
 	WIN_HIDE_STATUS,
     END_WIN};
 WINDOW_TABLE(MMI_WORD_CARD_WIN_TAB) = {
@@ -241,19 +239,17 @@ WINDOW_TABLE(MMI_WORD_CARD_WIN_TAB) = {
     WIN_FUNC((uint32)HandleWordCardWinMsg),
     CREATE_BUTTON_CTRL(PNULL, MMI_ZMT_WORD_BUTTON_REFRESH),
     CREATE_BUTTON_CTRL(PNULL, MMI_ZMT_WORD_LABEL_TITLE_ID),
-    //CREATE_BUTTON_CTRL(PNULL, MMI_ZMT_WORD_PAD_LABEL_TITLE_ID),
     CREATE_BUTTON_CTRL(PNULL, MMI_ZMT_WORD_BUTTON_OK_ID),
     CREATE_BUTTON_CTRL(PNULL, MMI_ZMT_WORD_BUTTON_CACEL_ID),
-    //CREATE_BUTTON_CTRL(IMG_BACK, MMI_ZMT_WORD_BUTTON_BACK_ID),
 	CREATE_BUTTON_CTRL(WORD_NEXT_ICON, MMI_ZMT_WORD_BUTTON_NEXT_ID),
     CREATE_BUTTON_CTRL(WORD_PRE_ICON, MMI_ZMT_WORD_BUTTON_PRE_ID),
     CREATE_BUTTON_CTRL(WORD_DELETE_ICON, MMI_ZMT_WORD_BUTTON_DELETE_ID),
     CREATE_LABEL_CTRL(GUILABEL_ALIGN_RIGHT, MMI_ZMT_WORD_LABEL_NUM_ID),
 	CREATE_LABEL_CTRL(GUILABEL_ALIGN_LEFT, MMI_ZMT_WORD_MSG_LABEL_ID),
     CREATE_LABEL_CTRL(GUILABEL_ALIGN_LEFT, MMI_ZMT_WORD_MSG_SP1_ID),
-	CREATE_BUTTON_CTRL(IMG_DIS_AUTO_PLAY, MMI_ZMT_WORD_MSG_SP1_BTN_ID),
+	CREATE_BUTTON_CTRL(ZMT_LISTEN_VOLUME, MMI_ZMT_WORD_MSG_SP1_BTN_ID),
     CREATE_TEXT_CTRL(MMI_ZMT_WORD_INFO_TEXT_ID),
-	CREATE_LABEL_CTRL(GUILABEL_ALIGN_MIDDLE, MMI_ZMT_WORD_LABEL_MESSAGE_ID),
+	CREATE_BUTTON_CTRL(PNULL, MMI_ZMT_WORD_LABEL_MESSAGE_ID),
 	WIN_HIDE_STATUS,
     END_WIN};
 
@@ -289,7 +285,7 @@ LOCAL void AppendDSLListItemByTextId(MMI_CTRL_ID_T ctrl_id, MMI_IMAGE_ID_T image
 	item_data.item_content[0].item_data_type = GUIITEM_DATA_IMAGE_ID;
 	item_data.item_content[0].item_data.image_id = image_id;
 
-	itoa(index-dsl_word_main_display_idx*DSL_WORD_MAIN_DISPLAY_NUM+1,tmp, 10);
+	itoa(index+1,tmp, 10);
 	GUI_UTF8ToWstr(wstr0,10,tmp, strlen(tmp)+1);
 	text0.wstr_len = MMIAPICOM_Wstrlen(wstr0);
 	text0.wstr_ptr = wstr0;
@@ -307,7 +303,7 @@ LOCAL void AppendDSLListItemByTextId(MMI_CTRL_ID_T ctrl_id, MMI_IMAGE_ID_T image
 	text.wstr_ptr = wstr;
 	item_data.item_content[3].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
 	item_data.item_content[3].item_data.text_buffer = text;
-
+	
 	GUILIST_AppendItem(ctrl_id, &item_t);
 }
 LOCAL void appendCHItem(MMI_CTRL_ID_T ctrl_id, char *data,MMI_IMAGE_ID_T image_id)
@@ -333,18 +329,18 @@ LOCAL void appendCHItem(MMI_CTRL_ID_T ctrl_id, char *data,MMI_IMAGE_ID_T image_i
 
 	GUILIST_AppendItem(ctrl_id, &item_t);
 }
-LOCAL void LayoutItem(MMI_CTRL_ID_T ctrl_id, int16 left, int16 right, int16 top,int16 bottom) 
+LOCAL void LayoutItem(MMI_CTRL_ID_T ctrl_id, GUI_RECT_T rect) 
 {
 	GUI_BOTH_RECT_T both_rect = {0};
-	both_rect.h_rect.right = right;
-	both_rect.h_rect.left = left;
-	both_rect.h_rect.top = top;
-	both_rect.h_rect.bottom = bottom;
+	both_rect.h_rect.right = rect.right;
+	both_rect.h_rect.left = rect.left;
+	both_rect.h_rect.top = rect.top;
+	both_rect.h_rect.bottom = rect.bottom;
 
-	both_rect.v_rect.right = right;
-	both_rect.v_rect.left = left;
-	both_rect.v_rect.top = top;
-	both_rect.v_rect.bottom = bottom;
+	both_rect.v_rect.right = rect.right;
+	both_rect.v_rect.left = rect.left;
+	both_rect.v_rect.top = rect.top;
+	both_rect.v_rect.bottom = rect.bottom;
 	GUIAPICTRL_SetBothRect(ctrl_id, &both_rect);
 
 	return;
@@ -352,10 +348,14 @@ LOCAL void LayoutItem(MMI_CTRL_ID_T ctrl_id, int16 left, int16 right, int16 top,
 LOCAL void InitButton(MMI_CTRL_ID_T ctrl_id)
 {
 	GUI_FONT_ALL_T font = {0};
-	GUI_BORDER_T btn_border = {1, MMI_BLACK_COLOR, GUI_BORDER_SOLID};
-	font.font = SONG_FONT_16;
-	font.color = MMI_BLACK_COLOR;
+	GUI_BG_T bg = {0};
+	GUI_BORDER_T btn_border = {1, MMI_WHITE_COLOR, GUI_BORDER_ROUNDED};
+	font.font = DP_FONT_16;
+	font.color = GUI_RGB2RGB565(80, 162, 254);
 	GUIBUTTON_SetBorder(ctrl_id, &btn_border, FALSE);
+	bg.bg_type = GUI_BG_COLOR;
+	bg.color = MMI_WHITE_COLOR;
+	GUIBUTTON_SetBg(ctrl_id, &bg);
 	GUIBUTTON_SetFont(ctrl_id, &font);
 }
 
@@ -412,11 +412,11 @@ LOCAL void requestWordCh(){
 	char url[255]={0};
 	if(is_load_local)
 	{
-		loadLocalBookCH(books[pageInfo->bookIdx+dsl_word_main_display_idx*DSL_WORD_MAIN_DISPLAY_NUM]->path,books[pageInfo->bookIdx+dsl_word_main_display_idx*DSL_WORD_MAIN_DISPLAY_NUM]->basepath);
+		loadLocalBookCH(books[pageInfo->bookIdx]->path,books[pageInfo->bookIdx]->basepath);
 	}
 	else
 	{
-		sprintf(url, "v1/card/book/chapterList?F_book_id=%s&F_filter_word=1",books[pageInfo->bookIdx+dsl_word_main_display_idx*DSL_WORD_MAIN_DISPLAY_NUM]->id);
+		sprintf(url, "v1/card/book/chapterList?F_book_id=%s&F_filter_word=1",books[pageInfo->bookIdx]->id);
 		SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
 		request_http_win_ch_idx++;
 		MMIZDT_HTTP_AppSend(TRUE, BASE_URL_PATH, url, strlen(url), 1000, 0, 0, 0, 0, 0, parseChapterResponse);
@@ -447,25 +447,26 @@ LOCAL MMI_RESULT_E HandleWordWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_id,
 		}
 		requestBookInfo();
 		
-		font.font = SONG_FONT_16;
-		font.color = MMI_BLACK_COLOR;
+		font.font = DP_FONT_22;
+		font.color = MMI_WHITE_COLOR;
         
-        GUIBUTTON_SetRect(MMI_ZMT_WORD_MAIN_LABEL_BACK, &word_title_rect);
+		GUIBUTTON_SetRect(MMI_ZMT_WORD_MAIN_LABEL_BACK, &word_title_rect);      
 		GUIBUTTON_SetCallBackFunc(MMI_ZMT_WORD_MAIN_LABEL_BACK, closeWordWin);
 		GUIBUTTON_SetFont(MMI_ZMT_WORD_MAIN_LABEL_BACK, &font);
 		GUIBUTTON_SetTextAlign(MMI_ZMT_WORD_MAIN_LABEL_BACK,ALIGN_HVMIDDLE);
-	
+
+		font.font = DP_FONT_16;
 		GUILIST_SetRect(MMI_ZMT_WORD_MAIN_LIST_CONTENT, &word_list_rect);
-		GUILIST_SetListState(MMI_ZMT_WORD_MAIN_LIST_CONTENT,GUILIST_STATE_SPLIT_LINE, FALSE);
+		GUILIST_SetListState(MMI_ZMT_WORD_MAIN_LIST_CONTENT,GUILIST_STATE_SPLIT_LINE, TRUE);
 		GUILIST_SetListState(MMI_ZMT_WORD_MAIN_LIST_CONTENT,GUILIST_STATE_NEED_HIGHTBAR, FALSE);
 		GUILIST_SetTopItemOffset(MMI_ZMT_WORD_MAIN_LIST_CONTENT, 10);
 		GUILIST_SetMaxItem(MMI_ZMT_WORD_MAIN_LIST_CONTENT, DSL_WORD_MAIN_DISPLAY_NUM, FALSE);
-        GUILIST_SetTextFont(MMI_ZMT_WORD_MAIN_LIST_CONTENT, SONG_FONT_16, MMI_BLACK_COLOR);
+		GUILIST_SetBgColor(MMI_ZMT_WORD_MAIN_LIST_CONTENT,GUI_RGB2RGB565(80, 162, 254));
 
 		title_rect.top = word_title_rect.top + 2;
 		GUILABEL_SetRect(MMI_ZMT_WORD_MAIN_LABEL_NUM_ID, &title_rect, FALSE);
-		GUILABEL_SetFont(MMI_ZMT_WORD_MAIN_LABEL_NUM_ID, SONG_FONT_16,MMI_BLACK_COLOR);
-        GUILABEL_SetAlign(MMI_ZMT_WORD_MAIN_LABEL_NUM_ID, GUILABEL_ALIGN_RIGHT);
+		GUILABEL_SetFont(MMI_ZMT_WORD_MAIN_LABEL_NUM_ID, DP_FONT_16,MMI_WHITE_COLOR);
+		GUILABEL_SetAlign(MMI_ZMT_WORD_MAIN_LABEL_NUM_ID, GUILABEL_ALIGN_RIGHT);
 
 	}
 	break;
@@ -473,51 +474,38 @@ LOCAL MMI_RESULT_E HandleWordWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_id,
 	break;
     case MSG_LOSE_FOCUS:
 	break;
-	case MSG_LIST_NEXT_PAGE:
-	{
-		if(dsl_word_main_display_idx+1<(dsl_word_main_display_count+DSL_WORD_MAIN_DISPLAY_NUM-1)/DSL_WORD_MAIN_DISPLAY_NUM)
-		{
-			dsl_word_main_display_idx++;
-			MMK_PostMsg(MMI_WORD_WIN_ID, MSG_FULL_PAINT, PNULL, 0);
-		}	
-	}
-	break;
-	case MSG_LIST_PRE_PAGE:
-	{
-		if(dsl_word_main_display_idx>0)
-		{
-			dsl_word_main_display_idx--;
-			MMK_PostMsg(MMI_WORD_WIN_ID, MSG_FULL_PAINT, PNULL, 0);
-		}
-	}
-	break;
 	case MSG_FULL_PAINT: 
 	{
-		int i = dsl_word_main_display_idx*DSL_WORD_MAIN_DISPLAY_NUM;
+		int i = 0;
 		GUILIST_EMPTY_INFO_T empty_info = {0};
+		GUISTR_STYLE_T empty_style = {0};
 
 		GUI_LCD_DEV_INFO lcd_dev_info = {GUI_MAIN_LCD_ID,GUI_BLOCK_MAIN};
 
-		GUI_FillRect(&lcd_dev_info,word_win_rect,MMI_WHITE_COLOR);
+		GUI_FillRect(&lcd_dev_info, word_win_rect, GUI_RGB2RGB565(80, 162, 254));
+		GUI_FillRect(&lcd_dev_info, word_title_rect, GUI_RGB2RGB565(108, 181, 255));
 		
 		GUIBUTTON_SetVisible(MMI_ZMT_WORD_MAIN_BUTTON_REFRESH,FALSE,FALSE);
 
 		GUIBUTTON_SetTextId(MMI_ZMT_WORD_MAIN_LABEL_BACK, WORD_TITLE);
 
 		empty_info.text_id = WORD_LOADING;
+		empty_style.font = DP_FONT_22;
+		empty_style.font_color = MMI_WHITE_COLOR;
+		GUILIST_SetEmptyStyle(MMI_ZMT_WORD_MAIN_LIST_CONTENT, &empty_style);
 		GUILIST_SetEmptyInfo(MMI_ZMT_WORD_MAIN_LIST_CONTENT, &empty_info);
-		GUILIST_SetBgColor(MMI_ZMT_WORD_MAIN_LIST_CONTENT,MMI_WHITE_COLOR);
 		GUILIST_RemoveAllItems(MMI_ZMT_WORD_MAIN_LIST_CONTENT);
-		for (;i<(dsl_word_main_display_idx+1)*DSL_WORD_MAIN_DISPLAY_NUM&&i < dsl_word_main_display_count; i++) 
+		for (i = 0;i < dsl_word_main_display_count; i++) 
 		{
 			if (books[i] != PNULL) 
 			{
+				GUILIST_SetTextFont(MMI_ZMT_WORD_MAIN_LIST_CONTENT, DP_FONT_16, MMI_WHITE_COLOR);
 				AppendDSLListItemByTextId(MMI_ZMT_WORD_MAIN_LIST_CONTENT,IMG_ZMT_CONTACT_ICON, i);
 			}
 		}
 		if(dsl_word_main_display_count>0)
 		{
-			setNumberText(MMI_ZMT_WORD_MAIN_LABEL_NUM_ID,dsl_word_main_display_idx, (dsl_word_main_display_count+DSL_WORD_MAIN_DISPLAY_NUM-1)/DSL_WORD_MAIN_DISPLAY_NUM);
+			//setNumberText(MMI_ZMT_WORD_MAIN_LABEL_NUM_ID,dsl_word_main_display_idx, (dsl_word_main_display_count+DSL_WORD_MAIN_DISPLAY_NUM-1)/DSL_WORD_MAIN_DISPLAY_NUM);
 			if(is_record==2)
 			{
 				OpenWordRecordTips();
@@ -618,10 +606,11 @@ LOCAL MMI_RESULT_E HandleWordCHWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_i
 	{
 		GUI_RECT_T list_rect = {0, 25, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT};
 		GUI_RECT_T title_rect = {0};
-		GUI_BORDER_T btn_border = {1, MMI_BLACK_COLOR, GUI_BORDER_SOLID};
+		GUI_BORDER_T btn_border = {1, MMI_WHITE_COLOR, GUI_BORDER_ROUNDED};
 		GUI_FONT_ALL_T font = {0};
-		font.font = SONG_FONT_16;
-		font.color = MMI_BLACK_COLOR;
+		GUI_BG_T button_bg = {0};
+		font.font = DP_FONT_16;
+		font.color = MMI_WHITE_COLOR;
 
 		GUIBUTTON_SetRect(MMI_ZMT_WORD_CH_PAD_LABEL_BACK, &word_title_rect);
 		GUIBUTTON_SetCallBackFunc(MMI_ZMT_WORD_CH_PAD_LABEL_BACK, closeWordCHWin);
@@ -631,20 +620,25 @@ LOCAL MMI_RESULT_E HandleWordCHWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_i
 		GUIBUTTON_SetFont(MMI_ZMT_WORD_CH_LABEL_BACK, &font);
 		GUIBUTTON_SetTextAlign(MMI_ZMT_WORD_CH_LABEL_BACK,ALIGN_LVMIDDLE);
 
+		GUIBUTTON_SetRect(MMI_ZMT_WORD_CH_BUTTON_AUTOPLAY, &word_auto_play_rect);
+		GUIBUTTON_SetVisible(MMI_ZMT_WORD_CH_BUTTON_AUTOPLAY,TRUE,TRUE);
+		
+		font.font = DP_FONT_16;
 		list_rect = word_list_rect;
-		list_rect.bottom -= WORD_CARD_LINE_HIGHT;
+		list_rect.bottom -= WORD_CARD_LINE_HIGHT+5;
 		GUILIST_SetRect(MMI_ZMT_WORD_CH_LIST_CONTENT, &list_rect);
 		GUILIST_SetListState(MMI_ZMT_WORD_CH_LIST_CONTENT,GUILIST_STATE_SPLIT_LINE, TRUE);
 		GUILIST_SetListState(MMI_ZMT_WORD_CH_LIST_CONTENT, GUILIST_STATE_FOCUS,TRUE);
 		GUILIST_SetListState(MMI_ZMT_WORD_CH_LIST_CONTENT,GUILIST_STATE_NEED_HIGHTBAR, FALSE);
 		GUILIST_SetMaxItem(MMI_ZMT_WORD_CH_LIST_CONTENT, MAX_CHAPTER_NUM, FALSE);
-        GUILIST_SetBgColor(MMI_ZMT_WORD_CH_LIST_CONTENT, MMI_WHITE_COLOR);
-        GUILIST_SetTextFont(MMI_ZMT_WORD_CH_LIST_CONTENT, SONG_FONT_16, MMI_BLACK_COLOR);
+		GUILIST_SetTextFont(MMI_ZMT_WORD_CH_LIST_CONTENT, DP_FONT_16, MMI_WHITE_COLOR);
+		GUILIST_SetBgColor(MMI_ZMT_WORD_CH_LIST_CONTENT,GUI_RGB2RGB565(80, 162, 254));	
 
 		GUIBUTTON_SetRect(MMI_ZMT_WORD_CH_BUTTON_PACTISE, &word_left_rect);//单词学习
 		GUIBUTTON_SetRect(MMI_ZMT_WORD_CH_BUTTON_EXERCISE, &word_right_rect);//生词本
-		GUIBUTTON_SetBorder(MMI_ZMT_WORD_CH_BUTTON_PACTISE, &btn_border, FALSE);
-		GUIBUTTON_SetBorder(MMI_ZMT_WORD_CH_BUTTON_EXERCISE, &btn_border, FALSE);
+		InitButton(MMI_ZMT_WORD_CH_BUTTON_PACTISE);
+		InitButton(MMI_ZMT_WORD_CH_BUTTON_EXERCISE);
+
 		GUIBUTTON_SetCallBackFunc(MMI_ZMT_WORD_CH_BUTTON_PACTISE,openWordCardWin);
 		//SCI_TRACE_LOW("%s: is_load_local = %d", __FUNCTION__, is_load_local);
 		if(is_load_local)
@@ -655,18 +649,7 @@ LOCAL MMI_RESULT_E HandleWordCHWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_i
 			GUIBUTTON_SetCallBackFunc(MMI_ZMT_WORD_CH_BUTTON_EXERCISE,openNewWordCardWin);
 		}
 
-		font.font = SONG_FONT_16;
-		font.color = MMI_BLACK_COLOR;
-		GUIBUTTON_SetFont(MMI_ZMT_WORD_CH_BUTTON_EXERCISE, &font);
-		GUIBUTTON_SetFont(MMI_ZMT_WORD_CH_BUTTON_PACTISE, &font);
-		
-        title_rect = word_title_rect;
-        title_rect.top += 2;
-		GUILABEL_SetRect(MMI_ZMT_WORD_CH_LABEL_NUM_ID, &title_rect, FALSE);
-		GUILABEL_SetFont(MMI_ZMT_WORD_CH_LABEL_NUM_ID, SONG_FONT_16,MMI_BLACK_COLOR);
-		dsl_chapter_select_idx=0;
-
-		LayoutItem(MMI_ZMT_WORD_CH_BUTTON_REFRESH, 72, 168, 317, 346);
+		LayoutItem(MMI_ZMT_WORD_CH_BUTTON_REFRESH, word_tip_rect);
 		InitButton(MMI_ZMT_WORD_CH_BUTTON_REFRESH);
 		GUIBUTTON_SetTextId(MMI_ZMT_WORD_CH_BUTTON_REFRESH, WORD_REFRESH);
 		GUIBUTTON_SetCallBackFunc(MMI_ZMT_WORD_CH_BUTTON_REFRESH,wordChRefresh);
@@ -684,71 +667,64 @@ LOCAL MMI_RESULT_E HandleWordCHWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_i
 			create_info.is_static_layer = FALSE;   
 			UILAYER_CreateLayer(&create_info, &auto_tip_layer);
 		}
+		dsl_chapter_select_idx=0;
 	}
 	break;
     case MSG_GET_FOCUS:
       break;
     case MSG_LOSE_FOCUS:
       break;
-	case MSG_LIST_NEXT_PAGE:
-	{
-		if(dsl_chapter_display_idx+1<(dsl_chapter_display_count+DSL_CHAPTER_DISPLAY_NUM-1)/DSL_CHAPTER_DISPLAY_NUM)
-		{
-			dsl_chapter_display_idx++;
-			dsl_chapter_select_idx=0;
-			MMK_PostMsg(MMI_WORD_CH_WIN_ID, MSG_FULL_PAINT, PNULL, 0);
-		}	
-	}
-	break;
-	case MSG_LIST_PRE_PAGE:
-	{
-		if(dsl_chapter_display_idx>0)
-		{
-			dsl_chapter_display_idx--;
-			dsl_chapter_select_idx=0;
-			MMK_PostMsg(MMI_WORD_CH_WIN_ID, MSG_FULL_PAINT, PNULL, 0);
-		}
-	}
-	break;
     case MSG_FULL_PAINT: 
 	{
-		int i = dsl_chapter_display_idx*DSL_CHAPTER_DISPLAY_NUM;
+		int i = 0;
 		GUILIST_EMPTY_INFO_T empty_info = {0};
+		GUISTR_STYLE_T empty_style = {0};
+		GUI_BG_T auto_play_bg = {0};
 		GUI_LCD_DEV_INFO lcd_dev_info = {GUI_MAIN_LCD_ID,GUI_BLOCK_MAIN};
+		MMI_STRING_T string = {0};
+		wchar text[100] = {0};
+		wchar text_str[200] = {0};
         
-		GUI_FillRect(&lcd_dev_info,word_win_rect,0xffff);
+		GUI_FillRect(&lcd_dev_info, word_win_rect, GUI_RGB2RGB565(80, 162, 254));
+		GUI_FillRect(&lcd_dev_info, word_title_rect, GUI_RGB2RGB565(108, 181, 255));
 
 		GUIBUTTON_SetVisible(MMI_ZMT_WORD_CH_BUTTON_REFRESH,FALSE,FALSE);
 		if(is_autoplay)
 		{
-			GUIBUTTON_SetRect(MMI_ZMT_WORD_CH_BUTTON_DISAUTOPLAY, &word_auto_play_rect);
-			GUIBUTTON_SetCallBackFunc(MMI_ZMT_WORD_CH_BUTTON_DISAUTOPLAY, clickDisAutoPlay);
-			GUIBUTTON_SetVisible(MMI_ZMT_WORD_CH_BUTTON_DISAUTOPLAY,TRUE,TRUE);
-			GUIBUTTON_SetVisible(MMI_ZMT_WORD_CH_BUTTON_AUTOPLAY,FALSE,FALSE);
+                    auto_play_bg.bg_type = GUI_BG_IMG;
+                    auto_play_bg.img_id = IMG_AUTO_PLAY;
+                    GUIBUTTON_SetBg(MMI_ZMT_WORD_CH_BUTTON_AUTOPLAY, &auto_play_bg);
+                    GUIBUTTON_SetCallBackFunc(MMI_ZMT_WORD_CH_BUTTON_AUTOPLAY, clickDisAutoPlay);
 		}
 		else
 		{
-			GUIBUTTON_SetRect(MMI_ZMT_WORD_CH_BUTTON_DISAUTOPLAY, &word_auto_play_rect);
+                    auto_play_bg.bg_type = GUI_BG_IMG;
+                    auto_play_bg.img_id = IMG_DISAUTO_PLAY;
+                    GUIBUTTON_SetBg(MMI_ZMT_WORD_CH_BUTTON_AUTOPLAY, &auto_play_bg);
 			GUIBUTTON_SetCallBackFunc(MMI_ZMT_WORD_CH_BUTTON_AUTOPLAY, clickAutoPlay);
-			GUIBUTTON_SetVisible(MMI_ZMT_WORD_CH_BUTTON_AUTOPLAY,TRUE,TRUE);
-			GUIBUTTON_SetVisible(MMI_ZMT_WORD_CH_BUTTON_DISAUTOPLAY,FALSE,FALSE);
 		}
 
 		empty_info.text_id = WORD_LOADING;
+		empty_style.font = DP_FONT_22;
+		empty_style.font_color = MMI_WHITE_COLOR;
+		GUILIST_SetEmptyStyle(MMI_ZMT_WORD_MAIN_LIST_CONTENT, &empty_style);
 		GUILIST_SetEmptyInfo(MMI_ZMT_WORD_CH_LIST_CONTENT, &empty_info);
-
-		GUIBUTTON_SetTextId(MMI_ZMT_WORD_CH_LABEL_BACK, WORD_TITLE);
+		
+		sprintf(text, "%s%s", books[pageInfo->bookIdx]->name, books[pageInfo->bookIdx]->editionName);
+		GUI_UTF8ToWstr(text_str, 200, text, strlen(text));
+		string.wstr_ptr = text_str;
+		string.wstr_len = MMIAPICOM_Wstrlen(text_str);
+		GUIBUTTON_SetText(MMI_ZMT_WORD_CH_LABEL_BACK, string.wstr_ptr, string.wstr_len);
 		
 		GUIBUTTON_SetTextId(MMI_ZMT_WORD_CH_BUTTON_PACTISE, WORD_PACTISE);
 		GUIBUTTON_SetTextId(MMI_ZMT_WORD_CH_BUTTON_EXERCISE, WORD_EXERCISE);
 		GUIBUTTON_SetVisible(MMI_ZMT_WORD_CH_BUTTON_EXERCISE,FALSE,FALSE);
 		GUIBUTTON_SetVisible(MMI_ZMT_WORD_CH_BUTTON_PACTISE,FALSE,FALSE);
 		
-		
 		GUILIST_RemoveAllItems(MMI_ZMT_WORD_CH_LIST_CONTENT);
-		for (; i<(dsl_chapter_display_idx+1)*DSL_CHAPTER_DISPLAY_NUM&&i < dsl_chapter_display_count; i++) {
+		for (i = 0; i < dsl_chapter_display_count; i++) {
 			if (chapters[i] != PNULL) {
-				if (i-dsl_chapter_display_idx*DSL_CHAPTER_DISPLAY_NUM==dsl_chapter_select_idx) {
+				if (i == dsl_chapter_select_idx) {
 					appendCHItem(MMI_ZMT_WORD_CH_LIST_CONTENT, chapters[i]->name,IMG_ZMT_SELECTED);
 				}
 				else
@@ -757,12 +733,12 @@ LOCAL MMI_RESULT_E HandleWordCHWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_i
 				}
 			}
 		}
+		GUILIST_SetCurItemIndex(MMI_ZMT_WORD_CH_LIST_CONTENT, dsl_chapter_select_idx);
 
 		if(dsl_chapter_display_count>0)
 		{
 			GUIBUTTON_SetVisible(MMI_ZMT_WORD_CH_BUTTON_EXERCISE,TRUE,TRUE);
 			GUIBUTTON_SetVisible(MMI_ZMT_WORD_CH_BUTTON_PACTISE,TRUE,TRUE);
-			setNumberText(MMI_ZMT_WORD_CH_LABEL_NUM_ID,dsl_chapter_display_idx, (dsl_chapter_display_count+DSL_CHAPTER_DISPLAY_NUM-1)/DSL_CHAPTER_DISPLAY_NUM);
 		}
 		else if(dsl_chapter_display_count==-2)
 		{
@@ -791,13 +767,11 @@ LOCAL MMI_RESULT_E HandleWordCHWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_i
 				append_layer.layer_level = UILAYER_LEVEL_HIGH;
 				UILAYER_AppendBltLayer(&append_layer);
 
-				GUI_FillRect(&auto_tip_layer,word_tip_rect,0xffff);
-
-				LCD_DrawRect(&auto_tip_layer, word_tip_rect, MMI_BLACK_COLOR);
+				LCD_FillRoundedRect(&auto_tip_layer, word_tip_rect, word_tip_rect, MMI_WHITE_COLOR);
 
 				text_style.align = ALIGN_HVMIDDLE;
-				text_style.font = SONG_FONT_16;
-				text_style.font_color = MMI_BLACK_COLOR;
+				text_style.font = DP_FONT_16;
+				text_style.font_color = GUI_RGB2RGB565(80, 162, 254);
 
 				if(is_autodisplay_tip==1)
 				{
@@ -871,7 +845,7 @@ LOCAL void openNextCh()
 		newWords_ex=newWords;
 		newWords=PNULL;
 		sprintf(json,"{\"cardId\":\"%s\",\"bookId\":\"%s\",\"sectionId\":\"%s\",\"word\":\"%s\"}",
-					BASE_DEVICE_IMEI,books[pageInfo->bookIdx+dsl_word_main_display_idx*DSL_WORD_MAIN_DISPLAY_NUM]->id, chapters[pageInfo->chapterIdx]->id,newWords_ex);
+					BASE_DEVICE_IMEI,books[pageInfo->bookIdx]->id, chapters[pageInfo->chapterIdx]->id,newWords_ex);
 		sprintf(url, "%s%s", BASE_URL_PATH, "v1/card/word/collect");
 		MMIZDT_HTTP_AppSend(FALSE, url, json, strlen(json), 1000, 0, 0, 0, 0, 0, parseNewWordResponse);
 	}
@@ -948,7 +922,7 @@ LOCAL void loadLocalWordMp3(int position)
 }
 
 LOCAL void LoadWordInfo(int position) {
-    GUI_RECT_T uk_rect = {5, 36, 125, 52};
+    GUI_RECT_T uk_rect = {5, 36, 125, 58};
 	MMI_STRING_T text = {0, };
 	MMI_STRING_T text_en = {0};
 	MMI_STRING_T text_word = {0};
@@ -975,35 +949,33 @@ LOCAL void LoadWordInfo(int position) {
 	text_en.wstr_len = MMIAPICOM_Wstrlen(wstr_uk);
 	text_en.wstr_ptr = wstr_uk;
 	GUILABEL_SetText(MMI_ZMT_WORD_MSG_SP1_ID, &text_en, FALSE);
-	text_width_piex=GUI_CalculateStringPiexlNum(text_en.wstr_ptr, text_en.wstr_len, SONG_FONT_16, 1);
+	text_width_piex=GUI_CalculateStringPiexlNum(text_en.wstr_ptr, text_en.wstr_len, DP_FONT_16, 1);
 
 	if(text_width_piex>100)
 	{
 		GUILABEL_SetVisible(MMI_ZMT_WORD_MSG_SP1_ID,FALSE,FALSE);
-		text_width_piex=GUI_CalculateStringPiexlNum(text_word.wstr_ptr, text_word.wstr_len, SONG_FONT_20, 1);
+		text_width_piex=GUI_CalculateStringPiexlNum(text_word.wstr_ptr, text_word.wstr_len, DP_FONT_20, 1);
 		if(text_width_piex>100)
 		{
 			GUIBUTTON_SetVisible(MMI_ZMT_WORD_MSG_SP1_BTN_ID,FALSE,FALSE);
 		}else{
 			GUIBUTTON_SetVisible(MMI_ZMT_WORD_MSG_SP1_BTN_ID,TRUE,FALSE);
 			uk_rect.left = text_width_piex + 10;
-			uk_rect.right = uk_rect.left + 20;
+			uk_rect.right = uk_rect.left + 30;
 			GUIBUTTON_SetRect(MMI_ZMT_WORD_MSG_SP1_BTN_ID, &uk_rect);
-			//LayoutItem(MMI_ZMT_WORD_MSG_SP1_BTN_ID,  text_width_piex+30,  text_width_piex+70, 62, 106);
 			GUIBUTTON_SetCallBackFunc(MMI_ZMT_WORD_MSG_SP1_BTN_ID,PlayWordUkSound);
 		}
-		LCD_DrawHLine(&lcd_dev_info, word_uk_rect.left, uk_rect.bottom+5, word_uk_rect.right, MMI_BLACK_COLOR);
+		LCD_DrawHLine(&lcd_dev_info, word_uk_rect.left, uk_rect.bottom+5, word_uk_rect.right, MMI_WHITE_COLOR);
 	}
 	else
 	{
 		GUILABEL_SetVisible(MMI_ZMT_WORD_MSG_SP1_ID,TRUE,FALSE);
 		GUIBUTTON_SetVisible(MMI_ZMT_WORD_MSG_SP1_BTN_ID,TRUE,FALSE);
-		//LayoutItem(MMI_ZMT_WORD_MSG_SP1_BTN_ID,  text_width_piex+24,  text_width_piex+64, 94, 134);
 		uk_rect.left = text_width_piex + 10;
-		uk_rect.right = uk_rect.left + 20;
+		uk_rect.right = uk_rect.left + 30;
 		GUIBUTTON_SetRect(MMI_ZMT_WORD_MSG_SP1_BTN_ID, &uk_rect);
 		GUIBUTTON_SetCallBackFunc(MMI_ZMT_WORD_MSG_SP1_BTN_ID,PlayWordUkSound);
-		LCD_DrawHLine(&lcd_dev_info, word_uk_rect.left, uk_rect.bottom+5, word_uk_rect.right, MMI_BLACK_COLOR);
+		LCD_DrawHLine(&lcd_dev_info, word_uk_rect.left, uk_rect.bottom+5, word_uk_rect.right, MMI_WHITE_COLOR);
 	}
 
 	//单词信息
@@ -1050,26 +1022,29 @@ LOCAL MMI_RESULT_E HandleWordCardWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg
 		case MSG_OPEN_WINDOW: 
 		{
 			GUI_FONT_ALL_T font = {0};
-			GUI_RECT_T title_rect = {0, 0, MMI_MAINSCREEN_WIDTH-40, WORD_CARD_LINE_HIGHT};
-			GUI_FONT_T text_font = SONG_FONT_16;
-			GUI_COLOR_T text_color = MMI_BLACK_COLOR;
+			GUI_RECT_T title_rect = {0, 0, MMI_MAINSCREEN_WIDTH-WORD_CARD_LINE_WIDTH, WORD_CARD_LINE_HIGHT};
+			GUI_FONT_T text_font = DP_FONT_16;
+			GUI_COLOR_T text_color = MMI_WHITE_COLOR;
+			GUI_BG_T bg = {0};
             
-			font.font = SONG_FONT_24;
-			font.color = MMI_BLACK_COLOR;
+			font.font = DP_FONT_18;
+			font.color = MMI_WHITE_COLOR;
 
-			GUIBUTTON_SetRect(MMI_ZMT_WORD_LABEL_TITLE_ID, &word_title_rect);
+			GUIBUTTON_SetRect(MMI_ZMT_WORD_LABEL_TITLE_ID, &title_rect);
 			GUIBUTTON_SetFont(MMI_ZMT_WORD_LABEL_TITLE_ID, &font);
 			GUIBUTTON_SetTextAlign(MMI_ZMT_WORD_LABEL_TITLE_ID,ALIGN_LVMIDDLE);
 			GUIBUTTON_SetCallBackFunc(MMI_ZMT_WORD_LABEL_TITLE_ID,closeWordCardWin);
 
-			GUILABEL_SetRect(MMI_ZMT_WORD_LABEL_MESSAGE_ID, &word_msg_rect, FALSE);
-
-			title_rect.left = word_title_rect.right;
+			GUIBUTTON_SetRect(MMI_ZMT_WORD_LABEL_MESSAGE_ID, &word_msg_rect);
+			InitButton(MMI_ZMT_WORD_LABEL_MESSAGE_ID);
+			
+			font.font = DP_FONT_16;
+			title_rect.left = title_rect.right;
 			title_rect.right = MMI_MAINSCREEN_WIDTH;
 			GUILABEL_SetRect(MMI_ZMT_WORD_LABEL_NUM_ID, &title_rect, FALSE);
-			GUILABEL_SetFont(MMI_ZMT_WORD_LABEL_NUM_ID, SONG_FONT_16,MMI_BLACK_COLOR);
-			GUILABEL_SetFont(MMI_ZMT_WORD_MSG_SP1_ID, SONG_FONT_16,MMI_BLACK_COLOR);
-			GUILABEL_SetFont(MMI_ZMT_WORD_MSG_LABEL_ID, SONG_FONT_20,MMI_BLACK_COLOR);
+			GUILABEL_SetFont(MMI_ZMT_WORD_LABEL_NUM_ID, DP_FONT_16,MMI_WHITE_COLOR);
+			GUILABEL_SetFont(MMI_ZMT_WORD_MSG_SP1_ID, DP_FONT_16,MMI_WHITE_COLOR);
+			GUILABEL_SetFont(MMI_ZMT_WORD_MSG_LABEL_ID, DP_FONT_20,MMI_WHITE_COLOR);
 
 			//单词信息
 			GUITEXT_SetRect(MMI_ZMT_WORD_INFO_TEXT_ID, &word_text_rect);
@@ -1078,8 +1053,11 @@ LOCAL MMI_RESULT_E HandleWordCardWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg
 			GUITEXT_SetHandleTpMsg(FALSE, MMI_ZMT_WORD_INFO_TEXT_ID);
 			GUITEXT_SetClipboardEnabled(MMI_ZMT_WORD_INFO_TEXT_ID,FALSE);
 			GUITEXT_IsSlide(MMI_ZMT_WORD_INFO_TEXT_ID,FALSE);
+			bg.bg_type = GUI_BG_COLOR;
+			bg.color = GUI_RGB2RGB565(80, 162, 254);
+			GUITEXT_SetBg(MMI_ZMT_WORD_INFO_TEXT_ID, &bg);
 
-			LayoutItem(MMI_ZMT_WORD_BUTTON_REFRESH, 72, 168, 317, 346);
+			LayoutItem(MMI_ZMT_WORD_BUTTON_REFRESH, word_tip_rect);
 			InitButton(MMI_ZMT_WORD_BUTTON_REFRESH);
 			GUIBUTTON_SetTextId(MMI_ZMT_WORD_BUTTON_REFRESH, WORD_REFRESH);
 			GUIBUTTON_SetCallBackFunc(MMI_ZMT_WORD_BUTTON_REFRESH,wordRefresh);
@@ -1133,11 +1111,11 @@ LOCAL MMI_RESULT_E HandleWordCardWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg
 			int16 wstr[100] = {0};
 			GUI_LCD_DEV_INFO lcd_dev_info = {GUI_MAIN_LCD_ID,GUI_BLOCK_MAIN};
             
-			GUI_FillRect(&lcd_dev_info,word_win_rect,MMI_WHITE_COLOR);
+			GUI_FillRect(&lcd_dev_info, word_win_rect, GUI_RGB2RGB565(80, 162, 254));
+			GUI_FillRect(&lcd_dev_info, word_title_rect, GUI_RGB2RGB565(108, 181, 255));
 
 			GUIBUTTON_SetVisible(MMI_ZMT_WORD_BUTTON_REFRESH,FALSE,FALSE);
-
-			GUILABEL_SetFont(MMI_ZMT_WORD_LABEL_MESSAGE_ID, SONG_FONT_16,MMI_BLACK_COLOR);              
+            
 			if(is_new_word)
 			{
 				GUIBUTTON_SetTextId(MMI_ZMT_WORD_LABEL_TITLE_ID, WORD_EXERCISE);
@@ -1157,20 +1135,20 @@ LOCAL MMI_RESULT_E HandleWordCardWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg
 			GUIBUTTON_SetVisible(MMI_ZMT_WORD_BUTTON_DELETE_ID,FALSE,FALSE);
 			GUILABEL_SetVisible(MMI_ZMT_WORD_LABEL_NUM_ID,FALSE,FALSE);
 			
-			GUILABEL_SetVisible(MMI_ZMT_WORD_LABEL_MESSAGE_ID,TRUE,TRUE);
-			GUILABEL_SetTextById(MMI_ZMT_WORD_LABEL_MESSAGE_ID, WORD_LOADING, FALSE);
+			GUIBUTTON_SetVisible(MMI_ZMT_WORD_LABEL_MESSAGE_ID,TRUE,TRUE);
+			GUIBUTTON_SetTextId(MMI_ZMT_WORD_LABEL_MESSAGE_ID, WORD_LOADING);
 			if(pageInfo->total==-1)
 			{
-				GUILABEL_SetTextById(MMI_ZMT_WORD_LABEL_MESSAGE_ID, WORD_LOADING_FAILED,FALSE);
+				GUIBUTTON_SetTextId(MMI_ZMT_WORD_LABEL_MESSAGE_ID, WORD_LOADING_FAILED);
 				GUIBUTTON_SetVisible(MMI_ZMT_WORD_BUTTON_REFRESH,TRUE,TRUE);
 			}else if(pageInfo->total==-2)
 			{
 				if(is_new_word)
 				{
-					GUILABEL_SetTextById(MMI_ZMT_WORD_LABEL_MESSAGE_ID, NEW_WORD_BOOK_NO_DATA,FALSE);
+					GUIBUTTON_SetTextId(MMI_ZMT_WORD_LABEL_MESSAGE_ID, NEW_WORD_BOOK_NO_DATA);
 				}else
 				{
-					GUILABEL_SetTextById(MMI_ZMT_WORD_LABEL_MESSAGE_ID, WORD_NO_DATA,FALSE);
+					GUIBUTTON_SetTextId(MMI_ZMT_WORD_LABEL_MESSAGE_ID, WORD_NO_DATA);
 				}
 			}else if(pageInfo->total>0)
 			{
@@ -1180,7 +1158,7 @@ LOCAL MMI_RESULT_E HandleWordCardWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg
 					GUILABEL_SetVisible(MMI_ZMT_WORD_LABEL_NUM_ID,TRUE,TRUE);
 					if (words[pageInfo->curIdx] != PNULL&&pageInfo->curPageNum>0) 
 					{
-						GUILABEL_SetVisible(MMI_ZMT_WORD_LABEL_MESSAGE_ID,FALSE,TRUE);
+						GUIBUTTON_SetVisible(MMI_ZMT_WORD_LABEL_MESSAGE_ID,FALSE,TRUE);
 						
 						LoadWordInfo(pageInfo->curIdx);
 
@@ -1203,6 +1181,9 @@ LOCAL MMI_RESULT_E HandleWordCardWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg
 							GUIBUTTON_SetVisible(MMI_ZMT_WORD_BUTTON_DELETE_ID,TRUE,TRUE);							
 						}else
 						{
+							GUI_FONT_ALL_T font = {0};
+							GUI_BG_T button_bg = {0};
+							GUI_BORDER_T btn_border = {1, MMI_WHITE_COLOR, GUI_BORDER_ROUNDED};
 							GUIBUTTON_SetRect(MMI_ZMT_WORD_BUTTON_OK_ID, &word_left_rect);
 							InitButton(MMI_ZMT_WORD_BUTTON_OK_ID);
 							GUIBUTTON_SetRect(MMI_ZMT_WORD_BUTTON_CACEL_ID, &word_right_rect);
@@ -1220,12 +1201,15 @@ LOCAL MMI_RESULT_E HandleWordCardWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg
 				{
 					if(is_new_word)
 					{
-						GUILABEL_SetTextById(MMI_ZMT_WORD_LABEL_MESSAGE_ID, NEW_WORD_BOOK_FINISH, TRUE);
+						GUIBUTTON_SetTextId(MMI_ZMT_WORD_LABEL_MESSAGE_ID, NEW_WORD_BOOK_FINISH);
 					}else
 					{
 						if(chapters[pageInfo->chapterIdx+1]!=PNULL)
 						{ 
-							GUILABEL_SetTextById(MMI_ZMT_WORD_LABEL_MESSAGE_ID, WORD_FINISH, TRUE);
+							GUI_FONT_ALL_T font = {0};
+							GUI_BG_T button_bg = {0};
+							GUI_BORDER_T btn_border = {1, MMI_WHITE_COLOR, GUI_BORDER_ROUNDED};
+							GUIBUTTON_SetTextId(MMI_ZMT_WORD_LABEL_MESSAGE_ID, WORD_FINISH);
 							GUIBUTTON_SetRect(MMI_ZMT_WORD_BUTTON_OK_ID, &word_left_rect);
 							InitButton(MMI_ZMT_WORD_BUTTON_OK_ID);
 							GUIBUTTON_SetRect(MMI_ZMT_WORD_BUTTON_CACEL_ID, &word_right_rect);
@@ -1239,8 +1223,8 @@ LOCAL MMI_RESULT_E HandleWordCardWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg
 						}
 						else
 						{
-							GUILABEL_SetTextById(MMI_ZMT_WORD_LABEL_MESSAGE_ID, WORD_BOOK_FINISH, TRUE);
-							LayoutItem(MMI_ZMT_WORD_BUTTON_OK_ID, 72, 168, 317, 346);
+							GUIBUTTON_SetTextId(MMI_ZMT_WORD_LABEL_MESSAGE_ID, WORD_BOOK_FINISH);
+							LayoutItem(MMI_ZMT_WORD_BUTTON_OK_ID, word_tip_rect);
 							InitButton(MMI_ZMT_WORD_BUTTON_OK_ID);
 							GUIBUTTON_SetTextId(MMI_ZMT_WORD_BUTTON_OK_ID, WORD_BACK_CH);
 							GUIBUTTON_SetVisible(MMI_ZMT_WORD_BUTTON_OK_ID,TRUE,TRUE);
@@ -1268,7 +1252,7 @@ LOCAL MMI_RESULT_E HandleWordCardWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg
 				LCD_DrawRect(&tip_layer, word_tip_rect, MMI_BLACK_COLOR);
 
 				text_style.align = ALIGN_HVMIDDLE;
-				text_style.font = SONG_FONT_16;
+				text_style.font = DP_FONT_24;
 				text_style.font_color = MMI_BLACK_COLOR;
 
 				if(is_display_tip==1)
@@ -1958,7 +1942,7 @@ LOCAL MMI_RESULT_E closeWordCardWin() {
 		newWords_ex=newWords;
 		newWords=PNULL;
 		sprintf(json,"{\"cardId\":\"%s\",\"bookId\":\"%s\",\"sectionId\":\"%s\",\"word\":\"%s\"}",
-				BASE_DEVICE_IMEI,books[pageInfo->bookIdx+dsl_word_main_display_idx*DSL_WORD_MAIN_DISPLAY_NUM]->id, chapters[pageInfo->chapterIdx]->id,newWords_ex);
+				BASE_DEVICE_IMEI,books[pageInfo->bookIdx]->id, chapters[pageInfo->chapterIdx]->id,newWords_ex);
 		sprintf(url, "%s%s", BASE_URL_PATH, "v1/card/word/collect");
 		MMIZDT_HTTP_AppSend(FALSE, url, json, strlen(json), 1000, 0, 0, 0, 0, 0, parseNewWordResponse);
 	}
@@ -2178,7 +2162,7 @@ LOCAL void parseNewWordResponse(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32
 			char json[350]={0};
 			newWordsReNum++;
 			sprintf(json,"{\"cardId\":\"%s\",\"bookId\":\"%s\",\"sectionId\":\"%s\",\"word\":\"%s\"}",
-						BASE_DEVICE_IMEI,books[pageInfo->bookIdx+dsl_word_main_display_idx*DSL_WORD_MAIN_DISPLAY_NUM]->id, chapters[pageInfo->chapterIdx]->id,newWords_ex);
+						BASE_DEVICE_IMEI,books[pageInfo->bookIdx]->id, chapters[pageInfo->chapterIdx]->id,newWords_ex);
 			sprintf(url, "%s%s", BASE_URL_PATH, "v1/card/word/collect");
 			MMIZDT_HTTP_AppSend(FALSE, url, json, strlen(json), 1000, 0, 0, 0, 0, 0, parseNewWordResponse);
 		}
@@ -2189,10 +2173,10 @@ LOCAL void requestWordInfo() {
   char url[255]={0};
   if(is_new_word)
   {
-  	sprintf(url,"v1/card/word/collect?cardId=%s&bookId=%s&sectionId=%s&F_page=%d&F_pagesize=%d",BASE_DEVICE_IMEI,books[pageInfo->bookIdx+dsl_word_main_display_idx*DSL_WORD_MAIN_DISPLAY_NUM]->id, chapters[pageInfo->chapterIdx]->id, pageInfo->curPage,MAX_WORD_NUM);
+  	sprintf(url,"v1/card/word/collect?cardId=%s&bookId=%s&sectionId=%s&F_page=%d&F_pagesize=%d",BASE_DEVICE_IMEI,books[pageInfo->bookIdx]->id, chapters[pageInfo->chapterIdx]->id, pageInfo->curPage,MAX_WORD_NUM);
   }else
   {
-	sprintf(url,"v1/card/book/wordList?F_book_id=%s&F_section_id=%s&F_page=%d&F_limit=%d",books[pageInfo->bookIdx+dsl_word_main_display_idx*DSL_WORD_MAIN_DISPLAY_NUM]->id, chapters[pageInfo->chapterIdx]->id, pageInfo->curPage,MAX_WORD_NUM);
+	sprintf(url,"v1/card/book/wordList?F_book_id=%s&F_section_id=%s&F_page=%d&F_limit=%d",books[pageInfo->bookIdx+dsl_word_main_display_idx]->id, chapters[pageInfo->chapterIdx]->id, pageInfo->curPage,MAX_WORD_NUM);
   }
   SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
   request_http_win_word_idx++;
@@ -2230,7 +2214,7 @@ LOCAL MMI_RESULT_E setWordToNew() {
 			newWords_ex=newWords;
 			newWords=PNULL;
 			sprintf(json,"{\"cardId\":\"%s\",\"bookId\":\"%s\",\"sectionId\":\"%s\",\"word\":\"%s\"}",
-						BASE_DEVICE_IMEI,books[pageInfo->bookIdx+dsl_word_main_display_idx*DSL_WORD_MAIN_DISPLAY_NUM]->id, chapters[pageInfo->chapterIdx]->id,newWords_ex);
+						BASE_DEVICE_IMEI,books[pageInfo->bookIdx]->id, chapters[pageInfo->chapterIdx]->id,newWords_ex);
 			sprintf(url, "%s%s", BASE_URL_PATH, "v1/card/word/collect");
 			SCI_TRACE_LOW("%s: json = %s", __FUNCTION__, json);
 			SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
@@ -2325,7 +2309,7 @@ LOCAL MMI_RESULT_E deleteNewWordCard() {
 	MMK_PostMsg(MMI_WORD_CARD_WIN_ID, MSG_FULL_PAINT, PNULL, 0);
 
 	sprintf(json,"{\"cardId\":\"%s\",\"bookId\":\"%s\",\"sectionId\":\"%s\",\"word\":\"%s\"}",
-				BASE_DEVICE_IMEI,books[pageInfo->bookIdx+dsl_word_main_display_idx*DSL_WORD_MAIN_DISPLAY_NUM]->id, chapters[pageInfo->chapterIdx]->id,words[pageInfo->curIdx]->word);
+				BASE_DEVICE_IMEI,books[pageInfo->bookIdx]->id, chapters[pageInfo->chapterIdx]->id,words[pageInfo->curIdx]->word);
 	sprintf(url, "%s%s", BASE_URL_PATH, "v1/card/word/collect/delete");
 	MMIZDT_HTTP_AppSend(FALSE, url, json, strlen(json), 1000, 0, 0, 0, 0, 0, parseNewWordDeleteResponse);
 
@@ -2446,6 +2430,7 @@ LOCAL void setNumberText(MMI_CTRL_ID_T ctrl_id,int cur,int count) {
 	text.wstr_ptr = wstr;
 	text.wstr_len = MMIAPICOM_Wstrlen(wstr);
 	GUILABEL_SetText(ctrl_id, &text, TRUE);
+	GUILABEL_SetAlign(ctrl_id, GUILABEL_ALIGN_MIDDLE);
 }
 
 LOCAL void addChapterInfo(uint8 position, char *name, int id,char * path) {
@@ -2526,46 +2511,6 @@ LOCAL parseMp3Response(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id)
 	{
 		if(words[i]!=PNULL)
 		{
-			/*if(words[i]->us_audio_request_idx==idx)
-			{
-				if (is_ok) {
-					if(Rcv_len>0&&pRcv!=PNULL)
-					{
-						words[i]->us_audio_data_len=Rcv_len;
-						if(words[i]->us_audio_data!=PNULL)
-						{
-							SCI_FREE(words[i]->us_audio_data);
-							words[i]->us_audio_data=PNULL;
-							
-						}
-						words[i]->us_audio_data = SCI_ALLOCA(Rcv_len);
-						SCI_MEMSET(words[i]->us_audio_data, 0, Rcv_len);
-						SCI_MEMCPY(words[i]->us_audio_data, pRcv, Rcv_len);
-					}
-					else
-					{
-						words[i]->us_audio_data_len=-2;
-					}
-				}
-				else
-				{
-					int size=0;
-					words[i]->us_audio_data_len=-1;
-					size=strlen(data->data_url)+1;
-					if(words[i]->us_audio_data!=PNULL)
-					{
-						SCI_FREE(words[i]->us_audio_data);
-						words[i]->us_audio_data=PNULL;
-						
-					}
-					words[i]->us_audio_data = SCI_ALLOCA(size);
-					SCI_MEMSET(words[i]->us_audio_data, 0, size);
-					SCI_MEMCPY(words[i]->us_audio_data, data->data_url, size);
-				}
-				SCI_TRACE_LOW("%s i %d us len %d", __FUNCTION__,i,words[i]->us_audio_data_len);
-				break;
-			}*/
-			//if(words[i]->uk_audio_request_idx==idx)
 			{
 				if (is_ok) {
 					if(Rcv_len>0&&pRcv!=PNULL)
@@ -2580,6 +2525,7 @@ LOCAL parseMp3Response(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id)
 						words[i]->uk_audio_data = SCI_ALLOCA(Rcv_len);
 						SCI_MEMSET(words[i]->uk_audio_data, 0, Rcv_len);
 						SCI_MEMCPY(words[i]->uk_audio_data, pRcv, Rcv_len);
+						SCI_TRACE_LOW("%s: pageInfo->curIdx = %d", __FUNCTION__, pageInfo->curIdx);
 						if(is_autoplay&&pageInfo->curIdx==i)
 						{
 							PlayWordUkSound();
@@ -2590,20 +2536,6 @@ LOCAL parseMp3Response(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id)
 						words[i]->uk_audio_data_len=-2;
 					}
 				}
-				/*else
-				{
-					int size=0;
-					words[i]->uk_audio_data_len=-1;
-					size=strlen(data->data_url)+1;
-					if(words[i]->uk_audio_data!=PNULL)
-					{
-						SCI_FREE(words[i]->uk_audio_data);
-						words[i]->uk_audio_data=PNULL;
-					}
-					words[i]->uk_audio_data = SCI_ALLOCA(size);
-					SCI_MEMSET(words[i]->uk_audio_data, 0, size);
-					SCI_MEMCPY(words[i]->uk_audio_data, data->data_url, size);
-				}*/
 				SCI_TRACE_LOW("%s i %d uk len %d", __FUNCTION__,i,words[i]->uk_audio_data_len);
 				break;
 			}
@@ -2675,12 +2607,8 @@ LOCAL void addWordInfo(uint8 position, char *word,char *sentence,char *sentence_
 		SCI_MEMCPY(words[position]->us, us, size);
 		if(us_sound!=PNULL)
 		{
-			//words[position]->us_audio_request_idx=++mp3_idx;
-			//#ifdef WIN32
-				StrReplace(us_sound,"https","http");
-			//#endif
+                    StrReplace(us_sound,"https","http");
 			MMIZDT_HTTP_AppSend(TRUE, us_sound, PNULL, 0, 1000, 0, 0, 8000, 0, 0, parseMp3Response);
-			//StartAbslutoUrlHttpRequest(us_sound, 8000, words[position]->us_audio_request_idx, parseMp3Response);
 			words[position]->uk_audio_data_len=-1;
 			size=strlen(us_sound);
 			words[position]->uk_audio_data = SCI_ALLOCA(size+1);
@@ -2704,13 +2632,8 @@ LOCAL void addWordInfo(uint8 position, char *word,char *sentence,char *sentence_
 		SCI_MEMCPY(words[position]->uk, uk, size);
 		if(uk_sound!=PNULL)
 		{
-			//words[position]->uk_audio_request_idx=++mp3_idx;
-			//#ifdef WIN32
-				StrReplace(uk_sound,"https","http");
-			//#endif
+			StrReplace(uk_sound,"https","http");
 			MMIZDT_HTTP_AppSend(TRUE, uk_sound, PNULL, 0, 1000, 0, 0, 8000, 0, 0, parseMp3Response);
-			//StartAbslutoUrlHttpRequest(uk_sound, 8000, words[position]->uk_audio_request_idx, parseMp3Response);
-
 			words[position]->uk_audio_data_len=-1;
 			size=strlen(uk_sound);
 			words[position]->uk_audio_data = SCI_ALLOCA(size+1);
@@ -2905,7 +2828,7 @@ LOCAL MMI_RESULT_E HandlePopupWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E msg_i
 				border.type =  GUI_BORDER_ROUNDED;
 
 				text_style.align = ALIGN_HVMIDDLE;
-				text_style.font = SONG_FONT_16;
+				text_style.font = DP_FONT_16;
 				text_style.font_color = MMI_BLACK_COLOR;
 			
 				GUI_FillRect(&lcd_dev_info,rect,MMI_WHITE_COLOR);
