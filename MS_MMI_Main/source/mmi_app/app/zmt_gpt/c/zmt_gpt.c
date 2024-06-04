@@ -326,7 +326,7 @@ LOCAL void ZmtGpt_DisplayList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
         GUILIST_SetNeedPrgbarBlock(ctrl_id,FALSE);
 
         GUILIST_SetBgColor(ctrl_id,MMI_BLACK_COLOR);
-        GUILIST_SetTextFont(ctrl_id, SONG_FONT_20, MMI_WHITE_COLOR);
+        GUILIST_SetTextFont(ctrl_id, DP_FONT_20, MMI_WHITE_COLOR);
 
         GUILIST_AppendItem(ctrl_id, &item_t);
     }
@@ -342,7 +342,7 @@ LOCAL void ZmtGpt_FULL_PAINT(MMI_WIN_ID_T win_id)
     GUI_FillRect(&lcd_dev_info, zmt_gpt_win_rect, MMI_BLACK_COLOR);
 
     text_style.align = ALIGN_HVMIDDLE;
-    text_style.font = SONG_FONT_20;
+    text_style.font = DP_FONT_20;
     text_style.font_color = MMI_WHITE_COLOR;
     MMIRES_GetText(ZMT_CHAT_GPT, win_id, &text_string);
     GUISTR_DrawTextToLCDInRect(

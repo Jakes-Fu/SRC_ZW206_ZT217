@@ -448,7 +448,7 @@ LOCAL void ZmtDialStorePreview_FULL_PAINT(MMI_WIN_ID_T win_id)
     GUI_FillRect(&lcd_dev_info, zmt_dial_win_rect, MMI_WHITE_COLOR);
 
     text_style.align = ALIGN_HVMIDDLE;
-    text_style.font = SONG_FONT_20;
+    text_style.font = DP_FONT_20;
     text_style.font_color = MMI_BLACK_COLOR;
 #ifndef WIN32
     GUI_UTF8ToWstr(&dial_name, 50, dial_store_list[dial_store_cur_idx]->name_chn, strlen(dial_store_list[dial_store_cur_idx]->name_chn));
@@ -501,7 +501,7 @@ LOCAL void ZmtDialStorePreview_FULL_PAINT(MMI_WIN_ID_T win_id)
         return;
     }
     
-    text_style.font = SONG_FONT_16;
+    text_style.font = DP_FONT_16;
     if(ZmtDial_IsExistPanel(dial_store_list[dial_store_cur_idx]->name))
     {
         zmt_is_need_pay = FALSE;
@@ -764,7 +764,7 @@ LOCAL void ZmtDialStore_DisplayDialList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_
         GUILIST_SetNeedPrgbarBlock(ctrl_id,FALSE);
 
         GUILIST_SetBgColor(ctrl_id,MMI_WHITE_COLOR);
-        GUILIST_SetTextFont(ctrl_id, SONG_FONT_16, MMI_BLACK_COLOR);
+        GUILIST_SetTextFont(ctrl_id, DP_FONT_16, MMI_BLACK_COLOR);
 
         GUILIST_AppendItem(ctrl_id, &item_t);
     }
@@ -780,7 +780,7 @@ LOCAL void ZmtDialStore_FULL_PAINT(MMI_WIN_ID_T win_id)
     GUI_FillRect(&lcd_dev_info, zmt_dial_win_rect, MMI_BLACK_COLOR);
 
     text_style.align = ALIGN_HVMIDDLE;
-    text_style.font = SONG_FONT_20;
+    text_style.font = DP_FONT_20;
     text_style.font_color = MMI_WHITE_COLOR;
     MMIRES_GetText(ZMT_DIAL_STORE, win_id, &text_string);
     GUISTR_DrawTextToLCDInRect(
@@ -1001,7 +1001,7 @@ LOCAL void ZmtDialStore_OPEN_WINDOW(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
     ctrl_bg.color   = MMI_BLACK_COLOR;
     GUIICONLIST_SetBg(ctrl_id, &ctrl_bg);
     font_all.color = MMI_WHITE_COLOR;
-    font_all.font = SONG_FONT_16;
+    font_all.font = DP_FONT_16;
     GUIICONLIST_SetIconListTextInfo(ctrl_id, font_all);
     GUIICONLIST_SetIconItemSpace(ctrl_id,margin_space);
     GUIICONLIST_SetRect(ctrl_id,&rect);

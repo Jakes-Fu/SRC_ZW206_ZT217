@@ -1421,23 +1421,23 @@ LOCAL MMI_RESULT_E HandleMathCountWinMsg(
                 
 				GUIBUTTON_SetRect(MMI_MATH_COUNT_SET_TIME_ADD_BTN,&set_time_add_btn_rect);
 				GUIBUTTON_SetCallBackFunc(MMI_MATH_COUNT_SET_TIME_ADD_BTN,SetTimeAdd);
-                GUIBUTTON_SetTextId(MMI_MATH_COUNT_SET_TIME_ADD_BTN, MATH_COUNT_ADD_SIGNAL);
-                GUIBUTTON_SetFont(MMI_MATH_COUNT_SET_TIME_ADD_BTN, &font_all);
+                //GUIBUTTON_SetTextId(MMI_MATH_COUNT_SET_TIME_ADD_BTN, MATH_COUNT_ADD_SIGNAL);
+                //GUIBUTTON_SetFont(MMI_MATH_COUNT_SET_TIME_ADD_BTN, &font_all);
 				
 				GUIBUTTON_SetRect(MMI_MATH_COUNT_SET_TIME_REDUCE_BTN,&set_time_reduce_btn_rect);
 				GUIBUTTON_SetCallBackFunc(MMI_MATH_COUNT_SET_TIME_REDUCE_BTN,SetTimeReduce);
-                GUIBUTTON_SetTextId(MMI_MATH_COUNT_SET_TIME_REDUCE_BTN, MATH_COUNT_REDUCE_SIGNAL);
-                GUIBUTTON_SetFont(MMI_MATH_COUNT_SET_TIME_REDUCE_BTN, &font_all);
+                //GUIBUTTON_SetTextId(MMI_MATH_COUNT_SET_TIME_REDUCE_BTN, MATH_COUNT_REDUCE_SIGNAL);
+                //GUIBUTTON_SetFont(MMI_MATH_COUNT_SET_TIME_REDUCE_BTN, &font_all);
 
 				GUIBUTTON_SetRect(MMI_MATH_COUNT_SET_RANGE_ADD_BTN,&set_question_range_add_btn_rect);
 				GUIBUTTON_SetCallBackFunc(MMI_MATH_COUNT_SET_RANGE_ADD_BTN,SetRangeAdd);
-                GUIBUTTON_SetTextId(MMI_MATH_COUNT_SET_RANGE_ADD_BTN, MATH_COUNT_ADD_SIGNAL);
-                GUIBUTTON_SetFont(MMI_MATH_COUNT_SET_RANGE_ADD_BTN, &font_all);
+                //GUIBUTTON_SetTextId(MMI_MATH_COUNT_SET_RANGE_ADD_BTN, MATH_COUNT_ADD_SIGNAL);
+                //GUIBUTTON_SetFont(MMI_MATH_COUNT_SET_RANGE_ADD_BTN, &font_all);
 
 				GUIBUTTON_SetRect(MMI_MATH_COUNT_SET_RANGE_REDUCE_BTN,&set_question_range_reduce_btn_rect);
 				GUIBUTTON_SetCallBackFunc(MMI_MATH_COUNT_SET_RANGE_REDUCE_BTN,SetRangeReduce);
-                GUIBUTTON_SetTextId(MMI_MATH_COUNT_SET_RANGE_REDUCE_BTN, MATH_COUNT_REDUCE_SIGNAL);
-                GUIBUTTON_SetFont(MMI_MATH_COUNT_SET_RANGE_REDUCE_BTN, &font_all);
+                //GUIBUTTON_SetTextId(MMI_MATH_COUNT_SET_RANGE_REDUCE_BTN, MATH_COUNT_REDUCE_SIGNAL);
+                //GUIBUTTON_SetFont(MMI_MATH_COUNT_SET_RANGE_REDUCE_BTN, &font_all);
 
                 text_style.font_color = math_count_button_color;
 				text_style.font = SONG_FONT_24;
@@ -1755,7 +1755,7 @@ LOCAL MMI_RESULT_E HandleMathCountWinMsg(
 		case MSG_KEYDOWN_RED:
 			break;
 		case MSG_KEYUP_RED:
-		case MSG_APP_CANCEL:
+		case MSG_KEYUP_CANCEL:
 			MMK_CloseWin(win_id);
 			break;
 		case MSG_TP_PRESS_DOWN:

@@ -1196,7 +1196,7 @@ PUBLIC void ZMT_DialPanelShow(MMI_WIN_ID_T win_id, char * watch_name)
     watch_dial = zmt_watch_dial;
     
     text_style.align = ALIGN_LVMIDDLE;
-    text_style.font = SONG_FONT_16;
+    text_style.font = DP_FONT_16;
     text_style.font_color = MMI_WHITE_COLOR;
 
     TM_GetSysTime(&sys_time);

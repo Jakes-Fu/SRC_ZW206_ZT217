@@ -641,7 +641,7 @@ LOCAL void ZmtGptKouYuTalk_DisplayList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_i
         #endif
         text_string.wstr_ptr = text_str;
         text_string.wstr_len = MMIAPICOM_Wstrlen(text_string.wstr_ptr);
-        line_num = GUI_CalculateStringLinesByPixelNum(200,text_string.wstr_ptr,text_string.wstr_len,SONG_FONT_16,0,TRUE);
+        line_num = GUI_CalculateStringLinesByPixelNum(200,text_string.wstr_ptr,text_string.wstr_len,DP_FONT_16,0,TRUE);
         SCI_TRACE_LOW("%s: line_num = %d", __FUNCTION__, line_num);
         if(!gpt_kouyu_talk_info[i]->is_user)
         {
@@ -722,7 +722,7 @@ LOCAL void ZmtGptKouYuTalk_DisplayList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_i
         GUILIST_SetNeedPrgbarBlock(ctrl_id,FALSE);
         
         GUILIST_SetBgColor(ctrl_id,MMI_BLACK_COLOR);
-        GUILIST_SetTextFont(ctrl_id, SONG_FONT_16, MMI_WHITE_COLOR);
+        GUILIST_SetTextFont(ctrl_id, DP_FONT_16, MMI_WHITE_COLOR);
 
         GUILIST_AppendItem(ctrl_id, &item_t);
     }
@@ -747,7 +747,7 @@ LOCAL void ZmtGptKouYuTalk_DisplayList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_i
         GUILIST_SetNeedPrgbarBlock(ctrl_id,FALSE);
         
         GUILIST_SetBgColor(ctrl_id,MMI_BLACK_COLOR);
-        GUILIST_SetTextFont(ctrl_id, SONG_FONT_16, MMI_WHITE_COLOR);
+        GUILIST_SetTextFont(ctrl_id, DP_FONT_16, MMI_WHITE_COLOR);
 
         GUILIST_AppendItem(ctrl_id, &item_t);
         GUILIST_SetCurItemIndex(ctrl_id, gpt_kouyu_talk_size);
@@ -772,7 +772,7 @@ LOCAL void  ZmtGptKouYuTalk_DispalyRecord(MMI_WIN_ID_T win_id, int record_type)
     UILAYER_AppendBltLayer(&append_layer);
 
     text_style.align = ALIGN_HVMIDDLE;
-    text_style.font = SONG_FONT_16;
+    text_style.font = DP_FONT_16;
     text_style.font_color = MMI_BLACK_COLOR;
     switch(record_type)
     {
@@ -895,7 +895,7 @@ LOCAL void  ZmtGptKouYuTalk_DispalyRecord(MMI_WIN_ID_T win_id, int record_type)
                 text_string.wstr_ptr = text;
                 text_string.wstr_len = MMIAPICOM_Wstrlen(text_string.wstr_ptr);
                 pixel_num = zmt_gpt_record_rect.right - zmt_gpt_record_rect.left;
-                line_num = GUI_CalculateStringLinesByPixelNum(pixel_num,text_string.wstr_ptr,text_string.wstr_len,SONG_FONT_16,0,TRUE);
+                line_num = GUI_CalculateStringLinesByPixelNum(pixel_num,text_string.wstr_ptr,text_string.wstr_len,DP_FONT_16,0,TRUE);
             }
             if(line_num > 0)
             {
@@ -1074,7 +1074,7 @@ LOCAL void ZmtGptKouYuTalk_ShowFormList(MMI_WIN_ID_T win_id)
     GUI_BG_T text_bg = {GUI_BG_COLOR, GUI_SHAPE_ROUNDED_RECT, 0, MMI_BLACK_COLOR, FALSE};
     GUIFORM_CHILD_WIDTH_T child_width = {0};
     GUI_COLOR_T font_color = MMI_WHITE_COLOR;
-    GUI_FONT_T font_size = SONG_FONT_16;
+    GUI_FONT_T font_size = DP_FONT_16;
     MMI_STRING_T text_string = {0};
     wchar text_str[1024] = {0};
     uint8 line_num = 0;
@@ -1152,7 +1152,7 @@ LOCAL void ZmtGptKouYuTalk_FULL_PAINT(MMI_WIN_ID_T win_id)
     GUI_FillRect(&lcd_dev_info, zmt_gpt_win_rect, MMI_BLACK_COLOR);
 
     text_style.align = ALIGN_HVMIDDLE;
-    text_style.font = SONG_FONT_20;
+    text_style.font = DP_FONT_20;
     text_style.font_color = MMI_WHITE_COLOR;
     MMIRES_GetText(ZMT_CHAT_GPT_KOUYU, win_id, &text_string);
     GUISTR_DrawTextToLCDInRect(
@@ -1546,7 +1546,7 @@ LOCAL void ZmtGptKouYuTopic_DisplayList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_
         GUILIST_SetNeedPrgbarBlock(ctrl_id,FALSE);
 
         GUILIST_SetBgColor(ctrl_id,MMI_BLACK_COLOR);
-        GUILIST_SetTextFont(ctrl_id, SONG_FONT_20, MMI_WHITE_COLOR);
+        GUILIST_SetTextFont(ctrl_id, DP_FONT_20, MMI_WHITE_COLOR);
 
         GUILIST_AppendItem(ctrl_id, &item_t);
     }
@@ -1562,7 +1562,7 @@ LOCAL void ZmtGptKouYuTopic_FULL_PAINT(MMI_WIN_ID_T win_id)
     GUI_FillRect(&lcd_dev_info, zmt_gpt_win_rect, MMI_BLACK_COLOR);
 
     text_style.align = ALIGN_HVMIDDLE;
-    text_style.font = SONG_FONT_20;
+    text_style.font = DP_FONT_20;
     text_style.font_color = MMI_WHITE_COLOR;
     MMIRES_GetText(ZMT_CHAT_GPT, win_id, &text_string);
     GUISTR_DrawTextToLCDInRect(
