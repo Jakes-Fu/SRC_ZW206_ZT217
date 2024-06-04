@@ -33,6 +33,9 @@
 #include "zmt_listening_image.h"
 #include "zmt_listening_text.h"
 #include "zmt_listening_nv.h"
+#ifdef MATH_COUNT_SUPPORT
+#include "math_count_image.h"
+#endif
 
 extern LISTENING_ALBUM_INFO * album_info;
 extern uint8 listening_downloading_index;
@@ -46,24 +49,25 @@ LISTENING_PALYER_PLAY_INFO player_play_info = {0};
 
 extern GUI_RECT_T listen_win_rect;
 extern GUI_RECT_T listen_title_rect;
-LOCAL GUI_RECT_T listening_pre_rect = {LISTEN_LINE_HIGHT, 1.8*LISTEN_LINE_HIGHT, 2*LISTEN_LINE_WIDTH, 3.2*LISTEN_LINE_HIGHT};
+LOCAL GUI_RECT_T listening_pre_rect = {0.8*LISTEN_LINE_WIDTH, 1.8*LISTEN_LINE_HIGHT, 1.8*LISTEN_LINE_WIDTH, 3.2*LISTEN_LINE_HIGHT};
 LOCAL GUI_RECT_T listening_play_rect = {2*LISTEN_LINE_WIDTH, LISTEN_LINE_HIGHT, 4*LISTEN_LINE_WIDTH, 4*LISTEN_LINE_HIGHT};
-LOCAL GUI_RECT_T listening_next_rect = {4*LISTEN_LINE_WIDTH ,1.8*LISTEN_LINE_HIGHT, 5*LISTEN_LINE_WIDTH, 3.2*LISTEN_LINE_HIGHT};
-LOCAL GUI_RECT_T listening_play_time_rect = {0, 4*LISTEN_LINE_HIGHT, LISTEN_LINE_WIDTH+5, 5*LISTEN_LINE_HIGHT};
-LOCAL GUI_RECT_T listening_dis_play_rect = {LISTEN_LINE_WIDTH+5, 4*LISTEN_LINE_HIGHT, 5*LISTEN_LINE_WIDTH-5, 5*LISTEN_LINE_HIGHT};
-LOCAL GUI_RECT_T listening_dis_total_rect = {LISTEN_LINE_WIDTH+5, 4*LISTEN_LINE_HIGHT, 5*LISTEN_LINE_WIDTH-5, 5*LISTEN_LINE_HIGHT};
-LOCAL GUI_RECT_T listening_total_rect = {5*LISTEN_LINE_WIDTH-5, 4*LISTEN_LINE_HIGHT, MMI_MAINSCREEN_WIDTH, 5*LISTEN_LINE_HIGHT};
-LOCAL GUI_RECT_T listening_lrc_rect = {2*LISTEN_LINE_WIDTH, 6*LISTEN_LINE_HIGHT, 4*LISTEN_LINE_WIDTH, 7*LISTEN_LINE_HIGHT};
+LOCAL GUI_RECT_T listening_next_rect = {4.2*LISTEN_LINE_WIDTH ,1.8*LISTEN_LINE_HIGHT, 5.2*LISTEN_LINE_WIDTH, 3.2*LISTEN_LINE_HIGHT};
+LOCAL GUI_RECT_T listening_play_time_rect = {0.5*LISTEN_LINE_WIDTH, 4*LISTEN_LINE_HIGHT, 2*LISTEN_LINE_WIDTH, 5*LISTEN_LINE_HIGHT};
+LOCAL GUI_RECT_T listening_dis_play_rect = {0.5*LISTEN_LINE_WIDTH, 4.9*LISTEN_LINE_HIGHT, 5.5*LISTEN_LINE_WIDTH, 5.3*LISTEN_LINE_HIGHT};
+LOCAL GUI_RECT_T listening_dis_total_rect = {0.5*LISTEN_LINE_WIDTH, 4.9*LISTEN_LINE_HIGHT, 5.5*LISTEN_LINE_WIDTH, 5.3*LISTEN_LINE_HIGHT};
+LOCAL GUI_RECT_T listening_total_rect = {5*LISTEN_LINE_WIDTH, 4*LISTEN_LINE_HIGHT, MMI_MAINSCREEN_WIDTH, 5*LISTEN_LINE_HIGHT};
+LOCAL GUI_RECT_T listening_lrc_rect = {1.5*LISTEN_LINE_WIDTH, 6*LISTEN_LINE_HIGHT, 4.8*LISTEN_LINE_WIDTH, 7*LISTEN_LINE_HIGHT};
 LOCAL GUI_RECT_T listening_rect_empty_bottom = {0, 6*LISTEN_LINE_HIGHT+5, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT};
-LOCAL GUI_RECT_T listening_play_style_rect = {LISTEN_LINE_WIDTH, 6*LISTEN_LINE_HIGHT+5, 2*LISTEN_LINE_WIDTH, 7*LISTEN_LINE_HIGHT+5};
+LOCAL GUI_RECT_T listening_play_style_rect = {0.5*LISTEN_LINE_WIDTH, 6*LISTEN_LINE_HIGHT+5, 1.5*LISTEN_LINE_WIDTH, 7*LISTEN_LINE_HIGHT+5};
 LOCAL GUI_RECT_T listening_rect_style_loop = {0.8*LISTEN_LINE_WIDTH, 8*LISTEN_LINE_HIGHT, 1.8*LISTEN_LINE_WIDTH, 9*LISTEN_LINE_HIGHT};
 LOCAL GUI_RECT_T listening_rect_style_random = {2.8*LISTEN_LINE_WIDTH, 8*LISTEN_LINE_HIGHT, 3.8*LISTEN_LINE_WIDTH, 9*LISTEN_LINE_HIGHT};
 LOCAL GUI_RECT_T listening_rect_style_single = {4.8*LISTEN_LINE_WIDTH, 8*LISTEN_LINE_HIGHT, 5.8*LISTEN_LINE_WIDTH, 9*LISTEN_LINE_HIGHT};
-LOCAL GUI_RECT_T listening_volume_rect = {4.5*LISTEN_LINE_WIDTH, 6*LISTEN_LINE_HIGHT+5, 6*LISTEN_LINE_WIDTH, 7*LISTEN_LINE_HIGHT+5};
+LOCAL GUI_RECT_T listening_volume_rect = {4.8*LISTEN_LINE_WIDTH, 6*LISTEN_LINE_HIGHT+5, 5.8*LISTEN_LINE_WIDTH, 7*LISTEN_LINE_HIGHT+5};
 LOCAL GUI_RECT_T listening_rect_empty = {0, 7*LISTEN_LINE_HIGHT+5, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT};
 LOCAL GUI_RECT_T listening_rect_decrese = {10, 8*LISTEN_LINE_HIGHT+5, 2*LISTEN_LINE_WIDTH, 9*LISTEN_LINE_HIGHT+5};
 LOCAL GUI_RECT_T listening_rect_volume = {LISTEN_LINE_WIDTH, 8*LISTEN_LINE_HIGHT, 1.5*LISTEN_LINE_WIDTH, 9*LISTEN_LINE_HIGHT};
 LOCAL GUI_RECT_T listening_rect_increse = {5*LISTEN_LINE_WIDTH+5, 8*LISTEN_LINE_HIGHT+5, MMI_MAINSCREEN_WIDTH, 9*LISTEN_LINE_HIGHT+5};
+LOCAL GUI_RECT_T listening_lrc_txt_rect = {0, LISTEN_LINE_HIGHT, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT - LISTEN_LINE_HIGHT};
 
 LOCAL void ListeningPlayer_InitPlayerInfo(void);
 LOCAL void ListeningPlayer_ButtonPreCallback(void);
@@ -306,11 +310,14 @@ LOCAL void ListeningPlayerWin_DisplayPlayDuration(MMI_WIN_ID_T win_id, GUI_LCD_D
 	{
 		duration = 0;
 	}
+#ifdef WIN32
+	duration = 243;
+#endif
 
 	SCI_TRACE_LOW("%s: duration = %d", __FUNCTION__, duration);
-	text_style.align = ALIGN_HVMIDDLE;
-	text_style.font = SONG_FONT_16;
-	text_style.font_color = MMI_BLACK_COLOR;
+	text_style.align = ALIGN_LVMIDDLE;
+	text_style.font = DP_FONT_16;
+	text_style.font_color = MMI_WHITE_COLOR;
 
 	min = listening_play_times / 60;
 	second = listening_play_times % 60;
@@ -331,13 +338,13 @@ LOCAL void ListeningPlayerWin_DisplayPlayDuration(MMI_WIN_ID_T win_id, GUI_LCD_D
 		GUISTR_TEXT_DIR_AUTO
 		);
 
-	LCD_DrawRect(&lcd_dev_info, listening_dis_total_rect, MMI_BLACK_COLOR);
-	listening_dis_play_rect.right = 38 + ((float)((float)listening_play_times / (float)duration) * 150);
-	if(listening_dis_play_rect.right > 90)
+	LCD_FillRoundedRect(&lcd_dev_info, listening_dis_total_rect, listening_dis_total_rect, GUI_RGB2RGB565(43,121,208));
+	listening_dis_play_rect.right = (0.5*LISTEN_LINE_WIDTH) + ((float)((float)listening_play_times / (float)duration) * (5*LISTEN_LINE_WIDTH));
+	if(listening_dis_play_rect.right > 5.5*LISTEN_LINE_WIDTH)
 	{
-		listening_dis_play_rect.right = 90;
+		listening_dis_play_rect.right = 5.5*LISTEN_LINE_WIDTH;
 	}
-	LCD_FillRect(&lcd_dev_info, listening_dis_play_rect, MMI_BLACK_COLOR);
+	LCD_FillRoundedRect(&lcd_dev_info, listening_dis_play_rect, listening_dis_play_rect, GUI_RGB2RGB565(71,235,255));
 
 	min = duration / 60;
 	second = duration % 60;
@@ -364,7 +371,7 @@ LOCAL void ListeningPlayerWin_DisplayPlayChoose(MMI_WIN_ID_T win_id, GUI_LCD_DEV
 	GUISTR_STYLE_T text_style = {0};
 	MMI_STRING_T text_string = {0};
 	
-	GUI_FillRect(&lcd_dev_info, listening_rect_empty_bottom, MMI_WHITE_COLOR);
+	GUI_FillRect(&lcd_dev_info, listening_rect_empty_bottom, GUI_RGB2RGB565(80, 162, 254));
 
 	if(player_play_info.play_style == PALYER_PLAY_STYLE_LOOP)
 	{
@@ -380,8 +387,8 @@ LOCAL void ListeningPlayerWin_DisplayPlayChoose(MMI_WIN_ID_T win_id, GUI_LCD_DEV
 	}
 	GUIRES_DisplayImg(PNULL, &listening_volume_rect, PNULL, win_id, ZMT_LISTEN_VOLUME, &lcd_dev_info);
 
-	text_style.align = ALIGN_HVMIDDLE;
-	text_style.font = SONG_FONT_16;
+	/*text_style.align = ALIGN_HVMIDDLE;
+	text_style.font = DP_FONT_16;
 	text_style.font_color = MMI_BLACK_COLOR;
 	MMIRES_GetText(ZMT_TXT_LYRICS, win_id, &text_string);
 	GUISTR_DrawTextToLCDInRect(
@@ -393,12 +400,12 @@ LOCAL void ListeningPlayerWin_DisplayPlayChoose(MMI_WIN_ID_T win_id, GUI_LCD_DEV
 		text_state,
 		GUISTR_TEXT_DIR_AUTO
 		);
-	LCD_DrawRect(&lcd_dev_info, listening_lrc_rect, MMI_BLACK_COLOR);
+	LCD_DrawRect(&lcd_dev_info, listening_lrc_rect, MMI_BLACK_COLOR);*/
 }
 
 LOCAL void ListeningPlayerWin_DisplayPlayBottom(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_dev_info)
 {
-	GUI_FillRect(&lcd_dev_info, listening_rect_empty, MMI_WHITE_COLOR);
+	GUI_FillRect(&lcd_dev_info, listening_rect_empty, GUI_RGB2RGB565(80, 162, 254));
 	if(player_play_info.bottom_type == 1)
 	{
 		uint8 i = 0;
@@ -412,8 +419,8 @@ LOCAL void ListeningPlayerWin_DisplayPlayBottom(MMI_WIN_ID_T win_id, GUI_LCD_DEV
 		MMI_TEXT_ID_T text_id[3] = {ZMT_TXT_LOOP_PLAY, ZMT_TXT_RANDOM_PLAY, ZMT_TXT_SINGLE_PLAY};
 		
 		text_style.align = ALIGN_LVMIDDLE;
-		text_style.font = SONG_FONT_16;
-		text_style.font_color = MMI_BLACK_COLOR;
+		text_style.font = DP_FONT_16;
+		text_style.font_color = MMI_WHITE_COLOR;
 		for(; i < 3; i++)
 		{
 			GUIRES_DisplayImg(PNULL, &rect_style, PNULL, win_id, img_id[i], &lcd_dev_info);
@@ -440,8 +447,8 @@ LOCAL void ListeningPlayerWin_DisplayPlayBottom(MMI_WIN_ID_T win_id, GUI_LCD_DEV
 		uint8 i = 0;
 		uint8 volume_item = 0;
 		GUI_RECT_T rect_volume = {0};
-		GUIRES_DisplayImg(PNULL, &listening_rect_decrese, PNULL, win_id, ZMT_LISTEN_DECRESE, &lcd_dev_info);
-		GUIRES_DisplayImg(PNULL, &listening_rect_increse, PNULL, win_id, ZMT_LISTEN_INCRESE, &lcd_dev_info);
+		GUIRES_DisplayImg(PNULL, &listening_rect_decrese, PNULL, win_id, MATH_COUNT_REDUCE_IMG, &lcd_dev_info);
+		GUIRES_DisplayImg(PNULL, &listening_rect_increse, PNULL, win_id, MATH_COUNT_ADD_IMG, &lcd_dev_info);
 		count = player_play_info.volume / 2 + player_play_info.volume % 2;
 		SCI_TRACE_LOW("%s: listening_player_volume = %d, count = %d", __FUNCTION__, player_play_info.volume, count);
 		rect_volume = listening_rect_volume;
@@ -891,11 +898,12 @@ LOCAL MMI_RESULT_E HandleListeningPlayerWinMsg(
 				wchar title_wchar[50] = {0};
 				uint8 length = 0;
 				
-				GUI_FillRect(&lcd_dev_info, listen_win_rect, MMI_WHITE_COLOR);
-
+				GUI_FillRect(&lcd_dev_info, listen_win_rect, GUI_RGB2RGB565(80, 162, 254));
+				GUI_FillRect(&lcd_dev_info, listen_title_rect, GUI_RGB2RGB565(108, 181, 255));
+                
 				text_style.align = ALIGN_HVMIDDLE;
-				text_style.font = SONG_FONT_16;
-				text_style.font_color = MMI_BLACK_COLOR;
+				text_style.font = DP_FONT_20;
+				text_style.font_color = MMI_WHITE_COLOR;
 				player_info = (LISTENING_PLAYER_INFO *) MMK_GetWinAddDataPtr(win_id);
 				if(player_info->is_local_play)
 				{
@@ -935,7 +943,8 @@ LOCAL MMI_RESULT_E HandleListeningPlayerWinMsg(
 				GUI_POINT_T point = {0};
 				point.x = MMK_GET_TP_X(param);
 				point.y = MMK_GET_TP_Y(param);
-				if(GUI_PointIsInRect(point, listening_lrc_rect))
+				//if(GUI_PointIsInRect(point, listening_lrc_rect))
+				if(0)
 				{
 					LISTENING_PLAYER_INFO * player_infos = NULL;
 					player_info = (LISTENING_PLAYER_INFO *) MMK_GetWinAddDataPtr(win_id);
@@ -1189,14 +1198,11 @@ LOCAL MMI_RESULT_E HandleListeningPlayerLrcWinMsg(
 			{
 				GUI_FONT_ALL_T font = {0};
 				GUI_RECT_T rect = {10,70,230,359};
-				GUI_FONT_T text_font = SONG_FONT_20;
+				GUI_FONT_T text_font = DP_FONT_20;
 				GUI_COLOR_T text_color = MMI_BLACK_COLOR;
-				font.font = SONG_FONT_16;
+				font.font = DP_FONT_16;
 				font.color = MMI_BLACK_COLOR;
-                rect = listen_win_rect;
-                rect.left += 10;
-                rect.right -= 10;
-				GUITEXT_SetRect(ctrl_id, &rect);
+				GUITEXT_SetRect(ctrl_id, &listening_lrc_txt_rect);
 				GUITEXT_SetFont(ctrl_id, &text_font, &text_color);
 				GUITEXT_IsDisplayPrg(FALSE, ctrl_id);
 				GUITEXT_SetHandleTpMsg(FALSE, ctrl_id);
@@ -1217,8 +1223,8 @@ LOCAL MMI_RESULT_E HandleListeningPlayerLrcWinMsg(
 				
 				GUI_FillRect(&lcd_dev_info, listen_win_rect, MMI_WHITE_COLOR);
 
-				text_style.align = ALIGN_LVMIDDLE;
-				text_style.font = SONG_FONT_16;
+				text_style.align = ALIGN_HVMIDDLE;
+				text_style.font = DP_FONT_20;
 				text_style.font_color = MMI_BLACK_COLOR;
 				player_info = (LISTENING_PLAYER_INFO *) MMK_GetWinAddDataPtr(win_id);
 				if(player_info->is_local_play)
@@ -1236,7 +1242,7 @@ LOCAL MMI_RESULT_E HandleListeningPlayerLrcWinMsg(
 					GUI_UTF8ToWstr(title_wchar, 50, album_info->item_info[player_info->audio_index].audio_name, length);
 				}
 				text_string.wstr_ptr = title_wchar;
-				text_string.wstr_len = MMIAPICOM_Wstrlen(text_string.wstr_ptr);
+				text_string.wstr_len = MMIAPICOM_Wstrlen(title_wchar);
 				GUISTR_DrawTextToLCDInRect(
 					(const GUI_LCD_DEV_INFO *)&lcd_dev_info,
 					&listen_title_rect,

@@ -43,7 +43,7 @@ PUBLIC void Listening_GetLrcFileName(char * file_name, int module_id, int album_
 
 	sprintf(file_str, LISTENING_FILE_LRC_BASE_PATH, module_id,album_id, audio_id);
 	strcpy(file_name, file_str);
-	SCI_TRACE_LOW("%s: file_name = %s",  __FUNCTION__, file_name);
+	//SCI_TRACE_LOW("%s: file_name = %s",  __FUNCTION__, file_name);
 }
 
 PUBLIC void Listening_GetFileName(char * file_name, int module_id, int album_id, int audio_id)
@@ -51,7 +51,7 @@ PUBLIC void Listening_GetFileName(char * file_name, int module_id, int album_id,
 	char file_str[LIST_ITEM_PATH_SIZE_MAX] = {0};
 	sprintf(file_str, LISTENING_FILE_BASE_PATH, module_id, album_id, audio_id);
 	strcpy(file_name, file_str);
-	SCI_TRACE_LOW("%s: file_name = %s",  __FUNCTION__, file_name);
+	//SCI_TRACE_LOW("%s: file_name = %s",  __FUNCTION__, file_name);
 }
 
 //º”√‹

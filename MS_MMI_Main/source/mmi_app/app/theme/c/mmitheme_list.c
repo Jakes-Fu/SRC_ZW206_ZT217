@@ -5765,29 +5765,29 @@ LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_1_text_eng =
 //GUIITEM_STYLE_TWO_ICON_AND_ONE_TEXT_MS,
 LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_2_icon_and_1_text_ms =
 {
-    2*LISTEN_LINE_HIGHT, 2*LISTEN_LINE_HIGHT,
+    1.5*LISTEN_LINE_HIGHT, 1.5*LISTEN_LINE_HIGHT,
 
     {        
             //icon
             {
             0,
-            {5, 0, LISTEN_LINE_WIDTH, 2*LISTEN_LINE_HIGHT},
-            {5, 0, LISTEN_LINE_WIDTH, 2*LISTEN_LINE_HIGHT},
+            {5, 0, LISTEN_LINE_WIDTH, 1.5*LISTEN_LINE_HIGHT},
+            {5, 0, LISTEN_LINE_WIDTH, 1.5*LISTEN_LINE_HIGHT},
             0, 0
         },
             //name
             {
                     0,
-                    {LISTEN_LINE_WIDTH,  0,  MMI_MAINSCREEN_WIDTH-LISTEN_LINE_WIDTH, 2*LISTEN_LINE_HIGHT},
-                    {LISTEN_LINE_WIDTH,  0,  MMI_MAINSCREEN_WIDTH-LISTEN_LINE_WIDTH, 2*LISTEN_LINE_HIGHT},
+                    {LISTEN_LINE_WIDTH,  0,  MMI_MAINSCREEN_WIDTH-LISTEN_LINE_WIDTH, 1.5*LISTEN_LINE_HIGHT},
+                    {LISTEN_LINE_WIDTH,  0,  MMI_MAINSCREEN_WIDTH-LISTEN_LINE_WIDTH, 1.5*LISTEN_LINE_HIGHT},
                     SONG_FONT_16, SONG_FONT_16,
                     0, 0
             },
             //icon
             {
             0,
-            {MMI_MAINSCREEN_WIDTH-LISTEN_LINE_WIDTH, 0,  MMI_MAINSCREEN_WIDTH, 2*LISTEN_LINE_HIGHT},
-            {MMI_MAINSCREEN_WIDTH-LISTEN_LINE_WIDTH, 0,  MMI_MAINSCREEN_WIDTH, 2*LISTEN_LINE_HIGHT},
+            {MMI_MAINSCREEN_WIDTH-LISTEN_LINE_WIDTH, 0,  MMI_MAINSCREEN_WIDTH, 1.5*LISTEN_LINE_HIGHT},
+            {MMI_MAINSCREEN_WIDTH-LISTEN_LINE_WIDTH, 0,  MMI_MAINSCREEN_WIDTH, 1.5*LISTEN_LINE_HIGHT},
             0, 0
         },
      {0},

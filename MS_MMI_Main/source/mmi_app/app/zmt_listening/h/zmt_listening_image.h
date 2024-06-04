@@ -9,10 +9,6 @@
 ** --------------------------------------------------------------------------*
 ** Create by Spreadtrum Resource Editor tool                                 *
 ******************************************************************************/
-
-#ifndef HELLO_MMI_IMAGE_H_
-#define HELLO_MMI_IMAGE_H_
-
 #include "sci_types.h"
 #include "mmi_imagefun.h"
 #include "mmi_module.h"
@@ -47,4 +43,3 @@ typedef enum LISTENING_MMI_IMAGE_ID_E
 }
 #endif
 
-#endif //HELLO_MMI_IMAGE_H_

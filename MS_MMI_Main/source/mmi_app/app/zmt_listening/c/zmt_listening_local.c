@@ -37,11 +37,12 @@
 
 GUI_RECT_T listen_win_rect = {0, 0, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT};
 GUI_RECT_T listen_title_rect = {0, 0, MMI_MAINSCREEN_WIDTH, LISTEN_LINE_HIGHT};
+GUI_RECT_T listen_bottom_rect = {0, MMI_MAINSCREEN_HEIGHT-LISTEN_LINE_HIGHT, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT};
 GUI_RECT_T listen_dir_rect = {4*LISTEN_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-LISTEN_LINE_HIGHT-10, 5*LISTEN_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT};
 GUI_RECT_T listen_list_rect = {0, 2*LISTEN_LINE_HIGHT+5, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT - LISTEN_LINE_HIGHT};
-LOCAL GUI_RECT_T listen_del_all_rect = {LISTEN_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-LISTEN_LINE_HIGHT, 2*LISTEN_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-2};
-LOCAL GUI_RECT_T listen_del_rect = {2*LISTEN_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-LISTEN_LINE_HIGHT, 3*LISTEN_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-2};
-LOCAL GUI_RECT_T listen_del_back_rect = {3*LISTEN_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-LISTEN_LINE_HIGHT+2, 4*LISTEN_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-2};
+LOCAL GUI_RECT_T listen_del_all_rect = {LISTEN_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-0.8*LISTEN_LINE_HIGHT, 2*LISTEN_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT};
+LOCAL GUI_RECT_T listen_del_rect = {2*LISTEN_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-0.8*LISTEN_LINE_HIGHT, 3*LISTEN_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT};
+LOCAL GUI_RECT_T listen_del_back_rect = {3*LISTEN_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-0.8*LISTEN_LINE_HIGHT, 4*LISTEN_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT};
 
 extern char * listening_downloading_audio_path;
 extern LISTENING_LIST_INFO * listening_info;
@@ -170,8 +171,7 @@ LOCAL void ListeningLocal_DownloadDataInit(void)
 ///////////////////////////////////////////////////////////////////////////////////////
 LOCAL void ListeningLocalAudioWin_DisplayLocalAudioList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id, uint8 id_index)
 {
-	uint8 index = 0;
-	uint8 num = 0;
+	uint16 index = 0;
 	LISTEING_LOCAL_INFO * local_info = NULL;
 	GUILIST_INIT_DATA_T list_init = {0};
 	GUILIST_ITEM_T item_t = {0};
@@ -196,17 +196,14 @@ LOCAL void ListeningLocalAudioWin_DisplayLocalAudioList(MMI_WIN_ID_T win_id, MMI
 
 	MMK_SetAtvCtrl(win_id, ctrl_id);
 	GUILIST_RemoveAllItems(ctrl_id);
-	GUILIST_SetMaxItem(ctrl_id, listening_info->local_audio_total, FALSE);
+	GUILIST_SetMaxItem(ctrl_id, local_info->module_info[id_index].album_info[0].audio_count, FALSE);
 
-	index = AUDIO_LIST_SHOW_ITEM_MAX * listening_info->local_audio_cur;
-	num = AUDIO_LIST_SHOW_ITEM_MAX * (listening_info->local_audio_cur + 1);
-
-	for( ; index < num && index < local_info->module_info[id_index].album_info[0].audio_count; index++)
+	for(index = 0; index < local_info->module_info[id_index].album_info[0].audio_count; index++)
 	{
 		char file_str[LIST_ITEM_PATH_SIZE_MAX] = {0};
 		length = strlen(local_info->module_info[id_index].album_info[0].audio_info[index].audio_name);
-		SCI_TRACE_LOW("%s: length = %d, audio_name = %s",
-			__FUNCTION__, length, local_info->module_info[id_index].album_info[0].audio_info[index].audio_name);
+		//SCI_TRACE_LOW("%s: length = %d, audio_name = %s",
+		//	__FUNCTION__, length, local_info->module_info[id_index].album_info[0].audio_info[index].audio_name);
 		if(length == 0) continue;
 		Listening_GetFileName(file_str, local_info->module_info[id_index].module_id, 
 		local_info->module_info[id_index].album_info[0].album_id, 
@@ -221,8 +218,11 @@ LOCAL void ListeningLocalAudioWin_DisplayLocalAudioList(MMI_WIN_ID_T win_id, MMI
 		memset(name_str, 0, 50);
 
 		//name item
-		//GUI_GBToWstr(name_str, local_info.album_info[id_index].audio_info[index].audio_name, length);
+        #ifdef WIN32
+		GUI_GBToWstr(name_str, local_info->module_info[id_index].album_info[0].audio_info[index].audio_name, length);
+        #else
 		GUI_UTF8ToWstr(name_str, length, local_info->module_info[id_index].album_info[0].audio_info[index].audio_name, length);
+        #endif
 		text_str.wstr_ptr = name_str;
 		text_str.wstr_len = MMIAPICOM_Wstrlen(text_str.wstr_ptr);
 		item_data.item_content[0].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
@@ -232,7 +232,7 @@ LOCAL void ListeningLocalAudioWin_DisplayLocalAudioList(MMI_WIN_ID_T win_id, MMI
 		item_data.item_content[1].item_data_type = GUIITEM_DATA_IMAGE_ID;
 		if(!delete_info.is_select_delete)
 		{
-			SCI_TRACE_LOW("%s: listening_downloading_audio_path = %s", __FUNCTION__, listening_downloading_audio_path);
+			//SCI_TRACE_LOW("%s: listening_downloading_audio_path = %s", __FUNCTION__, listening_downloading_audio_path);
 			if(listening_downloading_audio_path != NULL &&
 				0 == strcmp(listening_downloading_audio_path, file_str))
 			{
@@ -261,9 +261,8 @@ LOCAL void ListeningLocalAudioWin_DisplayLocalAudioList(MMI_WIN_ID_T win_id, MMI
 
 		GUILIST_SetNeedPrgbarBlock(ctrl_id,FALSE);
 
-		list_color = MMI_WHITE_COLOR;
-		GUILIST_SetBgColor(ctrl_id,list_color);
-		GUILIST_SetTextFont(ctrl_id, SONG_FONT_16, MMI_BLACK_COLOR);
+		GUILIST_SetBgColor(ctrl_id,GUI_RGB2RGB565(80, 162, 254));
+		GUILIST_SetTextFont(ctrl_id, DP_FONT_22, MMI_WHITE_COLOR);
 
 		GUILIST_AppendItem(ctrl_id, &item_t);
 	}
@@ -303,9 +302,7 @@ LOCAL void ListeningLocalAudioWin_DisplayListAndDir(MMI_WIN_ID_T win_id, int id_
 	GUI_LCD_DEV_INFO lcd_dev_info = {GUI_MAIN_LCD_ID, GUI_BLOCK_MAIN};
 	MMI_CTRL_ID_T ctrl_id = LISTENING_LISTBOX_LOCAL_AUDIO_CTRL_ID;
 
-//#ifndef WIN32
 	ListeningLocalAudioWin_DisplayLocalAudioList(win_id, ctrl_id, id_index);
-//#endif
 
 	SCI_TRACE_LOW("%s: is_select_delete = %d", __FUNCTION__, delete_info.is_select_delete);
 	if(delete_info.is_select_delete)
@@ -356,11 +353,13 @@ LOCAL MMI_RESULT_E HandleListeningLocalAudioWinMsg(
 				wchar num_str[10] = {0};
 				uint8 total_page = 0;
 
-				GUI_FillRect(&lcd_dev_info, listen_win_rect, MMI_WHITE_COLOR);
+				GUI_FillRect(&lcd_dev_info, listen_win_rect, GUI_RGB2RGB565(80, 162, 254));
+				GUI_FillRect(&lcd_dev_info, listen_title_rect, GUI_RGB2RGB565(108, 181, 255));
+				GUI_FillRect(&lcd_dev_info, listen_bottom_rect, GUI_RGB2RGB565(255, 255, 255));				
 
 				text_style.align = ALIGN_HVMIDDLE;
-				text_style.font = SONG_FONT_24;
-				text_style.font_color = MMI_BLACK_COLOR;
+				text_style.font = DP_FONT_24;
+				text_style.font_color = MMI_WHITE_COLOR;
 
 				local_info = Listening_GetLocalDataInfo();
 				id_index = (uint8) MMK_GetWinAddDataPtr(win_id);
@@ -383,27 +382,6 @@ LOCAL MMI_RESULT_E HandleListeningLocalAudioWinMsg(
 					GUISTR_TEXT_DIR_AUTO
 					);
 				
-				text_style.align = ALIGN_HVMIDDLE;
-
-				total_page = listening_info->local_audio_total / AUDIO_LIST_SHOW_ITEM_MAX;
-				if(listening_info->local_audio_total % AUDIO_LIST_SHOW_ITEM_MAX != 0)
-				{
-					total_page++;
-				}
-				sprintf(num_buf, "%d/%d", listening_info->local_audio_cur + 1, total_page);
-				GUI_GBToWstr(num_str, num_buf, strlen(num_buf));
-				text_string.wstr_ptr = num_str;
-				text_string.wstr_len = MMIAPICOM_Wstrlen(text_string.wstr_ptr);
-				GUISTR_DrawTextToLCDInRect(
-					(const GUI_LCD_DEV_INFO *)&lcd_dev_info,
-					&listen_dir_rect,
-					&listen_dir_rect,
-					&text_string,
-					&text_style,
-					text_state,
-					GUISTR_TEXT_DIR_AUTO
-					);
-
 				if(listening_info->local_audio_total > 0)
 				{
 					ListeningLocalAudioWin_DisplayListAndDir(win_id, id_index);
@@ -414,16 +392,15 @@ LOCAL MMI_RESULT_E HandleListeningLocalAudioWinMsg(
 			{
 				uint16 index = GUILIST_GetCurItemIndex(ctrl_id);
 				id_index = (uint8) MMK_GetWinAddDataPtr(win_id);
-				index += AUDIO_LIST_SHOW_ITEM_MAX * listening_info->local_audio_cur;
+				//index += AUDIO_LIST_SHOW_ITEM_MAX * listening_info->local_audio_cur;
 				if(!delete_info.is_select_delete)
 				{
-					listening_info->local_audio_cur = 0;
-					if(1){
-						//use for simulator test
+					listening_info->local_audio_cur = 0;//
+					#ifdef WIN32
 						MMI_TestToOpenPlayerWin();
-					}else{
+					#else
 						ListeningLocalAudioWin_SelectOpenAudio(id_index, index);
-					}
+					#endif
 				}
 				else
 				{
@@ -592,8 +569,7 @@ PUBLIC void MMI_CreateListeningLocalAudioWin(uint8 index)
 
 PUBLIC void ListeningLocalWin_DisplayLocalAlbumList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
 {
-	uint8 index = 0;
-	uint8 num = 0;
+	uint16 index = 0;
 	LISTEING_LOCAL_INFO * local_info = NULL;
 	GUILIST_INIT_DATA_T list_init = {0};
 	GUILIST_ITEM_T item_t = {0};
@@ -614,11 +590,8 @@ PUBLIC void ListeningLocalWin_DisplayLocalAlbumList(MMI_WIN_ID_T win_id, MMI_CTR
 	GUILIST_RemoveAllItems(ctrl_id);
 	GUILIST_SetMaxItem(ctrl_id, listening_info->local_album_total, FALSE);
 
-	index = ALBUM_LIST_SHOW_ITEM_MAX * listening_info->local_album_cur;
-	num = ALBUM_LIST_SHOW_ITEM_MAX * (listening_info->local_album_cur + 1);
-
 	local_info = Listening_GetLocalDataInfo();
-	for( ; index < num && listening_info->local_album_total; index++)
+	for(index = 0; index < listening_info->local_album_total; index++)
 	{
 		length = strlen(local_info->module_info[index].album_info[0].album_name);
 		SCI_TRACE_LOW("%s: length = %d, album_name = %s",
@@ -673,9 +646,8 @@ PUBLIC void ListeningLocalWin_DisplayLocalAlbumList(MMI_WIN_ID_T win_id, MMI_CTR
 
 		GUILIST_SetNeedPrgbarBlock(ctrl_id,FALSE);
 
-		list_color = MMI_WHITE_COLOR;
-		GUILIST_SetBgColor(ctrl_id,list_color);
-		GUILIST_SetTextFont(ctrl_id, SONG_FONT_24, MMI_BLACK_COLOR);
+		GUILIST_SetBgColor(ctrl_id,GUI_RGB2RGB565(80, 162, 254));
+		GUILIST_SetTextFont(ctrl_id, DP_FONT_22, MMI_WHITE_COLOR);
 
 		GUILIST_AppendItem(ctrl_id, &item_t);
 	}
@@ -698,8 +670,8 @@ PUBLIC void ListeningLocalWin_DisplayListAndDir(MMI_WIN_ID_T win_id)
 	LISTEING_LOCAL_INFO * local_info = NULL;
 	
 	text_style.align = ALIGN_HVMIDDLE;
-	text_style.font = SONG_FONT_24;
-	text_style.font_color = MMI_BLACK_COLOR;
+	text_style.font = DP_FONT_24;
+	text_style.font_color = MMI_WHITE_COLOR;
 	
 	SCI_TRACE_LOW("%s: listening_info->local_album_total = %d", __FUNCTION__, listening_info->local_album_total);
 	if(listening_info->local_album_total == 0 || listening_info->local_album_total > 12)
@@ -718,32 +690,7 @@ PUBLIC void ListeningLocalWin_DisplayListAndDir(MMI_WIN_ID_T win_id)
 	}
 	else
 	{
-	//#ifndef WIN32
-		local_info = Listening_GetLocalDataInfo();
-		listening_info->local_album_total = local_info->module_count;
-	//#endif
-		total_page = listening_info->local_album_total / ALBUM_LIST_SHOW_ITEM_MAX;
-		if(listening_info->local_album_total % ALBUM_LIST_SHOW_ITEM_MAX != 0)
-		{
-			total_page++;
-		}
-		SCI_TRACE_LOW("%s: total_page = %d", __FUNCTION__, total_page);
-		sprintf(num_buf, "%d/%d", listening_info->local_album_cur + 1, total_page);
-		GUI_GBToWstr(num_str, num_buf, strlen(num_buf));
-		text_string.wstr_ptr = num_str;
-		text_string.wstr_len = MMIAPICOM_Wstrlen(text_string.wstr_ptr);
-		GUISTR_DrawTextToLCDInRect(
-			(const GUI_LCD_DEV_INFO *)&lcd_dev_info,
-			&listen_dir_rect,
-			&listen_dir_rect,
-			&text_string,
-			&text_style,
-			text_state,
-			GUISTR_TEXT_DIR_AUTO
-			);
-	//#ifndef WIN32
 		ListeningLocalWin_DisplayLocalAlbumList(win_id, ctrl_id);
-	//#endif
 
 		SCI_TRACE_LOW("%s: is_select_delete = %d", __FUNCTION__, delete_info.is_select_delete);
 		if(delete_info.is_select_delete)
@@ -807,11 +754,13 @@ LOCAL MMI_RESULT_E HandleListeningLocalWinMsg(
 				wchar num_str[10] = {0};
 				uint8 total_page = 0;
 
-				GUI_FillRect(&lcd_dev_info, listen_win_rect, MMI_WHITE_COLOR);
+				GUI_FillRect(&lcd_dev_info, listen_win_rect, GUI_RGB2RGB565(80, 162, 254));
+				GUI_FillRect(&lcd_dev_info, listen_title_rect, GUI_RGB2RGB565(108, 181, 255));
+				GUI_FillRect(&lcd_dev_info, listen_bottom_rect, GUI_RGB2RGB565(255, 255, 255));
 
 				text_style.align = ALIGN_HVMIDDLE;
-				text_style.font = SONG_FONT_24;
-				text_style.font_color = MMI_BLACK_COLOR;
+				text_style.font = DP_FONT_24;
+				text_style.font_color = MMI_WHITE_COLOR;
 				MMIRES_GetText(ZMT_TXT_LISTENING, win_id, &text_string);
 				GUISTR_DrawTextToLCDInRect(
 					(const GUI_LCD_DEV_INFO *)&lcd_dev_info,
@@ -831,7 +780,7 @@ LOCAL MMI_RESULT_E HandleListeningLocalWinMsg(
 		case MSG_CTL_PENOK:
 			{
 				uint16 index = GUILIST_GetCurItemIndex(ctrl_id);
-				index += ALBUM_LIST_SHOW_ITEM_MAX * listening_info->local_album_cur;
+				//index += ALBUM_LIST_SHOW_ITEM_MAX * listening_info->local_album_cur;
 				SCI_TRACE_LOW("%s: index = %d", __FUNCTION__, index);
 				if(!delete_info.is_select_delete)
 				{
@@ -853,7 +802,7 @@ LOCAL MMI_RESULT_E HandleListeningLocalWinMsg(
 				}
 			}
 			break;
-		case MSG_LIST_PRE_PAGE:
+		/*case MSG_LIST_PRE_PAGE:
 			{
 				if(listening_info->local_album_cur != 0)
 				{
@@ -870,7 +819,7 @@ LOCAL MMI_RESULT_E HandleListeningLocalWinMsg(
 					MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
 				}
 			}
-			break;
+			break;*/
 		case MSG_TP_PRESS_UP:
 			{
 				GUI_POINT_T point = {0};

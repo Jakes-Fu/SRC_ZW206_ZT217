@@ -59,6 +59,10 @@ char * LISTENING_ALBUM_LIST_URL = "/api/listening/album_list";
 char * LISTENING_AUDIO_LIST_URL = "/api/listening/audio_list";
 char * LISTENING_AUDIO_LRC_BASE_URL = "https://img.readboy.com/apps/listening/file/%d/%s.lrc";
 
+#define STREAM_DATA_ORIGIN_MAX_LEN 102400
+#define STREAM_DATA_ORIGIN_FIRST_PLAY_LEN 10240
+#define STREAM_DATA_ORIGIN_LEFT_LEN 5120
+
 char * listening_downloading_audio_path = NULL;
 
 extern uint8 listening_downloading_index;
@@ -155,13 +159,14 @@ PUBLIC int Listening_StrReplace(char strRes[],char from[], char to[])
 
 PUBLIC void Listening_RequestDownloadAudio(uint8 index)
 {
-	char * url = (char *)SCI_ALLOC_APPZ(100);
+	char url[100] = {0};
 	strcpy(url, album_info->item_info[index].audio_path);
+	//strcpy(url, "http://appdl.ebag.readboy.com/poem/audio/ddf33c3cf7505982734a3f284f885e1e.mp3");
 	#ifdef WIN32
 	Listening_StrReplace(url, "https", "http");
 	#endif
 	SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
-
+    
 	#ifndef WIN32
 	if(zmt_tfcard_exist() && zmt_tfcard_get_free_kb() > 100 * 1024)
 	#else
@@ -183,19 +188,14 @@ PUBLIC void Listening_RequestDownloadAudio(uint8 index)
 		SCI_MEMSET(listening_downloading_audio_path, 0, strlen(file_path)+1);
 		SCI_MEMCPY(listening_downloading_audio_path, file_path, strlen(file_path)+1);
 		SCI_TRACE_LOW("%s: listening_downloading_audio_path = %s", __FUNCTION__, listening_downloading_audio_path);
-		if(zmt_file_exist(file_path))
-		{
-			//zmt_file_delete(file_path);
-			Listening_DeleteOneAudio(FALSE, album_info->module_id, album_info->item_info[index].audio_id);
-		}
 		request_http_listening_idx++;
 		listening_download_audio = TRUE;
-		
+		SCI_TRACE_LOW("%s: index = %d", __FUNCTION__, index);
 		album_info->item_info[index].aduio_ready = 1;
 		MMK_SendMsg(LISTENING_AUDIO_LIST_WIN_ID, MSG_FULL_PAINT, PNULL);
-		Listening_InsertOneAudioInfoToLocal(album_info, listening_downloading_index);
-		//RB_StartHttpRequest(url, file_path,5 * 60 * 1000, request_http_listening_idx, Listening_ParseAudioDownload);
-		SCI_TRACE_LOW("%s: url = %s file_path = %s", __FUNCTION__, url, file_path);
+		//MMIZDT_HTTP_AppSend(TRUE, url, PNULL, 0, 1000, 0, 0, 8000, 0, 0, Listening_ParseAudioDownload);
+		//MMIZYB_HTTP_TestLongPlay();
+		MMIZDT_HTTP_AppSend(TRUE,url,PNULL,0,101,0,1,600*1000,file_path,strlen(file_path),Listening_ParseAudioDownload);
 	}
 	else
 	{
@@ -217,7 +217,7 @@ PUBLIC void Listening_RequestDownloadAudioLrc(int module_id, int album_id, int a
 	Listening_GetLrcFileName(file_path, module_id, album_id, audio_id);
 	
 	request_http_listening_idx++;
-	//RB_StartHttpRequest(url, file_path, 60 * 1000, request_http_listening_idx, Listening_ParseAudioLrcResponse);
+	MMIZDT_HTTP_AppSend(TRUE,url,PNULL,0,101,0,1,180*1000,file_path,strlen(file_path),Listening_ParseAudioLrcResponse);
 	SCI_TRACE_LOW("%s: url = %s file_path = %s", __FUNCTION__, url, file_path);
 }
 

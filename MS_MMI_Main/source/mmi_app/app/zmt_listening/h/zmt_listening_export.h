@@ -57,7 +57,7 @@
 #define LISTEN_LINE_WIDTH MMI_MAINSCREEN_WIDTH/6
 
 #define LISTENING_DIRECTORY_BASE_PATH "E:/Listening/%d_%d"
-#define LISTENING_FILE_INFO_PATH "C:/Listening/listening_info.json"
+#define LISTENING_FILE_INFO_PATH "E:/Listening/listening_info.json"
 #define LISTENING_FILE_BASE_PATH "E:/Listening/%d_%d/%d.mp3"
 #define LISTENING_FILE_LRC_BASE_PATH "E:/Listening/%d_%d/%d.lrc"
 
@@ -161,8 +161,8 @@ PUBLIC LISTEING_LOCAL_INFO * Listening_GetLocalDataInfo(void);
 
 PUBLIC void Listening_ParseAlbumResponse(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id);
 PUBLIC void Listening_ParseAudioResponse(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id);
-PUBLIC void Listening_ParseAudioDownload( BOOLEAN success, uint32 idx);
-PUBLIC void Listening_ParseAudioLrcResponse(BOOLEAN success, uint32 idx);
+PUBLIC void Listening_ParseAudioDownload(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id);
+PUBLIC void Listening_ParseAudioLrcResponse(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id);
 
 PUBLIC void Listening_RequestAlbumListInfo(LISTENING_SELECT_MODULE_TYPE module_type);
 PUBLIC void Listening_RequestAudioListInfo(uint8 module_id);

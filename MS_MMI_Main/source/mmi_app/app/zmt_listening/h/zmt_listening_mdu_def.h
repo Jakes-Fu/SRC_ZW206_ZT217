@@ -2,13 +2,10 @@
 //[[define image information
 
 	RES_ADD_IMG(ZMT_LISTEN_ALBUM,"\\MMI_RES_##\\IMAG\\dsl_listen_album.png",IMG_CMP_PNG_ARGB_RLE,0)
-	RES_ADD_IMG(ZMT_LISTEN_LOCAL,"\\MMI_RES_##\\IMAG\\dsl_listen_local.png",IMG_CMP_PNG_ARGB_RLE,0)
 	RES_ADD_IMG(ZMT_LISTEN_DOWNLOAD,"\\MMI_RES_##\\IMAG\\dsl_listen_download.png",IMG_CMP_PNG_ARGB_RLE,0)
 	RES_ADD_IMG(ZMT_LISTEN_DOWNLOADING,"\\MMI_RES_##\\IMAG\\dsl_listen_downloading.png",IMG_CMP_PNG_ARGB_RLE,0)
 	RES_ADD_IMG(ZMT_LISTEN_SELECT,"\\MMI_RES_##\\IMAG\\dsl_listen_select.png",IMG_CMP_PNG_ARGB_RLE,0)
 	RES_ADD_IMG(ZMT_LISTEN_UNSELECT,"\\MMI_RES_##\\IMAG\\dsl_listen_unselect.png",IMG_CMP_PNG_ARGB_RLE,0)
-	RES_ADD_IMG(ZMT_LISTEN_DECRESE,"\\MMI_RES_##\\IMAG\\dsl_listen_decrese.png",IMG_CMP_PNG_ARGB_RLE,0)
-	RES_ADD_IMG(ZMT_LISTEN_INCRESE,"\\MMI_RES_##\\IMAG\\dsl_listen_increse.png",IMG_CMP_PNG_ARGB_RLE,0)
 	RES_ADD_IMG(ZMT_LISTEN_LOOP,"\\MMI_RES_##\\IMAG\\dsl_listen_loop.png",IMG_CMP_PNG_ARGB_RLE,0)
 	RES_ADD_IMG(ZMT_LISTEN_RANDOM,"\\MMI_RES_##\\IMAG\\dsl_listen_random.png",IMG_CMP_PNG_ARGB_RLE,0)
 	RES_ADD_IMG(ZMT_LISTEN_SINGLE,"\\MMI_RES_##\\IMAG\\dsl_listen_single.png",IMG_CMP_PNG_ARGB_RLE,0)

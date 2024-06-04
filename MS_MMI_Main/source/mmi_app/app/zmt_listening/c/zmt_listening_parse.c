@@ -16,7 +16,7 @@
 #include "mmi_appmsg.h"
 #include "mmipub.h"
 #include "mmi_common.h"
-
+#include "http_api.h"
 #include "mmiidle_export.h"
 #include "mmi_position.h"
 #include "ldo_drvapi.h"
@@ -46,123 +46,7 @@ extern LISTENING_ALBUM_INFO * album_info;
 extern char * listening_player_lrc_buf;
 extern LISTENING_PALYER_PLAY_INFO player_play_info;
 extern char * listening_downloading_audio_path;
-
-/*PUBLIC void Listening_ParseAlbumResponse(DSLMAIN_DATA_CONTENT_T * list_data, BOOLEAN success, uint32 idx) 
-{
-	if(request_http_listening_idx == idx)
-	{
-		request_http_listening_idx = 0;
-		if(success)
-		{
-			uint8 i = 0;
-			uint8 count = 0;
-			cJSON *root = cJSON_Parse(list_data->data);
-			cJSON *data = cJSON_GetObjectItem(root, "data");
-			cJSON *chList = cJSON_GetObjectItem(data, "module_list");
-			SCI_TRACE_LOW("%s: data_len = %d", __FUNCTION__, list_data->data_len);
-			SCI_TRACE_LOW("%s: data = %s", __FUNCTION__, list_data->data);
-			if(chList != NULL && chList->type != cJSON_NULL)
-			{
-				if(module_info == NULL)
-				{
-					module_info = (LISTENING_MODULE_INFO *)SCI_ALLOC_APPZ(sizeof(LISTENING_MODULE_INFO));
-				}
-				memset(module_info, 0, sizeof(LISTENING_MODULE_INFO));
-				for(i = 0; i < cJSON_GetArraySize(chList) && i < ALBUM_LIST_ITEM_MAX ; i++)
-				{
-					cJSON *item = cJSON_GetArrayItem(chList, i);
-					cJSON *name = cJSON_GetObjectItem(item, "module_name");
-					cJSON *album_id = cJSON_GetObjectItem(item, "id");
-					cJSON *module_id = cJSON_GetObjectItem(item, "stage");
-					if(album_id->valueint == 14) continue;
-					module_info->module_id = module_id->valueint;
-					//SCI_TRACE_LOW("%s: album_id->valueint = %d", __FUNCTION__, album_id->valueint);
-					module_info->item_info[count].album_id = album_id->valueint;
-					strcpy(module_info->item_info[count].album_name, name->valuestring);
-					count++;
-				}
-				listening_info->album_total_num = count;
-				SCI_TRACE_LOW("%s: count = %d", __FUNCTION__, count);
-			}
-			cJSON_Delete(root);
-			listening_load_win = 1;
-		}
-		else
-		{
-			listening_load_win = -1;
-		}
-		if(MMK_IsOpenWin(LISTENING_ALBUM_LIST_WIN_ID))
-		{
-			MMK_SendMsg(LISTENING_ALBUM_LIST_WIN_ID, MSG_FULL_PAINT, PNULL);
-		}
-	}
-}*/
-
-/*PUBLIC void Listening_ParseAudioResponse(DSLMAIN_DATA_CONTENT_T * list_data, BOOLEAN success, uint32 idx) 
-{
-	if(request_http_listening_idx == idx)
-	{
-		request_http_listening_idx = 0;
-		if(success)
-		{
-			uint8 i = 0;
-			uint8 index = 0;
-			uint8 count = 0;
-			cJSON *root = cJSON_Parse(list_data->data);
-			cJSON *data = cJSON_GetObjectItem(root, "data");
-			cJSON *chList = cJSON_GetObjectItem(data, "album_list");
-			SCI_TRACE_LOW("%s: data_len = %d", __FUNCTION__, list_data->data_len);
-			SCI_TRACE_LOW("%s: data = %s", __FUNCTION__, list_data->data);
-			if(chList != NULL && chList->type != cJSON_NULL)
-			{
-				if(album_info == NULL)
-				{
-					album_info = (LISTENING_ALBUM_INFO *)SCI_ALLOC_APPZ(sizeof(LISTENING_ALBUM_INFO));
-				}
-				memset(album_info, 0, sizeof(LISTENING_ALBUM_INFO));
-				for(index = 0; index < cJSON_GetArraySize(chList) && index < AUDIO_LIST_ITEM_MAX ; index++)
-				{
-					cJSON *album_list = cJSON_GetArrayItem(chList, index);
-					cJSON *module_id = cJSON_GetObjectItem(album_list, "module_id");
-					cJSON *album_id = cJSON_GetObjectItem(album_list, "id");
-					cJSON *album_name = cJSON_GetObjectItem(album_list, "module_name");
-					cJSON *audList = cJSON_GetObjectItem(album_list, "audio_list");
-					album_info->module_id = module_id->valueint;
-					album_info->album_id = album_id->valueint;
-					strcpy(album_info->album_name, album_name->valuestring);
-					for(count = 0; count < cJSON_GetArraySize(audList) && count < AUDIO_LIST_ITEM_MAX; count++)
-					{
-						cJSON *audio_list = cJSON_GetArrayItem(audList, count);
-						cJSON *audio_id = cJSON_GetObjectItem(audio_list, "id");
-						cJSON *audio_duration = cJSON_GetObjectItem(audio_list, "duration");
-						cJSON *audio_name = cJSON_GetObjectItem(audio_list, "audio_name");
-						//cJSON *audio_lrc = cJSON_GetObjectItem(audio_list, "lrc_file");
-						cJSON *audio_file = cJSON_GetObjectItem(audio_list, "audio_file");
-						album_info->item_info[count].audio_id = audio_id->valueint;
-						album_info->item_info[count].audio_duration = audio_duration->valueint;
-						album_info->item_info[count].aduio_ready = 0;
-
-						SCI_MEMCPY(album_info->item_info[count].audio_name, audio_name->valuestring, strlen(audio_name->valuestring) + 1);
-						//SCI_MEMCPY(album_info->item_info[count].audio_lrc, audio_lrc->valuestring, strlen(audio_lrc->valuestring) + 1);
-						SCI_MEMCPY(album_info->item_info[count].audio_path, audio_file->valuestring, strlen(audio_file->valuestring) + 1);
-					}
-				}
-				listening_info->item_total_num = count;
-				SCI_TRACE_LOW("%s: count = %d", __FUNCTION__, count);
-			}
-			cJSON_Delete(root);
-			listening_load_win = 1;
-		}
-		else
-		{
-			listening_load_win = -1;
-		}
-		if(MMK_IsOpenWin(LISTENING_AUDIO_LIST_WIN_ID))
-		{
-			MMK_SendMsg(LISTENING_AUDIO_LIST_WIN_ID, MSG_FULL_PAINT, PNULL);
-		}
-	}
-}*/
+extern uint8 listening_downloading_index;
 
 PUBLIC void Listening_InsertOneAudioInfoToLocal(LISTENING_ALBUM_INFO * album_info, uint8 index)
 {
@@ -183,27 +67,27 @@ PUBLIC void Listening_InsertOneAudioInfoToLocal(LISTENING_ALBUM_INFO * album_inf
 		if(local_info == NULL)
 		{
 			SCI_TRACE_LOW("%s: local_info == NULL !!", __FUNCTION__);
-			return;
-		}
-		
-		for(i = 0; i < local_info->module_count; i++)
-		{
-			//SCI_TRACE_LOW("%s: module_id = %d", __FUNCTION__, album_info->module_id);
-			//SCI_TRACE_LOW("%s: module_info[%d].module_id = %d", __FUNCTION__, i, local_info->module_info[i].module_id);
+			new_module = TRUE;
+		}else{	
+       		for(i = 0; i < local_info->module_count; i++)
+        		{
+        			//SCI_TRACE_LOW("%s: module_id = %d", __FUNCTION__, album_info->module_id);
+        			//SCI_TRACE_LOW("%s: module_info[%d].module_id = %d", __FUNCTION__, i, local_info->module_info[i].module_id);
 
-			if(album_info->module_id == local_info->module_info[i].module_id)
-			{
-				new_module = FALSE;
-				break;
-			}
+        			if(album_info->module_id == local_info->module_info[i].module_id)
+        			{
+        				new_module = FALSE;
+        				break;
+        			}
+        		}
 		}
 
 		SCI_TRACE_LOW("%s: new_module = %d", __FUNCTION__, new_module);
-		if(1)
+		if(local_info != NULL)
 		{
 			cJSON * module_list;
 			cJSON * module_count;
-			
+			SCI_TRACE_LOW("%s: local start add", __FUNCTION__);
 			root = cJSON_CreateObject();
 			module_list = cJSON_CreateArray();
 			if(!new_module)
@@ -319,6 +203,8 @@ PUBLIC void Listening_InsertOneAudioInfoToLocal(LISTENING_ALBUM_INFO * album_inf
 				cJSON * mudule_id;
 				cJSON * album_count;
 				cJSON * album_list;
+				
+				SCI_TRACE_LOW("%s: new_module add", __FUNCTION__);
 				
 				i++;
 				module_root = cJSON_CreateObject();
@@ -734,84 +620,84 @@ PUBLIC void Listening_DeleteOneAlbum(int module_id)
 	Listening_InitLocalDataInfo();
 }
 
-PUBLIC void Listening_ParseAudioDownload(BOOLEAN success, uint32 idx) 
+PUBLIC void Listening_ParseAudioDownload(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id)
 {
- 	SCI_TRACE_LOW("%s: request_http_listening_idx = %d, idx = %d", 
-		__FUNCTION__, request_http_listening_idx, idx);
-    //if(request_http_listening_idx == idx)
+    SCI_TRACE_LOW("%s: is_ok = %d, Rcv_len  = %d", __FUNCTION__, is_ok, Rcv_len);	
+    request_http_listening_idx = 0;
+
+    return;
+    if(is_ok)
     {
-        extern uint8 listening_downloading_index;
-        request_http_listening_idx = 0;
-        SCI_TRACE_LOW("%s: success = %d", __FUNCTION__, success);
-        if(success)
+        LISTENING_PLAYER_INFO * player_info = NULL;
+        if((!MMK_IsOpenWin(LISTENING_AUDIO_LIST_WIN_ID) &&
+                !MMK_IsOpenWin(LISTENING_LOCAL_AUDIO_WIN_ID)) || 
+            MMK_IsOpenWin(LISTENING_PLAYER_WIN_ID)){
+            SCI_TRACE_LOW("%s: window LISTENING_AUDIO_LIST_WIN_ID no open", __FUNCTION__);
+            if(listening_downloading_audio_path != NULL){
+                SCI_FREE(listening_downloading_audio_path);
+                listening_downloading_audio_path = NULL;
+            }
+            listening_download_audio = FALSE;
+            return;
+        }
+        player_info = (LISTENING_PLAYER_INFO *)SCI_ALLOC_APPZ(sizeof(LISTENING_PLAYER_INFO));
+        album_info->item_info[listening_downloading_index].aduio_ready = 2;
+        listening_download_fail = FALSE;
+        SCI_TRACE_LOW("%s: module_id = %d, album_id = %d, audio_id = %d", 
+                __FUNCTION__,
+                album_info->module_id,
+                album_info->album_id,
+                album_info->item_info[listening_downloading_index].audio_id);
+        Listening_InsertOneAudioInfoToLocal(album_info, listening_downloading_index);
+        if(Listening_PlayMp3(
+                album_info->module_id,
+                album_info->album_id,
+                album_info->item_info[listening_downloading_index].audio_id)
+        )
         {
-        	LISTENING_PLAYER_INFO * player_info = NULL;
-        	if((!MMK_IsOpenWin(LISTENING_AUDIO_LIST_WIN_ID) &&
-			!MMK_IsOpenWin(LISTENING_LOCAL_AUDIO_WIN_ID)) || 
-			MMK_IsOpenWin(LISTENING_PLAYER_WIN_ID)){
-			SCI_TRACE_LOW("%s: window LISTENING_AUDIO_LIST_WIN_ID no open", __FUNCTION__);
-			if(listening_downloading_audio_path != NULL){
-				SCI_FREE(listening_downloading_audio_path);
-				listening_downloading_audio_path = NULL;
-			 }
-			listening_download_audio = FALSE;
-			return;
-        	}
-            player_info = (LISTENING_PLAYER_INFO *)SCI_ALLOC_APPZ(sizeof(LISTENING_PLAYER_INFO));
-            album_info->item_info[listening_downloading_index].aduio_ready = 2;
-            listening_download_fail = FALSE;
+            player_info->is_local_play = FALSE;
+            player_info->moudle_index = 0;//not use
+            player_info->audio_index = listening_downloading_index;
+            MMI_CreateListeningPlayerWin(player_info);
+        }
+    }
+    else
+    {
+        if(1)
+        {
+            char file_path[LIST_ITEM_PATH_SIZE_MAX] = {0};
             SCI_TRACE_LOW("%s: module_id = %d, album_id = %d, audio_id = %d", 
                 __FUNCTION__,
                 album_info->module_id,
                 album_info->album_id,
                 album_info->item_info[listening_downloading_index].audio_id);
-            //Listening_InsertOneAudioInfoToLocal(album_info, listening_downloading_index);
-            if(Listening_PlayMp3(
+            Listening_GetFileName(
+                file_path, 
                 album_info->module_id,
                 album_info->album_id,
-                album_info->item_info[listening_downloading_index].audio_id)
-                )
+                album_info->item_info[listening_downloading_index].audio_id);
+            if(zmt_file_exist(file_path))
             {
-                player_info->is_local_play = FALSE;
-                player_info->moudle_index = 0;//not use
-                player_info->audio_index = listening_downloading_index;
-                MMI_CreateListeningPlayerWin(player_info);
+                zmt_file_delete(file_path);
             }
         }
-        else
-        {
-            	if(1)
-            	{
-                	char file_path[LIST_ITEM_PATH_SIZE_MAX] = {0};
-                	SCI_TRACE_LOW("%s: module_id = %d, album_id = %d, audio_id = %d", 
-                   		 __FUNCTION__,
-                    		album_info->module_id,
-                    		album_info->album_id,
-                    		album_info->item_info[listening_downloading_index].audio_id);
-                	Listening_GetFileName(
-                    		file_path, 
-                    		album_info->module_id,
-                    		album_info->album_id,
-                    		album_info->item_info[listening_downloading_index].audio_id);
-                	if(zmt_file_exist(file_path))
-                	{
-                    		zmt_file_delete(file_path);
-                	}
-            	}
-            	album_info->item_info[listening_downloading_index].aduio_ready = 0;
-		MMI_CreateListeningTipWin(PALYER_PLAY_DOWNLOAD_FAIL_TIP);
+        album_info->item_info[listening_downloading_index].aduio_ready = 0;
+        if(err_id == HTTP_ERROR_FILE_NO_SPACE){
+            MMI_CreateListeningTipWin(PALYER_PLAY_NO_SPACE_TIP);
+        }else{
+            MMI_CreateListeningTipWin(PALYER_PLAY_DOWNLOAD_FAIL_TIP);
         }
-	 if(listening_downloading_audio_path != NULL){
-		SCI_FREE(listening_downloading_audio_path);
-		listening_downloading_audio_path = NULL;
-	 }
-        listening_download_audio = FALSE;
-	 if(MMK_IsOpenWin(LISTENING_AUDIO_LIST_WIN_ID)){
-        	MMK_SendMsg(LISTENING_AUDIO_LIST_WIN_ID, MSG_FULL_PAINT, PNULL);
-	 }
-	 if(MMK_IsOpenWin(LISTENING_LOCAL_AUDIO_WIN_ID)){
-		MMK_SendMsg(LISTENING_LOCAL_AUDIO_WIN_ID, MSG_FULL_PAINT, PNULL);
-	 }
+    }
+    if(listening_downloading_audio_path != NULL){
+        SCI_FREE(listening_downloading_audio_path);
+        listening_downloading_audio_path = NULL;
+    }
+    listening_download_audio = FALSE;
+    if(MMK_IsOpenWin(LISTENING_AUDIO_LIST_WIN_ID)){
+        MMK_SendMsg(LISTENING_AUDIO_LIST_WIN_ID, MSG_FULL_PAINT, PNULL);
+    }
+    if(MMK_IsOpenWin(LISTENING_LOCAL_AUDIO_WIN_ID)){
+        MMK_SendMsg(LISTENING_LOCAL_AUDIO_WIN_ID, MSG_FULL_PAINT, PNULL);
     }
 }
 
@@ -929,53 +815,45 @@ PUBLIC void Listening_InitLocalDataInfo(void)
 	}
 }
 
-PUBLIC void Listening_ParseAudioLrcResponse(BOOLEAN success, uint32 idx)
+PUBLIC void Listening_ParseAudioLrcResponse(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id)
 {
-	if(request_http_listening_idx == idx)
-	{
-		extern uint8 listening_downloading_index;
-		request_http_listening_idx = 0;
-		SCI_TRACE_LOW("%s: success = %d", __FUNCTION__, success);
-		if(success)
-		{
-			char file_str[50] = {0};
-			uint8 lenght = 0;
-			uint32 * data_size;
-			char * data_buf;
+    SCI_TRACE_LOW("%s: is_ok = %d, Rcv_len  = %d", __FUNCTION__, is_ok, Rcv_len);
+    if(is_ok)
+    {
+        char file_str[50] = {0};
+        uint8 lenght = 0;
+        uint32 * data_size;
+        char * data_buf;
 
-			Listening_GetLrcFileName(
-				file_str, 
-				album_info->module_id,
-				album_info->album_id, 
-				album_info->item_info[listening_downloading_index].audio_id);
-			if(zmt_file_exist(file_str))
-			{
-				/*uint8 * data_buf = NULL;
-				int data_size = 0;
-				data_buf = zmt_file_data_read(file_str,&data_size);
-				Listening_Encryption(data_buf, data_size);
-				zmt_file_delete(file_str);
-				zmt_file_data_write(data_buf, data_size, file_str);
-				SCI_FREE(data_buf);*/
-				{
-					LISTENING_PLAYER_INFO * player_infos = NULL;
-					LISTENING_PLAYER_INFO * player_info = NULL;
-					player_info = (LISTENING_PLAYER_INFO *) MMK_GetWinAddDataPtr(LISTENING_PLAYER_WIN_ID);
-					player_infos = (LISTENING_PLAYER_INFO*) SCI_ALLOC_APPZ(sizeof(LISTENING_PLAYER_INFO));
-					player_infos->is_local_play = FALSE;
-					player_infos->moudle_index = player_info->moudle_index;
-					player_infos->audio_index = player_info->audio_index;
-					player_play_info.lrc_ready = 1;//success
-					SCI_TRACE_LOW("%s: player_infos->is_local_play = %d", __FUNCTION__, player_infos->is_local_play);
-					MMI_CreateListeningPlayerLrcWin(player_infos);
-				}
-			}
-		}
-		else
-		{
-			player_play_info.lrc_ready = 2;//fail
-		}
-	}
+        request_http_listening_idx = 0;
+        Listening_GetLrcFileName(
+            file_str, 
+            album_info->module_id,
+            album_info->album_id, 
+            album_info->item_info[listening_downloading_index].audio_id);
+        if(zmt_file_exist(file_str))
+        {
+            LISTENING_PLAYER_INFO * player_infos = NULL;
+            LISTENING_PLAYER_INFO * player_info = NULL;
+            player_info = (LISTENING_PLAYER_INFO *) MMK_GetWinAddDataPtr(LISTENING_PLAYER_WIN_ID);
+            player_infos = (LISTENING_PLAYER_INFO*) SCI_ALLOC_APPZ(sizeof(LISTENING_PLAYER_INFO));
+            player_infos->is_local_play = FALSE;
+            player_infos->moudle_index = player_info->moudle_index;
+            player_infos->audio_index = player_info->audio_index;
+            player_play_info.lrc_ready = 1;//success
+            SCI_TRACE_LOW("%s: player_infos->is_local_play = %d", __FUNCTION__, player_infos->is_local_play);
+            MMI_CreateListeningPlayerLrcWin(player_infos);
+        }
+    }
+    else
+    {
+        player_play_info.lrc_ready = 2;//fail
+        if(err_id == HTTP_ERROR_FILE_NO_SPACE){
+            MMI_CreateListeningTipWin(PALYER_PLAY_NO_SPACE_TIP);
+        }else{
+            MMI_CreateListeningTipWin(PALYER_PLAY_DOWNLOAD_FAIL_TIP);
+        }
+    }
 }
 
 PUBLIC void Listening_GetAudioLrcData(int module_id, int album_id, int audio_id)
