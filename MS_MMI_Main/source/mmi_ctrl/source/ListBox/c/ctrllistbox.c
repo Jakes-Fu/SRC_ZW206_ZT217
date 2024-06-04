@@ -13978,3 +13978,18 @@ PUBLIC BOOLEAN CTRLLIST_SetIsSupportSlideDecAnim(
 
     return TRUE;
 }
+
+PUBLIC BOOLEAN CTRLLIST_SetEmptyStyle(MMI_CTRL_ID_T ctrl_id, GUISTR_STYLE_T *style)
+{
+    CTRLLIST_OBJ_T  *list_ctrl_ptr = ListGetPtr(ctrl_id);
+
+    if (PNULL == list_ctrl_ptr)
+    {
+        return FALSE;
+    }
+
+    list_ctrl_ptr->display_style.text_empty_font = style->font;
+    list_ctrl_ptr->display_style.text_empty_color = style->font_color;
+
+    return TRUE;
+}

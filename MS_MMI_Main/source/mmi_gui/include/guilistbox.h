@@ -1076,6 +1076,14 @@ PUBLIC void GUILIST_SetItemStyleEx(
 #define GUILIST_SetIsSupportSlideDecAnim CTRLLIST_SetIsSupportSlideDecAnim
 
 /*****************************************************************************/
+//  Description : set empty style
+//  Global resource dependence :
+//  Author:fys 2024.06.04
+//  Note:
+/*****************************************************************************/
+#define GUILIST_SetEmptyStyle CTRLLIST_SetEmptyStyle
+
+/*****************************************************************************/
 //  Description : Get the item state
 //  Global resource dependence :
 //  Author:James.Zhang
