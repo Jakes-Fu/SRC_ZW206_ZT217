@@ -116,6 +116,8 @@ typedef struct
 	uint8 favorite[9000];
 } ZMT_POETRY_TEMP_FAVORITE_STATUS_LIST_T;
 
+PUBLIC BOOLEAN MMI_IsPoetryDetailWinOpen(void);
+
 #ifdef _cplusplus
 }
 #endif

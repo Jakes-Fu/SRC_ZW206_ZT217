@@ -82,6 +82,7 @@ LOCAL uint16 auto_play = 1;
 LOCAL uint8 autoplay_tip_timer=0;
 LOCAL GUI_LCD_DEV_INFO poetry_auto_tip_layer={0};
 LOCAL GUI_LCD_DEV_INFO poetry_item_auto_tip_layer={0};
+LOCAL GUI_LCD_DEV_INFO poetry_detail_auto_tip_layer={0};
 LOCAL int where_open_favorite = 0;//0年级列表进入,1诗词列表进入
 LOCAL BOOLEAN is_open_favorite = FALSE;
 LOCAL ZMT_POETRY_LIST_T favorite_infos ={0};
@@ -90,6 +91,7 @@ LOCAL BOOLEAN poetry_is_favorite = FALSE;
 LOCAL uint16 detail_win_current_option = 1;///1原文，2注释，3翻译，赏析
 LOCAL MMISRV_HANDLE_T poetry_player_handle=PNULL;
 LOCAL BOOLEAN audio_play_now = FALSE;
+LOCAL BOOLEAN audio_download_now = FALSE;
 LOCAL uint8 audio_play_progress = 0;
 LOCAL uint8 audio_download_progress = 0;
 LOCAL uint8 audio_download_retry_num = 0;
@@ -161,6 +163,7 @@ LOCAL void auto_play_tip_timeout(uint8 timer_id,uint32 param)
     auto_play_open_close_tip=0;
     UILAYER_RemoveBltLayer(&poetry_auto_tip_layer);
     UILAYER_RemoveBltLayer(&poetry_item_auto_tip_layer);
+    UILAYER_RemoveBltLayer(&poetry_detail_auto_tip_layer);
 }
 
 LOCAL void auto_play_tip_timer(MMI_WIN_ID_T win_id)
@@ -225,16 +228,17 @@ LOCAL void Poetry_PlayMp3Notify(MMISRV_HANDLE_T handle, MMISRVMGR_NOTIFY_PARAM_T
 			switch(report_ptr->report)
 			{
 			    case MMISRVAUD_REPORT_END:
-				{
-					if(audio_play_progress + 1 < poetry_detail_infos->sentences_num){
+				{			    
+				    SCI_TRACE_LOW("%s: audio_play_progress = %d", __FUNCTION__, audio_play_progress);
+					if(audio_play_progress < poetry_detail_infos->sentences_num){
 						audio_play_progress ++;
-						audio_play_now = FALSE;
 						startPlayAudio();
 					}else{
 						audio_play_progress = 0;
 						audio_download_progress = 0;
 						audio_play_now = FALSE;
-						MMK_PostMsg(POETRY_DETAIL_WIN_ID, MSG_FULL_PAINT, PNULL, 0);
+						audio_download_now = FALSE;
+						SCI_TRACE_LOW("%s: play end = %d", __FUNCTION__);
 					}
 				}
 				break;
@@ -306,28 +310,100 @@ LOCAL uint8 Poetry_StartPlayMp3(char* file_name)
     return ret;
 }
 
+LOCAL void parsePlayAudio(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id)
+{
+    if (is_ok && pRcv != PNULL && Rcv_len> 2)
+    {
+        char file_path[100] = {0};
+        char poem_id[10] = {0};
+        if(poetry_detail_infos->id != NULL){
+            strcpy(poem_id, poetry_detail_infos->id);
+            sprintf(file_path,"E:/Poetry/Poetry_offline/%s/%s_%d.mp3",poem_id,poem_id,audio_download_progress);
+            if(zmt_tfcard_exist() && zmt_tfcard_get_free_kb() > 300 * 1024)
+            {
+                zmt_file_data_write(pRcv, Rcv_len, file_path);
+            }
+            else
+            {
+                MMI_CreateListeningTipWin(PALYER_PLAY_NO_SPACE_TIP);
+                return;
+            }
+            audio_play_progress++;
+            audio_download_retry_num = 0;
+        }
+        else
+        {
+            audio_download_retry_num++;
+        }
+        if(audio_download_retry_num > 3){
+            audio_play_progress++;
+        }
+        startPlayAudio();
+    }
+}
+
+LOCAL void startPlayAudio(void)
+{
+    char url[100] = {0};
+    char file_path[100] = {0};
+    char poem_id[10] = {0};
+
+    if(!MMI_IsPoetryDetailWinOpen()){
+        SCI_TRACE_LOW("%s: DetailWin no exist", __FUNCTION__);
+        return;
+    }
+    
+    SCI_TRACE_LOW("%s: audio_play_progress = %d", __FUNCTION__, audio_play_progress);
+    if(poetry_detail_infos->id != NULL){
+        strcpy(poem_id, poetry_detail_infos->id);
+        sprintf(file_path,"E:/Poetry/Poetry_offline/%s/%s_%d.mp3",poem_id,poem_id,audio_play_progress);
+        if(zmt_file_exist(file_path))
+        {
+            Poetry_StartPlayMp3(file_path);
+            audio_download_now = FALSE;
+        }
+        else
+        {
+            if(poetry_detail_infos != NULL){
+                if(audio_play_progress == 0){
+                    if(poetry_detail_infos->titleAudio != NULL){
+                        sprintf(url,"http://%s",poetry_detail_infos->titleAudio);
+                    }
+                }else if(audio_play_progress < poetry_detail_infos->sentences_num + 1){
+                    if(poetry_detail_infos->sen_audio[audio_download_progress-1] != NULL){
+                        sprintf(url,"http://%s",poetry_detail_infos->sen_audio[audio_play_progress-1]->audio);
+                    }
+                }else{
+                    return;
+                }
+                MMIZDT_HTTP_AppSend(TRUE, url, PNULL, 0, 1000, 0, 0, 3000, 0, 0, parsePlayAudio);
+                audio_download_now = TRUE;
+            }
+        }
+    }
+}
+
 LOCAL void parseDownloadAudio(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id)
 {
     if (is_ok && pRcv != PNULL && Rcv_len> 2)
     {
         char file_path[100] = {0};
         char poem_id[10] = {0};
-        strcpy(poem_id, poetry_detail_infos->id);
-        sprintf(file_path,"E:/Poetry/Poetry_offline/%s/%s_%d.mp3",poem_id,poem_id,audio_download_progress);
-        if(zmt_tfcard_exist() && zmt_tfcard_get_free_kb() > 300 * 1024)
-        {
-            zmt_file_data_write(pRcv, Rcv_len, file_path);
+        if(poetry_detail_infos->id != NULL){
+            strcpy(poem_id, poetry_detail_infos->id);
+            sprintf(file_path,"E:/Poetry/Poetry_offline/%s/%s_%d.mp3",poem_id,poem_id,audio_download_progress);
+            if(zmt_tfcard_exist() && zmt_tfcard_get_free_kb() > 300 * 1024)
+            {
+                zmt_file_data_write(pRcv, Rcv_len, file_path);
+            }
+            else
+            {
+                MMI_CreateListeningTipWin(PALYER_PLAY_NO_SPACE_TIP);
+                return;
+            }
+            audio_download_progress++;
+            audio_download_retry_num = 0;
         }
-        else
-        {
-            MMI_CreateListeningTipWin(PALYER_PLAY_NO_SPACE_TIP);
-            return;
-        }
-        if(!audio_play_now){
-            startPlayAudio();
-        }
-        audio_download_progress++;
-        audio_download_retry_num = 0;   
     }
     else
     {
@@ -339,55 +415,56 @@ LOCAL void parseDownloadAudio(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 e
     startDownloadAudio();
 }
 
-LOCAL void startPlayAudio(void)
-{
-    char url[100] = {0};
-    char file_path[100] = {0};
-    char poem_id[10] = {0};
-
-    strcpy(poem_id, poetry_detail_infos->id);
-    sprintf(file_path,"E:/Poetry/Poetry_offline/%s/%s_%d.mp3",poem_id,poem_id,audio_play_progress);
-    if(zmt_file_exist(file_path))
-    {
-        Poetry_StartPlayMp3(file_path);
-    }
-    else
-    {
-        if(audio_play_progress == 0){
-            sprintf(url,"http://%s",poetry_detail_infos->titleAudio);
-        }else{
-            sprintf(url,"http://%s",poetry_detail_infos->sen_audio[audio_play_progress-1]->audio);
-        }
-        MMIZDT_HTTP_AppSend(TRUE, url, PNULL, 0, 1000, 0, 0, 3000, 0, 0, parseDownloadAudio);
-    }
-}
-
 LOCAL void startDownloadAudio(void)
 {
     char url[100] = {0};
     char file_path[100] = {0};
     char poem_id[10] = {0};
-
+    
+    if(audio_play_now){
+        SCI_TRACE_LOW("%s: audio play now", __FUNCTION__);
+        return;
+    }
+    if(!MMI_IsPoetryDetailWinOpen()){
+        SCI_TRACE_LOW("%s: DetailWin no exist", __FUNCTION__);
+        return;
+    }
+    
+    SCI_TRACE_LOW("%s: sentences_num = %d", __FUNCTION__, poetry_detail_infos->sentences_num);
     strcpy(poem_id, poetry_detail_infos->id);
     sprintf(file_path,"E:/Poetry/Poetry_offline/%s/%s_%d.mp3",poem_id,poem_id,audio_download_progress);
     if(zmt_file_exist(file_path))
-    {
-        if(!audio_play_now){
-            startPlayAudio();
-        }
-        if(audio_download_progress + 1< poetry_detail_infos->sentences_num){
+    {        
+        if(audio_download_progress < poetry_detail_infos->sentences_num + 1)
+        {
             audio_download_progress++;
-            startDownloadAudio();           
+            audio_download_now = TRUE;
+            startDownloadAudio();
+        }
+        else
+        {
+            audio_play_progress = 0;
+            startPlayAudio();       
         }
     }
     else
     {
-        if(audio_download_progress == 0){
-            sprintf(url,"http://%s",poetry_detail_infos->titleAudio);
-        }else{
-            sprintf(url,"http://%s",poetry_detail_infos->sen_audio[audio_download_progress-1]->audio);
-        }
-        if(audio_download_progress + 1 < poetry_detail_infos->sentences_num){
+        if(poetry_detail_infos != NULL){
+            if(audio_download_progress == 0){
+                if(poetry_detail_infos->titleAudio != NULL){
+                    sprintf(url,"http://%s",poetry_detail_infos->titleAudio);
+                }
+            }else if(audio_download_progress < poetry_detail_infos->sentences_num + 1){
+                if(poetry_detail_infos->sen_audio[audio_download_progress-1] != NULL){
+                    sprintf(url,"http://%s",poetry_detail_infos->sen_audio[audio_download_progress-1]->audio);
+                }
+            }else{
+                audio_play_progress = 0;
+                startPlayAudio();
+                audio_download_now = FALSE;
+                return;
+            }
+            audio_download_now = TRUE;
             MMIZDT_HTTP_AppSend(TRUE, url, PNULL, 0, 1000, 0, 0, 3000, 0, 0, parseDownloadAudio);
         }
     }
@@ -423,8 +500,8 @@ LOCAL void parseGradeList(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_i
                     if(zmt_tfcard_exist()&& zmt_tfcard_get_free_kb() > 100 * 1024){
                         char file_path[80] = {0};
                         uint32 file_len = 0;
-                        sprintf(file_path,"E:/Poetry/Poetry_offline/grade_%d/list.bin",poetry_cur_post_grade_id-1);
-                        if(!zmt_file_exist(file_path)){                           
+                        sprintf(file_path,"E:/Poetry/Poetry_offline/grade_%d/list.bin",poetry_cur_post_grade_id);
+                        if(!zmt_file_exist(file_path)){
                             char * out = cJSON_PrintUnformatted(root);
                             zmt_file_data_write(out, strlen(out), file_path);
                             SCI_FREE(out);
@@ -635,53 +712,68 @@ LOCAL void releasePoetryDetail(void)
         if(poetry_detail_infos->id != NULL){
             SCI_FREE(poetry_detail_infos->id);
             poetry_detail_infos->id = NULL;
+            SCI_TRACE_LOW("%s: free id", __FUNCTION__);
         }
         if(poetry_detail_infos->title != NULL){
             SCI_FREE(poetry_detail_infos->title);
             poetry_detail_infos->title = NULL;
+            SCI_TRACE_LOW("%s: free title", __FUNCTION__);
         }
         if(poetry_detail_infos->title_content != NULL){
             SCI_FREE(poetry_detail_infos->title_content);
             poetry_detail_infos->title_content = NULL;
+            SCI_TRACE_LOW("%s: free title_content", __FUNCTION__);
         }      
         if(poetry_detail_infos->titleAudio != NULL){
             SCI_FREE(poetry_detail_infos->titleAudio);
             poetry_detail_infos->titleAudio = NULL;
+            SCI_TRACE_LOW("%s: free titleAudio", __FUNCTION__);
         }
         if(poetry_detail_infos->type != NULL){
             SCI_FREE(poetry_detail_infos->type);
             poetry_detail_infos->type = NULL;
+            SCI_TRACE_LOW("%s: free type", __FUNCTION__);
         }
         if(poetry_detail_infos->content != NULL){
             SCI_FREE(poetry_detail_infos->content);
             poetry_detail_infos->content = NULL;
+            SCI_TRACE_LOW("%s: free content", __FUNCTION__);
         }
         if(poetry_detail_infos->comment != NULL){
             SCI_FREE(poetry_detail_infos->comment);
             poetry_detail_infos->comment = NULL;
+            SCI_TRACE_LOW("%s: free comment", __FUNCTION__);
         }
         if(poetry_detail_infos->translation != NULL){
             SCI_FREE(poetry_detail_infos->translation);
             poetry_detail_infos->translation = NULL;
+            SCI_TRACE_LOW("%s: free translation", __FUNCTION__);
         }
         if(poetry_detail_infos->appreciation != NULL){
             SCI_FREE(poetry_detail_infos->appreciation);
             poetry_detail_infos->appreciation = NULL;
+            SCI_TRACE_LOW("%s: free appreciation", __FUNCTION__);
         }
         for(i = 0; i < MAX_POETRY_SENTENCES_SIZE;i++){
             if(poetry_detail_infos->sen_audio[i] != NULL){
                 SCI_FREE(poetry_detail_infos->sen_audio[i]);
                 poetry_detail_infos->sen_audio[i] = NULL;
+                SCI_TRACE_LOW("%s: free sen_audio", __FUNCTION__);
             }
         }
         SCI_FREE(poetry_detail_infos);
         poetry_detail_infos = NULL;
+        SCI_TRACE_LOW("%s: free poetry_detail_infos", __FUNCTION__);
     }
 }
 
 LOCAL void parsePoetryDetail(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id)
 {
     uint8 i = 0;
+    if(!MMK_IsOpenWin(POETRY_DETAIL_WIN_ID))
+    {
+        return;
+    }
     if (is_ok && pRcv != PNULL && Rcv_len> 2)
     {
         cJSON *root = cJSON_Parse(pRcv);
@@ -802,9 +894,6 @@ LOCAL void parsePoetryDetail(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 er
                     zmt_file_data_write(out, strlen(out), file_path);
                     SCI_FREE(out);
                 }
-                if(auto_play){
-                    startDownloadAudio();
-                }
             }
             else
             {
@@ -822,13 +911,23 @@ LOCAL void parsePoetryDetail(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 er
         detail_get_status = 2;
     }
     SCI_TRACE_LOW("%s: detail_get_status = %d", __FUNCTION__, detail_get_status);
-    if(poetry_detail_infos != NULL && poetry_detail_infos->id != NULL)
+    if(MMK_IsOpenWin(POETRY_DETAIL_WIN_ID))
     {
-        poetry_is_favorite = getPoemIsFavorite(poetry_detail_infos->id);
-    }
-    if(MMK_IsFocusWin(POETRY_DETAIL_WIN_ID))
-    {
+        if(poetry_detail_infos != NULL && poetry_detail_infos->id != NULL)
+        {
+            poetry_is_favorite = getPoemIsFavorite(poetry_detail_infos->id);
+        }
+        SCI_TRACE_LOW("%s: end to full paint", __FUNCTION__);
         MMK_PostMsg(POETRY_DETAIL_WIN_ID, MSG_FULL_PAINT, PNULL, 0);
+        if(detail_get_status == 1){
+            if(auto_play){
+                audio_download_progress = 0;
+                audio_play_progress = 0;
+                audio_play_now = FALSE;
+                audio_download_now = FALSE;
+                startDownloadAudio();
+            }
+        }
     }
 }
 
@@ -885,7 +984,7 @@ LOCAL void PoetryWin_ShowAutoPlayTip(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_d
         LCD_DrawRoundedRect(&lcd_dev_info, tip_rect_line, tip_rect_line, MMI_BLACK_COLOR);
 
         text_style.align = ALIGN_HVMIDDLE;
-        text_style.font = SONG_FONT_16;
+        text_style.font = DP_FONT_16;
         text_style.font_color = MMI_BLACK_COLOR;
 
         if(auto_play_open_close_tip==1){
@@ -894,6 +993,8 @@ LOCAL void PoetryWin_ShowAutoPlayTip(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_d
             sprintf(count_str,"已关闭自动朗读");
         }else if(auto_play_open_close_tip==3){
             sprintf(count_str,"正在播放音频");
+        }else if(auto_play_open_close_tip==4){
+            sprintf(count_str,"正在下载音频");
         }
         GUI_GBToWstr(text_str, count_str, strlen(count_str));
         text_string.wstr_ptr = text_str;
@@ -963,7 +1064,7 @@ LOCAL void Draw_GradeList(MMI_WIN_ID_T win_id)
         GUILIST_SetNeedPrgbarBlock(ctrl_id,FALSE);
 
         GUILIST_SetBgColor(ctrl_id,MMI_WHITE_COLOR);
-        GUILIST_SetTextFont(ctrl_id, SONG_FONT_20, MMI_BLACK_COLOR);
+        GUILIST_SetTextFont(ctrl_id, DP_FONT_20, MMI_BLACK_COLOR);
 
         GUILIST_AppendItem(ctrl_id, &item_t);
     }
@@ -982,7 +1083,7 @@ LOCAL void PoetryWin_FULL_PAINT(MMI_WIN_ID_T win_id)
     GUIRES_DisplayImg(PNULL, &poetry_win_rect, PNULL, win_id, IMG_POETRY_BG, &lcd_dev_info);
 
     text_style.align = ALIGN_LVMIDDLE;
-    text_style.font = SONG_FONT_20;
+    text_style.font = DP_FONT_20;
     text_style.font_color = MMI_WHITE_COLOR;
     MMIRES_GetText(ZMT_TXT_POETRY, win_id, &text_string);
     GUISTR_DrawTextToLCDInRect(
@@ -998,7 +1099,7 @@ LOCAL void PoetryWin_FULL_PAINT(MMI_WIN_ID_T win_id)
     if(auto_play == 1){
         GUIRES_DisplayImg(PNULL, &poetry_play_rect, PNULL, win_id, IMG_POETRY_AUDOPLAY, &lcd_dev_info);//自动播放的喇叭
         MMIRES_GetText(ZMT_TXT_POETRY_AUTO, win_id, &text_string);
-        text_style.font = SONG_FONT_16;
+        text_style.font = DP_FONT_16;
         GUISTR_DrawTextToLCDInRect(
         (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
             &poetry_play_text_rect,
@@ -1055,6 +1156,7 @@ LOCAL void PoetryWin_HanldeTpUp(MMI_WIN_ID_T win_id, GUI_POINT_T point)
 LOCAL void PoetryWin_CLOSE_WINDOW(MMI_WIN_ID_T win_id)
 {
     MMIZDT_HTTP_Close();
+    releasePoetryDetail();
 }
 
 LOCAL MMI_RESULT_E HandlePoetryWinMsg(
@@ -1182,7 +1284,7 @@ LOCAL void DrawPoetryItemList(MMI_WIN_ID_T win_id, uint16 study_favorite)
         GUILIST_SetNeedPrgbarBlock(ctrl_id,FALSE);
 
         GUILIST_SetBgColor(ctrl_id,MMI_WHITE_COLOR);
-        GUILIST_SetTextFont(ctrl_id, SONG_FONT_20, MMI_BLACK_COLOR);
+        GUILIST_SetTextFont(ctrl_id, DP_FONT_20, MMI_BLACK_COLOR);
 
         GUILIST_AppendItem(ctrl_id, &item_t);
     }
@@ -1200,7 +1302,7 @@ LOCAL void PoetryItemWin_FULL_PAINT(MMI_WIN_ID_T win_id)
     GUIRES_DisplayImg(PNULL, &poetry_win_rect, PNULL, win_id, IMG_POETRY_BG, &lcd_dev_info);
 
     text_style.align = ALIGN_LVMIDDLE;
-    text_style.font = SONG_FONT_20;
+    text_style.font = DP_FONT_20;
     text_style.font_color = MMI_WHITE_COLOR;
     MMIRES_GetText(ZMT_TXT_POETRY, win_id, &text_string);
     GUISTR_DrawTextToLCDInRect(
@@ -1218,7 +1320,7 @@ LOCAL void PoetryItemWin_FULL_PAINT(MMI_WIN_ID_T win_id)
     {
         GUIRES_DisplayImg(PNULL, &poetry_play_rect, PNULL, win_id, IMG_POETRY_AUDOPLAY, &lcd_dev_info);//自动播放的喇叭
         MMIRES_GetText(ZMT_TXT_POETRY_AUTO, win_id, &text_string);
-        text_style.font = SONG_FONT_16;
+        text_style.font = DP_FONT_16;
         GUISTR_DrawTextToLCDInRect(
             (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
             &poetry_play_text_rect,
@@ -1268,7 +1370,7 @@ LOCAL void PoetryItemWin_FULL_PAINT(MMI_WIN_ID_T win_id)
         }
         return;
     }
-    text_style.font = SONG_FONT_20;
+    text_style.font = DP_FONT_20;
     text_style.font_color = MMI_BLACK_COLOR;
     GUISTR_DrawTextToLCDInRect(
         (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
@@ -1339,6 +1441,10 @@ LOCAL MMI_RESULT_E HandlePoetryItemWinMsg(
             }
             break;
         case MSG_GET_FOCUS:
+            {
+                //releasePoetryDetail();
+            }
+            break;
         case MSG_FULL_PAINT:
             {
                 PoetryItemWin_FULL_PAINT(win_id);
@@ -1390,8 +1496,22 @@ LOCAL MMI_RESULT_E HandlePoetryItemWinMsg(
 LOCAL void PoetryDetailWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
 {
     MMI_CTRL_ID_T ctrl_id = MMI_ZMT_POETRY_APPRE_TEXT_ID;
-    GUI_FONT_T text_font = SONG_FONT_18;
+    GUI_FONT_T text_font = DP_FONT_18;
     GUI_COLOR_T text_color = MMI_BLACK_COLOR;
+    releasePoetryDetail();
+    if (UILAYER_IsMultiLayerEnable())
+    {              
+        UILAYER_CREATE_T create_info = {0};
+        create_info.lcd_id = MAIN_LCD_ID;
+        create_info.owner_handle = win_id;
+        create_info.offset_x = poetry_tip_rect.left;
+        create_info.offset_y = poetry_tip_rect.top;
+        create_info.width = poetry_tip_rect.right - poetry_tip_rect.left;
+        create_info.height = poetry_tip_rect.bottom - poetry_tip_rect.top;
+        create_info.is_bg_layer = FALSE;
+        create_info.is_static_layer = FALSE;
+        UILAYER_CreateLayer(&create_info, &poetry_detail_auto_tip_layer);
+    }
     
     GUITEXT_SetRect(ctrl_id, &poetry_content_other_rect);
     GUITEXT_SetFont(ctrl_id, &text_font,&text_color);
@@ -1399,7 +1519,14 @@ LOCAL void PoetryDetailWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
     GUITEXT_SetHandleTpMsg(FALSE, ctrl_id);
     GUITEXT_SetClipboardEnabled(ctrl_id,FALSE);
     GUITEXT_IsSlide(ctrl_id,FALSE);
+
+    SCI_TRACE_LOW("%s: start %d KB-- %d kB", __FUNCTION__, SCI_GetSystemSpaceTotalAvalidMem()/1024, SCI_GetHeapTotalSpace(DYNAMIC_HEAP_APP_MEMORY)/1024);
     
+    detail_win_current_option = 1;
+    audio_download_progress = 0;
+    audio_play_progress = 0;
+    audio_play_now = FALSE;
+    audio_download_now = FALSE;
     detail_get_status = 0;
     Read_detail_data_from_tf_and_parse();
 }
@@ -1418,7 +1545,7 @@ LOCAL void PoetryDetailWin_DrawOption(MMI_WIN_ID_T win_id, uint16 current_option
     };
 
     text_style.align = ALIGN_HVMIDDLE;
-    text_style.font = SONG_FONT_20;
+    text_style.font = DP_FONT_20;
   
     optin_rect = poetry_bottom_option_rect;
     for(i = 0; i < 4;i++){
@@ -1458,8 +1585,9 @@ LOCAL void PoetryDetailWin_ShowText(MMI_WIN_ID_T win_id)
     GUI_RECT_T rect = {0};
 
     text_style.align = ALIGN_HVMIDDLE;
-    text_style.font = SONG_FONT_18;
+    text_style.font = DP_FONT_18;
     text_style.font_color = MMI_BLACK_COLOR;
+    SCI_TRACE_LOW("%s: detail_win_current_option = %d", __FUNCTION__, detail_win_current_option);
     switch(detail_win_current_option)
     {
         case 1:
@@ -1537,13 +1665,14 @@ LOCAL void PoetryDetailWin_ShowText(MMI_WIN_ID_T win_id)
         text_string.wstr_len = MMIAPICOM_Wstrlen(text_string.wstr_ptr);
         GUITEXT_SetRect(MMI_ZMT_POETRY_APPRE_TEXT_ID, &rect);
         GUITEXT_SetAlign(MMI_ZMT_POETRY_APPRE_TEXT_ID, text_style.align);
-        GUITEXT_SetString(MMI_ZMT_POETRY_APPRE_TEXT_ID, text_string.wstr_ptr, text_string.wstr_len, TRUE);
+        GUITEXT_SetString(MMI_ZMT_POETRY_APPRE_TEXT_ID, text_string.wstr_ptr, text_string.wstr_len, FALSE);
 
         SCI_FREE(text_char);
         text_char = NULL;
         SCI_FREE(text_str);
         text_str = NULL;
     }
+    SCI_TRACE_LOW("%s: show text end", __FUNCTION__);
 }
 
 LOCAL void PoetryDetailWin_FULL_PAINT(MMI_WIN_ID_T win_id)
@@ -1558,7 +1687,7 @@ LOCAL void PoetryDetailWin_FULL_PAINT(MMI_WIN_ID_T win_id)
     GUIRES_DisplayImg(PNULL, &poetry_win_rect, PNULL, win_id, IMG_POETRY_DETAIL_BG, &lcd_dev_info);
 
     text_style.align = ALIGN_LVMIDDLE;
-    text_style.font = SONG_FONT_20;
+    text_style.font = DP_FONT_20;
     text_style.font_color = MMI_WHITE_COLOR;
     MMIRES_GetText(ZMT_TXT_POETRY, win_id, &text_string);
     GUISTR_DrawTextToLCDInRect(
@@ -1571,6 +1700,7 @@ LOCAL void PoetryDetailWin_FULL_PAINT(MMI_WIN_ID_T win_id)
         GUISTR_TEXT_DIR_AUTO
     );
 
+    text_style.align = ALIGN_HVMIDDLE;
     if(detail_win_current_option == 1){//只有原文有音频
         GUIRES_DisplayImg(PNULL, &poetry_play_rect, PNULL, win_id, IMG_POETRY_PLAY, &lcd_dev_info);
     }
@@ -1581,7 +1711,7 @@ LOCAL void PoetryDetailWin_FULL_PAINT(MMI_WIN_ID_T win_id)
     }
 
     PoetryDetailWin_DrawOption(win_id, detail_win_current_option);
-
+    PoetryWin_ShowAutoPlayTip(win_id, poetry_detail_auto_tip_layer);
     if(detail_get_status == 0)
     {
         MMIRES_GetText(ZMT_TXT_POETRY_LOADING, win_id, &text_string);
@@ -1614,49 +1744,56 @@ LOCAL void PoetryDetailWin_HanldeTpUp(MMI_WIN_ID_T win_id, GUI_POINT_T point)
 {
     if(GUI_PointIsInRect(point, poetry_play_rect) && detail_win_current_option == 1)
     {
+        SCI_TRACE_LOW("%s: audio_play_now = %d, audio_download_now = %d", __FUNCTION__, audio_play_now, audio_download_now);
         if(!audio_play_now){
+            audio_download_progress = 0;
+            audio_play_progress = 0;
             startDownloadAudio();
+        }else if(audio_download_now){
+            auto_play_open_close_tip = 4;
+            auto_play_tip_timer(win_id);
         }else{
             auto_play_open_close_tip = 3;
             auto_play_tip_timer(win_id);
         }
+        MMK_PostMsg(win_id, MSG_FULL_PAINT, PNULL, 0);
     }
     else if(GUI_PointIsInRect(point, poetry_favorite_rect))
     {
         if(poetry_is_favorite){
             poetry_is_favorite = FALSE;
-            MMK_PostMsg(POETRY_DETAIL_WIN_ID, MSG_FULL_PAINT, PNULL, 0);
+            MMK_PostMsg(win_id, MSG_FULL_PAINT, PNULL, 0);
         }else{
             poetry_is_favorite = TRUE;
-            MMK_PostMsg(POETRY_DETAIL_WIN_ID, MSG_FULL_PAINT, PNULL, 0);
+            MMK_PostMsg(win_id, MSG_FULL_PAINT, PNULL, 0);
         }
     }
     else if(GUI_PointIsInRect(point, poetry_bottom_option_rect_array[0]))
     {
         if (detail_win_current_option != 1){
             detail_win_current_option = 1;
-            MMK_PostMsg(POETRY_DETAIL_WIN_ID, MSG_FULL_PAINT, PNULL, 0);
+            MMK_PostMsg(win_id, MSG_FULL_PAINT, PNULL, 0);
         }
     }
     else if(GUI_PointIsInRect(point, poetry_bottom_option_rect_array[1]))
     {
         if (detail_win_current_option != 2){
             detail_win_current_option = 2;
-            MMK_PostMsg(POETRY_DETAIL_WIN_ID, MSG_FULL_PAINT, PNULL, 0);
+            MMK_PostMsg(win_id, MSG_FULL_PAINT, PNULL, 0);
         }
     }
     else if(GUI_PointIsInRect(point, poetry_bottom_option_rect_array[2]))
     {
         if (detail_win_current_option != 3){
             detail_win_current_option = 3;
-            MMK_PostMsg(POETRY_DETAIL_WIN_ID, MSG_FULL_PAINT, PNULL, 0);
+            MMK_PostMsg(win_id, MSG_FULL_PAINT, PNULL, 0);
         }
     }
     else if(GUI_PointIsInRect(point, poetry_bottom_option_rect_array[3]))
     {
         if (detail_win_current_option != 4){
             detail_win_current_option = 4;
-            MMK_PostMsg(POETRY_DETAIL_WIN_ID, MSG_FULL_PAINT, PNULL, 0);
+            MMK_PostMsg(win_id, MSG_FULL_PAINT, PNULL, 0);
         }
     }
 }
@@ -1674,13 +1811,14 @@ LOCAL void PoetryDetailWin_CLOSE_WINDOW(MMI_WIN_ID_T win_id)
             changeFavoritePoem(poetry_detail_infos->id, TRUE);
         }
     }
-    Poetry_StopPlayMp3();
-    releasePoetryDetail();
-    MMIZDT_HTTP_Close();
     detail_win_current_option = 1;
     audio_download_progress = 0;
     audio_play_progress = 0;
+    audio_play_now = FALSE;
+    audio_download_now = FALSE;
     detail_get_status = 0;
+    MMIZDT_HTTP_Close();
+    Poetry_StopPlayMp3();
 }
 
 LOCAL MMI_RESULT_E HandlePoetryDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_id,DPARAM param) 
@@ -1802,5 +1940,14 @@ LOCAL void MMI_CreatePoetryDetailWin(void)
         MMK_CloseWin(win_id);
     }
     MMK_CreateWin((uint32 *)POETRY_DETAIL_WIN_TAB, PNULL);
+}
+
+PUBLIC BOOLEAN MMI_IsPoetryDetailWinOpen(void)
+{
+    if (MMK_IsOpenWin(POETRY_DETAIL_WIN_ID))
+    {
+        return TRUE;
+    }
+    return FALSE;
 }
 
