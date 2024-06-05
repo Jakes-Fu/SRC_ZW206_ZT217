@@ -2611,3 +2611,8 @@ MINCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_gpt/h
 MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_gpt/c
 SOURCES			+=  zmt_gpt.c zmt_gpt_zuowen.c zmt_gpt_kouyu.c
 endif
+ifeq ($(strip $(LYRIC_PARSER_SUPPORT)), TRUE)
+MINCPATH		+=  MS_MMI_Main/source/mmi_app/app/lyric_parser/h
+MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/lyric_parser/c
+SOURCES			+=  lyric_parser.c
+endif
