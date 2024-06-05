@@ -1050,6 +1050,7 @@ LOCAL MMI_RESULT_E HandleHanziDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
                 hanzi_detail_cur_idx = 0;
                 hanzi_detail_count = 0;
                 cur_chapter_select_idx = 0;
+                Hanzi_StopPlayMp3Data();
             }
             break;
         default:
