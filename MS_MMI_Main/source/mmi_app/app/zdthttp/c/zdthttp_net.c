@@ -359,7 +359,9 @@ LOCAL MMI_RESULT_E Http_HandleDataInd(CTREGHTTP_HTTP_CONTEXT * http_context_ptr,
     g_cur_http_file_save_len += ZDT_HTTP_File_Write(g_zdt_http_rcf_file_handle,signal.data_ptr,signal.data_len);
     ZDTHTTP_LOG("[HTTP]:Http_HandleDataInd receive len=%d,g_cur_http_rcv_count=%d,%d",signal.data_len,g_cur_http_rcv_count,g_cur_http_file_save_len);
     ZDT_HTTPRcvTrace(signal.data_ptr, signal.data_len);
-    ZDT_HTTP_RCV_Add(signal.data_ptr,signal.data_len);
+    if(g_zdt_http_rcf_file_handle == SFS_INVALID_HANDLE){
+        ZDT_HTTP_RCV_Add(signal.data_ptr,signal.data_len);
+    }
     http_context_ptr->request_id = signal.request_id;
     http_context_ptr->app_instance = signal.app_instance;
     return result;
