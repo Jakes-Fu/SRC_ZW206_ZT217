@@ -146,6 +146,7 @@ PUBLIC void HanziChapter_requestChapterInfo(uint16 book_id)
     char * data_buf = PNULL;
     uint32 file_len = 0;
     char *temp_file_path = HANZI_CARD_CHAPTER_PATH;
+    //这里要通过book_id来获得书本单元信息，暂用HANZI_CARD_CHAPTER_PATH代替
     strcpy(file_path,temp_file_path);
     if(zmt_file_exist(file_path)){
         data_buf = zmt_file_data_read(file_path, &file_len);

@@ -113,7 +113,6 @@ LOCAL void setNumberText(MMI_CTRL_ID_T ctrl_id,int cur,int count);
 LOCAL void parseBookResponse(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id);
 LOCAL void parseChapterResponse(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id);
 LOCAL void parseWordResponse(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id);
-LOCAL parseMp3AudioResponse(BOOLEAN success, uint32 idx);
 LOCAL parseListenAudioResponse(BOOLEAN success, uint32 idx);
 LOCAL parseMp3Response(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id);
 
@@ -1226,6 +1225,7 @@ LOCAL MMI_RESULT_E HandleWordCardWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg
 							GUIBUTTON_SetTextId(MMI_ZMT_WORD_LABEL_MESSAGE_ID, WORD_BOOK_FINISH);
 							LayoutItem(MMI_ZMT_WORD_BUTTON_OK_ID, word_tip_rect);
 							InitButton(MMI_ZMT_WORD_BUTTON_OK_ID);
+							GUIBUTTON_SetVisible(MMI_ZMT_WORD_BUTTON_CACEL_ID,FALSE,FALSE);
 							GUIBUTTON_SetTextId(MMI_ZMT_WORD_BUTTON_OK_ID, WORD_BACK_CH);
 							GUIBUTTON_SetVisible(MMI_ZMT_WORD_BUTTON_OK_ID,TRUE,TRUE);
 							GUIBUTTON_SetCallBackFunc(MMI_ZMT_WORD_BUTTON_OK_ID, closeWordCardWin);
@@ -2480,29 +2480,6 @@ LOCAL void addBookInfo(uint8 position, char *name , char *editionName, int id,ch
 	}
 }
 
-LOCAL parseMp3AudioResponse(BOOLEAN success, uint32 idx) 
-{
-	int i=0;
-	//for(i=0;i<MAX_WORD_NUM;i++)
-	{
-		SCI_TRACE_LOW("%s: pageInfo->curIdx = %d", __FUNCTION__, pageInfo->curIdx);
-		if(words[pageInfo->curIdx]!=PNULL)
-		{
-			SCI_TRACE_LOW("%s: uk_audio_request_idx = %d, idx = %d", __FUNCTION__, words[i]->uk_audio_request_idx, idx);
-			//if(words[i]->uk_audio_request_idx==idx)
-			{
-				SCI_TRACE_LOW("%s: success = %d", __FUNCTION__, success);
-				if (success){
-					words[pageInfo->curIdx]->uk_audio_data_len=255;
-					PlayWordUkSound();
-				}
-				//break;
-			}
-		}
-	}
-	
-}
-
 LOCAL parseMp3Response(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id)
 {
 	int i=0;
@@ -2511,6 +2488,7 @@ LOCAL parseMp3Response(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id)
 	{
 		if(words[i]!=PNULL)
 		{
+			if(pageInfo->curIdx==i)
 			{
 				if (is_ok) {
 					if(Rcv_len>0&&pRcv!=PNULL)
@@ -2520,7 +2498,6 @@ LOCAL parseMp3Response(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id)
 						{
 							SCI_FREE(words[i]->uk_audio_data);
 							words[i]->uk_audio_data=PNULL;
-							
 						}
 						words[i]->uk_audio_data = SCI_ALLOCA(Rcv_len);
 						SCI_MEMSET(words[i]->uk_audio_data, 0, Rcv_len);
@@ -2591,14 +2568,6 @@ LOCAL void addWordInfo(uint8 position, char *word,char *sentence,char *sentence_
 	SCI_MEMSET(words[position]->word, 0, size+1);
 	SCI_MEMCPY(words[position]->word, word, size);
 
-	if(is_homework_task && (strlen(homework_task_id) > 0 || word_task_msg_id != NULL)){
-		index = position+homework_task_page*MAX_WORD_NUM;
-		if(index > MAX_AUDIO_NUM - 1){
-			index = MAX_AUDIO_NUM - 1;
-		}
-		words_audio[index] = SCI_ALLOCA(sizeof(ZMT_WORD_AUDIO_T));
-		SCI_MEMSET(words_audio[index],0,sizeof(ZMT_WORD_AUDIO_T));
-	}
 	if(us!=PNULL)
 	{
 		size=strlen(us);
@@ -2608,19 +2577,11 @@ LOCAL void addWordInfo(uint8 position, char *word,char *sentence,char *sentence_
 		if(us_sound!=PNULL)
 		{
                     StrReplace(us_sound,"https","http");
-			MMIZDT_HTTP_AppSend(TRUE, us_sound, PNULL, 0, 1000, 0, 0, 8000, 0, 0, parseMp3Response);
 			words[position]->uk_audio_data_len=-1;
 			size=strlen(us_sound);
 			words[position]->uk_audio_data = SCI_ALLOCA(size+1);
 			SCI_MEMSET(words[position]->uk_audio_data, 0, size+1);
 			SCI_MEMCPY(words[position]->uk_audio_data, us_sound, size);
-
-			if(is_homework_task && (strlen(homework_task_id) > 0 || word_task_msg_id != NULL)){
-				words_audio[index]->audio_data_len=-1;
-				words_audio[index]->audio_data_url= SCI_ALLOCA(size);
-				SCI_MEMSET(words_audio[index]->audio_data_url, 0, size);
-				SCI_MEMCPY(words_audio[index]->audio_data_url, us_sound, size);
-			}
 		}
 	}
 	
@@ -2633,19 +2594,11 @@ LOCAL void addWordInfo(uint8 position, char *word,char *sentence,char *sentence_
 		if(uk_sound!=PNULL)
 		{
 			StrReplace(uk_sound,"https","http");
-			MMIZDT_HTTP_AppSend(TRUE, uk_sound, PNULL, 0, 1000, 0, 0, 8000, 0, 0, parseMp3Response);
 			words[position]->uk_audio_data_len=-1;
 			size=strlen(uk_sound);
 			words[position]->uk_audio_data = SCI_ALLOCA(size+1);
 			SCI_MEMSET(words[position]->uk_audio_data, 0, size+1);
 			SCI_MEMCPY(words[position]->uk_audio_data, uk_sound, size);
-
-			if(is_homework_task && (strlen(homework_task_id) > 0 || word_task_msg_id != NULL)){
-				words_audio[index]->audio_data_len=-1;
-				words_audio[index]->audio_data_url = SCI_ALLOCA(size);
-				SCI_MEMSET(words_audio[index]->audio_data_url, 0, size);
-				SCI_MEMCPY(words_audio[index]->audio_data_url, uk_sound, size);
-			}
 		}
 	}
     if(explain != PNULL)
