@@ -624,8 +624,6 @@ PUBLIC void Listening_ParseAudioDownload(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_l
 {
     SCI_TRACE_LOW("%s: is_ok = %d, Rcv_len  = %d", __FUNCTION__, is_ok, Rcv_len);	
     request_http_listening_idx = 0;
-
-    return;
     if(is_ok)
     {
         LISTENING_PLAYER_INFO * player_info = NULL;
@@ -842,7 +840,8 @@ PUBLIC void Listening_ParseAudioLrcResponse(BOOLEAN is_ok,uint8 * pRcv,uint32 Rc
             player_infos->audio_index = player_info->audio_index;
             player_play_info.lrc_ready = 1;//success
             SCI_TRACE_LOW("%s: player_infos->is_local_play = %d", __FUNCTION__, player_infos->is_local_play);
-            MMI_CreateListeningPlayerLrcWin(player_infos);
+            //MMI_CreateListeningPlayerLrcWin(player_infos);
+            ListeningPlayerWin_LrcParser(LISTENING_PLAYER_WIN_ID, file_str);
         }
     }
     else

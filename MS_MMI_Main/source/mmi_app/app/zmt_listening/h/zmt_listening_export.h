@@ -56,6 +56,8 @@
 #define LISTEN_LINE_HIGHT MMI_MAINSCREEN_HEIGHT/10
 #define LISTEN_LINE_WIDTH MMI_MAINSCREEN_WIDTH/6
 
+#define LISTEN_LRC_LABEL_NUM 10
+
 #define LISTENING_DIRECTORY_BASE_PATH "E:/Listening/%d_%d"
 #define LISTENING_FILE_INFO_PATH "E:/Listening/listening_info.json"
 #define LISTENING_FILE_BASE_PATH "E:/Listening/%d_%d/%d.mp3"
