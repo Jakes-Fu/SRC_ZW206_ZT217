@@ -452,11 +452,11 @@ PUBLIC void gpt_get_baidu_access_token(void)
     char url[200] = {0};
     uint32 cur_times = MMIAPICOM_GetCurTime() + ZMT_GPT_TIMES_DIFF_FROM_1978_TO_1980;
     SCI_TRACE_LOW("%s: cur_times = %d, baidu_access_token_tims = %d", __FUNCTION__, cur_times, baidu_access_token_times);
-    if(gpt_baidu_access_token == NULL || 
-        cur_times - baidu_access_token_times > BAIDU_ACCESS_TOKEN_TIMES_MAX)
+    /*if(gpt_baidu_access_token == NULL || 
+        cur_times - baidu_access_token_times < BAIDU_ACCESS_TOKEN_TIMES_MAX)
     {
         return;
-    }
+    }*/
     sprintf(url, "%s?grant_type=%s&client_id=%s&client_secret=%s", 
 		GPT_HTTP_BAIDU_ACCESS_TOKEN_PATH, 
 		GPT_HTTP_BAIDU_GRANT_TYPE, 
