@@ -28,7 +28,7 @@ extern "C"
 #define HANZI_CARD_NEW_WORD_PATH "E:/hanzi/unmaster_hanzi.json"
 
 #define HANZI_CONTENT_CHAPTER_MAX 20
-#define HANZI_CHAPTER_WORD_MAX 5
+#define HANZI_CHAPTER_WORD_MAX 50
 #define HANZI_BOOK_TOTAL 18 
 
 typedef struct
