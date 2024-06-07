@@ -3092,15 +3092,7 @@ LOCAL void ListDrawItem(
                 is_single_line = !(i == style_ptr->sub_index
                                    && (GUIITEM_CONTENT_STATE_MULTILINE & style_ptr->content[i].state));
 
-            #ifdef POETRY_LISTEN_SUPPORT
-                if(item_ptr->item.style_id == GUIITEM_STYLE_POETRY_ITEM_LIST_MS)
-                {
-                    ListDrawString(list_ctrl_ptr, lcd_dev_info_ptr, text_info.wstr_ptr, text_info.wstr_len, &con_rect, &con_disp_rect, index, i, is_single_line);
-                }
-                else if(need_scrolling)
-            #else
                  if(need_scrolling)
-            #endif
                 {
                     GUISTR_STYLE_T str_style = {0}; /*lint !e64*/                    
 #ifdef SCRIPTEASY_SUPPORT
@@ -3345,12 +3337,7 @@ LOCAL void ListDrawString(
             str_style.font_color = item_ptr->item.data_ptr->item_content[content_index].custom_font_color;
         }
     }
-#ifdef POETRY_LISTEN_SUPPORT
-    if(item_ptr->item.style_id == GUIITEM_STYLE_POETRY_ITEM_LIST_MS)
-    {
-        str_style.align = ALIGN_HVMIDDLE;
-    }
-#endif
+
     GUISTR_DrawTextToLCDInRect(dev_info_ptr,
 	                               (const GUI_RECT_T *)disp_rect_ptr,
 	                               (const GUI_RECT_T *)clip_rect_ptr,
@@ -13859,7 +13846,6 @@ LOCAL BOOLEAN isNeedDrawListItemBG(uint32 style_id)
         style_id == GUIITEM_STYLE_2STR_1ICON_2LINE_LAYOUT1 ||
         style_id == GUIITEM_STYLE_1STR_1LINE_CHECK_LAYOUT1 ||
         style_id == GUIITEM_STYLE_1ICON_2STR_1LINE_LAYOUT ||
-        
 #endif
         style_id == GUIITEM_STYLE_TWO_LINE_ANIM_TEXT_AND_TEXT_ANIM)
     {

@@ -11,6 +11,7 @@
 	RES_ADD_IMG(IMG_POETRY_PLAY,"\\MMI_RES_##\\IMAG\\poetry_play.png",IMG_CMP_PNG_ARGB_RLE,0)
 	RES_ADD_IMG(IMG_POETRY_BG,"\\MMI_RES_##\\IMAG\\poetry_bg.png",IMG_CMP_PNG_ARGB_RLE,0)
 	RES_ADD_IMG(IMG_POETRY_DETAIL_BG,"\\MMI_RES_##\\IMAG\\poetry_detailbg.png",IMG_CMP_PNG_ARGB_RLE,0)
+	RES_ADD_IMG(IMG_POETRY_ITEM_BG,"\\MMI_RES_##\\IMAG\\poetry_item_bg.png",IMG_CMP_PNG_ARGB_RLE,0)
 //]]define image information
 
 

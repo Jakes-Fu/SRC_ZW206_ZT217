@@ -526,6 +526,9 @@ PUBLIC void Hanzi_ParseDetailInfo(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint
                 {
                     hanzi_detail_count = cJSON_GetArraySize(hanzis);
                     SCI_TRACE_LOW("%s: hanzi_detail_count = %d", __FUNCTION__, hanzi_detail_count);
+                    if(hanzi_detail_count > HANZI_CHAPTER_WORD_MAX){
+                        hanzi_detail_count = HANZI_CHAPTER_WORD_MAX;
+                    }
                     for(j = 0;j < cJSON_GetArraySize(hanzis) && j < HANZI_CHAPTER_WORD_MAX;j++)
                     {
                         cJSON *hanzis_item =  cJSON_GetArrayItem(hanzis, j);

@@ -6406,15 +6406,22 @@ LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_poetry_item_list_ms =
 {
     2*POETRY_LINE_HIGHT, 2*POETRY_LINE_HIGHT,
     {
-        //text
+        //bg
         {
             0,
+            {0, 0, MMI_MAINSCREEN_WIDTH, 2*POETRY_LINE_HIGHT},
+            {0, 0, MMI_MAINSCREEN_WIDTH, 2*POETRY_LINE_HIGHT},
+            0, 0,
+            0, 0
+        }, 
+        //text
+        {
+            GUIITEM_CONTENT_STATE_TEXT_M_ALIGN,
             {0.2*POETRY_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH - 0.2*POETRY_LINE_WIDTH, 2*POETRY_LINE_HIGHT},
             {0.2*POETRY_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH - 0.2*POETRY_LINE_WIDTH, 2*POETRY_LINE_HIGHT},
             SONG_FONT_20, SONG_FONT_20,
             0, 0
         },   
-        {0},
         {0},
         {0},
         {0},

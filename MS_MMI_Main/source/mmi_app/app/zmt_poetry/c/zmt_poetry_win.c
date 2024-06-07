@@ -1079,19 +1079,18 @@ LOCAL void Draw_GradeList(MMI_WIN_ID_T win_id)
         text_string.wstr_len = MMIAPICOM_Wstrlen(text_str);
         item_data.item_content[1].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
         item_data.item_content[1].item_data.text_buffer = text_string;
-        
-        //不画分割线
-        GUILIST_SetListState( ctrl_id, GUILIST_STATE_SPLIT_LINE, TRUE);
-        //不画高亮条
-        GUILIST_SetListState( ctrl_id, GUILIST_STATE_NEED_HIGHTBAR, FALSE);
-
-        GUILIST_SetNeedPrgbarBlock(ctrl_id,FALSE);
-
-        GUILIST_SetBgColor(ctrl_id,GUI_RGB2RGB565(80, 162, 254));
-        GUILIST_SetTextFont(ctrl_id, DP_FONT_20, MMI_WHITE_COLOR);
 
         GUILIST_AppendItem(ctrl_id, &item_t);
     }
+    //不画分割线
+    GUILIST_SetListState( ctrl_id, GUILIST_STATE_SPLIT_LINE, TRUE);
+    //不画高亮条
+    GUILIST_SetListState( ctrl_id, GUILIST_STATE_NEED_HIGHTBAR, FALSE);
+
+    GUILIST_SetNeedPrgbarBlock(ctrl_id,FALSE);
+
+    GUILIST_SetBgColor(ctrl_id,GUI_RGB2RGB565(80, 162, 254));
+    GUILIST_SetTextFont(ctrl_id, DP_FONT_20, MMI_WHITE_COLOR);
 }
 
 LOCAL void PoetryWin_FULL_PAINT(MMI_WIN_ID_T win_id)
@@ -1146,11 +1145,11 @@ LOCAL void PoetryWin_FULL_PAINT(MMI_WIN_ID_T win_id)
 LOCAL void PoetryWin_CTL_PENOK(MMI_WIN_ID_T win_id)
 {
     uint16 cur_idx = GUILIST_GetCurItemIndex(MMI_ZMT_POETRY_GRADE_LIST_CTRL_ID);
-    
-    Read_list_data_from_tf_and_parse(cur_idx+1, TRUE);
+
     is_open_favorite = FALSE;
     where_open_favorite = 1;
     MMI_CreatePoetryItemWin();
+    Read_list_data_from_tf_and_parse(cur_idx+1, TRUE);
     getFavoritePoetry();
 }
 
@@ -1289,6 +1288,9 @@ LOCAL void DrawPoetryItemList(MMI_WIN_ID_T win_id, uint16 study_favorite)
         item_t.item_data_ptr = &item_data;
         item_t.item_state = GUIITEM_STATE_SELFADAPT_RECT|GUIITEM_STATE_CONTENT_CHECK;
 
+        item_data.item_content[0].item_data_type = GUIITEM_DATA_IMAGE_ID;
+        item_data.item_content[0].item_data.image_id = IMG_POETRY_ITEM_BG;
+
         if(study_favorite){
             strcpy(text_char, grade_all_list.all_grade[poetry_cur_post_grade_id-1].grade_info[i].title);
         }else{
@@ -1298,22 +1300,21 @@ LOCAL void DrawPoetryItemList(MMI_WIN_ID_T win_id, uint16 study_favorite)
         GUI_UTF8ToWstr(text_str, 50, text_char, strlen(text_char));
         text_string.wstr_ptr = text_str;
         text_string.wstr_len = MMIAPICOM_Wstrlen(text_str);
-        item_data.item_content[0].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
-        item_data.item_content[0].item_data.text_buffer = text_string;
-        
-        //不画分割线
-        GUILIST_SetListState( ctrl_id, GUILIST_STATE_SPLIT_LINE, TRUE);
-        //不画高亮条
-        GUILIST_SetListState( ctrl_id, GUILIST_STATE_NEED_HIGHTBAR, FALSE);
-        GUILIST_SetListState( ctrl_id, GUILIST_STATE_AUTO_SCROLL, TRUE);
-        GUILIST_SetCycScroll(ctrl_id, TRUE);
-        GUILIST_SetNeedPrgbarBlock(ctrl_id,FALSE);
-
-        GUILIST_SetBgColor(ctrl_id, GUI_RGB2RGB565(80, 162, 254));
-        GUILIST_SetTextFont(ctrl_id, DP_FONT_20, MMI_WHITE_COLOR);
+        item_data.item_content[1].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
+        item_data.item_content[1].item_data.text_buffer = text_string;
 
         GUILIST_AppendItem(ctrl_id, &item_t);
     }
+    //不画分割线
+    GUILIST_SetListState(ctrl_id, GUILIST_STATE_SPLIT_LINE, FALSE);
+    //不画高亮条
+    GUILIST_SetListState(ctrl_id, GUILIST_STATE_NEED_HIGHTBAR, FALSE);
+    GUILIST_SetListState(ctrl_id, GUILIST_STATE_AUTO_SCROLL, TRUE);
+    GUILIST_SetCycScroll(ctrl_id, TRUE);
+    GUILIST_SetNeedPrgbarBlock(ctrl_id,FALSE);
+    GUILIST_SetBgImage(ctrl_id, IMG_POETRY_ITEM_BG, FALSE);
+    GUILIST_SetBgColor(ctrl_id, GUI_RGB2RGB565(80, 162, 254));
+    GUILIST_SetTextFont(ctrl_id, DP_FONT_20, GUI_RGB2RGB565(80, 162, 254));
     GUILIST_SetRect(ctrl_id,&poetry_list_rect);
 }
 
