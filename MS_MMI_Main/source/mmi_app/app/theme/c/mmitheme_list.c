@@ -6785,6 +6785,7 @@ const GUI_COLOR_T s_item_content_color[MMITHEME_COLOR_MAX] =
     AUDULT_BLUE_COLOR,
     AUDULT_RED_COLOR,
 #endif
+    GUI_RGB2RGB565(80, 162, 254),
     /*lint -e572*//*lint -e778*/
 };
 
