@@ -12,54 +12,227 @@
 #include "sci_types.h"
 #include "mmi_module.h"
 #include "cjson.h"
-#ifdef LISTENING_PRATICE_SUPPORT
 #include "zmt_hanzi_main.h"
 #include "zmt_hanzi_id.h"
+#include "zmt_hanzi_text.h"
+#ifdef LISTENING_PRATICE_SUPPORT
 #include "zmt_main_file.h"
 #endif
 
+extern HANZI_BOOK_INFO_T hanzi_book_info;
+extern BOOLEAN is_open_auto_play;
+extern int cur_chapter_unmaster_idx[HANZI_CHAPTER_WORD_MAX];
+extern uint8 cur_new_word_page_idx;
 
-HANZI_CHAPTER_INFO_T * hanzi_chapter_info[20];
+HANZI_CONTENT_INFO_T * hanzi_content_info[HANZI_CONTENT_CHAPTER_MAX];
 int16 hanzi_chapter_count = 0;
-int16 hanzi_chapter_children_count[20] = {0};
-HANZI_BOOK_HANZI_INFO * hanzi_detail_info[100];
+int16 hanzi_chapter_children_count[HANZI_CONTENT_CHAPTER_MAX] = {0};
+HANZI_BOOK_HANZI_INFO * hanzi_detail_info[HANZI_CHAPTER_WORD_MAX];
 int16 hanzi_detail_count = 0;
 int16 hanzi_detail_cur_idx = 0;
-extern HANZI_BOOK_INFO_T hanzi_book_info;
+BOOLEAN hanzi_is_load_local = FALSE;
 
-ZMT_HANZI_BOOK_NAME hanzi_book_name_str[HANZI_BOOK_TOTAL] = {
-    {"一年级上册人教部编版", 0},{"一年级上册人教版", 1},{"一年级下册人教部编版", 2},{"一年级下册人教版", 3},
-    {"二年级上册人教部编版", 4},{"二年级上册人教版", 5},{"二年级下册人教部编版", 6},{"二年级下册人教版", 7},
-    {"三年级上册人教部编版", 8},{"三年级上册人教版", 9},{"三年级上册人教部编版", 10},{"三年级下册人教版", 11},
-    {"四年级上册人教部编版", 12},{"四年级上册人教版", 13},{"四年级上册人教部编版", 14},{"四年级下册人教版", 15},
-    {"五年级上册人教部编版", 16},{"五年级上册人教版", 17},{"五年级上册人教部编版", 18},{"五年级下册人教版", 19},
-    {"六年级上册人教部编版", 20},{"六年级上册人教版", 21},{"六年级上册人教部编版", 22},{"六年级下册人教版", 23},
-    {"七年级上册人教部编版", 24},{"七年级上册人教版", 25},{"七年级上册人教部编版", 26},{"七年级下册人教版", 27},
-    {"八年级上册人教部编版", 28},{"八年级上册人教版", 29},{"八年级上册人教部编版", 30},{"八年级下册人教版", 31},
-    {"九年级上册人教部编版", 32},{"九年级上册人教版", 33},{"九年级下册人教部编版", 34},{"九年级下册人教版", 35}
-};
+PUBLIC void Hanzi_WriteExistUnmasterHanzi(cJSON * hanzis, uint8 write_count)
+{
+    uint16 i = 0;
+    uint16 j = 0;
+    uint16 count = 0;
+    char file_path[30] = {0};
+    char * pRcv = NULL;
+    uint32 data_size = 0;
+    cJSON * roots;
+    cJSON * hanziss;
+    cJSON * hanzis_item;
+    cJSON * hanzis_items;
+    cJSON * texts;
+    cJSON * audios;
+    cJSON * pinyins;
+    cJSON * similar_words;
+    cJSON * annotations;
+
+    strcpy(file_path,HANZI_CARD_NEW_WORD_PATH);
+    if(zmt_tfcard_exist() && zmt_file_exist(file_path)){
+        pRcv = zmt_file_data_read(file_path, &data_size);
+    }else{
+        return;
+    }
+    if(pRcv != NULL && data_size > 2)
+    {
+        roots = cJSON_Parse(pRcv);
+        if(roots != NULL && roots->type != cJSON_NULL)
+        {
+            hanziss = cJSON_GetObjectItem(roots, "hanzis");
+            count = cJSON_GetArraySize(hanziss);
+            for(i = 0; i < cJSON_GetArraySize(hanziss);i++)
+            {
+                BOOLEAN is_exist = FALSE;
+                hanzis_item = cJSON_GetArrayItem(hanziss, i);
+                texts = cJSON_GetObjectItem(hanzis_item, "text");
+                audios = cJSON_GetObjectItem(hanzis_item, "audio");
+                pinyins = cJSON_GetObjectItem(hanzis_item, "pinyin");
+                similar_words = cJSON_GetObjectItem(hanzis_item, "similar_word");
+                annotations = cJSON_GetObjectItem(hanzis_item, "annotation");
+
+                //SCI_TRACE_LOW("%s: texts->valuestring = %s", __FUNCTION__, texts->valuestring);
+                //SCI_TRACE_LOW("%s: pinyins->valuestring = %s", __FUNCTION__, pinyins->valuestring);
+                for(j = 0;j < write_count;j++)
+                {
+                    uint8 idx = cur_chapter_unmaster_idx[j] - 1;
+                    //SCI_TRACE_LOW("%s: hanzi_detail_info[%d]->word = %s", __FUNCTION__, idx, hanzi_detail_info[idx]->word);
+                    //SCI_TRACE_LOW("%s: hanzi_detail_info[%d]->pingy = %s", __FUNCTION__, idx, hanzi_detail_info[idx]->pingy);
+                    if(texts->valuestring != NULL && pinyins->valuestring != NULL)
+                    {
+                        if(0 == strcmp(texts->valuestring, hanzi_detail_info[idx]->word) && 
+                            0 == strcmp(pinyins->valuestring, hanzi_detail_info[idx]->pingy))
+                        {
+                            is_exist = TRUE;
+                            break;
+                        }
+                    }
+                }
+                SCI_TRACE_LOW("%s: is_exist = %d", __FUNCTION__, is_exist);
+                if(is_exist){
+                    continue;
+                }
+
+                hanzis_items = cJSON_CreateObject();
+                if(texts->valuestring != NULL){
+                    cJSON_AddStringToObject(hanzis_items, "text", texts->valuestring);
+                }else{
+                    cJSON_AddStringToObject(hanzis_items, "text", "");
+                }
+                if(audios->valuestring != NULL){
+                    cJSON_AddStringToObject(hanzis_items, "audio", audios->valuestring);
+                }else{
+                    cJSON_AddStringToObject(hanzis_items, "audio", "");
+                }
+                if(pinyins->valuestring != NULL){
+                    cJSON_AddStringToObject(hanzis_items, "pinyin", pinyins->valuestring);
+                }else{
+                    cJSON_AddStringToObject(hanzis_items, "pinyin", "");
+                }
+                if(similar_words->valuestring != NULL){
+                    cJSON_AddStringToObject(hanzis_items, "similar_word", similar_words->valuestring);
+                }else{
+                    cJSON_AddStringToObject(hanzis_items, "similar_word", "");
+                }
+                if(annotations->valuestring != NULL){
+                    cJSON_AddStringToObject(hanzis_items, "annotation", annotations->valuestring);
+                }else{
+                    cJSON_AddStringToObject(hanzis_items, "annotation", "");
+                }
+                cJSON_AddItemToArray(hanzis, hanzis_items);
+            }
+            cJSON_Delete(roots);
+        }
+        SCI_FREE(pRcv);
+    }
+}
+
+PUBLIC void Hanzi_WriteUnmasterHanzi(uint8 write_count)
+{
+    uint16 i = 0;
+    char * out = NULL;
+    char file_path[30] = {0};
+    char * pRcv = NULL;
+    uint32 data_size = 0;
+    cJSON * root;
+    cJSON * hanzis;
+    cJSON * hanzis_item;
+    cJSON * text;
+    cJSON * audio;
+    cJSON * pinyin;
+    cJSON * similar_word;
+    cJSON * annotation;
+
+    if(write_count <= 0){
+        SCI_TRACE_LOW("%s: UnmasterHanzi no to write", __FUNCTION__);
+        return;
+    }
+    SCI_TRACE_LOW("%s: write_count = %d", __FUNCTION__, write_count);
+
+    root = cJSON_CreateObject();
+    hanzis = cJSON_CreateArray();
+
+    strcpy(file_path,HANZI_CARD_NEW_WORD_PATH);
+    Hanzi_WriteExistUnmasterHanzi(hanzis, write_count);
+    for(i = 0;i < HANZI_CHAPTER_WORD_MAX;i++)
+    {       
+        if(cur_chapter_unmaster_idx[i] != 0)
+        {
+            hanzis_item = cJSON_CreateObject();
+            if(hanzi_detail_info[i]->word != NULL){
+                text = cJSON_CreateString(hanzi_detail_info[i]->word);
+                cJSON_AddItemToObject(hanzis_item, "text", text);
+            }else{
+                cJSON_AddStringToObject(hanzis_item, "text", "");
+            }
+            
+            if(hanzi_detail_info[i]->audio_uri != NULL){
+                audio = cJSON_CreateString(hanzi_detail_info[i]->audio_uri);
+                cJSON_AddItemToObject(hanzis_item, "audio", audio);
+            }else{
+                cJSON_AddStringToObject(hanzis_item, "audio", "");
+            }
+            
+            if(hanzi_detail_info[i]->pingy != NULL){
+                pinyin = cJSON_CreateString(hanzi_detail_info[i]->pingy);
+                cJSON_AddItemToObject(hanzis_item, "pinyin", pinyin);
+            }else{
+                cJSON_AddStringToObject(hanzis_item, "pinyin", "");
+            }
+            
+            if(hanzi_detail_info[i]->similar_word != NULL){
+                similar_word = cJSON_CreateString(hanzi_detail_info[i]->similar_word);
+                cJSON_AddItemToObject(hanzis_item, "similar_word", similar_word);
+            }else{
+                cJSON_AddStringToObject(hanzis_item, "similar_word", "");
+            }
+            
+            if(hanzi_detail_info[i]->annotation != NULL){
+                annotation = cJSON_CreateString(hanzi_detail_info[i]->annotation);
+                cJSON_AddItemToObject(hanzis_item, "annotation", annotation);
+            }else{
+                cJSON_AddStringToObject(hanzis_item, "annotation", "");
+            }
+
+            cJSON_AddItemToArray(hanzis, hanzis_item);
+        }
+    }
+    cJSON_AddItemToObject(root, "hanzis", hanzis);
+    out = cJSON_PrintUnformatted(root);
+    cJSON_Delete(root);
+    //SCI_TRACE_LOW("%s: out = %s", __FUNCTION__, out);
+
+    if(zmt_tfcard_exist() && zmt_file_exist(file_path)){
+        zmt_file_delete(file_path);
+    }
+    zmt_file_data_write(out, strlen(out), file_path);
+    SCI_FREE(out);
+}
 
 PUBLIC void Hanzi_ReleaseChapterInfo(void)
 {
     uint8 i,j = 0;
-    for(i = 0;i < 20;i++)
+    for(i = 0;i < HANZI_CONTENT_CHAPTER_MAX;i++)
     {
-        //SCI_TRACE_LOW("%s: i = %d", __FUNCTION__, i);
-        if(hanzi_chapter_info[i] != NULL){
-            if(hanzi_chapter_info[i]->chapter_name != NULL){
-                SCI_FREE(hanzi_chapter_info[i]->chapter_name);
-                hanzi_chapter_info[i]->chapter_name = NULL;
+        if(hanzi_content_info[i] != NULL){
+            if(hanzi_content_info[i]->content_name != NULL){
+                SCI_FREE(hanzi_content_info[i]->content_name);
+                hanzi_content_info[i]->content_name = NULL;
             }
-            for(j = 0;j < 30;j++){
-                //SCI_TRACE_LOW("%s: j = %d", __FUNCTION__, j);
-                if(hanzi_chapter_info[i]->children[j].chapter_name != NULL){
-                    SCI_FREE(hanzi_chapter_info[i]->children[j].chapter_name);
-                    hanzi_chapter_info[i]->children[j].chapter_name = NULL;
+            for(j = 0;j < HANZI_CONTENT_CHAPTER_MAX;j++){
+                if(hanzi_content_info[i]->chapter[j] != NULL){
+                    if(hanzi_content_info[i]->chapter[j]->chapter_name != NULL){
+                        SCI_FREE(hanzi_content_info[i]->chapter[j]->chapter_name);
+                        hanzi_content_info[i]->chapter[j]->chapter_name = NULL;
+                    }
+                    SCI_FREE(hanzi_content_info[i]->chapter[j]);
+                    hanzi_content_info[i]->chapter[j]= NULL;
                 }
-                memset(&hanzi_chapter_info[i]->children[j], 0, sizeof(HANZI_CHAPTER_CHILDREN_INFO_T));
             }
-            SCI_FREE(hanzi_chapter_info[i]);
-            hanzi_chapter_info[i] = NULL;
+            SCI_FREE(hanzi_content_info[i]);
+            hanzi_content_info[i] = NULL;
         }
     }
 }
@@ -72,112 +245,128 @@ PUBLIC void Hanzi_ParseChapterInfo(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uin
         uint8 m = 0;
         uint16 size = 0;
         cJSON *root = cJSON_Parse(pRcv);
-        cJSON *F_list = cJSON_GetObjectItem(root, "F_list");
-        if(F_list != NULL && F_list->type != cJSON_NULL)
+        if(root != NULL && root->type != cJSON_NULL)
         {
-            for(i = 0;i < cJSON_GetArraySize(F_list) && i < 20;i++)
+            for(i = 0;i < cJSON_GetArraySize(root) && i < HANZI_CONTENT_CHAPTER_MAX;i++)
             {              
-                cJSON *list_item =  cJSON_GetArrayItem(F_list, i);
-                cJSON *F_chapter_children = cJSON_GetObjectItem(list_item, "F_chapter_children");
-                if(hanzi_chapter_info[i] != NULL){
-                    SCI_FREE(hanzi_chapter_info[i]);
-                    hanzi_chapter_info[i] = NULL;
+                cJSON *list_item =  cJSON_GetArrayItem(root, i);
+                cJSON *contentId = cJSON_GetObjectItem(list_item, "id");
+                cJSON *contentName = cJSON_GetObjectItem(list_item, "contentName");
+                cJSON *chapters = cJSON_GetObjectItem(list_item, "chapters");
+                if(hanzi_content_info[i] != NULL){
+                    SCI_FREE(hanzi_content_info[i]);
+                    hanzi_content_info[i] = NULL;
                 }
-                hanzi_chapter_info[i] = (HANZI_CHAPTER_INFO_T *)SCI_ALLOC_APP(sizeof(HANZI_CHAPTER_INFO_T));
-                memset(hanzi_chapter_info[i], 0, sizeof(HANZI_CHAPTER_INFO_T));
-                if(F_chapter_children != NULL && F_chapter_children->type != cJSON_NULL && cJSON_GetArraySize(F_chapter_children) > 0)
+                hanzi_content_info[i] = (HANZI_CONTENT_INFO_T *)SCI_ALLOC_APP(sizeof(HANZI_CONTENT_INFO_T));
+                memset(hanzi_content_info[i], 0, sizeof(HANZI_CONTENT_INFO_T));
+                if(contentName != NULL && contentName->type != cJSON_NULL)
                 {
-                    cJSON *F_chapter_name = cJSON_GetObjectItem(list_item, "F_chapter_name");
-                    if(hanzi_chapter_info[i]->chapter_name != NULL){
-                        SCI_FREE(hanzi_chapter_info[i]->chapter_name);
-                        hanzi_chapter_info[i]->chapter_name = NULL;
+                    if(hanzi_content_info[i]->content_name != NULL){
+                        SCI_FREE(hanzi_content_info[i]->content_name);
+                        hanzi_content_info[i]->content_name = NULL;
                     }
-                    size = strlen(F_chapter_name->valuestring);
-                    hanzi_chapter_info[i]->chapter_name = SCI_ALLOC_APP(size+1);
-                    memset(hanzi_chapter_info[i]->chapter_name, 0, size+1);
-                    strncpy(hanzi_chapter_info[i]->chapter_name, F_chapter_name->valuestring, size);
-                    SCI_TRACE_LOW("%s: info[%d].chapter_name = %s", __FUNCTION__, i, hanzi_chapter_info[i]->chapter_name);
-                    for(m = 0;m < cJSON_GetArraySize(F_chapter_children) && m < 20;m++)
-                    {
-                        cJSON *children_item =  cJSON_GetArrayItem(F_chapter_children, m);
-                        cJSON *F_chapter_id = cJSON_GetObjectItem(children_item, "F_chapter_id");
-                        cJSON *chapter_name = cJSON_GetObjectItem(children_item, "F_chapter_name");
+                    
+                    size = strlen(contentName->valuestring);
+                    hanzi_content_info[i]->content_name = SCI_ALLOC_APP(size+1);
+                    memset(hanzi_content_info[i]->content_name, 0, size+1);
+                    strncpy(hanzi_content_info[i]->content_name, contentName->valuestring, size);
+                    SCI_TRACE_LOW("%s: info[%d].content_name = %s", __FUNCTION__, i, hanzi_content_info[i]->content_name);
 
-                        memset(&hanzi_chapter_info[i]->children[m], 0, sizeof(HANZI_CHAPTER_CHILDREN_INFO_T));
-                        if(hanzi_chapter_info[i]->children[m].chapter_name != NULL){
-                            SCI_FREE(hanzi_chapter_info[i]->children[m].chapter_name);
-                            hanzi_chapter_info[i]->children[m].chapter_name = NULL;
-                        }
-                        size = strlen(chapter_name->valuestring);
-                        hanzi_chapter_info[i]->children[m].chapter_name = SCI_ALLOC_APP(size+1);
-                        memset(hanzi_chapter_info[i]->children[m].chapter_name, 0, size+1);
-                        strncpy(hanzi_chapter_info[i]->children[m].chapter_name, chapter_name->valuestring, size);                       
-                        SCI_TRACE_LOW("%s: info[%d].children[%d].chapter_name = %s", __FUNCTION__, i, m, hanzi_chapter_info[i]->children[m].chapter_name);
-                        hanzi_chapter_info[i]->children[m].chapter_id= F_chapter_id->valueint;
+                    hanzi_content_info[i]->content_id = contentId->valueint;
+                    SCI_TRACE_LOW("%s: info[%d].content_id = %d", __FUNCTION__, i, hanzi_content_info[i]->content_id);            
+                }
+                for(m = 0;m < cJSON_GetArraySize(chapters) && m < HANZI_CONTENT_CHAPTER_MAX;m++)
+                {
+                    cJSON *chapters_item =  cJSON_GetArrayItem(chapters, m);
+                    cJSON *chaptersId = cJSON_GetObjectItem(chapters_item, "id");
+                    cJSON *chaptersName = cJSON_GetObjectItem(chapters_item, "chapterName");
+
+                    if(hanzi_content_info[i]->chapter[m] != NULL){
+                        SCI_FREE(hanzi_content_info[i]->chapter[m]);
+                        hanzi_content_info[i]->chapter[m] = NULL;
                     }
-                    hanzi_chapter_children_count[i] = m;
-                }       
+                    hanzi_content_info[i]->chapter[m] = SCI_ALLOC_APP(sizeof(HANZI_CONTENT_CHAPTER_INFO_T));
+                    memset(hanzi_content_info[i]->chapter[m], 0, sizeof(HANZI_CONTENT_CHAPTER_INFO_T));
+                    
+                    if(hanzi_content_info[i]->chapter[m]->chapter_name != NULL){
+                        SCI_FREE(hanzi_content_info[i]->chapter[m]->chapter_name);
+                        hanzi_content_info[i]->chapter[m]->chapter_name = NULL;
+                    }
+                    size = strlen(chaptersName->valuestring);
+                    hanzi_content_info[i]->chapter[m]->chapter_name = SCI_ALLOC_APP(size+1);
+                    memset(hanzi_content_info[i]->chapter[m]->chapter_name, 0, size+1);
+                    strncpy(hanzi_content_info[i]->chapter[m]->chapter_name, chaptersName->valuestring, size);
+                    SCI_TRACE_LOW("%s: info[%d].chapter[%d]->chapter_name = %s", __FUNCTION__, i, m, chaptersName->valuestring);
+
+                    hanzi_content_info[i]->chapter[m]->chapter_id = chaptersId->valueint;
+                }
+                hanzi_chapter_children_count[i] = m;
             }
             hanzi_chapter_count = i;
+            if(!hanzi_is_load_local)
+            {
+                char * out = NULL;
+                char file_path[30] = {0};
+                sprintf(file_path, HANZI_CARD_GRADE_CHAPTER_PATH, hanzi_book_info.cur_book_idx+1, hanzi_book_info.cur_book_idx+1);
+                if(zmt_file_exist(file_path)){
+                    zmt_file_delete(file_path);
+                }
+                out = cJSON_PrintUnformatted(root);
+                zmt_file_data_write(out, strlen(out), file_path);
+                SCI_FREE(out);
+            }
+            
         }
         else
         {
             hanzi_chapter_count = -2;
         }
-        cJSON_Delete(root);    
+        cJSON_Delete(root);
     }
     else
     {
         hanzi_chapter_count = -1;
     }
-#if HANZI_CARD_USE_OFF_DATA
-    if(pRcv != PNULL)
-    {
-    	SCI_FREE(pRcv);
-    	pRcv = PNULL;
+    if(hanzi_is_load_local){
+        if(pRcv != PNULL)
+        {
+        	SCI_FREE(pRcv);
+        	pRcv = PNULL;
+        }
     }
-#endif    
+    hanzi_is_load_local = FALSE;
     MMK_SendMsg(MMI_HANZI_CHAPTER_WIN_ID, MSG_FULL_PAINT, PNULL);
 }
 
-PUBLIC void HanziChapter_requestChapterInfo(uint16 book_id)
+PUBLIC void Hanzi_requestChapterInfo(uint8 grade_id)
 {
-    char file_path[80] = {0};
+    char file_path[30] = {0};
     char * data_buf = PNULL;
     uint32 file_len = 0;
-    char *temp_file_path = HANZI_CARD_CHAPTER_PATH;
-    //这里要通过book_id来获得书本单元信息，暂用HANZI_CARD_CHAPTER_PATH代替
-    strcpy(file_path,temp_file_path);
+    sprintf(file_path, HANZI_CARD_GRADE_CHAPTER_PATH, grade_id, grade_id);
     if(zmt_file_exist(file_path)){
         data_buf = zmt_file_data_read(file_path, &file_len);
         SCI_TRACE_LOW("%s: file_len = %d", __FUNCTION__, file_len);
         if(data_buf != PNULL && file_len > 0)
         {
+            hanzi_is_load_local = TRUE;
             Hanzi_ParseChapterInfo(1, data_buf, file_len,0);
         }
     }
     else
     {
-        char url[100] = {0};
-        sprintf(url, "v1/card/book/hanzi/chapters?F_book_id=%d", book_id);
+        char url[40] = {0};
+        sprintf(url,HANZI_BOOK_GRADE_PATH,grade_id);
         SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
+        hanzi_is_load_local = FALSE;
         MMIZDT_HTTP_AppSend(TRUE, HANZI_BOOK_HEADER_PATH, url, strlen(url), 1000, 0, 0, 0, 0, 0, Hanzi_ParseChapterInfo);
     }
 }
 
-PUBLIC void HanziDetail_InitDetailInfo(void)
-{
-	uint16 i = 0;
-	for(i = 0;i < 100;i++)
-	{
-		hanzi_detail_info[i] = NULL;
-	}
-}
-
-PUBLIC void HanziDetail_ReleaseDetailInfo(void)
+PUBLIC void Hanzi_ReleaseDetailInfo(void)
 {
     uint16 i = 0;
-    for(i = 0;i < 100;i++)
+    for(i = 0;i < HANZI_CHAPTER_WORD_MAX;i++)
     {
         if(hanzi_detail_info[i] != NULL){
             if(hanzi_detail_info[i]->word != NULL){
@@ -196,6 +385,14 @@ PUBLIC void HanziDetail_ReleaseDetailInfo(void)
                 SCI_FREE(hanzi_detail_info[i]->audio_data);
                 hanzi_detail_info[i]->audio_data = NULL;
             }
+            if(hanzi_detail_info[i]->similar_word != NULL){
+                SCI_FREE(hanzi_detail_info[i]->similar_word);
+                hanzi_detail_info[i]->similar_word = NULL;
+            }
+            if(hanzi_detail_info[i]->annotation != NULL){
+                SCI_FREE(hanzi_detail_info[i]->annotation);
+                hanzi_detail_info[i]->annotation = NULL;
+            }
             if(hanzi_detail_info[i]->remark != NULL){
                 SCI_FREE(hanzi_detail_info[i]->remark);
                 hanzi_detail_info[i]->remark = NULL;
@@ -206,219 +403,311 @@ PUBLIC void HanziDetail_ReleaseDetailInfo(void)
     }
 }
 
-PUBLIC void HanziDetail_ReleaseDetailItemInfo(uint16 idx)
+LOCAL void Hanzi_DetailMakeTermRemark(char* remark, char * similar_word, char * annotation)
 {
-    if(hanzi_detail_info[idx]->word != NULL){
-        SCI_FREE(hanzi_detail_info[idx]->word);
-        hanzi_detail_info[idx]->word = NULL;
+    if(remark != NULL)
+    {
+        if(similar_word != NULL && strlen(similar_word) > 0){
+            char word[20] = {0};
+            MMI_STRING_T text_string = {0};
+            MMIRES_GetText(HANZI_SIMILAR_WORD, MMI_HANZI_DETAIL_WIN_ID, &text_string);
+            GUI_WstrToUTF8(word, 20, text_string.wstr_ptr, text_string.wstr_len);
+            strcat(remark, word);
+            strcat(remark, similar_word);
+            strcat(remark, "\n");
+        }
+        if(annotation != NULL && strlen(annotation) > 0){
+            strcat(remark, annotation);
+        }
     }
-    if(hanzi_detail_info[idx]->pingy != NULL){
-        SCI_FREE(hanzi_detail_info[idx]->pingy);
-        hanzi_detail_info[idx]->pingy = NULL;
-    }
-    if(hanzi_detail_info[idx]->audio_uri != NULL){
-        SCI_FREE(hanzi_detail_info[idx]->audio_uri);
-        hanzi_detail_info[idx]->audio_uri = NULL;
-    }
-    if(hanzi_detail_info[idx]->audio_data != NULL){
-        SCI_FREE(hanzi_detail_info[idx]->audio_data);
-        hanzi_detail_info[idx]->audio_data = NULL;
-    }
-    if(hanzi_detail_info[idx]->remark != NULL){
-        SCI_FREE(hanzi_detail_info[idx]->remark);
-        hanzi_detail_info[idx]->remark = NULL;
-    }   
 }
 
-PUBLIC void Hanzi_DetailMakeTermRemark(char* remark, char * explain, char * example)
+LOCAL void Hanzi_AddDetailInfo(uint8 idx, cJSON* text, cJSON * audio, cJSON * pinyin, cJSON * similar_word, cJSON *annotation)
 {
-	strcat(remark, "释义:");
-	strcat(remark, explain);
-	strcat(remark, "\n");
-	strcat(remark, "例句:");
-	strcat(remark, example);
+    uint32 size = 0;
+    uint32 similar_word_size = 0;
+    uint32 annotation_size = 0;
+    hanzi_detail_info[idx] = (HANZI_BOOK_HANZI_INFO *)SCI_ALLOC_APP(sizeof(HANZI_BOOK_HANZI_INFO));
+    memset(hanzi_detail_info[idx], 0, sizeof(HANZI_BOOK_HANZI_INFO));
+
+    if(text->valuestring != NULL){
+        size = strlen(text->valuestring);
+        if(size > 0){
+            hanzi_detail_info[idx]->word = (char *)SCI_ALLOC_APP(size + 1);
+            memset(hanzi_detail_info[idx]->word, 0, size + 1);
+            SCI_MEMCPY(hanzi_detail_info[idx]->word, text->valuestring, size);
+        }else{
+            hanzi_detail_info[idx]->word = NULL;
+        }
+    }else{
+        hanzi_detail_info[idx]->word = NULL;
+    }
+
+    if(pinyin->valuestring != NULL){
+        size = strlen(pinyin->valuestring);
+        if(size > 0){
+            hanzi_detail_info[idx]->pingy = (char *)SCI_ALLOC_APP(size + 1);
+            memset(hanzi_detail_info[idx]->pingy, 0, size + 1);
+            SCI_MEMCPY(hanzi_detail_info[idx]->pingy, pinyin->valuestring, size);
+        }else{
+            hanzi_detail_info[idx]->pingy = NULL;
+        }
+    }else{
+        hanzi_detail_info[idx]->pingy = NULL;
+    }
+
+    if(audio->valuestring != NULL){
+        size = strlen(audio->valuestring);
+        if(size > 0){
+            hanzi_detail_info[idx]->audio_uri = (char *)SCI_ALLOC_APP(size + 1);
+            memset(hanzi_detail_info[idx]->audio_uri, 0, size + 1);
+            SCI_MEMCPY(hanzi_detail_info[idx]->audio_uri, audio->valuestring, size);
+            hanzi_detail_info[idx]->audio_len = 0;
+        }else{
+            hanzi_detail_info[idx]->audio_uri = NULL;
+            hanzi_detail_info[idx]->audio_len = -1;
+        }                    
+    }else{
+        hanzi_detail_info[idx]->audio_uri = NULL;
+        hanzi_detail_info[idx]->audio_len = -1;
+    }
+                        
+    if(similar_word->valuestring != NULL){
+        similar_word_size = strlen(similar_word->valuestring);
+        if(similar_word_size > 0){
+            hanzi_detail_info[idx]->similar_word = (char *)SCI_ALLOC_APP(similar_word_size + 1);
+            memset(hanzi_detail_info[idx]->similar_word, 0, similar_word_size + 1);
+            SCI_MEMCPY(hanzi_detail_info[idx]->similar_word, similar_word->valuestring, similar_word_size);
+        }else{
+            hanzi_detail_info[idx]->similar_word = NULL;
+        }
+    }else{
+        hanzi_detail_info[idx]->similar_word = NULL;
+    }
+                        
+    if(annotation->valuestring != NULL){
+        annotation_size = strlen(annotation->valuestring);
+        if(annotation_size > 0){
+            hanzi_detail_info[idx]->annotation = (char *)SCI_ALLOC_APP(annotation_size + 1);
+            memset(hanzi_detail_info[idx]->annotation, 0, annotation_size + 1);
+            SCI_MEMCPY(hanzi_detail_info[idx]->annotation, annotation->valuestring, annotation_size);
+        }else{
+            hanzi_detail_info[idx]->annotation = NULL;
+        }
+    }else{
+        hanzi_detail_info[idx]->annotation = NULL;
+    }
+
+    size = similar_word_size + annotation_size + 30;
+    hanzi_detail_info[idx]->remark = (char *)SCI_ALLOC_APP(size + 1);
+    memset(hanzi_detail_info[idx]->remark, 0, size + 1);
+    Hanzi_DetailMakeTermRemark(hanzi_detail_info[idx]->remark, similar_word->valuestring, annotation->valuestring);          
 }
 
 PUBLIC void Hanzi_ParseDetailInfo(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id)
 {
     if (is_ok && pRcv != PNULL && Rcv_len> 2)
     {
-        uint16 i = 0;
-        uint16 j = 0;
+        uint8 i = 0;
+        uint8 j = 0;
+        uint16 req_chapter_id = 0;
         uint32 size = 0;
         cJSON *root = cJSON_Parse(pRcv);
-        cJSON *F_list = cJSON_GetObjectItem(root, "F_list");
-        if(F_list != NULL && F_list->type != cJSON_NULL)
+        if(root != NULL && root->type != cJSON_NULL)
         {
-            HanziDetail_InitDetailInfo();
-            for(i = 0;i < cJSON_GetArraySize(F_list) && i < 100;i++)
+            SCI_TRACE_LOW("%s: cur_chapter_idx = %d, cur_section_children_idx = %d", __FUNCTION__, hanzi_book_info.cur_chapter_idx, hanzi_book_info.cur_section_children_idx);
+            if(cJSON_GetArraySize(root) > hanzi_book_info.cur_section_children_idx)
             {
-                cJSON *list_item =  cJSON_GetArrayItem(F_list, i);
-                cJSON *F_word = cJSON_GetObjectItem(list_item, "F_word");
-                cJSON *F_pingy = cJSON_GetObjectItem(list_item, "F_pingy");
-                cJSON *F_audio_uri = cJSON_GetObjectItem(list_item, "F_audio_uri");
-
-                if(hanzi_detail_info[j] == NULL){
-                    hanzi_detail_info[j] = (HANZI_BOOK_HANZI_INFO *)SCI_ALLOC_APP(sizeof(HANZI_BOOK_HANZI_INFO));
-                    hanzi_detail_info[j]->word = NULL;
-                    hanzi_detail_info[j]->pingy = NULL;
-                    hanzi_detail_info[j]->audio_uri = NULL;
-                    hanzi_detail_info[j]->remark = NULL;
-                }
-                memset(hanzi_detail_info[j], 0, sizeof(HANZI_BOOK_HANZI_INFO));
-
-                HanziDetail_ReleaseDetailItemInfo(j);
-
-                if(F_word != NULL && F_word->type != cJSON_NULL){
-                    size = strlen(F_word->valuestring);
-                    if(size > 0){
-                        hanzi_detail_info[j]->word = (char *)SCI_ALLOC_APP(size + 1);
-                        memset(hanzi_detail_info[j]->word, 0, size + 1);
-                        strncpy(hanzi_detail_info[j]->word, F_word->valuestring, size);
-                    }
-                }
-
-                if(F_pingy != NULL && F_pingy->type != cJSON_NULL){
-                    size = strlen(F_pingy->valuestring);
-                    if(size > 0){
-                        hanzi_detail_info[j]->pingy = (char *)SCI_ALLOC_APP(size + 1);
-                        memset(hanzi_detail_info[j]->pingy, 0, size + 1);
-                        strncpy(hanzi_detail_info[j]->pingy, F_pingy->valuestring, size);
-                    }
-                }
-
-                if(F_audio_uri != NULL && F_audio_uri->type != cJSON_NULL){
-                    size = strlen(F_audio_uri->valuestring);
-                    if(size > 0)
+                cJSON *list_item =  cJSON_GetArrayItem(root, hanzi_book_info.cur_section_children_idx);
+                cJSON *id = cJSON_GetObjectItem(list_item, "id");
+                cJSON *hanzis = cJSON_GetObjectItem(list_item, "hanzis");
+                req_chapter_id = hanzi_content_info[hanzi_book_info.cur_section_idx]->chapter[hanzi_book_info.cur_section_children_idx]->chapter_id;
+                if(id->valueint == req_chapter_id)
+                {
+                    hanzi_detail_count = cJSON_GetArraySize(hanzis);
+                    SCI_TRACE_LOW("%s: hanzi_detail_count = %d", __FUNCTION__, hanzi_detail_count);
+                    for(j = 0;j < cJSON_GetArraySize(hanzis) && j < HANZI_CHAPTER_WORD_MAX;j++)
                     {
-                        hanzi_detail_info[j]->audio_uri = (char *)SCI_ALLOC_APP(size + 1);
-                        memset(hanzi_detail_info[j]->audio_uri, 0, size + 1);
-                        strncpy(hanzi_detail_info[j]->audio_uri, F_audio_uri->valuestring, size);
-                        hanzi_detail_info[j]->audio_len = 0;
+                        cJSON *hanzis_item =  cJSON_GetArrayItem(hanzis, j);
+                        cJSON *text = cJSON_GetObjectItem(hanzis_item, "text");
+                        cJSON *audio = cJSON_GetObjectItem(hanzis_item, "audio");
+                        cJSON *pinyin = cJSON_GetObjectItem(hanzis_item, "pinyin");
+                        cJSON * similar_word = cJSON_GetObjectItem(hanzis_item, "similar_word");
+                        cJSON *annotation = cJSON_GetObjectItem(hanzis_item, "annotation");
+                        
+                        Hanzi_AddDetailInfo(j, text, audio, pinyin, similar_word, annotation);
                     }
-                    else
+                    if(!hanzi_is_load_local)
                     {
-                        hanzi_detail_info[j]->audio_len = -1;
-                    }                    
-                }
-
-                if(F_word != NULL && F_word->type != cJSON_NULL){
-                    if(strlen(F_word->valuestring) > 4){
-                        cJSON *F_explain = cJSON_GetObjectItem(list_item, "F_explain");
-                        cJSON *F_example = cJSON_GetObjectItem(list_item, "F_example");
-                        if(F_explain != NULL && F_explain->type != cJSON_NULL &&
-                            F_example != NULL && F_example->type != cJSON_NULL){
-                            if(strlen(F_explain->valuestring) > 0 && strlen(F_example->valuestring) > 0){
-                                size = strlen(F_explain->valuestring) + strlen(F_example->valuestring) + 30;
-                                hanzi_detail_info[j]->remark = (char *)SCI_ALLOC_APP(size);
-                                memset(hanzi_detail_info[j]->remark, 0, size);
-                                Hanzi_DetailMakeTermRemark(hanzi_detail_info[j]->remark, F_explain->valuestring, F_example->valuestring);
-                            }
+                        char * out = NULL;
+                        char file_path[40] = {0};
+                        sprintf(file_path, HANZI_CARD_CHAPTER_WORD_PATH, 
+                            hanzi_book_info.cur_book_idx+1, 
+                            hanzi_content_info[hanzi_book_info.cur_section_idx]->content_id
+                        );
+                        if(zmt_file_exist(file_path)){
+                            zmt_file_delete(file_path);
                         }
-                        else
-                        {
-                            cJSON *F_remark = cJSON_GetObjectItem(list_item, "F_remark");
-                            if(F_remark != NULL && F_remark->type != cJSON_NULL){
-                                size = strlen(F_remark->valuestring);
-                                if(size > 0){
-                                    hanzi_detail_info[j]->remark = (char *)SCI_ALLOC_APP(size + 1);
-                                    memset(hanzi_detail_info[j]->remark, 0, size + 1);
-                                    strncpy(hanzi_detail_info[j]->remark, F_remark->valuestring, size);
-                                }
-                            }
-                        }
-                    }else{
-                        cJSON *F_remark = cJSON_GetObjectItem(list_item, "F_remark");
-                        if(F_remark != NULL && F_remark->type != cJSON_NULL){
-                            size = strlen(F_remark->valuestring);
-                            if(size > 0){
-                                hanzi_detail_info[j]->remark = (char *)SCI_ALLOC_APP(size + 1);
-                                memset(hanzi_detail_info[j]->remark, 0, size + 1);
-                                strncpy(hanzi_detail_info[j]->remark, F_remark->valuestring, size);
-                            }
-                        }
+                        out = cJSON_PrintUnformatted(root);
+                        zmt_file_data_write(out, strlen(out), file_path);
+                        SCI_FREE(out);
                     }
-                    j++;
-                }                
-            }    
-            hanzi_detail_count = j;
+                    if(is_open_auto_play){
+                        HanziDetail_PlayPinyinAudio();
+                    }
+                }
+                else
+                {
+                    hanzi_detail_count = -2;
+                }
+            }
+            else
+            {
+                hanzi_detail_count = -2;
+            }
+            cJSON_Delete(root);
         }
         else
         {
             hanzi_detail_count = -2;
         }
-        cJSON_Delete(root);
     }
     else
     {
         hanzi_detail_count = -1;
     }
-#if HANZI_CARD_USE_OFF_DATA
-    if(pRcv != PNULL)
-    {
-    	SCI_FREE(pRcv);
-    	pRcv = PNULL;
+    if(hanzi_is_load_local){
+        if(pRcv != PNULL)
+        {
+        	SCI_FREE(pRcv);
+        	pRcv = PNULL;
+        }
     }
-#endif
+    hanzi_is_load_local = FALSE;
     HanziDetail_TipTimeout(0, 0);
 }
 
-PUBLIC void HanziDetail_requestDetailInfo(uint16 section_id)
+PUBLIC void Hanzi_requestDetailInfo(uint8 grade_id, uint16 req_id)
 {
-//这里需要根据传过来的section_id获取单元汉字信息，这里先用固定的HANZI_CARD_CHAPTER_WORD_PATH
-    char file_path[80] = {0};
+    char file_path[40] = {0};
     char * data_buf = PNULL;
     uint32 file_len = 0;
-    char *temp_file_path = HANZI_CARD_CHAPTER_WORD_PATH;
-    strcpy(file_path,temp_file_path);
+    SCI_TRACE_LOW("%s: grade_id = %d, req_id = %d", __FUNCTION__,grade_id, req_id);
+    sprintf(file_path, HANZI_CARD_CHAPTER_WORD_PATH, grade_id, req_id);
+    Hanzi_ReleaseDetailInfo();
     if(zmt_file_exist(file_path)){
         data_buf = zmt_file_data_read(file_path, &file_len);
         SCI_TRACE_LOW("%s: file_len = %d", __FUNCTION__, file_len);
         if(data_buf != PNULL && file_len > 0)
         {
+            hanzi_is_load_local = TRUE;
             Hanzi_ParseDetailInfo(1, data_buf, file_len,0);
         }
     }
     else
     {
         char url[130] = {0};
-        sprintf(url, "v1/card/chapters/hanzi?F_cardId=%s&&F_section_id=%d", HANZI_BASE_DEVICE_IMEI, section_id);
+        sprintf(url, HANZI_BOOK_CHAPTER_PATH, req_id);
         SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
+        hanzi_is_load_local = FALSE;
         MMIZDT_HTTP_AppSend(TRUE, HANZI_BOOK_HEADER_PATH, url, strlen(url), 1000, 0, 0, 0, 0, 0, Hanzi_ParseDetailInfo);
     }
 }
 
-PUBLIC void HanziDetail_RequestNewWord(void)
+PUBLIC void Hanzi_ParseUnmasterDetailInfo(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id)
 {
-    char file_path[80] = {0};
+    if (is_ok && pRcv != PNULL && Rcv_len> 2)
+    {
+        uint16 i = 0;
+        uint16 j = 0;
+        uint16 read_idx = 0;
+        uint8 read_count = 0;
+        cJSON * root;
+        cJSON * hanzis;
+        cJSON * hanzis_item;
+        cJSON * text;
+        cJSON * audio;
+        cJSON * pinyin;
+        cJSON * similar_word;
+        cJSON * annotation;
+
+        root = cJSON_Parse(pRcv);
+        if(root != NULL && root->type != cJSON_NULL)
+        {
+            hanzis = cJSON_GetObjectItem(root, "hanzis");
+            hanzi_detail_count = cJSON_GetArraySize(hanzis);
+            read_idx = cur_new_word_page_idx * HANZI_CHAPTER_WORD_MAX;
+            read_count = (cur_new_word_page_idx + 1) * HANZI_CHAPTER_WORD_MAX;
+            for(i = read_idx; i < cJSON_GetArraySize(hanzis) && i < read_count;i++)
+            {
+                hanzis_item = cJSON_GetArrayItem(hanzis, i);
+                text = cJSON_GetObjectItem(hanzis_item, "text");
+                audio = cJSON_GetObjectItem(hanzis_item, "audio");
+                pinyin = cJSON_GetObjectItem(hanzis_item, "pinyin");
+                similar_word = cJSON_GetObjectItem(hanzis_item, "similar_word");
+                annotation = cJSON_GetObjectItem(hanzis_item, "annotation");
+
+                Hanzi_AddDetailInfo(j, text, audio, pinyin, similar_word, annotation);
+                j++;
+            }
+            cJSON_Delete(root);
+        }
+        else
+        {
+            hanzi_detail_count = -3;
+        }
+    }
+    else
+    {
+        hanzi_detail_count = -3;
+    }
+    if(hanzi_is_load_local){
+        if(pRcv != PNULL)
+        {
+        	SCI_FREE(pRcv);
+        	pRcv = PNULL;
+        }
+    }
+    hanzi_is_load_local = FALSE;
+    HanziDetail_TipTimeout(0, 0);
+}
+
+PUBLIC void Hanzi_RequestNewWord(void)
+{
+    char file_path[30] = {0};
     char * data_buf = PNULL;
     uint32 file_len = 0;
     char *temp_file_path = HANZI_CARD_NEW_WORD_PATH;
     strcpy(file_path,temp_file_path);
+    Hanzi_ReleaseDetailInfo();
     if(zmt_file_exist(file_path)){
         data_buf = zmt_file_data_read(file_path, &file_len);
         SCI_TRACE_LOW("%s: file_len = %d", __FUNCTION__, file_len);
         if(data_buf != PNULL && file_len > 0)
         {
-            Hanzi_ParseDetailInfo(1, data_buf, file_len,0);
+            hanzi_is_load_local = TRUE;
+            Hanzi_ParseUnmasterDetailInfo(1, data_buf, file_len,0);
         }
     }
     else
     {
-        char url[200] = {0};
-        Hanzi_ParseDetailInfo(0, data_buf, file_len,0);
+        //char url[200] = {0};
+        hanzi_is_load_local = FALSE;
+        Hanzi_ParseUnmasterDetailInfo(0, data_buf, file_len,0);
         //sprintf(url, "v1/card/chapters/hanzi?F_cardId=%s&&F_section_id=%d", HANZI_BASE_DEVICE_IMEI, section_id);
-        //MMIZDT_HTTP_AppSend(TRUE, HANZI_BOOK_HEADER_PATH, url, strlen(url), 1000, 0, 0, 0, 0, 0, Hanzi_ParseDetailInfo);
+        //MMIZDT_HTTP_AppSend(TRUE, HANZI_BOOK_HEADER_PATH, url, strlen(url), 1000, 0, 0, 0, 0, 0, Hanzi_ParseUnmasterDetailInfo);
     }
 }
 
-PUBLIC void HanziDetail_DeleteNewWordItem(uint16 cur_idx)
+PUBLIC void Hanzi_DeleteNewWordItem(uint16 cur_idx)
 {
-    char file_path[80] = {0};
+    char file_path[30] = {0};
     char * data_buf = PNULL;
     uint32 file_len = 0;
-    char *temp_file_path = HANZI_CARD_NEW_WORD_PATH;
-    strcpy(file_path,temp_file_path);
+    cJSON * root;
+    
+    strcpy(file_path,HANZI_CARD_NEW_WORD_PATH);
+    SCI_TRACE_LOW("%s: cur_idx = %d, hanzi_detail_count = %d", __FUNCTION__, cur_idx, hanzi_detail_count);
     if(hanzi_detail_count == 1 && cur_idx == 0){
         if(zmt_file_exist(file_path)){
             zmt_file_delete(file_path);
@@ -426,59 +715,111 @@ PUBLIC void HanziDetail_DeleteNewWordItem(uint16 cur_idx)
         MMI_CloseHanziDetailWin();
         return;
     }
+    
+    if(zmt_file_exist(file_path)){
+        data_buf = zmt_file_data_read(file_path, &file_len);
+        if(data_buf != PNULL && file_len > 0){
+            root = cJSON_Parse(data_buf);
+        }else{
+            return;
+        }
+    }else{
+        return;
+    }
     {
         uint16 i = 0;
         char * out = NULL;
-        cJSON * root ;
-        cJSON * F_list;
-        cJSON * list_root;
-        cJSON * F_word;
-        cJSON * F_pingy;
-        cJSON * F_audio_uri;
-        cJSON * F_remark;
+        cJSON * roots;
+        cJSON * hanzis;
+        cJSON * hanzis_item;
+        cJSON * text;
+        cJSON * audio;
+        cJSON * pinyin;
+        cJSON * similar_word;
+        cJSON * annotation;
 
-        root = cJSON_CreateObject();
-        F_list = cJSON_CreateArray();
-        for(i = 0;i < hanzi_detail_count && i < 100;i++)
-        {
-            if(i == cur_idx){
-                continue;
+        if(root != NULL && root->type != cJSON_NULL)
+        {      
+            cJSON * hanziss;
+            cJSON * hanzis_item;
+            cJSON * hanzis_items;
+            cJSON * texts;
+            cJSON * audios;
+            cJSON * pinyins;
+            cJSON * similar_words;
+            cJSON * annotations;
+            
+            roots = cJSON_CreateObject();
+            hanziss = cJSON_CreateArray();
+            hanzis = cJSON_GetObjectItem(root, "hanzis");
+            for(i = 0;i < hanzi_detail_count;i++)
+            {
+                if(i == cur_idx){
+                    continue;
+                }
+                hanzis_item = cJSON_GetArrayItem(hanzis, i);
+                text = cJSON_GetObjectItem(hanzis_item, "text");
+                audio = cJSON_GetObjectItem(hanzis_item, "audio");
+                pinyin = cJSON_GetObjectItem(hanzis_item, "pinyin");
+                similar_word = cJSON_GetObjectItem(hanzis_item, "similar_word");
+                annotation = cJSON_GetObjectItem(hanzis_item, "annotation");
+
+                hanzis_items = cJSON_CreateObject();
+                if(text->valuestring != NULL){
+                    cJSON_AddStringToObject(hanzis_items, "text", text->valuestring);
+                }else{
+                    cJSON_AddStringToObject(hanzis_items, "text", "");
+                }
+                if(audio->valuestring != NULL){
+                    cJSON_AddStringToObject(hanzis_items, "audio", audio->valuestring);
+                }else{
+                    cJSON_AddStringToObject(hanzis_items, "audio", "");
+                }
+                if(pinyin->valuestring != NULL){
+                    cJSON_AddStringToObject(hanzis_items, "pinyin", pinyin->valuestring);
+                }else{
+                    cJSON_AddStringToObject(hanzis_items, "pinyin", "");
+                }
+                if(similar_word->valuestring != NULL){
+                    cJSON_AddStringToObject(hanzis_items, "similar_word", similar_word->valuestring);
+                }else{
+                    cJSON_AddStringToObject(hanzis_items, "similar_word", "");
+                }
+                if(annotation->valuestring != NULL){
+                    cJSON_AddStringToObject(hanzis_items, "annotation", annotation->valuestring);
+                }else{
+                    cJSON_AddStringToObject(hanzis_items, "annotation", "");
+                }
+                cJSON_AddItemToArray(hanziss, hanzis_items);
             }
-            list_root = cJSON_CreateObject();
-            cJSON_AddItemToArray(F_list, list_root);
-
-            F_word = cJSON_CreateString(hanzi_detail_info[i]->word);
-            cJSON_AddItemToObject(list_root, "F_word", F_word);
-
-            F_pingy = cJSON_CreateString(hanzi_detail_info[i]->pingy);
-            cJSON_AddItemToObject(list_root, "F_pingy", F_pingy);
-
-            F_audio_uri = cJSON_CreateString(hanzi_detail_info[i]->audio_uri);
-            cJSON_AddItemToObject(list_root, "F_audio_uri", F_audio_uri);
-
-            F_remark = cJSON_CreateString(hanzi_detail_info[i]->remark);
-            cJSON_AddItemToObject(list_root, "F_remark", F_remark);
+            cJSON_AddItemToObject(roots, "hanzis", hanziss);
         }
-        cJSON_AddItemToObject(root, "F_list", F_list);
-
-        out = cJSON_PrintUnformatted(root);
-        
+        out = cJSON_PrintUnformatted(roots);  
         if(zmt_file_exist(file_path)){
             zmt_file_delete(file_path);
         }
         zmt_file_data_write(out, strlen(out), file_path);
-        
         SCI_FREE(out);
         cJSON_Delete(root);
-        
-        HanziDetail_ReleaseDetailInfo();
+        cJSON_Delete(roots);
+
+        SCI_TRACE_LOW("%s: before, hanzi_detail_cur_idx = %d, cur_new_word_page_idx = %d", __FUNCTION__, hanzi_detail_cur_idx, cur_new_word_page_idx);
+        if(hanzi_detail_cur_idx == 0 && cur_new_word_page_idx > 0){
+            hanzi_detail_cur_idx = HANZI_CHAPTER_WORD_MAX - 1;
+            cur_new_word_page_idx--;
+        }else if(hanzi_detail_cur_idx == 0 && cur_new_word_page_idx == 0)
+        {
+            //not to do
+        }else if(hanzi_detail_cur_idx > 0 && hanzi_detail_cur_idx < HANZI_CHAPTER_WORD_MAX){
+            hanzi_detail_cur_idx--;
+        }
+        SCI_TRACE_LOW("%s: after, hanzi_detail_cur_idx = %d, cur_new_word_page_idx = %d", __FUNCTION__, hanzi_detail_cur_idx, cur_new_word_page_idx);
+        Hanzi_ReleaseDetailInfo();
         data_buf = zmt_file_data_read(file_path, &file_len);
         if(data_buf != PNULL && file_len > 0)
         {
-            Hanzi_ParseDetailInfo(1, data_buf, file_len,0);
-        }
-        if(hanzi_detail_cur_idx >= hanzi_detail_count){
-            hanzi_detail_cur_idx--;
+            hanzi_is_load_local = TRUE;
+            Hanzi_ParseUnmasterDetailInfo(1, data_buf, file_len,0);
         }
     }
 }

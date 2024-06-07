@@ -692,6 +692,8 @@ PUBLIC void ListeningLocalWin_DisplayListAndDir(MMI_WIN_ID_T win_id)
 	{
 		ListeningLocalWin_DisplayLocalAlbumList(win_id, ctrl_id);
 
+		GUI_FillRect(&lcd_dev_info, listen_bottom_rect, GUI_RGB2RGB565(255, 255, 255));
+
 		SCI_TRACE_LOW("%s: is_select_delete = %d", __FUNCTION__, delete_info.is_select_delete);
 		if(delete_info.is_select_delete)
 		{
@@ -702,7 +704,7 @@ PUBLIC void ListeningLocalWin_DisplayListAndDir(MMI_WIN_ID_T win_id)
 		else
 		{
 			GUIRES_DisplayImg(PNULL, &listen_del_all_rect, PNULL, win_id, ZMT_LISTEN_DELECT, &lcd_dev_info);
-		}	
+		}
 	}
 }
 
@@ -756,7 +758,6 @@ LOCAL MMI_RESULT_E HandleListeningLocalWinMsg(
 
 				GUI_FillRect(&lcd_dev_info, listen_win_rect, GUI_RGB2RGB565(80, 162, 254));
 				GUI_FillRect(&lcd_dev_info, listen_title_rect, GUI_RGB2RGB565(108, 181, 255));
-				GUI_FillRect(&lcd_dev_info, listen_bottom_rect, GUI_RGB2RGB565(255, 255, 255));
 
 				text_style.align = ALIGN_HVMIDDLE;
 				text_style.font = DP_FONT_24;

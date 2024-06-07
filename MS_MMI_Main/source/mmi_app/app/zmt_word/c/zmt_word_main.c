@@ -288,6 +288,7 @@ LOCAL void AppendDSLListItemByTextId(MMI_CTRL_ID_T ctrl_id, MMI_IMAGE_ID_T image
 	GUI_UTF8ToWstr(wstr0,10,tmp, strlen(tmp)+1);
 	text0.wstr_len = MMIAPICOM_Wstrlen(wstr0);
 	text0.wstr_ptr = wstr0;
+	item_data.item_content[1].font_color_id = MMITHEME_COLOR_LIGHT_BLUE;
 	item_data.item_content[1].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
 	item_data.item_content[1].item_data.text_buffer = text0;
 
@@ -454,10 +455,10 @@ LOCAL MMI_RESULT_E HandleWordWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_id,
 		GUIBUTTON_SetFont(MMI_ZMT_WORD_MAIN_LABEL_BACK, &font);
 		GUIBUTTON_SetTextAlign(MMI_ZMT_WORD_MAIN_LABEL_BACK,ALIGN_HVMIDDLE);
 
-		font.font = DP_FONT_16;
 		GUILIST_SetRect(MMI_ZMT_WORD_MAIN_LIST_CONTENT, &word_list_rect);
 		GUILIST_SetListState(MMI_ZMT_WORD_MAIN_LIST_CONTENT,GUILIST_STATE_SPLIT_LINE, TRUE);
 		GUILIST_SetListState(MMI_ZMT_WORD_MAIN_LIST_CONTENT,GUILIST_STATE_NEED_HIGHTBAR, FALSE);
+		GUILIST_SetListState(MMI_ZMT_WORD_MAIN_LIST_CONTENT, GUILIST_STATE_EFFECT_STR,TRUE);
 		GUILIST_SetTopItemOffset(MMI_ZMT_WORD_MAIN_LIST_CONTENT, 10);
 		GUILIST_SetMaxItem(MMI_ZMT_WORD_MAIN_LIST_CONTENT, DSL_WORD_MAIN_DISPLAY_NUM, FALSE);
 		GUILIST_SetBgColor(MMI_ZMT_WORD_MAIN_LIST_CONTENT,GUI_RGB2RGB565(80, 162, 254));
@@ -498,7 +499,6 @@ LOCAL MMI_RESULT_E HandleWordWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_id,
 		{
 			if (books[i] != PNULL) 
 			{
-				GUILIST_SetTextFont(MMI_ZMT_WORD_MAIN_LIST_CONTENT, DP_FONT_16, MMI_WHITE_COLOR);
 				AppendDSLListItemByTextId(MMI_ZMT_WORD_MAIN_LIST_CONTENT,IMG_ZMT_CONTACT_ICON, i);
 			}
 		}
@@ -608,7 +608,7 @@ LOCAL MMI_RESULT_E HandleWordCHWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_i
 		GUI_BORDER_T btn_border = {1, MMI_WHITE_COLOR, GUI_BORDER_ROUNDED};
 		GUI_FONT_ALL_T font = {0};
 		GUI_BG_T button_bg = {0};
-		font.font = DP_FONT_16;
+		font.font = DP_FONT_18;
 		font.color = MMI_WHITE_COLOR;
 
 		GUIBUTTON_SetRect(MMI_ZMT_WORD_CH_PAD_LABEL_BACK, &word_title_rect);
@@ -706,7 +706,7 @@ LOCAL MMI_RESULT_E HandleWordCHWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_i
 		empty_info.text_id = WORD_LOADING;
 		empty_style.font = DP_FONT_22;
 		empty_style.font_color = MMI_WHITE_COLOR;
-		GUILIST_SetEmptyStyle(MMI_ZMT_WORD_MAIN_LIST_CONTENT, &empty_style);
+		GUILIST_SetEmptyStyle(MMI_ZMT_WORD_CH_LIST_CONTENT, &empty_style);
 		GUILIST_SetEmptyInfo(MMI_ZMT_WORD_CH_LIST_CONTENT, &empty_info);
 		
 		sprintf(text, "%s%s", books[pageInfo->bookIdx]->name, books[pageInfo->bookIdx]->editionName);
@@ -1247,13 +1247,11 @@ LOCAL MMI_RESULT_E HandleWordCardWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg
 				append_layer.layer_level = UILAYER_LEVEL_HIGH;
 				UILAYER_AppendBltLayer(&append_layer);
 
-				GUI_FillRect(&tip_layer,word_tip_rect,MMI_WHITE_COLOR);
-
-				LCD_DrawRect(&tip_layer, word_tip_rect, MMI_BLACK_COLOR);
+				LCD_FillRoundedRect(&tip_layer, word_tip_rect, word_tip_rect, MMI_WHITE_COLOR);
 
 				text_style.align = ALIGN_HVMIDDLE;
-				text_style.font = DP_FONT_24;
-				text_style.font_color = MMI_BLACK_COLOR;
+				text_style.font = DP_FONT_18;
+				text_style.font_color = GUI_RGB2RGB565(80, 162, 254);
 
 				if(is_display_tip==1)
 				{
