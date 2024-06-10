@@ -44,14 +44,18 @@
 #ifdef LISTENING_PRATICE_SUPPORT
 #include "zmt_listening_export.h"
 #endif
+#ifdef WORD_CARD_SUPPORT
+#include "zmt_word_text.h"
+#include "zmt_word_image.h"
+#endif
 
 LOCAL GUI_RECT_T poetry_win_rect = {0, 0, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT};
 LOCAL GUI_RECT_T poetry_title_rect = {0, 0, MMI_MAINSCREEN_WIDTH, 1.2*POETRY_LINE_HIGHT};
 LOCAL GUI_RECT_T poetry_back_rect = {0.5*POETRY_LINE_WIDTH, 0, 2.5*POETRY_LINE_WIDTH, POETRY_LINE_HIGHT};
 LOCAL GUI_RECT_T poetry_list_rect = {0, 1.2*POETRY_LINE_HIGHT, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT};
-LOCAL GUI_RECT_T poetry_play_rect = {2.6*POETRY_LINE_WIDTH, 6, 3.6*POETRY_LINE_WIDTH, POETRY_LINE_HIGHT};
+LOCAL GUI_RECT_T poetry_play_rect = {2.6*POETRY_LINE_WIDTH, 10, 4.6*POETRY_LINE_WIDTH, POETRY_LINE_HIGHT};
 LOCAL GUI_RECT_T poetry_play_text_rect = {3*POETRY_LINE_WIDTH, 0, 4*POETRY_LINE_WIDTH, 1.2*POETRY_LINE_HIGHT};
-LOCAL GUI_RECT_T poetry_favorite_rect = {5*POETRY_LINE_WIDTH, 8, 6*POETRY_LINE_WIDTH, POETRY_LINE_HIGHT};
+LOCAL GUI_RECT_T poetry_favorite_rect = {5*POETRY_LINE_WIDTH, 10, 6*POETRY_LINE_WIDTH, POETRY_LINE_HIGHT};
 LOCAL GUI_RECT_T poetry_tip_rect = {POETRY_LINE_WIDTH,MMI_MAINSCREEN_HEIGHT/2-POETRY_LINE_WIDTH,MMI_MAINSCREEN_WIDTH-POETRY_LINE_WIDTH,MMI_MAINSCREEN_HEIGHT/2+POETRY_LINE_HIGHT};
 LOCAL GUI_RECT_T poetry_page_rect = {5*POETRY_LINE_WIDTH,MMI_MAINSCREEN_HEIGHT-0.8*POETRY_LINE_HIGHT,6*POETRY_LINE_WIDTH,MMI_MAINSCREEN_HEIGHT-2};
 LOCAL GUI_RECT_T poetry_grade_line_rect = {10,1.2*POETRY_LINE_HIGHT,MMI_MAINSCREEN_WIDTH-10,2.4*POETRY_LINE_HIGHT};
@@ -69,6 +73,7 @@ LOCAL GUI_RECT_T poetry_bottom_option_rect_array[4] = {0};
 LOCAL int16 main_tp_down_x = 0;
 LOCAL int16 main_tp_down_y = 0;
 LOCAL GUI_LCD_DEV_INFO lcd_dev_info = {GUI_MAIN_LCD_ID, GUI_BLOCK_MAIN};
+LOCAL ZMT_POETRY_SHELECT_INFO poetery_info = {0};
 LOCAL ZMT_POETRY_ALL_GRADE_LIST_T grade_all_list = {0};
 LOCAL uint16 poetry_cur_post_grade_id = 0;
 LOCAL uint16 poetry_cur_post_poem_id = 0;
@@ -88,7 +93,6 @@ LOCAL BOOLEAN is_open_favorite = FALSE;
 LOCAL ZMT_POETRY_LIST_T favorite_infos ={0};
 LOCAL ZMT_POETRY_DETAIL_T * poetry_detail_infos = NULL;
 LOCAL BOOLEAN poetry_is_favorite = FALSE;
-LOCAL uint16 detail_win_current_option = 1;///1原文，2注释，3翻译，赏析
 LOCAL MMISRV_HANDLE_T poetry_player_handle=PNULL;
 LOCAL BOOLEAN audio_play_now = FALSE;
 LOCAL BOOLEAN audio_download_now = FALSE;
@@ -1000,16 +1004,9 @@ LOCAL void PoetryWin_ShowAutoPlayTip(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_d
 
         LCD_FillRoundedRect(&lcd_dev_info, poetry_tip_rect, poetry_tip_rect, MMI_WHITE_COLOR);
 
-        tip_rect_line = poetry_tip_rect;
-        tip_rect_line.left += 10;
-        tip_rect_line.right -= 10;
-        tip_rect_line.top +=10;
-        tip_rect_line.bottom -= 10;
-        LCD_DrawRoundedRect(&lcd_dev_info, tip_rect_line, tip_rect_line, MMI_BLACK_COLOR);
-
         text_style.align = ALIGN_HVMIDDLE;
         text_style.font = DP_FONT_16;
-        text_style.font_color = MMI_BLACK_COLOR;
+        text_style.font_color = GUI_RGB2RGB565(80, 162, 254);
 
         if(auto_play_open_close_tip==1){
             sprintf(count_str,"已开启自动朗读");
@@ -1086,11 +1083,12 @@ LOCAL void Draw_GradeList(MMI_WIN_ID_T win_id)
     GUILIST_SetListState( ctrl_id, GUILIST_STATE_SPLIT_LINE, TRUE);
     //不画高亮条
     GUILIST_SetListState( ctrl_id, GUILIST_STATE_NEED_HIGHTBAR, FALSE);
-
+    //GUILIST_SetListState( ctrl_id, GUILIST_STATE_ENABLE_MARK, FALSE);
     GUILIST_SetNeedPrgbarBlock(ctrl_id,FALSE);
 
     GUILIST_SetBgColor(ctrl_id,GUI_RGB2RGB565(80, 162, 254));
     GUILIST_SetTextFont(ctrl_id, DP_FONT_20, MMI_WHITE_COLOR);
+    GUILIST_SetCurItemIndex(ctrl_id, poetery_info.grade_idx);
 }
 
 LOCAL void PoetryWin_FULL_PAINT(MMI_WIN_ID_T win_id)
@@ -1120,20 +1118,9 @@ LOCAL void PoetryWin_FULL_PAINT(MMI_WIN_ID_T win_id)
     );
     text_style.align = ALIGN_HVMIDDLE;
     if(auto_play == 1){
-        GUIRES_DisplayImg(PNULL, &poetry_play_rect, PNULL, win_id, IMG_POETRY_AUDOPLAY, &lcd_dev_info);//自动播放的喇叭
-        MMIRES_GetText(ZMT_TXT_POETRY_AUTO, win_id, &text_string);
-        text_style.font = DP_FONT_16;
-        GUISTR_DrawTextToLCDInRect(
-        (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
-            &poetry_play_text_rect,
-            &poetry_play_text_rect,
-            &text_string,
-            &text_style,
-            text_state,
-            GUISTR_TEXT_DIR_AUTO
-        );
+        GUIRES_DisplayImg(PNULL, &poetry_play_rect, PNULL, win_id, IMG_AUTO_PLAY, &lcd_dev_info);//自动播放的喇叭
     }else{
-        GUIRES_DisplayImg(PNULL, &poetry_play_rect, PNULL, win_id, IMG_POETRY_DISAUTOPLAY, &lcd_dev_info);//不播放的喇叭
+        GUIRES_DisplayImg(PNULL, &poetry_play_rect, PNULL, win_id, IMG_DISAUTO_PLAY, &lcd_dev_info);//不播放的喇叭
     }
     GUIRES_DisplayImg(PNULL, &poetry_favorite_rect, PNULL, win_id, IMG_POETRY_FAVORITELIST, &lcd_dev_info);//收藏页图标
 
@@ -1145,7 +1132,7 @@ LOCAL void PoetryWin_FULL_PAINT(MMI_WIN_ID_T win_id)
 LOCAL void PoetryWin_CTL_PENOK(MMI_WIN_ID_T win_id)
 {
     uint16 cur_idx = GUILIST_GetCurItemIndex(MMI_ZMT_POETRY_GRADE_LIST_CTRL_ID);
-
+    poetery_info.grade_idx = cur_idx;
     is_open_favorite = FALSE;
     where_open_favorite = 1;
     MMI_CreatePoetryItemWin();
@@ -1181,6 +1168,7 @@ LOCAL void PoetryWin_CLOSE_WINDOW(MMI_WIN_ID_T win_id)
 {
     MMIZDT_HTTP_Close();
     releasePoetryDetail();
+    memset(&poetery_info, 0, sizeof(ZMT_POETRY_SHELECT_INFO));
 }
 
 LOCAL MMI_RESULT_E HandlePoetryWinMsg(
@@ -1316,6 +1304,7 @@ LOCAL void DrawPoetryItemList(MMI_WIN_ID_T win_id, uint16 study_favorite)
     GUILIST_SetBgColor(ctrl_id, GUI_RGB2RGB565(80, 162, 254));
     GUILIST_SetTextFont(ctrl_id, DP_FONT_20, GUI_RGB2RGB565(80, 162, 254));
     GUILIST_SetRect(ctrl_id,&poetry_list_rect);
+    GUILIST_SetCurItemIndex(ctrl_id, poetery_info.poetry_idx);
 }
 
 LOCAL void PoetryItemWin_FULL_PAINT(MMI_WIN_ID_T win_id)
@@ -1345,22 +1334,11 @@ LOCAL void PoetryItemWin_FULL_PAINT(MMI_WIN_ID_T win_id)
     text_style.align = ALIGN_HVMIDDLE;
     if(auto_play == 1)
     {
-        GUIRES_DisplayImg(PNULL, &poetry_play_rect, PNULL, win_id, IMG_POETRY_AUDOPLAY, &lcd_dev_info);//自动播放的喇叭
-        MMIRES_GetText(ZMT_TXT_POETRY_AUTO, win_id, &text_string);
-        text_style.font = DP_FONT_16;
-        GUISTR_DrawTextToLCDInRect(
-            (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
-            &poetry_play_text_rect,
-            &poetry_play_text_rect,
-            &text_string,
-            &text_style,
-            text_state,
-            GUISTR_TEXT_DIR_AUTO
-        );
+        GUIRES_DisplayImg(PNULL, &poetry_play_rect, PNULL, win_id, IMG_AUTO_PLAY, &lcd_dev_info);//自动播放的喇叭
     }
     else
     {
-        GUIRES_DisplayImg(PNULL, &poetry_play_rect, PNULL, win_id, IMG_POETRY_DISAUTOPLAY, &lcd_dev_info);//不播放的喇叭
+        GUIRES_DisplayImg(PNULL, &poetry_play_rect, PNULL, win_id, IMG_DISAUTO_PLAY, &lcd_dev_info);//不播放的喇叭
     }
     if(!is_open_favorite){
         status = grade_get_status;
@@ -1437,6 +1415,7 @@ LOCAL void PoetryItemWin_HanldeTpUp(MMI_WIN_ID_T win_id, GUI_POINT_T point)
 LOCAL void PoetryItemWin_CTL_PENOK(MMI_WIN_ID_T win_id)
 {
     uint16 cur_idx = GUILIST_GetCurItemIndex(MMI_ZMT_POETRY_ITEM_LIST_CTRL_ID);
+    poetery_info.poetry_idx = cur_idx;
     if(!is_open_favorite){
         poetry_cur_post_poem_id = grade_all_list.all_grade[(poetry_cur_post_grade_id-1)].grade_info[cur_idx].id;
     }else{
@@ -1555,7 +1534,6 @@ LOCAL void PoetryDetailWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
 
     SCI_TRACE_LOW("%s: start %d KB-- %d kB", __FUNCTION__, SCI_GetSystemSpaceTotalAvalidMem()/1024, SCI_GetHeapTotalSpace(DYNAMIC_HEAP_APP_MEMORY)/1024);
     
-    detail_win_current_option = 1;
     audio_download_progress = 0;
     audio_play_progress = 0;
     audio_play_now = FALSE;
@@ -1587,7 +1565,7 @@ LOCAL void PoetryDetailWin_DrawOption(MMI_WIN_ID_T win_id, uint16 current_option
     optin_rect.left = 0.3*POETRY_LINE_WIDTH;
     optin_rect.right = 1.3*POETRY_LINE_WIDTH;
     for(i = 0; i < 4;i++){
-        if(i == current_option-1){
+        if(i == current_option){
             text_style.font_color = GUI_RGB2RGB565(80, 162, 254);
         }else{
             text_style.font_color = GUI_RGB2RGB565(151, 166, 180);
@@ -1606,7 +1584,7 @@ LOCAL void PoetryDetailWin_DrawOption(MMI_WIN_ID_T win_id, uint16 current_option
         optin_rect.left += 1.5*POETRY_LINE_WIDTH;
         optin_rect.right = optin_rect.left + POETRY_LINE_WIDTH;
     }
-    optin_option_line_rect = poetry_bottom_option_rect_array[current_option-1];
+    optin_option_line_rect = poetry_bottom_option_rect_array[current_option];
     optin_option_line_rect.bottom -= 2;
     optin_option_line_rect.top = optin_option_line_rect.bottom - 1;
     LCD_FillRect(&lcd_dev_info, optin_option_line_rect, GUI_RGB2RGB565(80, 162, 254));
@@ -1632,10 +1610,9 @@ LOCAL void PoetryDetailWin_ShowText(MMI_WIN_ID_T win_id)
     text_style.align = ALIGN_HVMIDDLE;
     text_style.font = DP_FONT_18;
     text_style.font_color = MMI_WHITE_COLOR;
-    SCI_TRACE_LOW("%s: detail_win_current_option = %d", __FUNCTION__, detail_win_current_option);
-    switch(detail_win_current_option)
+    switch(poetery_info.detail_idx)
     {
-        case 1:
+        case 0:
             {
                 text_char = SCI_ALLOC_APPZ(strlen(poetry_detail_infos->title_content)+1);
                 memset(text_char, 0, strlen(poetry_detail_infos->title_content)+1);
@@ -1670,7 +1647,7 @@ LOCAL void PoetryDetailWin_ShowText(MMI_WIN_ID_T win_id)
                 rect = poetry_content_rect;
             }
             break;
-        case 2:
+        case 1:
             {
                 text_char = SCI_ALLOC_APPZ(strlen(poetry_detail_infos->comment)+1);
                 memset(text_char, 0, strlen(poetry_detail_infos->comment)+1);
@@ -1680,7 +1657,7 @@ LOCAL void PoetryDetailWin_ShowText(MMI_WIN_ID_T win_id)
                 rect = poetry_content_other_rect;
             }
             break;
-        case 3:
+        case 2:
             {
                 if(poetry_detail_infos->translation != NULL){
                     text_char = SCI_ALLOC_APPZ(strlen(poetry_detail_infos->translation)+1);
@@ -1691,7 +1668,7 @@ LOCAL void PoetryDetailWin_ShowText(MMI_WIN_ID_T win_id)
                 rect = poetry_content_other_rect;
             }
             break;
-        case 4:
+        case 3:
             {
                 text_char = SCI_ALLOC_APPZ(strlen(poetry_detail_infos->appreciation)+1);
                 memset(text_char, 0, strlen(poetry_detail_infos->appreciation)+1);
@@ -1747,7 +1724,7 @@ LOCAL void PoetryDetailWin_FULL_PAINT(MMI_WIN_ID_T win_id)
     );
 
     text_style.align = ALIGN_HVMIDDLE;
-    if(detail_win_current_option == 1){//只有原文有音频
+    if(poetery_info.detail_idx == 0){//只有原文有音频
         GUIRES_DisplayImg(PNULL, &poetry_play_rect, PNULL, win_id, IMG_POETRY_PLAY, &lcd_dev_info);
     }
     if(poetry_is_favorite){
@@ -1756,7 +1733,7 @@ LOCAL void PoetryDetailWin_FULL_PAINT(MMI_WIN_ID_T win_id)
         GUIRES_DisplayImg(PNULL, &poetry_favorite_rect, PNULL, win_id, IMG_ZMT_NOTFAVORITE, &lcd_dev_info);
     }
 
-    PoetryDetailWin_DrawOption(win_id, detail_win_current_option);
+    PoetryDetailWin_DrawOption(win_id, poetery_info.detail_idx);
     PoetryWin_ShowAutoPlayTip(win_id, poetry_detail_auto_tip_layer);
     if(detail_get_status == 0)
     {
@@ -1788,7 +1765,7 @@ LOCAL void PoetryDetailWin_FULL_PAINT(MMI_WIN_ID_T win_id)
 
 LOCAL void PoetryDetailWin_HanldeTpUp(MMI_WIN_ID_T win_id, GUI_POINT_T point)
 {
-    if(GUI_PointIsInRect(point, poetry_play_rect) && detail_win_current_option == 1)
+    if(GUI_PointIsInRect(point, poetry_play_rect) && poetery_info.detail_idx == 0)
     {
         SCI_TRACE_LOW("%s: audio_play_now = %d, audio_download_now = %d", __FUNCTION__, audio_play_now, audio_download_now);
         if(!audio_play_now){
@@ -1816,29 +1793,29 @@ LOCAL void PoetryDetailWin_HanldeTpUp(MMI_WIN_ID_T win_id, GUI_POINT_T point)
     }
     else if(GUI_PointIsInRect(point, poetry_bottom_option_rect_array[0]))
     {
-        if (detail_win_current_option != 1){
-            detail_win_current_option = 1;
+        if (poetery_info.detail_idx != 0){
+            poetery_info.detail_idx = 0;
             MMK_PostMsg(win_id, MSG_FULL_PAINT, PNULL, 0);
         }
     }
     else if(GUI_PointIsInRect(point, poetry_bottom_option_rect_array[1]))
     {
-        if (detail_win_current_option != 2){
-            detail_win_current_option = 2;
+        if (poetery_info.detail_idx != 1){
+            poetery_info.detail_idx = 1;
             MMK_PostMsg(win_id, MSG_FULL_PAINT, PNULL, 0);
         }
     }
     else if(GUI_PointIsInRect(point, poetry_bottom_option_rect_array[2]))
     {
-        if (detail_win_current_option != 3){
-            detail_win_current_option = 3;
+        if (poetery_info.detail_idx != 2){
+            poetery_info.detail_idx = 2;
             MMK_PostMsg(win_id, MSG_FULL_PAINT, PNULL, 0);
         }
     }
     else if(GUI_PointIsInRect(point, poetry_bottom_option_rect_array[3]))
     {
-        if (detail_win_current_option != 4){
-            detail_win_current_option = 4;
+        if (poetery_info.detail_idx != 3){
+            poetery_info.detail_idx = 3;
             MMK_PostMsg(win_id, MSG_FULL_PAINT, PNULL, 0);
         }
     }
@@ -1860,14 +1837,14 @@ LOCAL void PoetryDetailWin_CLOSE_WINDOW(MMI_WIN_ID_T win_id)
             changeFavoritePoem(poetry_detail_infos->id, TRUE);
         }
     }
-    detail_win_current_option = 1;
+    poetery_info.detail_idx = 0;
     audio_download_progress = 0;
     audio_play_progress = 0;
     audio_play_now = FALSE;
     audio_download_now = FALSE;
     detail_get_status = 0;
     MMIZDT_HTTP_Close();
-    Poetry_StopPlayMp3();
+    Poetry_StopPlayMp3();  
 }
 
 LOCAL MMI_RESULT_E HandlePoetryDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_id,DPARAM param) 

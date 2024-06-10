@@ -177,20 +177,20 @@ LOCAL void Hanzi_DisplayBookList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
         item_data.item_content[0].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
         item_data.item_content[0].item_data.text_buffer = text_str;
     #endif
-
-        //不画分割线
-        GUILIST_SetListState(ctrl_id, GUILIST_STATE_SPLIT_LINE, TRUE);
-        //不画高亮条
-        GUILIST_SetListState(ctrl_id, GUILIST_STATE_NEED_HIGHTBAR, FALSE);
-        //文字显示特效
-        GUILIST_SetListState(ctrl_id, GUILIST_STATE_EFFECT_STR,TRUE);
-
-        GUILIST_SetNeedPrgbarBlock(ctrl_id,FALSE);
-
-        GUILIST_SetBgColor(ctrl_id,GUI_RGB2RGB565(80, 162, 254));
-
         GUILIST_AppendItem(ctrl_id, &item_t);
     }
+     //不画分割线
+     GUILIST_SetListState(ctrl_id, GUILIST_STATE_SPLIT_LINE, TRUE);
+     //不画高亮条
+     GUILIST_SetListState(ctrl_id, GUILIST_STATE_NEED_HIGHTBAR, FALSE);
+     //文字显示特效
+     GUILIST_SetListState(ctrl_id, GUILIST_STATE_EFFECT_STR,TRUE);
+
+     GUILIST_SetNeedPrgbarBlock(ctrl_id,FALSE);
+
+     GUILIST_SetBgColor(ctrl_id,GUI_RGB2RGB565(80, 162, 254));
+
+     GUILIST_SetCurItemIndex(ctrl_id, hanzi_book_info.cur_book_idx);
 }
 
 LOCAL MMI_RESULT_E HandleHanziWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_id, DPARAM param)
@@ -435,20 +435,19 @@ LOCAL void Hanzi_DisplayChapterList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
             }else{
                 item_data.item_content[1].item_data.image_id = IMG_ZMT_UNSELECTED;
             }
-
-            //不画分割线
-            GUILIST_SetListState( ctrl_id, GUILIST_STATE_SPLIT_LINE, TRUE);
-            //不画高亮条
-            GUILIST_SetListState( ctrl_id, GUILIST_STATE_NEED_HIGHTBAR, FALSE);
-
-            GUILIST_SetNeedPrgbarBlock(ctrl_id,FALSE);
-
-            GUILIST_SetBgColor(ctrl_id,GUI_RGB2RGB565(80, 162, 254));
-            GUILIST_SetTextFont(ctrl_id, DP_FONT_16, MMI_WHITE_COLOR);
-
             GUILIST_AppendItem(ctrl_id, &item_t);
         }
     }
+    //不画分割线
+    GUILIST_SetListState( ctrl_id, GUILIST_STATE_SPLIT_LINE, TRUE);
+    //不画高亮条
+    GUILIST_SetListState( ctrl_id, GUILIST_STATE_NEED_HIGHTBAR, FALSE);
+
+    GUILIST_SetNeedPrgbarBlock(ctrl_id,FALSE);
+
+    GUILIST_SetBgColor(ctrl_id,GUI_RGB2RGB565(80, 162, 254));
+    GUILIST_SetTextFont(ctrl_id, DP_FONT_16, MMI_WHITE_COLOR);
+    GUILIST_SetCurItemIndex(ctrl_id, hanzi_book_info.cur_chapter_idx);
 }
 
 LOCAL MMI_RESULT_E HandleHanziChapterWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_id, DPARAM param)

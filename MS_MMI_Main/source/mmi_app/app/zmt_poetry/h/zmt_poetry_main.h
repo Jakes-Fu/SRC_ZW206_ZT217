@@ -41,6 +41,12 @@ extern "C"
 
 #define POETRY_TIME_DIFF_FROM_1970_TO_1980     ((365*10+2)*24*3600)
 
+typedef struct
+{
+    int grade_idx;
+    int poetry_idx;
+    int detail_idx;
+}ZMT_POETRY_SHELECT_INFO;
 
 typedef struct
 {
