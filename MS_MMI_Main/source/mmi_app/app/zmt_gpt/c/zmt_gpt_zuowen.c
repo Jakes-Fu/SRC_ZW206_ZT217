@@ -488,164 +488,6 @@ LOCAL void ZmtGptZuoWen_RightIndentifyClick(MMI_WIN_ID_T win_id)
     }
 }
 
-LOCAL void ZmtGptZuoWen_DisplayList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
-{
-    uint8 i = 0;
-    uint8 num = 0;
-    GUI_RECT_T list_rect = {0};
-    GUILIST_INIT_DATA_T list_init = {0};
-    GUILIST_ITEM_T item_t = {0};
-    GUIITEM_STATE_T item_state = {0};
-    GUILIST_ITEM_DATA_T item_data = {0};
-    MMI_STRING_T text_string = {0};
-    wchar text_str[2048] = {0};
-    uint8 line_num = 0;
-
-    list_rect = zmt_gpt_list_rect;
-    list_rect.bottom = MMI_MAINSCREEN_HEIGHT - ZMT_GPT_LINE_HIGHT;
-    list_init.both_rect.v_rect = list_rect;
-    list_init.type = GUILIST_TEXTLIST_E;
-    GUILIST_CreateListBox(win_id, 0, ctrl_id, &list_init);
-
-    MMK_SetAtvCtrl(win_id, ctrl_id);
-    GUILIST_RemoveAllItems(ctrl_id);
-    GUILIST_SetMaxItem(ctrl_id, gpt_zuowen_talk_size+1, FALSE);
-
-    SCI_TRACE_LOW("%s: gpt_kouyu_talk_size = %d", __FUNCTION__, gpt_zuowen_talk_size);
-    for(i = 0;i < gpt_zuowen_talk_size; i++)
-    {
-        memset(text_str, 0, 2048);
-
-        item_t.item_data_ptr = &item_data;
-        item_t.item_state = GUIITEM_STATE_SELFADAPT_RECT;
-        if(i == 0)
-        {
-            GUI_GBToWstr(text_str, gpt_zuowen_talk_info[i]->str, strlen(gpt_zuowen_talk_info[i]->str));
-        }
-        else
-        {
-        #ifndef WIN32
-            GUI_UTF8ToWstr(text_str, 2048, gpt_zuowen_talk_info[i]->str, strlen(gpt_zuowen_talk_info[i]->str));
-        #else
-            GUI_GBToWstr(text_str, gpt_zuowen_talk_info[i]->str, strlen(gpt_zuowen_talk_info[i]->str));
-        #endif
-        }
-        text_string.wstr_ptr = text_str;
-        text_string.wstr_len = MMIAPICOM_Wstrlen(text_string.wstr_ptr);
-        line_num = GUI_CalculateStringLinesByPixelNum(160,text_string.wstr_ptr,text_string.wstr_len,DP_FONT_16,0,TRUE);
-        SCI_TRACE_LOW("%s: i = %d, line_num = %d", __FUNCTION__, i, line_num);
-        if(!gpt_zuowen_talk_info[i]->is_user)
-        {
-            switch(line_num)
-            {
-                case 1:
-                    item_t.item_style = GUIITEM_STYLE_GPT_AI_TEXT_MS;
-                    break;
-                case 2:
-                    item_t.item_style = GUIITEM_STYLE_GPT_AI_2LINE_TEXT_MS;
-                    break;
-                case 3:
-                    item_t.item_style = GUIITEM_STYLE_GPT_AI_3LINE_TEXT_MS;
-                    break;
-                case 4:
-                    item_t.item_style = GUIITEM_STYLE_GPT_AI_4LINE_TEXT_MS;
-                    break;
-                case 5:
-                    item_t.item_style = GUIITEM_STYLE_GPT_AI_5LINE_TEXT_MS;
-                    break;
-                case 6:
-                    item_t.item_style = GUIITEM_STYLE_GPT_AI_6LINE_TEXT_MS;
-                    break;
-                case 7:
-                    item_t.item_style = GUIITEM_STYLE_GPT_AI_7LINE_TEXT_MS;
-                    break;
-                default:
-                    item_t.item_style = GUIITEM_STYLE_GPT_AI_7LINE_TEXT_MS;
-                    break;
-            }           
-            item_data.item_content[0].item_data.text_buffer = text_string;
-            item_data.item_content[0].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
-
-            item_data.item_content[1].item_data.image_id = PNULL;
-            item_data.item_content[1].item_data_type = GUIITEM_DATA_IMAGE_ID;
-        }
-        else
-        {
-            switch(line_num)
-            {
-                case 1:
-                    item_t.item_style = GUIITEM_STYLE_GPT_MINE_TEXT_MS;
-                    break;
-                case 2:
-                    item_t.item_style = GUIITEM_STYLE_GPT_MINE_2LINE_TEXT_MS;
-                    break;
-                case 3:
-                    item_t.item_style = GUIITEM_STYLE_GPT_MINE_3LINE_TEXT_MS;
-                    break;
-                case 4:
-                    item_t.item_style = GUIITEM_STYLE_GPT_MINE_4LINE_TEXT_MS;
-                    break;
-                case 5:
-                    item_t.item_style = GUIITEM_STYLE_GPT_MINE_5LINE_TEXT_MS;
-                    break;
-                case 6:
-                    item_t.item_style = GUIITEM_STYLE_GPT_MINE_6LINE_TEXT_MS;
-                    break;
-                case 7:
-                    item_t.item_style = GUIITEM_STYLE_GPT_MINE_7LINE_TEXT_MS;
-                    break;
-                default:
-                    item_t.item_style = GUIITEM_STYLE_GPT_MINE_7LINE_TEXT_MS;
-                    break;
-            } 
-            item_data.item_content[0].item_data.image_id = PNULL;
-            item_data.item_content[0].item_data_type = GUIITEM_DATA_IMAGE_ID;
-            
-            item_data.item_content[1].item_data.text_buffer = text_string;
-            item_data.item_content[1].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
-        }
-        //SCI_TRACE_LOW("%s: [%d]->str = %s", __FUNCTION__, i, gpt_zuowen_talk_info[i]->str);
-        //不画分割线
-        GUILIST_SetListState( ctrl_id, GUILIST_STATE_SPLIT_LINE, FALSE);
-        //不画高亮条
-        GUILIST_SetListState( ctrl_id, GUILIST_STATE_NEED_HIGHTBAR, FALSE);
-
-        GUILIST_SetNeedPrgbarBlock(ctrl_id,FALSE);
-        
-        GUILIST_SetBgColor(ctrl_id,MMI_BLACK_COLOR);
-        GUILIST_SetTextFont(ctrl_id, DP_FONT_16, MMI_WHITE_COLOR);
-
-        GUILIST_AppendItem(ctrl_id, &item_t);
-    }
-    GUILIST_SetCurItemIndex(ctrl_id, gpt_zuowen_talk_size - 1);
-    SCI_TRACE_LOW("%s: gpt_zuowen_load_text = %d", __FUNCTION__, gpt_zuowen_load_text);
-    if(gpt_zuowen_load_text)
-    {
-        item_t.item_data_ptr = &item_data;
-        item_t.item_state = GUIITEM_STATE_SELFADAPT_RECT;
-        item_t.item_style = GUIITEM_STYLE_GPT_AI_TEXT_MS;
-
-        item_data.item_content[0].item_data.text_id= ZMT_CHAT_GPT_LOADING;
-        item_data.item_content[0].item_data_type = GUIITEM_DATA_TEXT_ID;
-
-        item_data.item_content[1].item_data.image_id = PNULL;
-        item_data.item_content[1].item_data_type = GUIITEM_DATA_IMAGE_ID;
-
-         //不画分割线
-        GUILIST_SetListState( ctrl_id, GUILIST_STATE_SPLIT_LINE, FALSE);
-        //不画高亮条
-        GUILIST_SetListState( ctrl_id, GUILIST_STATE_NEED_HIGHTBAR, FALSE);
-
-        GUILIST_SetNeedPrgbarBlock(ctrl_id,FALSE);
-        
-        GUILIST_SetBgColor(ctrl_id,MMI_BLACK_COLOR);
-        GUILIST_SetTextFont(ctrl_id, DP_FONT_16, MMI_WHITE_COLOR);
-
-        GUILIST_AppendItem(ctrl_id, &item_t);
-        GUILIST_SetCurItemIndex(ctrl_id, gpt_zuowen_talk_size);
-    }
-}
-
 LOCAL void ZmtGptZuoWen_ShowFormList(MMI_WIN_ID_T win_id)
 {
     uint8 i = 0;
@@ -748,9 +590,9 @@ LOCAL void  ZmtGptZuoWen_DispalyRecord(MMI_WIN_ID_T win_id, int record_type)
         case GPT_RECORD_TYPE_NONE:
         {
             zmt_gpt_record_rect = zmt_gpt_list_rect;
-            zmt_gpt_record_rect.top = zmt_gpt_record_rect.bottom - ZMT_GPT_LINE_HIGHT;
-            zmt_gpt_record_rect.left += 1.5*ZMT_GPT_LINE_WIDTH;
-            zmt_gpt_record_rect.right -= 1.5*ZMT_GPT_LINE_WIDTH;
+            zmt_gpt_record_rect.top = zmt_gpt_record_rect.bottom - 2*ZMT_GPT_LINE_HIGHT;
+            zmt_gpt_record_rect.left += ZMT_GPT_LINE_WIDTH;
+            zmt_gpt_record_rect.right -= ZMT_GPT_LINE_WIDTH;
             LCD_DrawRoundedRect(&gpt_zuowen_record_layer, zmt_gpt_record_rect, zmt_gpt_record_rect, MMI_WHITE_COLOR);
             LCD_FillRoundedRect(&gpt_zuowen_record_layer, zmt_gpt_record_rect, zmt_gpt_record_rect, MMI_WHITE_COLOR);
 
@@ -831,7 +673,7 @@ LOCAL void  ZmtGptZuoWen_DispalyRecord(MMI_WIN_ID_T win_id, int record_type)
         case GPT_RECORD_TYPE_VOICE_LOADING:
         {
             zmt_gpt_record_rect = zmt_gpt_list_rect;
-            zmt_gpt_record_rect.top = zmt_gpt_record_rect.bottom - ZMT_GPT_LINE_HIGHT;
+            zmt_gpt_record_rect.top = zmt_gpt_record_rect.bottom - 2*ZMT_GPT_LINE_HIGHT;
             zmt_gpt_record_rect.left += ZMT_GPT_LINE_WIDTH;
             zmt_gpt_record_rect.right -= ZMT_GPT_LINE_WIDTH;
 
@@ -853,7 +695,7 @@ LOCAL void  ZmtGptZuoWen_DispalyRecord(MMI_WIN_ID_T win_id, int record_type)
         case GPT_RECORD_TYPE_TEXT_LOADING:
         {
             zmt_gpt_record_rect = zmt_gpt_list_rect;
-            zmt_gpt_record_rect.top = zmt_gpt_record_rect.bottom - ZMT_GPT_LINE_HIGHT;
+            zmt_gpt_record_rect.top = zmt_gpt_record_rect.bottom - 2*ZMT_GPT_LINE_HIGHT;
             zmt_gpt_record_rect.left += ZMT_GPT_LINE_WIDTH;
             zmt_gpt_record_rect.right -= ZMT_GPT_LINE_WIDTH;
 
@@ -955,9 +797,9 @@ LOCAL void  ZmtGptZuoWen_DispalyRecord(MMI_WIN_ID_T win_id, int record_type)
         case GPT_RECORD_TYPE_FAIL:
         {
             zmt_gpt_record_rect = zmt_gpt_list_rect;
-            zmt_gpt_record_rect.top = zmt_gpt_record_rect.bottom - ZMT_GPT_LINE_HIGHT;
-            zmt_gpt_record_rect.left += 1.5*ZMT_GPT_LINE_WIDTH;
-            zmt_gpt_record_rect.right -= 1.5*ZMT_GPT_LINE_WIDTH;
+            zmt_gpt_record_rect.top = zmt_gpt_record_rect.bottom - 2*ZMT_GPT_LINE_HIGHT;
+            zmt_gpt_record_rect.left += ZMT_GPT_LINE_WIDTH;
+            zmt_gpt_record_rect.right -= ZMT_GPT_LINE_WIDTH;
             
             LCD_DrawRoundedRect(&gpt_zuowen_record_layer, zmt_gpt_record_rect, zmt_gpt_record_rect, MMI_WHITE_COLOR);
             LCD_FillRoundedRect(&gpt_zuowen_record_layer, zmt_gpt_record_rect, zmt_gpt_record_rect, MMI_WHITE_COLOR);
@@ -983,9 +825,9 @@ LOCAL void  ZmtGptZuoWen_DispalyRecord(MMI_WIN_ID_T win_id, int record_type)
         case GPT_RECORD_TYPE_ERROR:
         {
             zmt_gpt_record_rect = zmt_gpt_list_rect;
-            zmt_gpt_record_rect.top = zmt_gpt_record_rect.bottom - ZMT_GPT_LINE_HIGHT;
-            zmt_gpt_record_rect.left += 1.5*ZMT_GPT_LINE_WIDTH;
-            zmt_gpt_record_rect.right -= 1.5*ZMT_GPT_LINE_WIDTH;
+            zmt_gpt_record_rect.top = zmt_gpt_record_rect.bottom - 2*ZMT_GPT_LINE_HIGHT;
+            zmt_gpt_record_rect.left += ZMT_GPT_LINE_WIDTH;
+            zmt_gpt_record_rect.right -= ZMT_GPT_LINE_WIDTH;
             
             LCD_DrawRoundedRect(&gpt_zuowen_record_layer, zmt_gpt_record_rect, zmt_gpt_record_rect, MMI_WHITE_COLOR);
             LCD_FillRoundedRect(&gpt_zuowen_record_layer, zmt_gpt_record_rect, zmt_gpt_record_rect, MMI_WHITE_COLOR);
