@@ -38,10 +38,10 @@ LOCAL GUI_RECT_T hanzi_list_rect = {0, HANZI_CARD_LINE_HIGHT, MMI_MAINSCREEN_WID
 LOCAL GUI_RECT_T hanzi_dir_rect = {5*HANZI_CARD_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH, HANZI_CARD_LINE_HIGHT};
 LOCAL GUI_RECT_T hanzi_word_rect = {5, HANZI_CARD_LINE_HIGHT, MMI_MAINSCREEN_WIDTH, 2*HANZI_CARD_LINE_HIGHT};//汉字
 LOCAL GUI_RECT_T hanzi_pinyin_rect = {5, 1.8*HANZI_CARD_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-5, 2.8*HANZI_CARD_LINE_HIGHT};//音标
-LOCAL GUI_RECT_T hanzi_text_rect = {5,2.8*HANZI_CARD_LINE_HIGHT+1,MMI_MAINSCREEN_WIDTH-5,MMI_MAINSCREEN_HEIGHT-HANZI_CARD_LINE_HIGHT-5};//释义
+LOCAL GUI_RECT_T hanzi_text_rect = {5,2.8*HANZI_CARD_LINE_HIGHT+1,MMI_MAINSCREEN_WIDTH-5,MMI_MAINSCREEN_HEIGHT-1.5*HANZI_CARD_LINE_HIGHT-5};//释义
 LOCAL GUI_RECT_T hanzi_msg_rect = {HANZI_CARD_LINE_WIDTH, 3*HANZI_CARD_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-HANZI_CARD_LINE_WIDTH, 5*HANZI_CARD_LINE_HIGHT};//界面的信息提示
-LOCAL GUI_RECT_T hanzi_left_rect = {10, MMI_MAINSCREEN_HEIGHT-HANZI_CARD_LINE_HIGHT, 3*HANZI_CARD_LINE_WIDTH-10, MMI_MAINSCREEN_HEIGHT-2};//汉字学习/掌握
-LOCAL GUI_RECT_T hanzi_right_rect = {3*HANZI_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-HANZI_CARD_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-10, MMI_MAINSCREEN_HEIGHT-2};//生词本/未掌握
+LOCAL GUI_RECT_T hanzi_left_rect = {10, MMI_MAINSCREEN_HEIGHT-1.5*HANZI_CARD_LINE_HIGHT, 3*HANZI_CARD_LINE_WIDTH-10, MMI_MAINSCREEN_HEIGHT-2};//汉字学习/掌握
+LOCAL GUI_RECT_T hanzi_right_rect = {3*HANZI_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-1.5*HANZI_CARD_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-10, MMI_MAINSCREEN_HEIGHT-2};//生词本/未掌握
 LOCAL GUI_RECT_T hanzi_pre_rect = {0.5*HANZI_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-HANZI_CARD_LINE_HIGHT, 1.5*HANZI_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-2};//生词本-上一个
 LOCAL GUI_RECT_T hanzi_del_rect = {2.5*HANZI_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-HANZI_CARD_LINE_HIGHT, 3.5*HANZI_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-2};//生词本-删除
 LOCAL GUI_RECT_T hanzi_next_rect = {4.5*HANZI_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-HANZI_CARD_LINE_HIGHT, 5.5*HANZI_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-2};//生词本-下一个
@@ -397,7 +397,7 @@ LOCAL void Hanzi_DisplayChapterList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
     MMI_STRING_T text_string = {0};
 
     list_rect = hanzi_list_rect;
-    list_rect.bottom -= HANZI_CARD_LINE_HIGHT;
+    list_rect.bottom -= 1.5*HANZI_CARD_LINE_HIGHT;
     list_init.both_rect.v_rect = list_rect;
     list_init.type = GUILIST_TEXTLIST_E;
     GUILIST_CreateListBox(win_id, 0, ctrl_id, &list_init);
@@ -1076,7 +1076,7 @@ LOCAL MMI_RESULT_E HandleHanziDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
                     
                     if(!is_open_new_hanzi){
                         SCI_TRACE_LOW("%s: hanzi_detail_cur_idx = %d, hanzi_detail_count = %d", __FUNCTION__, hanzi_detail_cur_idx, hanzi_detail_count);
-                        if(hanzi_detail_cur_idx > hanzi_detail_count){
+                        if(hanzi_detail_cur_idx + 1 > hanzi_detail_count){
                             is_end = TRUE;
                         }
                     }else{

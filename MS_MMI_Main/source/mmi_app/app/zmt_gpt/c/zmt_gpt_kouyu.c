@@ -628,9 +628,9 @@ LOCAL void  ZmtGptKouYuTalk_DispalyRecord(MMI_WIN_ID_T win_id, int record_type)
         case GPT_RECORD_TYPE_NONE:
         {
             zmt_gpt_record_rect = zmt_gpt_list_rect;
-            zmt_gpt_record_rect.top = zmt_gpt_record_rect.bottom - ZMT_GPT_LINE_HIGHT;
-            zmt_gpt_record_rect.left += 1.5*ZMT_GPT_LINE_WIDTH;
-            zmt_gpt_record_rect.right -= 1.5*ZMT_GPT_LINE_WIDTH;
+            zmt_gpt_record_rect.top = zmt_gpt_record_rect.bottom - 2*ZMT_GPT_LINE_HIGHT;
+            zmt_gpt_record_rect.left += ZMT_GPT_LINE_WIDTH;
+            zmt_gpt_record_rect.right -= ZMT_GPT_LINE_WIDTH;
             LCD_DrawRoundedRect(&gpt_kouyu_record_layer, zmt_gpt_record_rect, zmt_gpt_record_rect, MMI_WHITE_COLOR);
             LCD_FillRoundedRect(&gpt_kouyu_record_layer, zmt_gpt_record_rect, zmt_gpt_record_rect, MMI_WHITE_COLOR);
 
@@ -795,7 +795,7 @@ LOCAL void  ZmtGptKouYuTalk_DispalyRecord(MMI_WIN_ID_T win_id, int record_type)
         case GPT_RECORD_TYPE_VOICE_LOADING:
         {
             zmt_gpt_record_rect = zmt_gpt_list_rect;
-            zmt_gpt_record_rect.top = zmt_gpt_record_rect.bottom - ZMT_GPT_LINE_HIGHT;
+            zmt_gpt_record_rect.top = zmt_gpt_record_rect.bottom - 2*ZMT_GPT_LINE_HIGHT;
             zmt_gpt_record_rect.left += ZMT_GPT_LINE_WIDTH;
             zmt_gpt_record_rect.right -= ZMT_GPT_LINE_WIDTH;
 
@@ -817,7 +817,7 @@ LOCAL void  ZmtGptKouYuTalk_DispalyRecord(MMI_WIN_ID_T win_id, int record_type)
         case GPT_RECORD_TYPE_TEXT_LOADING:
         {
             zmt_gpt_record_rect = zmt_gpt_list_rect;
-            zmt_gpt_record_rect.top = zmt_gpt_record_rect.bottom - ZMT_GPT_LINE_HIGHT;
+            zmt_gpt_record_rect.top = zmt_gpt_record_rect.bottom - 2*ZMT_GPT_LINE_HIGHT;
             zmt_gpt_record_rect.left += ZMT_GPT_LINE_WIDTH;
             zmt_gpt_record_rect.right -= ZMT_GPT_LINE_WIDTH;
 
@@ -839,9 +839,9 @@ LOCAL void  ZmtGptKouYuTalk_DispalyRecord(MMI_WIN_ID_T win_id, int record_type)
         case GPT_RECORD_TYPE_FAIL:
         {
             zmt_gpt_record_rect = zmt_gpt_list_rect;
-            zmt_gpt_record_rect.top = zmt_gpt_record_rect.bottom - ZMT_GPT_LINE_HIGHT;
-            zmt_gpt_record_rect.left += 1.5*ZMT_GPT_LINE_WIDTH;
-            zmt_gpt_record_rect.right -= 1.5*ZMT_GPT_LINE_WIDTH;
+            zmt_gpt_record_rect.top = zmt_gpt_record_rect.bottom - 2*ZMT_GPT_LINE_HIGHT;
+            zmt_gpt_record_rect.left += ZMT_GPT_LINE_WIDTH;
+            zmt_gpt_record_rect.right -= ZMT_GPT_LINE_WIDTH;
             
             LCD_DrawRoundedRect(&gpt_kouyu_record_layer, zmt_gpt_record_rect, zmt_gpt_record_rect, MMI_WHITE_COLOR);
             LCD_FillRoundedRect(&gpt_kouyu_record_layer, zmt_gpt_record_rect, zmt_gpt_record_rect, MMI_WHITE_COLOR);
@@ -867,9 +867,9 @@ LOCAL void  ZmtGptKouYuTalk_DispalyRecord(MMI_WIN_ID_T win_id, int record_type)
         case GPT_RECORD_TYPE_ERROR:
         {
             zmt_gpt_record_rect = zmt_gpt_list_rect;
-            zmt_gpt_record_rect.top = zmt_gpt_record_rect.bottom - ZMT_GPT_LINE_HIGHT;
-            zmt_gpt_record_rect.left += 1.5*ZMT_GPT_LINE_WIDTH;
-            zmt_gpt_record_rect.right -= 1.5*ZMT_GPT_LINE_WIDTH;
+            zmt_gpt_record_rect.top = zmt_gpt_record_rect.bottom - 2*ZMT_GPT_LINE_HIGHT;
+            zmt_gpt_record_rect.left += ZMT_GPT_LINE_WIDTH;
+            zmt_gpt_record_rect.right -= ZMT_GPT_LINE_WIDTH;
             
             LCD_DrawRoundedRect(&gpt_kouyu_record_layer, zmt_gpt_record_rect, zmt_gpt_record_rect, MMI_WHITE_COLOR);
             LCD_FillRoundedRect(&gpt_kouyu_record_layer, zmt_gpt_record_rect, zmt_gpt_record_rect, MMI_WHITE_COLOR);

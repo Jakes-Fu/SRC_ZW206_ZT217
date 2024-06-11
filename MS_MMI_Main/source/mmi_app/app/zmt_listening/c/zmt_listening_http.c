@@ -193,8 +193,6 @@ PUBLIC void Listening_RequestDownloadAudio(uint8 index)
 		SCI_TRACE_LOW("%s: index = %d", __FUNCTION__, index);
 		album_info->item_info[index].aduio_ready = 1;
 		MMK_SendMsg(LISTENING_AUDIO_LIST_WIN_ID, MSG_FULL_PAINT, PNULL);
-		//MMIZDT_HTTP_AppSend(TRUE, url, PNULL, 0, 1000, 0, 0, 8000, 0, 0, Listening_ParseAudioDownload);
-		//MMIZYB_HTTP_TestLongPlay();
 		MMIZDT_HTTP_AppSend(TRUE,url,PNULL,0,101,0,1,600*1000,file_path,strlen(file_path),Listening_ParseAudioDownload);
 	}
 	else

@@ -36,8 +36,8 @@
 LOCAL GUI_RECT_T word_win_rect = {0, 0, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT};//窗口
 LOCAL GUI_RECT_T word_title_rect = {0, 0, MMI_MAINSCREEN_WIDTH, WORD_CARD_LINE_HIGHT};//顶部
 LOCAL GUI_RECT_T word_list_rect = {0, WORD_CARD_LINE_HIGHT, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT-5};//列表
-LOCAL GUI_RECT_T word_left_rect = {10, MMI_MAINSCREEN_HEIGHT-WORD_CARD_LINE_HIGHT-5, 3*WORD_CARD_LINE_WIDTH-10, MMI_MAINSCREEN_HEIGHT-2};//单词学习/掌握
-LOCAL GUI_RECT_T word_right_rect = {3*WORD_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-WORD_CARD_LINE_HIGHT-5, MMI_MAINSCREEN_WIDTH-10, MMI_MAINSCREEN_HEIGHT-2};//生词本/未掌握
+LOCAL GUI_RECT_T word_left_rect = {10, MMI_MAINSCREEN_HEIGHT-1.5*WORD_CARD_LINE_HIGHT-5, 3*WORD_CARD_LINE_WIDTH-10, MMI_MAINSCREEN_HEIGHT-2};//单词学习/掌握
+LOCAL GUI_RECT_T word_right_rect = {3*WORD_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-1.5*WORD_CARD_LINE_HIGHT-5, MMI_MAINSCREEN_WIDTH-10, MMI_MAINSCREEN_HEIGHT-2};//生词本/未掌握
 LOCAL GUI_RECT_T word_pre_rect = {0.5*WORD_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-WORD_CARD_LINE_HIGHT, 1.5*WORD_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-2};//生词本-上一个
 LOCAL GUI_RECT_T word_del_rect = {3*WORD_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-WORD_CARD_LINE_HIGHT, 4*WORD_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-2};//生词本-删除
 LOCAL GUI_RECT_T word_next_rect = {4.5*WORD_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-WORD_CARD_LINE_HIGHT, 5.5*WORD_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-2};//生词本-下一个
@@ -47,7 +47,7 @@ LOCAL GUI_RECT_T word_auto_tip_rect = {WORD_CARD_LINE_WIDTH, 2*WORD_CARD_LINE_HI
 LOCAL GUI_RECT_T word_auto_play_rect = {4*WORD_CARD_LINE_WIDTH, 0, 6*WORD_CARD_LINE_WIDTH, WORD_CARD_LINE_HIGHT};//自动播放图标
 LOCAL GUI_RECT_T word_word_rect = {5, WORD_CARD_LINE_HIGHT, MMI_MAINSCREEN_WIDTH, 2*WORD_CARD_LINE_HIGHT};//单词
 LOCAL GUI_RECT_T word_uk_rect = {5, 2*WORD_CARD_LINE_HIGHT, MMI_MAINSCREEN_WIDTH, 3*WORD_CARD_LINE_HIGHT};//音标
-LOCAL GUI_RECT_T word_text_rect = {5,3*WORD_CARD_LINE_HIGHT,MMI_MAINSCREEN_WIDTH-5,MMI_MAINSCREEN_HEIGHT-WORD_CARD_LINE_HIGHT-8};//单词释义
+LOCAL GUI_RECT_T word_text_rect = {5,3*WORD_CARD_LINE_HIGHT,MMI_MAINSCREEN_WIDTH-5,MMI_MAINSCREEN_HEIGHT-1.5*WORD_CARD_LINE_HIGHT-8};//单词释义
 
 #define MAX_WORD_NUM 10
 #define MAX_BOOK_NUM 20
@@ -495,15 +495,16 @@ LOCAL MMI_RESULT_E HandleWordWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_id,
 		GUILIST_SetEmptyStyle(MMI_ZMT_WORD_MAIN_LIST_CONTENT, &empty_style);
 		GUILIST_SetEmptyInfo(MMI_ZMT_WORD_MAIN_LIST_CONTENT, &empty_info);
 		GUILIST_RemoveAllItems(MMI_ZMT_WORD_MAIN_LIST_CONTENT);
-		for (i = 0;i < dsl_word_main_display_count; i++) 
-		{
-			if (books[i] != PNULL) 
-			{
-				AppendDSLListItemByTextId(MMI_ZMT_WORD_MAIN_LIST_CONTENT,IMG_ZMT_CONTACT_ICON, i);
-			}
-		}
 		if(dsl_word_main_display_count>0)
 		{
+			for (i = 0;i < dsl_word_main_display_count; i++) 
+			{
+			    if (books[i] != PNULL) 
+			    {
+			        AppendDSLListItemByTextId(MMI_ZMT_WORD_MAIN_LIST_CONTENT,IMG_ZMT_CONTACT_ICON, i);
+			    }
+			}
+			GUILIST_SetCurItemIndex(MMI_ZMT_WORD_MAIN_LIST_CONTENT, pageInfo->bookIdx);
 			//setNumberText(MMI_ZMT_WORD_MAIN_LABEL_NUM_ID,dsl_word_main_display_idx, (dsl_word_main_display_count+DSL_WORD_MAIN_DISPLAY_NUM-1)/DSL_WORD_MAIN_DISPLAY_NUM);
 			if(is_record==2)
 			{
@@ -624,7 +625,7 @@ LOCAL MMI_RESULT_E HandleWordCHWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_i
 		
 		font.font = DP_FONT_16;
 		list_rect = word_list_rect;
-		list_rect.bottom -= WORD_CARD_LINE_HIGHT+5;
+		list_rect.bottom -= 1.5*WORD_CARD_LINE_HIGHT+5;
 		GUILIST_SetRect(MMI_ZMT_WORD_CH_LIST_CONTENT, &list_rect);
 		GUILIST_SetListState(MMI_ZMT_WORD_CH_LIST_CONTENT,GUILIST_STATE_SPLIT_LINE, TRUE);
 		GUILIST_SetListState(MMI_ZMT_WORD_CH_LIST_CONTENT, GUILIST_STATE_FOCUS,TRUE);
@@ -721,21 +722,20 @@ LOCAL MMI_RESULT_E HandleWordCHWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_i
 		GUIBUTTON_SetVisible(MMI_ZMT_WORD_CH_BUTTON_PACTISE,FALSE,FALSE);
 		
 		GUILIST_RemoveAllItems(MMI_ZMT_WORD_CH_LIST_CONTENT);
-		for (i = 0; i < dsl_chapter_display_count; i++) {
-			if (chapters[i] != PNULL) {
-				if (i == dsl_chapter_select_idx) {
-					appendCHItem(MMI_ZMT_WORD_CH_LIST_CONTENT, chapters[i]->name,IMG_ZMT_SELECTED);
-				}
-				else
-				{
-					appendCHItem(MMI_ZMT_WORD_CH_LIST_CONTENT, chapters[i]->name,IMG_ZMT_UNSELECTED);
-				}
-			}
-		}
-		GUILIST_SetCurItemIndex(MMI_ZMT_WORD_CH_LIST_CONTENT, dsl_chapter_select_idx);
-
 		if(dsl_chapter_display_count>0)
 		{
+			for (i = 0; i < dsl_chapter_display_count; i++) {
+			    if (chapters[i] != PNULL) {
+			        if (i == dsl_chapter_select_idx) {
+					appendCHItem(MMI_ZMT_WORD_CH_LIST_CONTENT, chapters[i]->name,IMG_ZMT_SELECTED);
+			        }
+			        else
+			        {
+					appendCHItem(MMI_ZMT_WORD_CH_LIST_CONTENT, chapters[i]->name,IMG_ZMT_UNSELECTED);
+			        }
+			    }
+			}
+			GUILIST_SetCurItemIndex(MMI_ZMT_WORD_CH_LIST_CONTENT, dsl_chapter_select_idx);
 			GUIBUTTON_SetVisible(MMI_ZMT_WORD_CH_BUTTON_EXERCISE,TRUE,TRUE);
 			GUIBUTTON_SetVisible(MMI_ZMT_WORD_CH_BUTTON_PACTISE,TRUE,TRUE);
 		}
@@ -1228,6 +1228,7 @@ LOCAL MMI_RESULT_E HandleWordCardWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg
 							GUIBUTTON_SetVisible(MMI_ZMT_WORD_BUTTON_CACEL_ID,FALSE,FALSE);
 							GUIBUTTON_SetTextId(MMI_ZMT_WORD_BUTTON_OK_ID, WORD_BACK_CH);
 							GUIBUTTON_SetVisible(MMI_ZMT_WORD_BUTTON_OK_ID,TRUE,TRUE);
+							GUIBUTTON_SetRect(MMI_ZMT_WORD_BUTTON_OK_ID, &word_left_rect);
 							GUIBUTTON_SetCallBackFunc(MMI_ZMT_WORD_BUTTON_OK_ID, closeWordCardWin);
 
 						}

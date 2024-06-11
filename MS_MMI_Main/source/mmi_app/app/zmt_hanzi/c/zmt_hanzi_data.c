@@ -203,11 +203,12 @@ PUBLIC void Hanzi_WriteUnmasterHanzi(uint8 write_count)
     out = cJSON_PrintUnformatted(root);
     cJSON_Delete(root);
     //SCI_TRACE_LOW("%s: out = %s", __FUNCTION__, out);
-
-    if(zmt_tfcard_exist() && zmt_file_exist(file_path)){
-        zmt_file_delete(file_path);
+    if(zmt_tfcard_exist() && zmt_tfcard_get_free_kb() > 100 * 1024){
+        if(zmt_file_exist(file_path)){
+            zmt_file_delete(file_path);
+        }
+        zmt_file_data_write(out, strlen(out), file_path);
     }
-    zmt_file_data_write(out, strlen(out), file_path);
     SCI_FREE(out);
 }
 
@@ -303,19 +304,20 @@ PUBLIC void Hanzi_ParseChapterInfo(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uin
                 hanzi_chapter_children_count[i] = m;
             }
             hanzi_chapter_count = i;
-            if(!hanzi_is_load_local)
-            {
-                char * out = NULL;
-                char file_path[30] = {0};
-                sprintf(file_path, HANZI_CARD_GRADE_CHAPTER_PATH, hanzi_book_info.cur_book_idx+1, hanzi_book_info.cur_book_idx+1);
-                if(zmt_file_exist(file_path)){
-                    zmt_file_delete(file_path);
+            if(zmt_tfcard_exist() && zmt_tfcard_get_free_kb() > 100 * 1024){
+                if(!hanzi_is_load_local)
+                {
+                    char * out = NULL;
+                    char file_path[30] = {0};
+                    sprintf(file_path, HANZI_CARD_GRADE_CHAPTER_PATH, hanzi_book_info.cur_book_idx+1, hanzi_book_info.cur_book_idx+1);
+                    if(zmt_file_exist(file_path)){
+                        zmt_file_delete(file_path);
+                    }
+                    out = cJSON_PrintUnformatted(root);
+                    zmt_file_data_write(out, strlen(out), file_path);
+                    SCI_FREE(out);
                 }
-                out = cJSON_PrintUnformatted(root);
-                zmt_file_data_write(out, strlen(out), file_path);
-                SCI_FREE(out);
             }
-            
         }
         else
         {
@@ -540,20 +542,22 @@ PUBLIC void Hanzi_ParseDetailInfo(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint
                         
                         Hanzi_AddDetailInfo(j, text, audio, pinyin, similar_word, annotation);
                     }
-                    if(!hanzi_is_load_local)
-                    {
-                        char * out = NULL;
-                        char file_path[40] = {0};
-                        sprintf(file_path, HANZI_CARD_CHAPTER_WORD_PATH, 
-                            hanzi_book_info.cur_book_idx+1, 
-                            hanzi_content_info[hanzi_book_info.cur_section_idx]->content_id
-                        );
-                        if(zmt_file_exist(file_path)){
-                            zmt_file_delete(file_path);
+                    if(zmt_tfcard_exist() && zmt_tfcard_get_free_kb() > 100 * 1024){
+                        if(!hanzi_is_load_local)
+                        {
+                            char * out = NULL;
+                            char file_path[40] = {0};
+                            sprintf(file_path, HANZI_CARD_CHAPTER_WORD_PATH, 
+                                hanzi_book_info.cur_book_idx+1, 
+                                hanzi_content_info[hanzi_book_info.cur_section_idx]->content_id
+                            );
+                            if(zmt_file_exist(file_path)){
+                                zmt_file_delete(file_path);
+                            }
+                            out = cJSON_PrintUnformatted(root);
+                            zmt_file_data_write(out, strlen(out), file_path);
+                            SCI_FREE(out);
                         }
-                        out = cJSON_PrintUnformatted(root);
-                        zmt_file_data_write(out, strlen(out), file_path);
-                        SCI_FREE(out);
                     }
                     if(is_open_auto_play){
                         HanziDetail_PlayPinyinAudio();
