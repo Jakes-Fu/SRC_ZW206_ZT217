@@ -98,6 +98,7 @@ LOCAL GUI_RECT_T show_time_bar_rect = {0,  MATCH_COUNT_LINE_HIGHT+5, 0,  MATCH_C
 LOCAL GUI_RECT_T show_index_text_rect = {MMI_MAINSCREEN_WIDTH-MATCH_COUNT_BLANK_START, MATCH_COUNT_LINE_HIGHT, MMI_MAINSCREEN_WIDTH, 2*MATCH_COUNT_LINE_HIGHT};
 LOCAL GUI_RECT_T correct_wrong_img_rect = {MATCH_COUNT_BLANK_START, 5*MATCH_COUNT_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-MATCH_COUNT_BLANK_START, MMI_MAINSCREEN_HEIGHT-10};
 LOCAL GUI_RECT_T show_formula_rect = {MATCH_COUNT_TEXT_START,2*MATCH_COUNT_LINE_HIGHT,MMI_MAINSCREEN_WIDTH-MATCH_COUNT_TEXT_START,4*MATCH_COUNT_LINE_HIGHT};
+LOCAL GUI_RECT_T show_tip_rect = {MATCH_COUNT_BLANK_START,4*MATCH_COUNT_LINE_HIGHT,MMI_MAINSCREEN_WIDTH-MATCH_COUNT_BLANK_START,6*MATCH_COUNT_LINE_HIGHT};//µ¯¿òÌáÊ¾
 
 LOCAL GUI_RECT_T math_count_back_rect = {9, 9.8*MATCH_COUNT_LINE_HIGHT, 115, 11.8*MATCH_COUNT_LINE_HIGHT};
 LOCAL GUI_RECT_T math_count_again_rect = {125, 9.8*MATCH_COUNT_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-9, 11.8*MATCH_COUNT_LINE_HIGHT};
@@ -690,11 +691,41 @@ LOCAL MMI_RESULT_E HandleCountingWinMsg(
 				if(show_correct_wrong_status){
 					switch(show_correct_wrong_status){
 						case 1:
-							GUIRES_DisplayImg(PNULL, &correct_wrong_img_rect, PNULL, win_id, MATH_COUNT_CORRECT_IMG, &lcd_dev_info);
-						break;
+						        {
+						            LCD_FillRoundedRect(&lcd_dev_info, show_tip_rect, show_tip_rect, MMI_WHITE_COLOR);
+						            text_style.align = ALIGN_HVMIDDLE;
+						            text_style.font = DP_FONT_18;
+						            text_style.font_color = GUI_RGB2RGB565(80, 162, 254);
+						            MMIRES_GetText(MATH_COUNT_RIGHT_ANSWER, win_id, &text_string);
+						            GUISTR_DrawTextToLCDInRect(
+						                (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
+						                &show_tip_rect,
+						                &show_tip_rect,
+						                &text_string,
+						                &text_style,
+						                text_state,
+						                GUISTR_TEXT_DIR_AUTO
+						            );
+						        }
+						        break;
 						case 2:
-							GUIRES_DisplayImg(PNULL, &correct_wrong_img_rect, PNULL, win_id, MATH_COUNT_WRONG_IMG, &lcd_dev_info);
-						break;
+							{
+						            LCD_FillRoundedRect(&lcd_dev_info, show_tip_rect, show_tip_rect, MMI_WHITE_COLOR);
+						            text_style.align = ALIGN_HVMIDDLE;
+						            text_style.font = DP_FONT_18;
+						            text_style.font_color = GUI_RGB2RGB565(80, 162, 254);
+						            MMIRES_GetText(MATH_COUNT_ERROR_ANSWER, win_id, &text_string);
+						            GUISTR_DrawTextToLCDInRect(
+						                (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
+						                &show_tip_rect,
+						                &show_tip_rect,
+						                &text_string,
+						                &text_style,
+						                text_state,
+						                GUISTR_TEXT_DIR_AUTO
+						            );
+						        }
+						        break;
 					}
 				}
 				{	                                
