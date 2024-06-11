@@ -245,6 +245,7 @@ LOCAL void Poetry_PlayMp3Notify(MMISRV_HANDLE_T handle, MMISRVMGR_NOTIFY_PARAM_T
 				    SCI_TRACE_LOW("%s: audio_play_progress = %d", __FUNCTION__, audio_play_progress);
 					if(audio_play_progress < poetry_detail_infos->sentences_num){
 						audio_play_progress ++;
+						audio_play_now = FALSE;
 						startPlayAudio();
 					}else{
 						audio_play_progress = 0;
@@ -366,7 +367,6 @@ LOCAL void startPlayAudio(void)
         return;
     }
     
-    SCI_TRACE_LOW("%s: audio_play_progress = %d", __FUNCTION__, audio_play_progress);
     if(poetry_detail_infos != NULL && poetry_detail_infos->id != NULL){
         strcpy(poem_id, poetry_detail_infos->id);
     }else{
@@ -377,7 +377,7 @@ LOCAL void startPlayAudio(void)
     if(zmt_file_exist(file_path))
     {
         Poetry_StartPlayMp3(file_path);
-        audio_download_now = FALSE;
+        //audio_download_now = FALSE;
     }
     else
     {
@@ -411,6 +411,9 @@ LOCAL void parseDownloadAudio(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 e
             if(zmt_tfcard_exist() && zmt_tfcard_get_free_kb() > 300 * 1024)
             {
                 zmt_file_data_write(pRcv, Rcv_len, file_path);
+                if(audio_download_progress == 0 || !audio_play_now){
+                    startPlayAudio();
+                }
             }
             else
             {
@@ -437,10 +440,6 @@ LOCAL void startDownloadAudio(void)
     char file_path[100] = {0};
     char poem_id[10] = {0};
     
-    if(audio_play_now){
-        SCI_TRACE_LOW("%s: audio play now", __FUNCTION__);
-        return;
-    }
     if(!MMI_IsPoetryDetailWinOpen()){
         SCI_TRACE_LOW("%s: DetailWin no exist", __FUNCTION__);
         return;
@@ -457,14 +456,18 @@ LOCAL void startDownloadAudio(void)
     {        
         if(audio_download_progress < poetry_detail_infos->sentences_num + 1)
         {
+            if(audio_download_progress == 0){
+                audio_play_progress = 0;
+                startPlayAudio();       
+            }
             audio_download_progress++;
             audio_download_now = TRUE;
             startDownloadAudio();
         }
         else
         {
-            audio_play_progress = 0;
-            startPlayAudio();       
+            audio_download_now = FALSE;
+            SCI_TRACE_LOW("%s: offline download audio end", __FUNCTION__);
         }
     }
     else
@@ -479,9 +482,10 @@ LOCAL void startDownloadAudio(void)
                     sprintf(url,"http://%s",poetry_detail_infos->sen_audio[audio_download_progress-1]->audio);
                 }
             }else{
-                audio_play_progress = 0;
-                startPlayAudio();
+                //audio_play_progress = 0;
+                //startPlayAudio();
                 audio_download_now = FALSE;
+                SCI_TRACE_LOW("%s: online download audio end", __FUNCTION__);
                 return;
             }
             audio_download_now = TRUE;
@@ -1771,7 +1775,8 @@ LOCAL void PoetryDetailWin_HanldeTpUp(MMI_WIN_ID_T win_id, GUI_POINT_T point)
         if(!audio_play_now){
             audio_download_progress = 0;
             audio_play_progress = 0;
-            startDownloadAudio();
+            audio_download_now = FALSE;
+            startPlayAudio();
         }else if(audio_download_now){
             auto_play_open_close_tip = 4;
             auto_play_tip_timer(win_id);
