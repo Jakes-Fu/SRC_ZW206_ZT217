@@ -468,6 +468,9 @@
 #ifdef STOPWATCH_SUPPORT
 #define MSG_ACC_UPDATE_STOPWATCH    0x090f
 #endif
+#ifdef FORMULA_SUPPORT
+#define MSG_ACC_UPDATE_FORMULA    0x090f
+#endif
 #define     MSG_ALM_START_RING               0x0910
 
 #ifdef ZDT_ZFB_SUPPORT
