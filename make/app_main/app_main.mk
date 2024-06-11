@@ -2581,6 +2581,11 @@ MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/math_count/c
 SOURCES			+=  math_count_win.c
 endif
 
+ifeq ($(strip $(FORMULA_SUPPORT)), TRUE)
+	MINCPATH += MS_MMI_Main/source/mmi_app/app/formula/h
+	MSRCPATH += MS_MMI_Main/source/mmi_app/app/formula/c
+	SOURCES += formula_win.c
+endif
 ifeq ($(strip $(LISTENING_PRATICE_SUPPORT)), TRUE)
 MINCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_listening/h
 MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_listening/c

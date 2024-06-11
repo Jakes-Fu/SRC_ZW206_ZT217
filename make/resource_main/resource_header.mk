@@ -144,6 +144,10 @@ ifeq ($(strip $(TULING_AI_SUPPORT)), TRUE)
 SRCPATH  += $(MMI_DIR)/source/mmi_app/app/tulingai/h
 SOURCES	 += tulingai_mdu_def.h
 endif
+ifeq ($(strip $(FORMULA_SUPPORT)), TRUE)
+SRCPATH  += $(MMI_DIR)/source/mmi_app/app/formula/h
+SOURCES	 += formula_mdu_def.h
+endif
 
 ifeq ($(strip $(LEBAO_MUSIC_SUPPORT)), TRUE)
 SRCPATH  += $(MMI_DIR)/source/mmi_app/app/lebao/h
