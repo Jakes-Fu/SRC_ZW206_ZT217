@@ -624,3 +624,4 @@ POETRY_LISTEN_SUPPORT = TRUE		#¹ÅÊ«´Ê
 HANZI_CARD_SUPPORT = TRUE			#ºº×Ö¿¨
 
 ZMT_GPT_SUPPORT = TRUE				#¶Ô»°GPT
+FORMULA_SUPPORT=TRUE                   ##³Ë·¨¿Ú¾÷	
