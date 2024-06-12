@@ -20,12 +20,15 @@ extern "C"
 
 #define HANZI_BASE_DEVICE_IMEI "868750061006384"
 #define HANZI_BOOK_HEADER_PATH "http://8.130.95.8:8866/"
+#define HANZI_BOOK_AUDIO_BASE_PATH "http://8.130.95.8:8866/file/"
 #define HANZI_BOOK_GRADE_PATH "hanzi/get?gradeId=%d"
 #define HANZI_BOOK_CHAPTER_PATH "hanzi/get?contentId=%d"
+#define HANZI_BOOK_AUDIO_PATH "%saudio/word/%s/name/%s.mp3"
 
 #define HANZI_CARD_GRADE_CHAPTER_PATH "E:/hanzi/grade_%d/grade_%d.json"
 #define HANZI_CARD_CHAPTER_WORD_PATH "E:/hanzi/grade_%d/%d.json"
 #define HANZI_CARD_NEW_WORD_PATH "E:/hanzi/unmaster_hanzi.json"
+#define HANZI_CARD_WORD_AUDIO_PATH "E:/hanzi/grade_%d/%s.mp3"
 
 #define HANZI_CONTENT_CHAPTER_MAX 20
 #define HANZI_CHAPTER_WORD_MAX 50
@@ -62,7 +65,7 @@ typedef struct
     char * word;//∫∫◊÷
     char * pingy;//∆¥“Ù
     char * audio_uri;//∫∫◊÷“Ù∆µpath
-    int16 audio_len;//“Ù∆µ≥§∂»//0:”–“Ù∆µurl,-1:Œﬁ“Ù∆µurl
+    int32 audio_len;//“Ù∆µ≥§∂»//0:”–“Ù∆µurl,-1:Œﬁ“Ù∆µurl
     char * audio_data;
     char * similar_word;
     char * annotation;
