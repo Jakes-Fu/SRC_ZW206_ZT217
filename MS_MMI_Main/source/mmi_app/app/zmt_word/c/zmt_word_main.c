@@ -1761,7 +1761,7 @@ LOCAL void parseBookResponse(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 er
 		if(dsl_word_main_display_count>0)
 		{
 			int i=0;
-			if(loadRecord())
+			/*if(loadRecord())
 			{
 				for(i=0;i<dsl_word_main_display_count;i++)
 				{
@@ -1772,7 +1772,7 @@ LOCAL void parseBookResponse(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 er
 						MMK_PostMsg(MMI_WORD_WIN_ID, MSG_FULL_PAINT, PNULL, 0);
 					}
 				}
-			}
+			}*/
 		}
     }
 	SCI_TRACE_LOW("%s: dsl_word_main_display_count = %d", __FUNCTION__, dsl_word_main_display_count);
@@ -2901,4 +2901,3 @@ LOCAL BOOLEAN ChatPlayAudioDataNotify(MMISRV_HANDLE_T handle, MMISRVMGR_NOTIFY_P
 	}
 	return TRUE;
 }
-

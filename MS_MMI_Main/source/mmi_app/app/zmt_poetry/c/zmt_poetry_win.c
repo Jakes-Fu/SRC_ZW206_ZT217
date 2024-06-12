@@ -64,7 +64,7 @@ LOCAL GUI_RECT_T poetry_grade_icon_rect = {0.6*POETRY_LINE_WIDTH,1.5*POETRY_LINE
 LOCAL GUI_RECT_T poetry_grade_text_rect = {1.6*POETRY_LINE_WIDTH,1.2*POETRY_LINE_HIGHT,MMI_MAINSCREEN_WIDTH-10,2.4*POETRY_LINE_HIGHT};
 LOCAL GUI_RECT_T poetry_item_line_rect = {10,1.2*POETRY_LINE_HIGHT,MMI_MAINSCREEN_WIDTH-10,2.7*POETRY_LINE_HIGHT};
 LOCAL GUI_RECT_T poetry_item_line_rect_array[POETRY_ITEM_LIST_SHOW_ITEM] = {0};
-LOCAL GUI_RECT_T poetry_content_title_rect = {0.8*POETRY_LINE_WIDTH, 1.8*POETRY_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-0.8*POETRY_LINE_WIDTH, 3.3*POETRY_LINE_HIGHT};
+LOCAL GUI_RECT_T poetry_content_title_rect = {0.2*POETRY_LINE_WIDTH, 1.8*POETRY_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-0.2*POETRY_LINE_WIDTH, 3.3*POETRY_LINE_HIGHT};
 LOCAL GUI_RECT_T poetry_content_rect = {0.8*POETRY_LINE_WIDTH, 3.5*POETRY_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-0.8*POETRY_LINE_WIDTH, 8*POETRY_LINE_HIGHT};
 LOCAL GUI_RECT_T poetry_content_other_rect = {0.8*POETRY_LINE_WIDTH, 1.8*POETRY_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-0.8*POETRY_LINE_WIDTH, 8*POETRY_LINE_HIGHT};
 LOCAL GUI_RECT_T poetry_bottom_option_rect = {0,9*POETRY_LINE_HIGHT,MMI_MAINSCREEN_WIDTH,MMI_MAINSCREEN_HEIGHT};
@@ -393,8 +393,8 @@ LOCAL void startPlayAudio(void)
             }else{
                 return;
             }
-            MMIZDT_HTTP_AppSend(TRUE, url, PNULL, 0, 1000, 0, 0, 3000, 0, 0, parsePlayAudio);
             audio_download_now = TRUE;
+            MMIZDT_HTTP_AppSend(TRUE, url, PNULL, 0, 1000, 0, 0, 3000, 0, 0, parsePlayAudio);
         }
     }
 }
@@ -1618,6 +1618,7 @@ LOCAL void PoetryDetailWin_ShowText(MMI_WIN_ID_T win_id)
     {
         case 0:
             {
+                uint8 line_num = 0;
                 text_char = SCI_ALLOC_APPZ(strlen(poetry_detail_infos->title_content)+1);
                 memset(text_char, 0, strlen(poetry_detail_infos->title_content)+1);
                 strcpy(text_char, poetry_detail_infos->title_content);
@@ -1628,6 +1629,10 @@ LOCAL void PoetryDetailWin_ShowText(MMI_WIN_ID_T win_id)
                 GUI_UTF8ToWstr(text_str, 3*strlen(text_char), text_char, strlen(text_char));
                 text_string.wstr_ptr = text_str;
                 text_string.wstr_len = MMIAPICOM_Wstrlen(text_string.wstr_ptr);
+                line_num = GUI_CalculateStringLinesByPixelNum(poetry_content_title_rect.right-poetry_content_title_rect.left,text_string.wstr_ptr,text_string.wstr_len,DP_FONT_20,0,TRUE);
+                if(line_num > 1){
+                    text_style.font = DP_FONT_16;
+                }
                 GUISTR_DrawTextToLCDInRect(
                     (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
                     &poetry_content_title_rect,
@@ -1646,7 +1651,8 @@ LOCAL void PoetryDetailWin_ShowText(MMI_WIN_ID_T win_id)
                 text_char = SCI_ALLOC_APPZ(strlen(poetry_detail_infos->content)+1);
                 memset(text_char, 0, strlen(poetry_detail_infos->content)+1);
                 strcpy(text_char, poetry_detail_infos->content);
-                
+
+                text_style.font = DP_FONT_18;
                 text_style.align = ALIGN_HMIDDLE;
                 rect = poetry_content_rect;
             }
@@ -1772,7 +1778,7 @@ LOCAL void PoetryDetailWin_HanldeTpUp(MMI_WIN_ID_T win_id, GUI_POINT_T point)
     if(GUI_PointIsInRect(point, poetry_play_rect) && poetery_info.detail_idx == 0)
     {
         SCI_TRACE_LOW("%s: audio_play_now = %d, audio_download_now = %d", __FUNCTION__, audio_play_now, audio_download_now);
-        if(!audio_play_now){
+        if(!audio_play_now && !audio_download_now){
             audio_download_progress = 0;
             audio_play_progress = 0;
             audio_download_now = FALSE;
