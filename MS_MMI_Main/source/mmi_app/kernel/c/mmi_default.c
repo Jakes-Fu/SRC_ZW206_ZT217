@@ -7388,3 +7388,20 @@ PUBLIC void MMI_HanldeEndKeyForTest(void)
     return;
 }
 /*Edit by script, ignore 4 case. Thu Apr 26 19:01:13 2012*/ //IGNORE9527
+
+PUBLIC void ZMTHandle_UdsikPlugCloseFoucsWindow(void)
+{
+    uint8 i = 0;
+    for(i = 0; i < 10;i++)
+    {
+        if((MMIAPICC_IsInState(CC_MT_CONNECTING_STATE) && MMK_IsOpenWin(MMICC_ANIMATION_WIN_ID)) || 
+            MMIAPICC_IsInState(CC_MO_CONNECTING_STATE) || 
+            MMIAPICC_IsInState(CC_CALL_CONNECTED_STATE))
+        {
+            break;
+        }
+        if(!WatchLAUNCHER_IsFoucsIdleWin(MMK_GetFocusWinId())){
+            MMK_CloseWin(MMK_GetFocusWinId());
+        }
+    }
+}

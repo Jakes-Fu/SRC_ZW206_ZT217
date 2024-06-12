@@ -588,6 +588,7 @@ PUBLIC MMI_RESULT_E MMIAPISD_HandleSDPlugWaiting (
         MMK_LoadDynamicModInfo();
         /* end */
 #endif
+        ZMTHandle_UdsikPlugCloseFoucsWindow();
 		//show msg
         MMIPUB_OpenAlertWinByTextId(
             PNULL,
