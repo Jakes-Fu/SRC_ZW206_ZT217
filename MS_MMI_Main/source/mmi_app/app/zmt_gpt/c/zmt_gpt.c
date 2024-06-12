@@ -112,7 +112,7 @@ PUBLIC void ZmtGpt_SendRecord(uint32 lan_type, char * record_buf, uint32 record_
     char url[50] = {0};
 
     root = cJSON_CreateObject();
-    format = cJSON_CreateString("amr");
+    format = cJSON_CreateString("pcm");
     cJSON_AddItemToObject(root, "format", format);
     rate = cJSON_CreateNumber(8000);
     cJSON_AddItemToObject(root, "rate", rate);

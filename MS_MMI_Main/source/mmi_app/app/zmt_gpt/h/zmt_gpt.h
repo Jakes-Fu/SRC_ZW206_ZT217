@@ -23,8 +23,8 @@
 #define ZMT_GPT_SELF_KOUYU_TALK_PATH "D:\\self_kouyu_talk.json"
 #define ZMT_GPT_ZUOWEN_TALK_PATH "D:\\zuowen_talk.json"
 #define ZMT_GPT_SELF_ZUOWEN_TALK_PATH "D:\\self_zuowen_talk.json"
-#define ZMT_GPT_RECORD_FILE_C "D:\\zmt_gpt_record.amr"
-#define ZMT_GPT_RECORD_FILE_L L"D:\\zmt_gpt_record.amr"
+#define ZMT_GPT_RECORD_FILE_C "D:\\zmt_gpt_record.pcm"
+#define ZMT_GPT_RECORD_FILE_L L"D:\\zmt_gpt_record.pcm"
 
 #define ZMT_GPT_LINE_WIDTH MMI_MAINSCREEN_WIDTH/6
 #define ZMT_GPT_LINE_HIGHT MMI_MAINSCREEN_HEIGHT/10

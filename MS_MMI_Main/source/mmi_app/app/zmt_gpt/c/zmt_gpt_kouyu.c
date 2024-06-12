@@ -491,7 +491,7 @@ LOCAL void ZmtGptKouYuTalk_StartRecord(MMI_WIN_ID_T win_id)
     call_name_str.wstr_ptr = ZMT_GPT_RECORD_FILE_L;
     call_name_str.wstr_len = MMIAPICOM_Wstrlen(ZMT_GPT_RECORD_FILE_L);
 
-    record_param.fmt = MMISRVAUD_RECORD_FMT_AMR;
+    record_param.fmt = MMISRVAUD_RECORD_FMT_PCM;
     record_param.prefix_ptr = PNULL;
     record_param.record_dev_ptr = &record_dev;
     record_param.record_file_id_ptr = PNULL;
