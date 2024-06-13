@@ -68,7 +68,7 @@ PUBLIC BOOLEAN IsWatchListFactoryWinOpen();//yangyu add
 
 
 //#define ZDT_VIBRATE_SUPPORT
-////#define FACTORY_KEY_TEST // wuxx 20231228 for FACTORY TEST for ZTE SRS // 中兴要求删掉按键测试
+#define FACTORY_KEY_TEST // wuxx 20231228 for FACTORY TEST for ZTE SRS // 中兴要求删掉按键测试
 
 #ifdef ZDT_NFC_SUPPORT
 #define FACTORY_NFC_TEST
@@ -93,6 +93,8 @@ extern uint8 ecg_hr_bp_hw_on;
 
 #define WATCH_FACTORY_TITLE_Y	  (2)
 #define WATCH_FACTORY_ITEM_HEIGHT   25//	20///  16//(24)*SCALE //yangyu 
+
+#define ZDT_W206_FACTORY_KEY_TEST
 
 typedef void (*PFNDLGHANDLER)(void);
 typedef struct _EM_STATUS_METHOD_
@@ -253,7 +255,7 @@ BOOLEAN g_factory_aging_test_flag = FALSE;
 #ifdef W217_AGING_TEST_CUSTOM //new_aginglist
 LOCAL uint8 aging_timer_id = 0; 
 LOCAL uint8 agingtext_timer_id = 0;
-LOCAL uint32 time_index = 0;
+uint32 time_index = 0;
 #endif
 
 #if 1
@@ -647,7 +649,7 @@ void ZdtWatch_Display_TimeStop(void);
 #define ZDT_TEST_KEY_MARGIN_Y			8
 #define ZDT_TEST_KEY_HIGHT		40
 #if defined(ZDT_W206_FACTORY_KEY_TEST)// only one key
-#define ZDT_TEST_KEY_NUM		1
+#define ZDT_TEST_KEY_NUM		9
 #else
 #define ZDT_TEST_KEY_NUM		5
 #endif
@@ -657,13 +659,22 @@ static uint8 s_zdt_key_ind_buf[2] = {0x00,0x00};
 #if defined(ZDT_W206_FACTORY_KEY_TEST)// only one key
 #define ZDT_TEST_KEY_COMPLETE_FLAG		0x01
 #else
-#define ZDT_TEST_KEY_COMPLETE_FLAG		0x1f
+#define ZDT_TEST_KEY_COMPLETE_FLAG		0x7f
 #endif
 
 #if defined(ZDT_W206_FACTORY_KEY_TEST)// only one key
 typedef enum
 {
-	ZDT_TEST_KEY_RED,
+	ZDT_TEST_KEY_VOL_UP=0x00,
+    ZDT_TEST_KEY_VOL_DOWN,
+    ZDT_TEST_KEY_RIGHT,
+	ZDT_TEST_KEY_LEFT,
+    ZDT_TEST_KEY_OK,
+	ZDT_TEST_KEY_CANCEL,
+    ZDT_TEST_KEY_REPEAT,
+	ZDT_TEST_KEY_SOS,
+    ZDT_TEST_KEY_UP,
+	ZDT_TEST_KEY_DOWN,
 	ZDT_TEST_KEY_MAX
 } ZDT_TEST_KEY_E;
 #else
@@ -696,23 +707,23 @@ LOCAL void ZdtWatch_Factory_KEY_DrawTestKeyBG( void )
     uint16      y = 0;
     wchar       disp_text[9] = {0};
     GUI_RECT_T  draw_rect = MMITHEME_GetFullScreenRect();
-    int16       TESTPAD_KEY_WIDTH = (draw_rect.right - draw_rect.left - ZDT_TEST_KEY_MARGIN_X*2)>>2 ;
+    int16       TESTPAD_KEY_WIDTH = (draw_rect.right - draw_rect.left - ZDT_TEST_KEY_MARGIN_X*2)/3 ;
     const GUI_LCD_DEV_INFO  *lcd_dev_info = MMITHEME_GetDefaultLcdDev() ;
     MMI_STRING_T        string = {0};
     GUISTR_STYLE_T      text_style = {0};
     GUISTR_STATE_T      state = GUISTR_STATE_ALIGN|GUISTR_STATE_WORDBREAK|GUISTR_STATE_SINGLE_LINE;
 	
-    char s_test_key_text[][9] =
+    char s_test_key_text[][10] =
     {
-        {"RED"}, 
+        {"+"},{"-"},{"Right"},{"Left"},{"OK"},{"Cancel"},{"Repeat"},{"SOS"},{"Up"},{"Down"},{""},{""}
     };
 	    
     draw_rect.top = 0;
     LCD_FillRect(lcd_dev_info, draw_rect, MMI_WHITE_COLOR);
     
-    for (y=0;y<1;y++)
+    for (y=0;y<4;y++)
     {
-        for (x=0;x<1;x++)
+        for (x=0;x<3;x++)
         {
             draw_rect.left = (uint16)ZDT_TEST_KEY_MARGIN_X + (uint16)(x * TESTPAD_KEY_WIDTH);
             draw_rect.top = ZDT_TEST_KEY_MARGIN_Y + y * ZDT_TEST_KEY_HIGHT;
@@ -720,7 +731,7 @@ LOCAL void ZdtWatch_Factory_KEY_DrawTestKeyBG( void )
             draw_rect.bottom = draw_rect.top + ZDT_TEST_KEY_HIGHT-1;
             ZDT_TestEditWinDrawFocusRect(draw_rect, MMI_BLACK_COLOR);
             
-            string.wstr_len = strlen(s_test_key_text[y*1+x]);
+            string.wstr_len = strlen(s_test_key_text[y*3+x]);
             MMI_STRNTOWSTR(disp_text,ZDT_TEST_KEY_TEXT_MAX_LEN, (uint8*)s_test_key_text[y*3+x],string.wstr_len,string.wstr_len);
             string.wstr_ptr = disp_text;
             
@@ -772,28 +783,80 @@ LOCAL BOOLEAN ZDT_TestKeyboard(MMI_MESSAGE_ID_E key_msg_id)
 	
 	switch (key_msg_id)
 	{
-        case MSG_KEYUP_RED:
-              test_key_y = 0;
-              test_key_x = 0;
-              s_zdt_test_key_flag |= (0x00000001 << ZDT_TEST_KEY_RED);
-         break;
+        case MSG_KEYDOWN_VOL_UP:
+        case MSG_KEYDOWN_1:
+        case MSG_KEYDOWN_UPSIDE:
+            test_key_y = 0;
+		    test_key_x = 0;
+		    s_zdt_test_key_flag |= (0x00000001 << ZDT_TEST_KEY_VOL_UP);
+		    break;
+        case MSG_KEYDOWN_2:
+        case MSG_KEYDOWN_VOL_DOWN:
+        case MSG_KEYDOWN_DOWNSIDE:
+            test_key_y = 0;
+		    test_key_x = 1;
+		    s_zdt_test_key_flag |= (0x00000001 << ZDT_TEST_KEY_VOL_DOWN);
+		    break;
+        case MSG_KEYDOWN_RIGHT:
+            test_key_y = 0;
+            test_key_x = 2;
+            s_zdt_test_key_flag |= (0x00000001 << ZDT_TEST_KEY_RIGHT);
+            break;
+        case MSG_KEYDOWN_LEFT:
+	        test_key_y = 1;
+	        test_key_x = 0;
+	        s_zdt_test_key_flag |= (0x00000001 << ZDT_TEST_KEY_LEFT);
+	        break;
+        case MSG_KEYDOWN_OK:
+		    test_key_y = 1;
+		    test_key_x = 1;
+		    s_zdt_test_key_flag |= (0x00000001 << ZDT_TEST_KEY_OK);
+		    break;
+        case MSG_KEYDOWN_CANCEL:
+            test_key_y = 1;
+            test_key_x = 2;
+            s_zdt_test_key_flag |= (0x00000001 << ZDT_TEST_KEY_CANCEL);
+            break;
+        case MSG_KEYDOWN_BACKWARD:
+        case MSG_KEYDOWN_4:
+        case MSG_KEYDOWN_FORWARD:
+	        test_key_y = 2;
+	        test_key_x = 0;
+	        s_zdt_test_key_flag |= (0x00000001 << ZDT_TEST_KEY_REPEAT);
+	        break;
+        case MSG_KEYDOWN_SHORTCUT:
+        case MSG_KEYDOWN_3:
+	        test_key_y = 2;
+	        test_key_x = 1;
+	        s_zdt_test_key_flag |= (0x00000001 << ZDT_TEST_KEY_SOS);
+	        break;
+        case MSG_KEYDOWN_UP:
+		    test_key_y = 2;
+		    test_key_x = 2;
+		    s_zdt_test_key_flag |= (0x00000001 << ZDT_TEST_KEY_UP);
+		    break;
+	    case MSG_KEYDOWN_DOWN:
+            test_key_y = 3;
+            test_key_x = 0;
+            s_zdt_test_key_flag |= (0x00000001 << ZDT_TEST_KEY_DOWN);
+            break;
 
-	default:
-		break;
+	    default:
+		    break;
     }
-    key_on_map_idx = test_key_y * 1 + test_key_x;
+    key_on_map_idx = test_key_y * 3 + test_key_x*1;
     key_on_map_idx %= ZDT_TEST_KEY_NUM;
-    byte_idx = key_on_map_idx / 8;
-    bit_idx = key_on_map_idx % 8;
+    byte_idx = key_on_map_idx / 16;
+    bit_idx = key_on_map_idx % 16;
     
     key_buf_byte = s_zdt_key_ind_buf[byte_idx];
     s_zdt_key_ind_buf[byte_idx] &= (unsigned char)(~(1<<bit_idx));/*lint !e502*/  
     // show key passed
-    if ((key_buf_byte^s_zdt_key_ind_buf[byte_idx]) != 0)
+   // if ((key_buf_byte^s_zdt_key_ind_buf[byte_idx]) != 0)
     {        
         {        
             GUI_RECT_T rect = MMITHEME_GetClientRect();
-            int32 TESTPAD_KEY_WIDTH = (rect.right- rect.left - ZDT_TEST_KEY_MARGIN_X*2)>>2 ;
+            int32 TESTPAD_KEY_WIDTH = (rect.right- rect.left - ZDT_TEST_KEY_MARGIN_X*2)/3 ;
             
             draw_rect.left = ZDT_TEST_KEY_MARGIN_X + test_key_x * TESTPAD_KEY_WIDTH;
             draw_rect.top = ZDT_TEST_KEY_MARGIN_X + test_key_y * ZDT_TEST_KEY_HIGHT;
@@ -6591,14 +6654,14 @@ LOCAL MMI_RESULT_E  HandleZDT_WatchFactoryWinMsg(
 #ifdef FACTORY_KEY_TEST
            if(g_em_test_idx == EM_TEST_KEY)
            {
-	           ZDT_TestKeyboard(msg_id); 
-                  if(ZDT_TEST_KEY_COMPLETE_FLAG==s_zdt_test_key_flag)
-                  {
-	                  g_test_ok=TRUE;
-                      em_test_is_ok[g_em_test_idx] = PASS;
-	                  ZdtWatch_Factory_StartNext();
-                  }
-	           break;
+                ZDT_TestKeyboard(msg_id); 
+                if(ZDT_TEST_KEY_COMPLETE_FLAG==s_zdt_test_key_flag)
+                {
+	                g_test_ok=TRUE;
+                    em_test_is_ok[g_em_test_idx] = PASS;
+	                ZdtWatch_Factory_StartNext();
+                }
+	            break;
            }else
 #endif 
             {
@@ -6609,15 +6672,32 @@ LOCAL MMI_RESULT_E  HandleZDT_WatchFactoryWinMsg(
     case MSG_KEYUP_CANCEL:
     #endif
 #ifdef FACTORY_KEY_TEST
+    case MSG_KEYDOWN_DOWN:
+    case MSG_KEYDOWN_UP:
+    case MSG_KEYDOWN_OK: 
+    case MSG_KEYDOWN_VOL_UP:
+    case MSG_KEYDOWN_VOL_DOWN: 
+    case MSG_KEYDOWN_SHORTCUT:
+    case MSG_KEYDOWN_LEFT:
+    case MSG_KEYDOWN_RIGHT:
+    case MSG_KEYDOWN_BACKWARD:
+    case MSG_KEYDOWN_1:
+    case MSG_KEYDOWN_2:
+    case MSG_KEYDOWN_3:
+    case MSG_KEYDOWN_4:
+    case MSG_KEYDOWN_UPSIDE:
+    case MSG_KEYDOWN_DOWNSIDE:
+    case MSG_KEYDOWN_FORWARD:
+    case MSG_KEYDOWN_CANCEL:
         if(g_em_test_idx == EM_TEST_KEY)
         {
             ZDT_TestKeyboard(msg_id);
-	     if(ZDT_TEST_KEY_COMPLETE_FLAG==s_zdt_test_key_flag)
-	     {
-                  g_test_ok=TRUE;
-                  em_test_is_ok[g_em_test_idx] = PASS;
-                  ZdtWatch_Factory_StartNext();
-	     }
+	         if(ZDT_TEST_KEY_COMPLETE_FLAG==s_zdt_test_key_flag)
+	         {
+                      g_test_ok=TRUE;
+                      em_test_is_ok[g_em_test_idx] = PASS;
+                      ZdtWatch_Factory_StartNext();
+	         }
         }
         else
 #endif 
