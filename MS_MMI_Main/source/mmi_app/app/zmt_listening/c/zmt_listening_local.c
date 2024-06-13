@@ -40,9 +40,9 @@ GUI_RECT_T listen_title_rect = {0, 0, MMI_MAINSCREEN_WIDTH, LISTEN_LINE_HIGHT};
 GUI_RECT_T listen_bottom_rect = {0, MMI_MAINSCREEN_HEIGHT-LISTEN_LINE_HIGHT, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT};
 GUI_RECT_T listen_dir_rect = {4*LISTEN_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-LISTEN_LINE_HIGHT-10, 5*LISTEN_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT};
 GUI_RECT_T listen_list_rect = {0, 2*LISTEN_LINE_HIGHT+5, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT - LISTEN_LINE_HIGHT};
-LOCAL GUI_RECT_T listen_del_all_rect = {LISTEN_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-0.8*LISTEN_LINE_HIGHT, 2*LISTEN_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT};
+LOCAL GUI_RECT_T listen_del_all_rect = {0.5*LISTEN_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-0.8*LISTEN_LINE_HIGHT, 1.5*LISTEN_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT};
 LOCAL GUI_RECT_T listen_del_rect = {2*LISTEN_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-0.8*LISTEN_LINE_HIGHT, 3*LISTEN_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT};
-LOCAL GUI_RECT_T listen_del_back_rect = {3*LISTEN_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-0.8*LISTEN_LINE_HIGHT, 4*LISTEN_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT};
+LOCAL GUI_RECT_T listen_del_back_rect = {3.5*LISTEN_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-0.8*LISTEN_LINE_HIGHT, 5*LISTEN_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT};
 
 extern char * listening_downloading_audio_path;
 extern LISTENING_LIST_INFO * listening_info;
@@ -65,25 +65,21 @@ LOCAL void ListeningLocal_DownloadDataInit(void)
 	cJSON * module_list;
 	cJSON * module_count;
 
-	LISTEING_LOCAL_AUDIO_NAME local_album_name[4] = 
+	LISTEING_LOCAL_AUDIO_NAME local_album_name[2] = 
 	{
 		"词汇", "语文_直击中考",
-          "词汇", "语文_直击中考"
 	};
 
-	LISTEING_LOCAL_AUDIO_NAME local_audio_name[4][4] = 
+	LISTEING_LOCAL_AUDIO_NAME local_audio_name[2][4] = 
 	{
 		{"dog", "lamp", "deer", "panda"},
 		{"1、字音题专项突破", "2、字形题专项突破",
-			"3、近义词的辨析和应用", "4、成语的理解和运用题型精讲"},
-			{"dog", "lamp", "deer", "panda"},
-		{"1、字音题专项突破", "2、字形题专项突破",
-			"3、近义词的辨析和应用", "4、成语的理解和运用题型精讲"},
+			"3、近义词的辨析和应用", "4、成语的理解和运用题型精讲"}
 	};
 
-	int local_module_id[4] = {6, 16, 6, 16};
-	int local_album_id[4] = {11, 19, 11, 19};
-	int local_audio_id[4][4] = {{395, 396, 397, 398},{868, 869, 870, 871},{395, 396, 397, 398},{868, 869, 870, 871}};
+	int local_module_id[2] = {6, 16};
+	int local_album_id[2] = {11, 19};
+	int local_audio_id[2][4] = {{395, 396, 397, 398},{868, 869, 870, 871}};
 
 	strcpy(file_path, LISTENING_FILE_INFO_PATH);
 	/*if(zmt_file_exist(file_path))
@@ -94,10 +90,10 @@ LOCAL void ListeningLocal_DownloadDataInit(void)
 	root = cJSON_CreateObject();
 	module_list = cJSON_CreateArray();
 
-	module_count = cJSON_CreateNumber(4);
+	module_count = cJSON_CreateNumber(2);
 	cJSON_AddItemToObject(root, "count", module_count);
 	cJSON_AddItemToObject(root, "module", module_list);
-	for(i = 0; i < 4; i++)
+	for(i = 0; i < 2; i++)
 	{
 		cJSON * module_root;
 		cJSON * mudule_id;
@@ -481,10 +477,10 @@ LOCAL MMI_RESULT_E HandleListeningLocalAudioWinMsg(
 					uint8 i = 0;
 					BOOLEAN delete_module = FALSE;
 					uint8 delete_count = 0;
-					int audio_id[] = {0};
+					int audio_id[100] = {0};
 					local_info = Listening_GetLocalDataInfo();
 					id_index = (uint8) MMK_GetWinAddDataPtr(win_id);
-					for(i = 0;i < listening_info->local_audio_total;i++)
+					for(i = 0;i < local_info->module_info[id_index].album_info[0].audio_count;i++)
 					{
 						if(delete_info.select_info[i].is_select)
 						{
@@ -494,7 +490,7 @@ LOCAL MMI_RESULT_E HandleListeningLocalAudioWinMsg(
 					}
 					SCI_TRACE_LOW("%s: delete_count = %d", __FUNCTION__, delete_count);
 					if(delete_count == 0) break;
-					if(listening_info->local_audio_total == delete_count)
+					if(local_info->module_info[id_index].album_info[0].audio_count == delete_count)
 					{
 						delete_module = TRUE;
 					}
@@ -672,6 +668,23 @@ PUBLIC void ListeningLocalWin_DisplayListAndDir(MMI_WIN_ID_T win_id)
 	text_style.align = ALIGN_HVMIDDLE;
 	text_style.font = DP_FONT_24;
 	text_style.font_color = MMI_WHITE_COLOR;
+
+    if(listening_info == NULL)
+    {
+        SCI_TRACE_LOW("%s: listening_info empty!!", __FUNCTION__);
+        win_rect.top += 40;
+        MMIRES_GetText(ZMT_TXT_NO_LOCAL, win_id, &text_string);
+        GUISTR_DrawTextToLCDInRect(
+            (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
+            &win_rect,
+            &win_rect,
+            &text_string,
+            &text_style,
+            text_state,
+            GUISTR_TEXT_DIR_AUTO
+        );
+        return;
+    }
 	
 	SCI_TRACE_LOW("%s: listening_info->local_album_total = %d", __FUNCTION__, listening_info->local_album_total);
 	if(listening_info->local_album_total == 0 || listening_info->local_album_total > 12)
@@ -687,6 +700,7 @@ PUBLIC void ListeningLocalWin_DisplayListAndDir(MMI_WIN_ID_T win_id)
 			text_state,
 			GUISTR_TEXT_DIR_AUTO
 			);
+            MMK_DestroyControl(ctrl_id);
 	}
 	else
 	{
@@ -725,17 +739,14 @@ LOCAL MMI_RESULT_E HandleListeningLocalWinMsg(
 	{
 		case MSG_OPEN_WINDOW:
 			{
-				uint8 i = 0;
-				
+				uint8 i = 0;				
 				if(listening_info == NULL)
 				{
 					listening_info = (LISTENING_LIST_INFO *)SCI_ALLOC_APPZ(sizeof(LISTENING_LIST_INFO));
-					SCI_MEMSET(listening_info, 0, sizeof(LISTENING_LIST_INFO));
 				}
-			//#ifndef WIN32
+				SCI_MEMSET(listening_info, 0, sizeof(LISTENING_LIST_INFO));
 				local_info = Listening_GetLocalDataInfo();
 				listening_info->local_album_total = local_info->module_count;
-			//#endif
 				listening_info->select_cur_class = SELECT_MODULE_LOCAL;
 				SCI_TRACE_LOW("%s: local_album_total = %d", __FUNCTION__, listening_info->local_album_total);
 				
@@ -781,7 +792,6 @@ LOCAL MMI_RESULT_E HandleListeningLocalWinMsg(
 		case MSG_CTL_PENOK:
 			{
 				uint16 index = GUILIST_GetCurItemIndex(ctrl_id);
-				//index += ALBUM_LIST_SHOW_ITEM_MAX * listening_info->local_album_cur;
 				SCI_TRACE_LOW("%s: index = %d", __FUNCTION__, index);
 				if(!delete_info.is_select_delete)
 				{
@@ -803,24 +813,6 @@ LOCAL MMI_RESULT_E HandleListeningLocalWinMsg(
 				}
 			}
 			break;
-		/*case MSG_LIST_PRE_PAGE:
-			{
-				if(listening_info->local_album_cur != 0)
-				{
-					listening_info->local_album_cur--;
-					MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
-				}
-			}
-			break;
-		case MSG_LIST_NEXT_PAGE:
-			{	
-				if(listening_info->local_album_cur < listening_info->local_album_total / (ALBUM_LIST_SHOW_ITEM_MAX + 1))
-				{
-					listening_info->local_album_cur++;
-					MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
-				}
-			}
-			break;*/
 		case MSG_TP_PRESS_UP:
 			{
 				GUI_POINT_T point = {0};
@@ -866,7 +858,7 @@ LOCAL MMI_RESULT_E HandleListeningLocalWinMsg(
 				{
 					uint8 i = 0;
 					uint8 delete_count = 0;
-					int module_id[] = {0};
+					int module_id[50] = {0};
 					local_info = Listening_GetLocalDataInfo();
 					for(i = 0;i < listening_info->local_album_total;i++)
 					{
@@ -883,19 +875,7 @@ LOCAL MMI_RESULT_E HandleListeningLocalWinMsg(
 						Listening_DeleteOneAlbum(module_id[i]);
 					}
 					memset(&delete_info, 0, sizeof(LISTEING_LOCAL_DELETE_INFO));
-				//#ifndef WIN32
-					local_info = Listening_GetLocalDataInfo();
-					listening_info->local_album_total = local_info->module_count;
-				//#endif
-					SCI_TRACE_LOW("%s: local_album_total = %d", __FUNCTION__, listening_info->local_album_total);
-					if(listening_info->local_album_total == 0)
-					{
-						MMI_CreateListeningLocalWin();
-					}
-					else
-					{
-						MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
-					}
+					MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
 				}
 				else if(GUI_PointIsInRect(point, listen_del_back_rect) && delete_info.is_select_delete)
 				{
@@ -919,6 +899,7 @@ LOCAL MMI_RESULT_E HandleListeningLocalWinMsg(
 				if(listening_info)
 				{
 					SCI_FREE(listening_info);
+					listening_info = NULL;
 				}
 				Listening_StopPlayMp3();
 				Listening_FreeLocalDataInfo();

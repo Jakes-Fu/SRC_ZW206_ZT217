@@ -333,7 +333,7 @@ LOCAL void parsePlayAudio(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_i
         if(poetry_detail_infos->id != NULL){
             strcpy(poem_id, poetry_detail_infos->id);
             sprintf(file_path,"E:/Poetry/Poetry_offline/%s/%s_%d.mp3",poem_id,poem_id,audio_download_progress);
-            if(zmt_tfcard_exist() && zmt_tfcard_get_free_kb() > 300 * 1024)
+            if(zmt_tfcard_exist() && zmt_tfcard_get_free_kb() > 100 * 1024)
             {
                 zmt_file_data_write(pRcv, Rcv_len, file_path);
             }
@@ -408,7 +408,7 @@ LOCAL void parseDownloadAudio(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 e
         if(poetry_detail_infos != NULL && poetry_detail_infos->id != NULL){
             strcpy(poem_id, poetry_detail_infos->id);
             sprintf(file_path,"E:/Poetry/Poetry_offline/%s/%s_%d.mp3",poem_id,poem_id,audio_download_progress);
-            if(zmt_tfcard_exist() && zmt_tfcard_get_free_kb() > 300 * 1024)
+            if(zmt_tfcard_exist() && zmt_tfcard_get_free_kb() > 100 * 1024)
             {
                 zmt_file_data_write(pRcv, Rcv_len, file_path);
                 if(audio_download_progress == 0 || !audio_play_now){
@@ -417,7 +417,9 @@ LOCAL void parseDownloadAudio(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 e
             }
             else
             {
+            #ifdef LISTENING_PRATICE_SUPPORT
                 MMI_CreateListeningTipWin(PALYER_PLAY_NO_SPACE_TIP);
+            #endif
                 return;
             }
             audio_download_progress++;

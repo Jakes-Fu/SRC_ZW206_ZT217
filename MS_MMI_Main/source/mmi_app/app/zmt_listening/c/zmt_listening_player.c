@@ -77,7 +77,7 @@ LOCAL GUI_RECT_T listening_rect_empty = {0, 7*LISTEN_LINE_HIGHT+5, MMI_MAINSCREE
 LOCAL GUI_RECT_T listening_rect_decrese = {7, 8.2*LISTEN_LINE_HIGHT, 2*LISTEN_LINE_WIDTH, 9*LISTEN_LINE_HIGHT};
 LOCAL GUI_RECT_T listening_rect_volume = {LISTEN_LINE_WIDTH-2, 8.2*LISTEN_LINE_HIGHT, 5*LISTEN_LINE_WIDTH+2, 9*LISTEN_LINE_HIGHT};
 LOCAL GUI_RECT_T listening_rect_increse = {5*LISTEN_LINE_WIDTH+10, 8.2*LISTEN_LINE_HIGHT, MMI_MAINSCREEN_WIDTH, 9*LISTEN_LINE_HIGHT};
-LOCAL GUI_RECT_T listening_lrc_txt_rect = {0, LISTEN_LINE_HIGHT, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT};
+LOCAL GUI_RECT_T listening_lrc_txt_rect = {0, LISTEN_LINE_HIGHT+5, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT};
 
 LOCAL void ListeningPlayer_InitPlayerInfo(void);
 LOCAL void ListeningPlayer_ButtonPreCallback(void);
@@ -1084,6 +1084,7 @@ LOCAL MMI_RESULT_E HandleListeningPlayerWinMsg(
 				MMI_STRING_T text_string = {0};
 				wchar title_wchar[50] = {0};
 				uint8 length = 0;
+				uint8 line_num = 0;
 				
 				GUI_FillRect(&lcd_dev_info, listen_win_rect, GUI_RGB2RGB565(80, 162, 254));
 				GUI_FillRect(&lcd_dev_info, listen_title_rect, GUI_RGB2RGB565(108, 181, 255));
@@ -1109,6 +1110,10 @@ LOCAL MMI_RESULT_E HandleListeningPlayerWinMsg(
 				}
 				text_string.wstr_ptr = title_wchar;
 				text_string.wstr_len = MMIAPICOM_Wstrlen(text_string.wstr_ptr);
+				line_num = GUI_CalculateStringLinesByPixelNum(MMI_MAINSCREEN_WIDTH,text_string.wstr_ptr,text_string.wstr_len,DP_FONT_20,0,TRUE);
+				if(line_num > 1){
+				    text_style.font = DP_FONT_16;
+				}
 				GUISTR_DrawTextToLCDInRect(
 					(const GUI_LCD_DEV_INFO *)&lcd_dev_info,
 					&listen_title_rect,
@@ -1245,6 +1250,7 @@ LOCAL int16 main_tp_down_x = 0;
 LOCAL int16 main_tp_down_y = 0;
 LOCAL int listening_player_lrc_page = 0;
 
+#ifdef LYRIC_PARSER_SUPPORT
 LOCAL void ListeningPlayerLrcWin_ShowLrcText(MMI_WIN_ID_T win_id, BOOLEAN is_full_paint)
 {
     int offset = 0;
@@ -1293,17 +1299,24 @@ LOCAL void ListeningPlayerLrcWin_ShowLrcText(MMI_WIN_ID_T win_id, BOOLEAN is_ful
             if (node != NULL && last_node != NULL){
                 if(0 != strcmp(last_node->content, node->content) || lrc_index < listening_lrc_p->lyric_num - LISTEN_LRC_LABEL_NUM)
                 {
-                    if(lyric_sel_index == lrc_index){
-                        text_style.font = DP_FONT_20;
-                        LCD_DrawHLine(&lcd_dev_info, text_rect.left+10, text_rect.bottom-5, text_rect.right-10, MMI_WHITE_COLOR);
-                    }else{
-                        text_style.font = DP_FONT_16;
-                    }
                     text_str = SCI_ALLOC_APPZ(3*strlen(node->content));
                     memset(text_str, 0, 3*strlen(node->content));
                     GUI_UTF8ToWstr(text_str, 3*strlen(node->content), node->content, strlen(node->content));
                     text_string.wstr_ptr = text_str;
                     text_string.wstr_len = MMIAPICOM_Wstrlen(text_string.wstr_ptr);
+                    if(lyric_sel_index == lrc_index){
+                        uint8 line_num = 0;
+                        text_style.font = DP_FONT_20;
+                        line_num = GUI_CalculateStringLinesByPixelNum(text_rect.right-text_rect.left,text_string.wstr_ptr,text_string.wstr_len,DP_FONT_20,0,TRUE);
+                        if(line_num > 1){
+                            text_style.font = DP_FONT_16;
+                        }else if(line_num > 2){
+                            text_style.font = DP_FONT_14;
+                        }
+                        LCD_DrawHLine(&lcd_dev_info, text_rect.left+10, text_rect.bottom-5, text_rect.right-10, MMI_WHITE_COLOR);
+                    }else{
+                        text_style.font = DP_FONT_16;
+                    }
                     GUISTR_DrawTextToLCDInRect(
                         (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
                         &text_rect,
@@ -1322,6 +1335,7 @@ LOCAL void ListeningPlayerLrcWin_ShowLrcText(MMI_WIN_ID_T win_id, BOOLEAN is_ful
         g_lrc_all_index = lyric_sel_index;
     }
 }
+#endif
 
 LOCAL MMI_RESULT_E HandleListeningPlayerLrcWinMsg(
 	MMI_WIN_ID_T win_id, 
@@ -1357,6 +1371,7 @@ LOCAL MMI_RESULT_E HandleListeningPlayerLrcWinMsg(
 				LISTENING_PLAYER_INFO *player_info = NULL;
 				wchar title_wchar[50] = {0};
 				uint8 length = 0;
+				uint8 line_num = 0;
 
 				text_style.align = ALIGN_HVMIDDLE;
 				text_style.font = DP_FONT_20;
@@ -1378,6 +1393,10 @@ LOCAL MMI_RESULT_E HandleListeningPlayerLrcWinMsg(
 				}
 				text_string.wstr_ptr = title_wchar;
 				text_string.wstr_len = MMIAPICOM_Wstrlen(text_string.wstr_ptr);
+				line_num = GUI_CalculateStringLinesByPixelNum(MMI_MAINSCREEN_WIDTH,text_string.wstr_ptr,text_string.wstr_len,DP_FONT_20,0,TRUE);
+				if(line_num > 1){
+				    text_style.font = DP_FONT_16;
+				}
 				GUISTR_DrawTextToLCDInRect(
 				    (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
 				    &listen_title_rect,

@@ -876,7 +876,7 @@ PUBLIC void Hanzi_ParseMp3Response(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uin
         SCI_MEMSET(hanzi_detail_info[hanzi_detail_cur_idx]->audio_data, 0, Rcv_len);
         SCI_MEMCPY(hanzi_detail_info[hanzi_detail_cur_idx]->audio_data, pRcv, Rcv_len);
 
-        if(zmt_tfcard_exist() && zmt_tfcard_get_free_kb() > 1024 * 1024){
+        if(zmt_tfcard_exist() && zmt_tfcard_get_free_kb() > 100 * 1024){
             char file_path[30] = {0};
             sprintf(file_path, HANZI_CARD_WORD_AUDIO_PATH, hanzi_book_info.cur_book_idx+1, hanzi_detail_info[hanzi_detail_cur_idx]->pingy);
             if(zmt_file_exist(file_path)){

@@ -87,6 +87,7 @@ LOCAL void ListeningAudioWin_DisplayAudioList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T
 
 	list_init.both_rect.v_rect = listen_list_rect;
 	list_init.both_rect.v_rect.top -= 25;
+	list_init.both_rect.v_rect.bottom = MMI_MAINSCREEN_HEIGHT - 2;
 	list_init.type = GUILIST_TEXTLIST_E;
 	GUILIST_CreateListBox(win_id, 0, ctrl_id, &list_init);
 
@@ -243,6 +244,19 @@ LOCAL MMI_RESULT_E HandleListeningAudioWinMsg(
 						GUISTR_TEXT_DIR_AUTO
 						);
 					break;
+				}else if(listening_load_win == -2)
+				{
+					MMIRES_GetText(ZMT_TXT_NO_AUDIO_DATA, win_id, &text_string);
+					GUISTR_DrawTextToLCDInRect(
+						(const GUI_LCD_DEV_INFO *)&lcd_dev_info,
+						&listen_win_rect,
+						&listen_win_rect,
+						&text_string,
+						&text_style,
+						text_state,
+						GUISTR_TEXT_DIR_AUTO
+						);
+					break;
 				}
 
 				ListeningAudioWin_DisplayAudioList(win_id, ctrl_id);
@@ -254,11 +268,26 @@ LOCAL MMI_RESULT_E HandleListeningAudioWinMsg(
 				SCI_TRACE_LOW("%s: index = %d, download = %d", __FUNCTION__, index, listening_download_audio);
 				if(Listening_IsMp3FileExist(index, album_info))
 				{
+					uint8 i = 0;
+					uint8 j = 0;
+					BOOLEAN is_exist_local = FALSE;
+					LISTEING_LOCAL_INFO * local_info = Listening_GetLocalDataInfo();
+					for(i = 0;i < local_info->module_count && i < 10;i++){
+					    for(j = 0;j < local_info->module_info[i].album_info[0].audio_count && j < 100;j++){
+					        if(album_info->item_info[index].audio_id == local_info->module_info[i].album_info[0].audio_info[j].audio_id){
+					            is_exist_local = TRUE;
+					            break;
+					        }
+					    }
+					}
 					SCI_TRACE_LOW("%s: module_id = %d, album_id = %d, audio_id = %d",
 						__FUNCTION__,
 						album_info->module_id, 
 						album_info->album_id,
 						album_info->item_info[index].audio_id);
+					if(!is_exist_local){
+					    Listening_InsertOneAudioInfoToLocal(album_info, index);
+					}
 					if(Listening_PlayMp3(
 						album_info->module_id, 
 						album_info->album_id,
@@ -271,6 +300,15 @@ LOCAL MMI_RESULT_E HandleListeningAudioWinMsg(
 						player_info->moudle_index = id_index;
 						player_info->audio_index = index;
 						MMI_CreateListeningPlayerWin(player_info);
+					}
+					else
+					{
+					    if(listening_download_audio)
+					    {
+					        MMI_CreateListeningTipWin(PALYER_PLAY_DOWNLOADING_TIP);
+					        break;
+					    }
+					    Listening_RequestDownloadAudio(index);
 					}
 				}
 				else
@@ -319,7 +357,7 @@ LOCAL MMI_RESULT_E HandleListeningAudioWinMsg(
 			{
 				listening_info->item_cur_page = 0;
 				listening_download_audio = FALSE;
-				MMIZDT_HTTP_Close();
+				//MMIZDT_HTTP_Close();
 				if(listening_downloading_audio_path != NULL){
 				    SCI_FREE(listening_downloading_audio_path);
 				    listening_downloading_audio_path = NULL;
@@ -385,6 +423,7 @@ LOCAL void ListeningWin_DisplayAlbumList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl
 	uint8 length = 0;
 
 	list_init.both_rect.v_rect = listen_list_rect;
+	list_init.both_rect.v_rect.bottom = MMI_MAINSCREEN_HEIGHT - 2;
 	list_init.type = GUILIST_TEXTLIST_E;
 	GUILIST_CreateListBox(win_id, 0, ctrl_id, &list_init);
 
@@ -641,7 +680,7 @@ LOCAL MMI_RESULT_E HandleListeningWinMsg(
 				win_rect.top += 40;
 				if(listening_info->select_cur_class != SELECT_MODULE_LOCAL)
 				{
-					SCI_TRACE_LOW("listening_load_win: = %d", listening_load_win);
+					SCI_TRACE_LOW("%s: listening_load_win = %d", __FUNCTION__, listening_load_win);
 					if(listening_load_win == 0)
 					{
 						MMIRES_GetText(ZMT_TXT_LOADING, win_id, &text_string);
@@ -678,33 +717,14 @@ LOCAL MMI_RESULT_E HandleListeningWinMsg(
 		case MSG_CTL_PENOK:
 			{
 				uint16 index = GUILIST_GetCurItemIndex(ctrl_id);
-				if(listening_load_win == 1)
+				//if(listening_load_win == 1)
 				{
-					//index += ALBUM_LIST_SHOW_ITEM_MAX * listening_info->album_cur_page;
 					SCI_TRACE_LOW("%s: index = %d", __FUNCTION__, index);
 					MMI_CreateListeningAudioWin(index);
 					Listening_RequestAudioListInfo(module_info->item_info[index].album_id);
 				}
 			}
 			break;
-		/*case MSG_LIST_PRE_PAGE:
-			{
-				if(listening_info->album_cur_page != 0)
-				{
-					listening_info->album_cur_page--;
-					MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
-				}
-			}
-			break;
-		case MSG_LIST_NEXT_PAGE:
-			{	
-				if(listening_info->album_cur_page + 1 < listening_info->album_total_num / ALBUM_LIST_SHOW_ITEM_MAX)
-				{
-					listening_info->album_cur_page++;
-					MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
-				}
-			}
-			break;*/
 		case MSG_TP_PRESS_UP:
 			{
 				GUI_POINT_T point = {0};
@@ -732,7 +752,7 @@ LOCAL MMI_RESULT_E HandleListeningWinMsg(
 				{
 					MMK_CloseWin(LISTENING_LOCAL_ALBUM_WIN_ID);
 				}
-				MMIZDT_HTTP_Close();
+				//MMIZDT_HTTP_Close();
 			}
 			break;
 		default:
@@ -797,17 +817,17 @@ LOCAL MMI_RESULT_E HandleListeningTipWinMsg(
 				MMI_STRING_T text_string = {0};
 				LISTENING_TIPS_TYPE_E type = 0;
 				GUI_BORDER_T border  = {0};
-				
-				GUI_FillRect(&lcd_dev_info, win_rect, MMI_WHITE_COLOR);
+
+				LCD_FillRoundedRect(&lcd_dev_info, win_rect, win_rect, MMI_WHITE_COLOR);
 				
 				border.width = 2;
-				border.color = 0x0000;
+				border.color = GUI_RGB2RGB565(50, 162, 254);
 				border.type =  GUI_BORDER_ROUNDED;
 				GUI_DisplayBorder(win_rect, win_rect, &border,&lcd_dev_info);
 
 				text_style.align = ALIGN_HVMIDDLE;
 				text_style.font = DP_FONT_16;
-				text_style.font_color = MMI_BLACK_COLOR;
+				text_style.font_color = GUI_RGB2RGB565(50, 162, 254);
 				win_rect.bottom -= 40;
 				type = (LISTENING_TIPS_TYPE_E)MMK_GetWinAddDataPtr(win_id);
 				if(type == PALYER_PLAY_NO_SPACE_TIP)

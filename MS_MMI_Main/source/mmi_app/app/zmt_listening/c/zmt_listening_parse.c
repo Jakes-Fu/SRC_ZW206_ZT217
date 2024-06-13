@@ -626,7 +626,6 @@ PUBLIC void Listening_ParseAudioDownload(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_l
     request_http_listening_idx = 0;
     if(is_ok)
     {
-        LISTENING_PLAYER_INFO * player_info = NULL;
         if((!MMK_IsOpenWin(LISTENING_AUDIO_LIST_WIN_ID) &&
                 !MMK_IsOpenWin(LISTENING_LOCAL_AUDIO_WIN_ID)) || 
             MMK_IsOpenWin(LISTENING_PLAYER_WIN_ID)){
@@ -638,7 +637,6 @@ PUBLIC void Listening_ParseAudioDownload(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_l
             listening_download_audio = FALSE;
             return;
         }
-        player_info = (LISTENING_PLAYER_INFO *)SCI_ALLOC_APPZ(sizeof(LISTENING_PLAYER_INFO));
         album_info->item_info[listening_downloading_index].aduio_ready = 2;
         listening_download_fail = FALSE;
         SCI_TRACE_LOW("%s: module_id = %d, album_id = %d, audio_id = %d", 
@@ -653,6 +651,7 @@ PUBLIC void Listening_ParseAudioDownload(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_l
                 album_info->item_info[listening_downloading_index].audio_id)
         )
         {
+            LISTENING_PLAYER_INFO * player_info = (LISTENING_PLAYER_INFO *)SCI_ALLOC_APPZ(sizeof(LISTENING_PLAYER_INFO));
             player_info->is_local_play = FALSE;
             player_info->moudle_index = 0;//not use
             player_info->audio_index = listening_downloading_index;
@@ -706,7 +705,7 @@ PUBLIC LISTEING_LOCAL_INFO * Listening_GetLocalDataInfo(void)
 
 PUBLIC void Listening_FreeLocalDataInfo(void)
 {
-	if(local_data_info)
+	if(local_data_info != NULL)
 	{
 		SCI_FREE(local_data_info);
 	}
@@ -810,6 +809,10 @@ PUBLIC void Listening_InitLocalDataInfo(void)
 			memset(local_data_info, 0, length);
 		}
 		local_data_info->module_count = 0;
+		if(listening_info != NULL){
+			memset(listening_info, 0, sizeof(LISTENING_LIST_INFO));
+			listening_info->select_cur_class = SELECT_MODULE_LOCAL;
+		}
 	}
 }
 
@@ -989,7 +992,11 @@ PUBLIC void Listening_ParseAudioResponse(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_l
             SCI_TRACE_LOW("%s: count = %d", __FUNCTION__, count);
         }
         cJSON_Delete(root);
-        listening_load_win = 1;
+        if(listening_info->item_total_num > 0){
+            listening_load_win = 1;
+        }else{
+            listening_load_win = -2;
+        }
     }
     else
     {
