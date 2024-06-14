@@ -527,7 +527,19 @@ PUBLIC void Sensor_SetMCLK(uint32 mclk)
 
     //SENSOR_PRINT:"SENSOR: Sensor_SetMCLK -> s_sensor_mclk = %dMHz, clk = %dMHz"
     SCI_TRACE_ID(TRACE_TOOL_CONVERT,SENSOR_DRV_419_112_2_18_1_24_32_582,(uint8*)"dd", s_sensor_mclk, mclk);
-
+    if(mclk)
+    {
+        Sensor_SetMCLK_6121e();
+        hwp_apApb->clk_ap_mode1_set |= AP_APB_CLK_MODE_CAMERA;
+        hwp_apApb->clk_ap_en1_set |= AP_APB_CLK_EN_CAMERA;
+    }
+    else
+    {
+        // Close Mclk
+        Sensor_disableMCLK_6121e();
+        hwp_apApb->clk_ap_en1_clr |= AP_APB_CLK_EN_CAMERA;
+    }
+     SCI_TRACE_ID(TRACE_TOOL_CONVERT,SENSOR_DRV_419_112_2_18_1_24_32_582,(uint8*)"dd", s_sensor_mclk, mclk);
     return ;
 #if 0
 #if 0
@@ -748,13 +760,13 @@ LOCAL void Sensor_PowerOn(BOOLEAN power_on)
     SCI_TRACE_ID(TRACE_TOOL_CONVERT,SENSOR_DRV_623_112_2_18_1_24_33_589,(uint8*)"ddd",power_on,power_down,avdd_val);
 
     // call user func
-    #if 0
+   //#if 0
     if(PNULL != power_func)
     {
         power_func(power_on);
     }
     else
-    #endif
+    //#endif
     {
         if(power_on)
         {
@@ -845,7 +857,7 @@ PUBLIC BOOLEAN Sensor_PowerDown(BOOLEAN power_down)
 
             break;
         }
-        #if 0
+
         case SENSOR_SUB:
         {
             //SENSOR_PRINT:"SENSOR: Sensor_PowerDown -> sub, power_down %d, time %d"
@@ -865,6 +877,7 @@ PUBLIC BOOLEAN Sensor_PowerDown(BOOLEAN power_down)
 
             break;
         }
+       #if 0
         case SENSOR_ATV:
         {
             //SENSOR_PRINT:"SENSOR: Sensor_PowerDown -> atv %d"
@@ -1566,10 +1579,11 @@ LOCAL void _Sensor_SetId(SENSOR_ID_E sensor_id)
 /*****************************************************************************/
 PUBLIC SENSOR_ID_E Sensor_GetCurId(void)
 {
-    return 0;
+    //return 0;
 
-    //SENSOR_REGISTER_INFO_T_PTR sensor_register_info_ptr=s_sensor_register_info_ptr;
-    //return (SENSOR_ID_E)sensor_register_info_ptr->cur_id;
+    SENSOR_REGISTER_INFO_T_PTR sensor_register_info_ptr=s_sensor_register_info_ptr;
+    SCI_TRACE_LOW("lichao Sensor_GetCurId:cur_id=%d",sensor_register_info_ptr->cur_id);
+    return (SENSOR_ID_E)sensor_register_info_ptr->cur_id;
 }
 
 /*****************************************************************************/
@@ -1874,7 +1888,7 @@ PUBLIC BOOLEAN Sensor_Init(void)
     //SCI_TRACE_LOW("after sensor identify!");
 
     // sub img sensor
-    //_Sensor_Identify(SENSOR_SUB);
+    _Sensor_Identify(SENSOR_SUB);
 
     s_sensor_identified = SCI_TRUE;
 
@@ -2446,6 +2460,7 @@ PUBLIC ERR_SENSOR_E Sensor_Close(void)
 
                 if(SENSOR_MAIN==cur_sensor_id)
                 {
+					SCI_TRACE_LOW("Sensor_Close LICHAO22!cur_sensor_id=%d",cur_sensor_id);
                     if(SCI_TRUE==sensor_register_info_ptr->is_register[SENSOR_SUB])
                     {
                         _Sensor_IicHandlerRelease();
@@ -2458,11 +2473,11 @@ PUBLIC ERR_SENSOR_E Sensor_Close(void)
                     }
                     _Sensor_SetId(SENSOR_MAIN);
                 }
-                #if 0
                 else
                 {
                     if(SCI_TRUE==sensor_register_info_ptr->is_register[SENSOR_MAIN])
                     {
+					SCI_TRACE_LOW("Sensor_Close LICHAO!cur_sensor_id=%d",cur_sensor_id);
                         _Sensor_IicHandlerRelease();
                         s_sensor_info_ptr=s_sensor_list_ptr[SENSOR_MAIN];
                         Sensor_SetExportInfo(&s_sensor_exp_info);
@@ -2473,7 +2488,7 @@ PUBLIC ERR_SENSOR_E Sensor_Close(void)
                     }
                     _Sensor_SetId(SENSOR_SUB);
                 }
-
+#if 0
                 //confirm the ATV LDO be shutted down
                 if(SCI_TRUE==sensor_register_info_ptr->is_register[SENSOR_ATV])
                 {

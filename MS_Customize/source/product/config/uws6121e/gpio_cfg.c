@@ -87,12 +87,12 @@ LOCAL const GPIO_CFG_INFO_T s_gpio_prod_cfg_cus_table[] =
 	#endif
 
     //{GPIO_PROD_SENSOR_RESET_ID,            GPIO_PROD_TYPE_BB0, GPIO_PROD_HIGH_LEVEL,     33,               PNULL    }, // 53--33
-     //{GPIO_PROD_SENSOR_PWDN_ID,            GPIO_PROD_TYPE_BB0, GPIO_PROD_HIGH_LEVEL,     44,                PNULL    },// 52--44
+     {GPIO_PROD_SENSOR_PWDN_ID,            GPIO_PROD_TYPE_BB0, GPIO_PROD_HIGH_LEVEL,     44,                PNULL    },// 52--44
      {GPIO_PROD_SENSOR_POWER_ID,            GPIO_PROD_TYPE_BB0, GPIO_PROD_HIGH_LEVEL,     GPIO_PROD_NUM_INVALID,                PNULL    },
      //{GPIO_PROD_ATV_RESET_ID,            GPIO_PROD_TYPE_BB0, GPIO_PROD_HIGH_LEVEL,     18,                PNULL    },
      //{GPIO_PROD_ATV_POWER_ID,            GPIO_PROD_TYPE_BB0, GPIO_PROD_HIGH_LEVEL,     3,                PNULL    },
      //{GPIO_PROD_ATV_LDO_ID,                GPIO_PROD_TYPE_BB0, GPIO_PROD_HIGH_LEVEL,     24,                PNULL    },
-     //{GPIO_PROD_SENSOR_PWDN_FRONT_ID,    GPIO_PROD_TYPE_BB0, GPIO_PROD_HIGH_LEVEL,     2,                PNULL    },
+     {GPIO_PROD_SENSOR_PWDN_FRONT_ID,    GPIO_PROD_TYPE_BB0, GPIO_PROD_HIGH_LEVEL,    45,                PNULL    },
     {GPIO_PROD_CHARGE_PLUG_DETECT_ID,    GPIO_PROD_TYPE_EIC_DBNC, GPIO_PROD_HIGH_LEVEL,     EICA_CHGR_INT,                PNULL      },
 
     {GPIO_PROD_POWER_KEY_ID,            GPIO_PROD_TYPE_EIC_DBNC, GPIO_PROD_HIGH_LEVEL,     EICA_PBINT,                PNULL   },

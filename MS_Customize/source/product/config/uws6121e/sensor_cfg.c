@@ -85,7 +85,7 @@ extern const SENSOR_INFO_T g_GC032A_yuv_info;
 #ifdef DRV_CAMERA_BF20A6_CUSTOM
 extern const SENSOR_INFO_T g_BF20A6_yuv_info;
 #endif
-
+extern const SENSOR_INFO_T g_GC032A_F_yuv_info;
 /**---------------------------------------------------------------------------*
  **                         analog tv                                         *
  **---------------------------------------------------------------------------*/
@@ -152,7 +152,7 @@ LOCAL const SENSOR_INFO_T* sub_sensor_infor_tab[]=
     //&g_GC0306_yuv_info,
     //&g_GC0310_yuv_info,
     //&g_GC6113_yuv_info,
-    &g_GC032A_yuv_info,
+    &g_GC032A_F_yuv_info,
     PNULL
 };
 

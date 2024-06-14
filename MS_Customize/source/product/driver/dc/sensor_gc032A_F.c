@@ -16,9 +16,9 @@
  ** DATE             NAME             DESCRIPTION                             *
  ** 2012-11-16   Haydn            Fristly Released
  ******************************************************************************/
-#ifndef _GC032A_C_
+#ifndef _GC032A_F_C_
 
-#define _GC032A_C_
+#define _GC032A_F_C_
 #include "ms_customize_trc.h"
 #include "sensor_cfg.h"
 #include "sensor_drv.h"
@@ -39,15 +39,15 @@
 /**---------------------------------------------------------------------------*
  **                         Const variables                                   *
  **---------------------------------------------------------------------------*/
-#define GC032A_I2C_ADDR_W                0x42
-#define GC032A_I2C_ADDR_R                0x43
-#define GC032A_I2C_ACK                    0x0
-#define GC032A_MIRROR                   (0x01 << 0)
-#define GC032A_FLIP                     (0x01 << 1)
-#define GC032A_SPECIAL_EFFECT_REG        0x43
-#define GC032A_SUBSAMPLE2_EN            (0x01 << 6)
+#define GC032A_F_I2C_ADDR_W                0x42
+#define GC032A_F_I2C_ADDR_R                0x43
+#define GC032A_F_I2C_ACK                    0x0
+#define GC032A_F_MIRROR                   (0x01 << 0)
+#define GC032A_F_FLIP                     (0x01 << 1)
+#define GC032A_F_SPECIAL_EFFECT_REG        0x43
+#define GC032A_F_SUBSAMPLE2_EN            (0x01 << 6)
 
-LOCAL BOOLEAN      bl_GC_50Hz_GC032A        = FALSE;
+LOCAL BOOLEAN      bl_GC_50Hz_GC032A_F       = FALSE;
 LOCAL uint8 mirror_flip = 0x55;
 /**---------------------------------------------------------------------------*
      GC032A SUPPORT 5 SERIAL MODE:
@@ -57,7 +57,7 @@ LOCAL uint8 mirror_flip = 0x55;
 
 // use next two interface
 //#define GC032A_OUTPUT_MODE_CCIR656_2BIT
-#define GC032A_OUTPUT_MODE_PACKET_DDR_2BIT
+#define GC032A_F_OUTPUT_MODE_PACKET_DDR_2BIT
 //#define GC032A_OUTPUT_MODE_QVGA
 
 
@@ -66,46 +66,46 @@ LOCAL uint8 mirror_flip = 0x55;
 /**---------------------------------------------------------------------------*
  **                     Local Function Prototypes                             *
  **---------------------------------------------------------------------------*/
-LOCAL uint32 GC032A_Power_On(uint32 power_on);
-LOCAL uint32 GC032A_Identify(uint32 param);
-LOCAL void   GC032A_WriteReg( uint8  subaddr, uint8 data );
-LOCAL uint8  GC032A_ReadReg( uint8  subaddr);
-LOCAL void   GC032A_Write_Group_Regs( SENSOR_REG_T* sensor_reg_ptr );
-LOCAL void   GC032A_Delayms (uint32 ms);
+LOCAL uint32 GC032A_F_Power_On(uint32 power_on);
+LOCAL uint32 GC032A_F_Identify(uint32 param);
+LOCAL void   GC032A_F_WriteReg( uint8  subaddr, uint8 data );
+LOCAL uint8  GC032A_F_ReadReg( uint8  subaddr);
+LOCAL void   GC032A_F_Write_Group_Regs( SENSOR_REG_T* sensor_reg_ptr );
+LOCAL void   GC032A_F_Delayms (uint32 ms);
 //LOCAL uint32 Set_GC032A_Mirror(uint32 level);
 //LOCAL uint32 Set_GC032A_Flip(uint32 level);
-LOCAL uint32 Set_GC032A_Brightness(uint32 level);
-LOCAL uint32 Set_GC032A_Contrast(uint32 level);
-LOCAL uint32 Set_GC032A_Image_Effect(uint32 effect_type);
-LOCAL uint32 Set_GC032A_Ev(uint32 level);
-LOCAL uint32 Set_GC032A_Anti_Flicker(uint32 mode);
-LOCAL uint32 Set_GC032A_Preview_Mode(uint32 preview_mode);
-LOCAL uint32 Set_GC032A_AWB(uint32 mode);
-LOCAL uint32 GC032A_AE_AWB_Enable(uint32 ae_enable, uint32 awb_enable);
-LOCAL uint32 GC032A_Before_Snapshot(uint32 para);
-LOCAL uint32 GC032A_After_Snapshot(uint32 para);
-LOCAL uint32 Set_GC032A_Video_Mode(uint32 mode);
-LOCAL uint32 GC032A_GetPclkTab(uint32 param);
-LOCAL uint32 GC032A_Hmirror_Enable(uint32 hmirror_enable);
-LOCAL uint32 GC032A_Vmirror_Enable(uint32 vmirror_enable);
-LOCAL uint32 GC032A_Test_Pattern_Enable(uint32 test_enable);
-LOCAL void Set_GC032A_Image_Res();
+LOCAL uint32 Set_GC032A_F_Brightness(uint32 level);
+LOCAL uint32 Set_GC032A_F_Contrast(uint32 level);
+LOCAL uint32 Set_GC032A_F_Image_Effect(uint32 effect_type);
+LOCAL uint32 Set_GC032A_F_Ev(uint32 level);
+LOCAL uint32 Set_GC032A_F_Anti_Flicker(uint32 mode);
+LOCAL uint32 Set_GC032A_F_Preview_Mode(uint32 preview_mode);
+LOCAL uint32 Set_GC032A_F_AWB(uint32 mode);
+LOCAL uint32 GC032A_F_AE_AWB_Enable(uint32 ae_enable, uint32 awb_enable);
+LOCAL uint32 GC032A_F_Before_Snapshot(uint32 para);
+LOCAL uint32 GC032A_F_After_Snapshot(uint32 para);
+LOCAL uint32 Set_GC032A_F_Video_Mode(uint32 mode);
+LOCAL uint32 GC032A_F_GetPclkTab(uint32 param);
+LOCAL uint32 GC032A_F_Hmirror_Enable(uint32 hmirror_enable);
+LOCAL uint32 GC032A_F_Vmirror_Enable(uint32 vmirror_enable);
+LOCAL uint32 GC032A_F_Test_Pattern_Enable(uint32 test_enable);
+LOCAL void Set_GC032A_F_Image_Res();
 
 
 
 /**---------------------------------------------------------------------------*
  **                         Local Variables                                   *
  **---------------------------------------------------------------------------*/
-#ifdef GC032A_SERIAL_LOAD_FROM_T_FLASH
+#ifdef GC032A_F_SERIAL_LOAD_FROM_T_FLASH
 #include "sfs.h"
 #include "ffs.h"
-LOCAL uint32 Load_GC032A_RegTab_From_T_Flash(void);
+LOCAL uint32 Load_GC032A_F_RegTab_From_T_Flash(void);
 #endif
 
 
-__align(4) const SENSOR_REG_T GC032A_YUV_320X240[] =
+__align(4) const SENSOR_REG_T GC032A_F_YUV_320X240[] =
 {
-#if defined(GC032A_OUTPUT_MODE_CCIR656_2BIT)
+#if defined(GC032A_F_OUTPUT_MODE_CCIR656_2BIT)
     /*System*/
     {0xf3,0x83},
     {0xf5,0x0c},
@@ -454,7 +454,7 @@ __align(4) const SENSOR_REG_T GC032A_YUV_320X240[] =
     {0x01,0x80},
     {0x02,0x02},
 
-#elif defined(GC032A_OUTPUT_MODE_PACKET_DDR_2BIT)
+#elif defined(GC032A_F_OUTPUT_MODE_PACKET_DDR_2BIT)
     {0xf3,0x83},    //ff//1f//01 data output
     {0xf5,0x0f},    //0x0f
     {0xf7,0x01},
@@ -829,9 +829,9 @@ __align(4) const SENSOR_REG_T GC032A_YUV_320X240[] =
 
 
 
-__align(4) const SENSOR_REG_T GC032A_YUV_640X480[] =
+__align(4) const SENSOR_REG_T GC032A_F_YUV_640X480[] =
 {
-#if defined(GC032A_OUTPUT_MODE_CCIR656_2BIT)
+#if defined(GC032A_F_OUTPUT_MODE_CCIR656_2BIT)
     /*System*/
     {0xf3,0x83},
     {0xf5,0x0c},
@@ -1183,12 +1183,12 @@ __align(4) const SENSOR_REG_T GC032A_YUV_640X480[] =
     {0x3c,0x20},
     {0xfe,0x00},
 
-#elif defined(GC032A_OUTPUT_MODE_PACKET_DDR_2BIT)
+#elif defined(GC032A_F_OUTPUT_MODE_PACKET_DDR_2BIT)
 /*System*/
     {0xf3,0x83},    //ff//1f//01 data output
     {0xf5,0x08},
     {0xf7,0x01},
-#if defined(GC032A_OUTPUT_MODE_QVGA)
+#if defined(GC032A_F_OUTPUT_MODE_QVGA)
     {0xf8,0x02},    // 0xf8=0x1 QVGA frame rate is 15fps
                     // 0xf8=0x2 QVGA frame rate is 22fps
                     // 0xf8=0x3 QVGA frame rate is 27fps
@@ -1577,7 +1577,7 @@ __align(4) const SENSOR_REG_T GC032A_YUV_640X480[] =
     /* test pattern*/
     //{0xfe,0x00},
     //{0x4C,0x08},
-#if defined(GC032A_OUTPUT_MODE_QVGA)
+#if defined(GC032A_F_OUTPUT_MODE_QVGA)
     /*QVGA*/
     {0xfe,0x00},
     {0x51,0x00},
@@ -1603,18 +1603,18 @@ __align(4) const SENSOR_REG_T GC032A_YUV_640X480[] =
 };
 
 
-LOCAL SENSOR_REG_TAB_INFO_T s_GC032A_resolution_Tab_YUV[]=
+LOCAL SENSOR_REG_TAB_INFO_T s_GC032A_F_resolution_Tab_YUV[]=
 {
-#if defined(GC032A_OUTPUT_MODE_PACKET_DDR_2BIT)
-    {ADDR_AND_LEN_OF_ARRAY(GC032A_YUV_640X480), 640, 480, 26, SENSOR_IMAGE_FORMAT_YUV422},
+#if defined(GC032A_F_OUTPUT_MODE_PACKET_DDR_2BIT)
+    {ADDR_AND_LEN_OF_ARRAY(GC032A_F_YUV_640X480), 640, 480, 26, SENSOR_IMAGE_FORMAT_YUV422},
     // YUV422 PREVIEW 1
     {PNULL, 0, 640, 480, 26, SENSOR_IMAGE_FORMAT_YUV422},
     {PNULL, 0, 0, 0, 0, 0},
     {PNULL, 0, 0, 0, 0, 0},
     {PNULL, 0, 0, 0, 0, 0},
 
-#elif defined(GC032A_OUTPUT_MODE_CCIR656_2BIT)
-    {ADDR_AND_LEN_OF_ARRAY(GC032A_YUV_640X480), 320, 240, 24, SENSOR_IMAGE_FORMAT_YUV422},
+#elif defined(GC032A_F_OUTPUT_MODE_CCIR656_2BIT)
+    {ADDR_AND_LEN_OF_ARRAY(GC032A_F_YUV_640X480), 320, 240, 24, SENSOR_IMAGE_FORMAT_YUV422},
     // YUV422 PREVIEW 1
     {PNULL, 0, 320, 240, 24, SENSOR_IMAGE_FORMAT_YUV422},
     {PNULL, 0, 0, 0, 0, 0},
@@ -1636,26 +1636,26 @@ LOCAL SENSOR_REG_TAB_INFO_T s_GC032A_resolution_Tab_YUV[]=
 // Note:
 //
 /******************************************************************************/
-LOCAL uint32 GC032A_set_flash_enable(uint32 enable)
+LOCAL uint32 GC032A_F_set_flash_enable(uint32 enable)
 {
-    SCI_TRACE_LOW("GC032A_set_flash_enable:%d", enable);
+    SCI_TRACE_LOW("GC032A_F_set_flash_enable:%d", enable);
     GPIO_SetFlashLight(enable);
     return 0;
 }
 
-#ifdef GC032A_SERIAL_LOAD_FROM_T_FLASH
-LOCAL SENSOR_IOCTL_FUNC_TAB_T s_GC032A_ioctl_func_tab =
+#ifdef GC032A_F_SERIAL_LOAD_FROM_T_FLASH
+LOCAL SENSOR_IOCTL_FUNC_TAB_T s_GC032A_F_ioctl_func_tab =
 {
     // Internal
     PNULL,
-    GC032A_Power_On,
+    GC032A_F_Power_On,
     PNULL,
-    GC032A_Identify,
+    GC032A_F_Identify,
     PNULL,
     PNULL,
 
     PNULL,
-    GC032A_GetPclkTab,
+    GC032A_F_GetPclkTab,
 
     // External
     PNULL,
@@ -1666,7 +1666,7 @@ LOCAL SENSOR_IOCTL_FUNC_TAB_T s_GC032A_ioctl_func_tab =
     PNULL,//Set_GC032A_Contrast,
     PNULL,
     PNULL,
-    Set_GC032A_Preview_Mode,
+    Set_GC032A_F_Preview_Mode,
 
     PNULL,//Set_GC032A_Image_Effect,
     PNULL,//GC032A_Before_Snapshot,
@@ -1697,35 +1697,35 @@ LOCAL SENSOR_IOCTL_FUNC_TAB_T s_GC032A_ioctl_func_tab =
     PNULL,
 };
 #else
-LOCAL SENSOR_IOCTL_FUNC_TAB_T s_GC032A_ioctl_func_tab =
+LOCAL SENSOR_IOCTL_FUNC_TAB_T s_GC032A_F_ioctl_func_tab =
 {
     // Internal
     PNULL,
-    GC032A_Power_On,
+    GC032A_F_Power_On,
     PNULL,
-    GC032A_Identify,
+    GC032A_F_Identify,
     PNULL,
     PNULL,
 
     PNULL,
-    GC032A_GetPclkTab,
+    GC032A_F_GetPclkTab,
 
     // External
     PNULL,
-    GC032A_Hmirror_Enable, //Set_GC032A_Mirror,
-    GC032A_Vmirror_Enable, //Set_GC032A_Flip,
+    GC032A_F_Hmirror_Enable, //Set_GC032A_Mirror,
+    GC032A_F_Vmirror_Enable, //Set_GC032A_Flip,
 
-    Set_GC032A_Brightness,
-    Set_GC032A_Contrast,
+    Set_GC032A_F_Brightness,
+    Set_GC032A_F_Contrast,
     PNULL,
     PNULL,
-    Set_GC032A_Preview_Mode,
+    Set_GC032A_F_Preview_Mode,
 
-    Set_GC032A_Image_Effect,
-    GC032A_Before_Snapshot,
-    GC032A_After_Snapshot,
+    Set_GC032A_F_Image_Effect,
+    GC032A_F_Before_Snapshot,
+    GC032A_F_After_Snapshot,
 
-    GC032A_set_flash_enable,
+    GC032A_F_set_flash_enable,
     PNULL,
     PNULL,
     PNULL,
@@ -1734,21 +1734,21 @@ LOCAL SENSOR_IOCTL_FUNC_TAB_T s_GC032A_ioctl_func_tab =
     PNULL,
     PNULL,
     PNULL,
-    Set_GC032A_AWB,
+    Set_GC032A_F_AWB,
     PNULL,
     PNULL,
-    Set_GC032A_Ev,
+    Set_GC032A_F_Ev,
     PNULL,
     PNULL,
     PNULL,
     PNULL,
 
     PNULL,
-    Set_GC032A_Anti_Flicker,
-    Set_GC032A_Video_Mode,
+    Set_GC032A_F_Anti_Flicker,
+    Set_GC032A_F_Video_Mode,
     PNULL,
     PNULL,
-    GC032A_Test_Pattern_Enable,
+    GC032A_F_Test_Pattern_Enable,
 };
 #endif
 
@@ -1756,20 +1756,20 @@ LOCAL SENSOR_IOCTL_FUNC_TAB_T s_GC032A_ioctl_func_tab =
 /**---------------------------------------------------------------------------*
  **                         Global Variables                                  *
  **---------------------------------------------------------------------------*/
-PUBLIC SENSOR_INFO_T g_GC032A_yuv_info =
+PUBLIC SENSOR_INFO_T g_GC032A_F_yuv_info =
 {
-    GC032A_I2C_ADDR_W,              // salve i2c write address
-    GC032A_I2C_ADDR_R,              // salve i2c read address
+    GC032A_F_I2C_ADDR_W,              // salve i2c write address
+    GC032A_F_I2C_ADDR_R,              // salve i2c read address
 
     0,                              // bit0: 0: i2c register value is 8 bit, 1: i2c register value is 16 bit
                                     // bit2: 0: i2c register addr  is 8 bit, 1: i2c register addr  is 16 bit
                                     // other bit: reseved
 
-#if defined(GC032A_OUTPUT_MODE_PACKET_DDR_2BIT)
+#if defined(GC032A_F_OUTPUT_MODE_PACKET_DDR_2BIT)
     SENSOR_HW_SIGNAL_PCLK_P|\
     SENSOR_HW_SIGNAL_VSYNC_N|\
     SENSOR_HW_SIGNAL_HSYNC_N,
-#elif defined(GC032A_OUTPUT_MODE_CCIR656_2BIT)
+#elif defined(GC032A_F_OUTPUT_MODE_CCIR656_2BIT)
     SENSOR_HW_SIGNAL_PCLK_P|\
     SENSOR_HW_SIGNAL_VSYNC_N|\
     SENSOR_HW_SIGNAL_HSYNC_P,
@@ -1820,8 +1820,8 @@ PUBLIC SENSOR_INFO_T g_GC032A_yuv_info =
                                     // if set to SENSOR_IMAGE_FORMAT_MAX here, image format depent on SENSOR_REG_TAB_INFO_T
     SENSOR_IMAGE_PATTERN_YUV422_UYVY,    // pattern of input image form sensor;
 
-    s_GC032A_resolution_Tab_YUV,    // point to resolution table information structure
-    &s_GC032A_ioctl_func_tab,       // point to ioctl function table
+    s_GC032A_F_resolution_Tab_YUV,    // point to resolution table information structure
+    &s_GC032A_F_ioctl_func_tab,       // point to ioctl function table
 
     PNULL,                          // information and table about Rawrgb sensor
     PNULL,                          // extend information about sensor
@@ -1836,17 +1836,17 @@ PUBLIC SENSOR_INFO_T g_GC032A_yuv_info =
     0,                     // threshold start postion
     0,                     // threshold end postion
 
-#if defined(GC032A_OUTPUT_MODE_CCIR656_2BIT)
+#if defined(GC032A_F_OUTPUT_MODE_CCIR656_2BIT)
     SENSOR_OUTPUT_MODE_CCIR656_2BIT,
-#elif defined(GC032A_OUTPUT_MODE_PACKET_DDR_2BIT)
+#elif defined(GC032A_F_OUTPUT_MODE_PACKET_DDR_2BIT)
     SENSOR_OUTPUT_MODE_PACKET_DDR_2BIT,
 #else
     SENSOR_OUTPUT_MODE_CCIR656_2BIT,
 #endif
 
-#if defined(GC032A_OUTPUT_MODE_CCIR656_2BIT)
+#if defined(GC032A_F_OUTPUT_MODE_CCIR656_2BIT)
     SENSOR_OUTPUT_ENDIAN_BIG
-#elif defined(GC032A_OUTPUT_MODE_PACKET_DDR_2BIT)
+#elif defined(GC032A_F_OUTPUT_MODE_PACKET_DDR_2BIT)
     SENSOR_OUTPUT_ENDIAN_LITTLE
 #else
     SENSOR_OUTPUT_ENDIAN_BIG
@@ -1856,7 +1856,7 @@ PUBLIC SENSOR_INFO_T g_GC032A_yuv_info =
 /**---------------------------------------------------------------------------*
  **                             Function  Definitions
  **---------------------------------------------------------------------------*/
-LOCAL void GC032A_WriteReg( uint8  subaddr, uint8 data )
+LOCAL void GC032A_F_WriteReg( uint8  subaddr, uint8 data )
 {
 #ifndef    _USE_DSP_I2C_
     uint8 cmd[2];
@@ -1868,11 +1868,11 @@ LOCAL void GC032A_WriteReg( uint8  subaddr, uint8 data )
     DSENSOR_IICWrite((uint16)subaddr, (uint16)data);
 #endif
 
-    //SCI_TRACE_LOW("SENSOR: GC032A_WriteReg reg/value(%x,%x) !!", subaddr, data);
+    //SCI_TRACE_LOW("SENSOR: GC032A_F_WriteReg reg/value(%x,%x) !!", subaddr, data);
 
 }
 
-LOCAL uint8 GC032A_ReadReg( uint8  subaddr)
+LOCAL uint8 GC032A_F_ReadReg( uint8  subaddr)
 {
     uint8 value = 0;
 
@@ -1890,7 +1890,7 @@ LOCAL uint8 GC032A_ReadReg( uint8  subaddr)
 }
 
 
-LOCAL void GC032A_Write_Group_Regs( SENSOR_REG_T* sensor_reg_ptr )
+LOCAL void GC032A_F_Write_Group_Regs( SENSOR_REG_T* sensor_reg_ptr )
 {
     uint32 i;
 
@@ -1901,7 +1901,7 @@ LOCAL void GC032A_Write_Group_Regs( SENSOR_REG_T* sensor_reg_ptr )
 
 }
 
-LOCAL void GC032A_Delayms (uint32 ms)
+LOCAL void GC032A_F_Delayms (uint32 ms)
 {
     uint32 t1, t2;
 
@@ -1916,53 +1916,45 @@ LOCAL void GC032A_Delayms (uint32 ms)
 /**---------------------------------------------------------------------------*
  **                         Function Definitions                              *
  **---------------------------------------------------------------------------*/
-LOCAL uint32 GC032A_Power_On(uint32 power_on)
+LOCAL uint32 GC032A_F_Power_On(uint32 power_on)
 {
-    SENSOR_AVDD_VAL_E        dvdd_val=g_GC032A_yuv_info.dvdd_val;
-    SENSOR_AVDD_VAL_E        avdd_val=g_GC032A_yuv_info.avdd_val;
-    SENSOR_AVDD_VAL_E        iovdd_val=g_GC032A_yuv_info.iovdd_val;
-    BOOLEAN                 power_down=g_GC032A_yuv_info.power_down_level;
-    BOOLEAN                 reset_level=g_GC032A_yuv_info.reset_pulse_level;
-    uint32                 reset_width=g_GC032A_yuv_info.reset_pulse_width;
-    SCI_TRACE_LOW("GC032A_Power_On:%d",power_on);
+    SENSOR_AVDD_VAL_E        dvdd_val=g_GC032A_F_yuv_info.dvdd_val;
+    SENSOR_AVDD_VAL_E        avdd_val=g_GC032A_F_yuv_info.avdd_val;
+    SENSOR_AVDD_VAL_E        iovdd_val=g_GC032A_F_yuv_info.iovdd_val;
+    BOOLEAN                 power_down=g_GC032A_F_yuv_info.power_down_level;
+    BOOLEAN                 reset_level=g_GC032A_F_yuv_info.reset_pulse_level;
+    uint32                 reset_width=g_GC032A_F_yuv_info.reset_pulse_width;
+    SCI_TRACE_LOW("GC032A_F_Power_On:%d",power_on);
     if(SCI_TRUE==power_on)
     {
-		GPIO_SetFrontSensorPwdn(power_down);
-		GC032A_Delayms(1);
-		GPIO_SetSensorPwdn(!power_down);
-		Sensor_SetVoltage(dvdd_val, avdd_val, iovdd_val);
-		GC032A_Delayms(1);
-		Sensor_SetMCLK(SENSOR_DEFALUT_MCLK);
-
+        GPIO_SetSensorPwdn(power_down);
+        GC032A_F_Delayms(1);
+        GPIO_SetFrontSensorPwdn(!power_down);
+        Sensor_SetVoltage(dvdd_val, avdd_val, iovdd_val);
+        GC032A_F_Delayms(1);
+        Sensor_SetMCLK(SENSOR_DEFALUT_MCLK);
         //GPIO_SetSensorPwdn(!power_down);
 #if 0
          if(SENSOR_MAIN==Sensor_GetCurId())
         {
             GPIO_SetFrontSensorPwdn(power_down);
-            GC032A_Delayms(2);
+            GC032A_F_Delayms(2);
             GPIO_SetSensorPwdn(!power_down);
-            GC032A_Delayms(2);
+            GC032A_F_Delayms(2);
             GPIO_SetSensorPwdn(power_down);
-            GC032A_Delayms(2);
+            GC032A_F_Delayms(2);
             GPIO_SetSensorPwdn(!power_down);
         }
         else
 #endif
         {
-            /* GPIO_SetSensorPwdn(power_down);
-            GC032A_Delayms(2);
-            GPIO_SetFrontSensorPwdn(!power_down);
-            GC032A_Delayms(2);
+            //GPIO_SetSensorPwdn(power_down);
+           //GC032A_F_Delayms(2);
+           //GPIO_SetFrontSensorPwdn(!power_down);
+            GC032A_F_Delayms(1);
             GPIO_SetFrontSensorPwdn(power_down);
-            GC032A_Delayms(2);
-            GPIO_SetFrontSensorPwdn(!power_down);*/
-           //GPIO_SetFrontSensorPwdn(power_down);
-            //GC032A_Delayms(2);
-           // GPIO_SetSensorPwdn(!power_down);
-            GC032A_Delayms(1);
-            GPIO_SetSensorPwdn(power_down);
-            GC032A_Delayms(1);
-            GPIO_SetSensorPwdn(!power_down);
+            GC032A_F_Delayms(1);
+            GPIO_SetFrontSensorPwdn(!power_down);
         }
 //#endif
 
@@ -1977,16 +1969,16 @@ LOCAL uint32 GC032A_Power_On(uint32 power_on)
     }
     else
     {
-        GPIO_SetSensorPwdn(power_down);
-        GC032A_Delayms(1);
+        //GPIO_SetSensorPwdn(power_down);
+        GPIO_SetFrontSensorPwdn(power_down);
+        GC032A_F_Delayms(1);
         Sensor_SetMCLK(SENSOR_DISABLE_MCLK);
-        GC032A_Delayms(1);
+        GC032A_F_Delayms(1);
         Sensor_SetVoltage(SENSOR_AVDD_CLOSED, SENSOR_AVDD_CLOSED, SENSOR_AVDD_CLOSED);
-        GC032A_Delayms(1);
-        GPIO_SetSensorPwdn(!power_down);
-        GC032A_Delayms(1);
-        //GC032A_Delayms(2);
-       // GPIO_SetSensorPwdn(power_down);
+        GC032A_F_Delayms(1);
+        GPIO_SetFrontSensorPwdn(!power_down);
+        GC032A_F_Delayms(1);
+        //GPIO_SetFrontSensorPwdn(power_down);
     }
 
     //SCI_TRACE_LOW("set_GC032A_Power_On");
@@ -2003,12 +1995,12 @@ LOCAL uint32 GC032A_Power_On(uint32 power_on)
 // Note:       this function only to check whether sensor is work, not identify
 //              whitch it is!!
 /******************************************************************************/
-LOCAL uint32 GC032A_Identify(uint32 param)
+LOCAL uint32 GC032A_F_Identify(uint32 param)
 {
-#define GC032A_PID_VALUE    0xf0
-#define GC032A_PID_ADDR     0x23
-#define GC032A_VER_VALUE    0xf1
-#define GC032A_VER_ADDR     0x2a
+#define GC032A_F_PID_VALUE    0xf0
+#define GC032A_F_PID_ADDR     0x23
+#define GC032A_F_VER_VALUE    0xf1
+#define GC032A_F_VER_ADDR     0x2a
 
     uint32 i;
     uint32 nLoop;
@@ -2019,7 +2011,7 @@ LOCAL uint32 GC032A_Identify(uint32 param)
 
     //GC032A_Power_On(TRUE);
 
-    SCI_TRACE_LOW("GC032A_Identify");
+    SCI_TRACE_LOW("GC032A_F_Identify");
 
     //SCI_TRACE_ID(TRACE_TOOL_CONVERT,SENSOR_GC032A_725_112_2_18_0_30_46_781,(uint8*)"");
 
@@ -2027,43 +2019,43 @@ LOCAL uint32 GC032A_Identify(uint32 param)
     while(nLoop--)
     {
         OS_TickDelay(2);
-        ret = GC032A_ReadReg(reg[0]);
+        ret = GC032A_F_ReadReg(reg[0]);
         if( ret != value[0])
         {
             OS_TickDelay(2);
-            SCI_TRACE_LOW("GC032A_Identify 0 ERROR 0x%x!!!", ret);
-            ret = GC032A_ReadReg(reg[1]);
+            SCI_TRACE_LOW("GC032A_F_Identify 0 ERROR 0x%x!!!", ret);
+            ret = GC032A_F_ReadReg(reg[1]);
             if(ret != value[1])
             {
-                SCI_TRACE_LOW("GC032A_Identify 1 ERROR 0x%x!!!", ret);
+                SCI_TRACE_LOW("GC032A_F_Identify 1 ERROR 0x%x!!!", ret);
             }
             else
             {
                 err_cnt = 0;
-                SCI_TRACE_LOW("GC032A_Identify OK 0x%x!!!", ret);
+                SCI_TRACE_LOW("GC032A_F_Identify OK 0x%x!!!", ret);
                 break;
             }
         }
         else
         {
             err_cnt = 0;
-            SCI_TRACE_LOW("GC032A_Identify OK 0x%x!!!", ret);
+            SCI_TRACE_LOW("GC032A_F_Identify OK 0x%x!!!", ret);
             break;
         }
     }
 
     if (err_cnt != 0)
     {
-        SCI_TRACE_LOW("GC032A_Identify failed");
+        SCI_TRACE_LOW("GC032A_F_Identify failed");
         return -1;
     }
-    SCI_TRACE_LOW("GC032A_Identify success");
+    SCI_TRACE_LOW("GC032A_F_Identify success");
 
     return (uint32)SCI_SUCCESS;
 }
 
 
-LOCAL SENSOR_TRIM_T s_GC032A_Pclk_Tab[]=
+LOCAL SENSOR_TRIM_T s_GC032A_F_Pclk_Tab[]=
 {
     // COMMON INIT
     {0, 0, 0, 0,  6},
@@ -2081,13 +2073,13 @@ LOCAL SENSOR_TRIM_T s_GC032A_Pclk_Tab[]=
     {0, 0, 0, 0,  0}
 };
 
-LOCAL uint32 GC032A_GetPclkTab(uint32 param)
+LOCAL uint32 GC032A_F_GetPclkTab(uint32 param)
 {
-    return (uint32)s_GC032A_Pclk_Tab;
+    return (uint32)s_GC032A_F_Pclk_Tab;
 }
 
 
-__align(4) const SENSOR_REG_T GC032A_brightness_tab[][2]=
+__align(4) const SENSOR_REG_T GC032A_F_brightness_tab[][2]=
 {
     {{0xd5, 0xd0},    {0xff,0xff}},
     {{0xd5, 0xe0},    {0xff,0xff}},
@@ -2098,23 +2090,23 @@ __align(4) const SENSOR_REG_T GC032A_brightness_tab[][2]=
     {{0xd5, 0x40},    {0xff,0xff}},
 };
 
-LOCAL uint32 Set_GC032A_Brightness(uint32 level)
+LOCAL uint32 Set_GC032A_F_Brightness(uint32 level)
 {
 
-    SENSOR_REG_T* sensor_reg_ptr = (SENSOR_REG_T*)GC032A_brightness_tab[level];
+    SENSOR_REG_T* sensor_reg_ptr = (SENSOR_REG_T*)GC032A_F_brightness_tab[level];
 
     SCI_ASSERT(PNULL != sensor_reg_ptr);
 
-    GC032A_Write_Group_Regs(sensor_reg_ptr);
+    GC032A_F_Write_Group_Regs(sensor_reg_ptr);
 
-    SCI_TRACE_LOW("Set_GC032A_Brightness:level=%d", level);
+    SCI_TRACE_LOW("Set_GC032A_F_Brightness:level=%d", level);
 
     return 0;
 }
 
 
 
-__align(4) const SENSOR_REG_T GC032A_contrast_tab[][2]=
+__align(4) const SENSOR_REG_T GC032A_F_contrast_tab[][2]=
 {
     {{0xd3,0x26}, {0xff,0xff}},
     {{0xd3,0x2c}, {0xff,0xff}},
@@ -2125,24 +2117,24 @@ __align(4) const SENSOR_REG_T GC032A_contrast_tab[][2]=
     {{0xd3,0x50}, {0xff,0xff}},
 };
 
-LOCAL uint32 Set_GC032A_Contrast(uint32 level)
+LOCAL uint32 Set_GC032A_F_Contrast(uint32 level)
 {
 
-    SENSOR_REG_T* sensor_reg_ptr = (SENSOR_REG_T*)GC032A_contrast_tab[level];
+    SENSOR_REG_T* sensor_reg_ptr = (SENSOR_REG_T*)GC032A_F_contrast_tab[level];
 
     SCI_ASSERT(PNULL != sensor_reg_ptr);
 
-    GC032A_Write_Group_Regs(sensor_reg_ptr);
+    GC032A_F_Write_Group_Regs(sensor_reg_ptr);
 
-    SCI_TRACE_LOW("Set_GC032A_Contrast:level=%d", level);
+    SCI_TRACE_LOW("Set_GC032A_F_Contrast:level=%d", level);
 
     return 0;
 }
 
 
-__align(4) const SENSOR_REG_T GC032A_image_effect_tab[][5]=
+__align(4) const SENSOR_REG_T GC032A_F_image_effect_tab[][5]=
 {
-#if defined(GC032A_OUTPUT_MODE_QVGA)
+#if defined(GC032A_F_OUTPUT_MODE_QVGA)
     // effect normal
     {{0xfe,0x00}, {0x43,0x50}, {0xda,0x00}, {0xdb,0x00}, {0xff,0xff}},
     //effect BLACKWHITE
@@ -2179,23 +2171,23 @@ __align(4) const SENSOR_REG_T GC032A_image_effect_tab[][5]=
 #endif
 };
 
-LOCAL uint32 Set_GC032A_Image_Effect(uint32 effect_type)
+LOCAL uint32 Set_GC032A_F_Image_Effect(uint32 effect_type)
 {
 
-    SENSOR_REG_T* sensor_reg_ptr = (SENSOR_REG_T*)GC032A_image_effect_tab[effect_type];
+    SENSOR_REG_T* sensor_reg_ptr = (SENSOR_REG_T*)GC032A_F_image_effect_tab[effect_type];
 
     SCI_ASSERT(PNULL != sensor_reg_ptr);
 
-    GC032A_Write_Group_Regs(sensor_reg_ptr);
+    GC032A_F_Write_Group_Regs(sensor_reg_ptr);
 
-    SCI_TRACE_LOW("Sensor:set_GC032A_image_effect:effect_type=%d", effect_type);
+    SCI_TRACE_LOW("Sensor:set_GC032A_F_image_effect:effect_type=%d", effect_type);
 
     return 0;
 }
 
 
 
-__align(4) const SENSOR_REG_T GC032A_ev_tab[][4]=
+__align(4) const SENSOR_REG_T GC032A_F_ev_tab[][4]=
 {
     {{0xfe, 0x01}, {0x13, 0x1a}, {0xfe, 0x00}, {0xff, 0xff}},
     {{0xfe, 0x01}, {0x13, 0x2a}, {0xfe, 0x00}, {0xff, 0xff}},
@@ -2206,16 +2198,16 @@ __align(4) const SENSOR_REG_T GC032A_ev_tab[][4]=
     {{0xfe, 0x01}, {0x13, 0x80}, {0xfe, 0x00}, {0xff, 0xff}},
 };
 
-LOCAL uint32 Set_GC032A_Ev(uint32 level)
+LOCAL uint32 Set_GC032A_F_Ev(uint32 level)
 {
 
-    SENSOR_REG_T* sensor_reg_ptr = (SENSOR_REG_T*)GC032A_ev_tab[level];
+    SENSOR_REG_T* sensor_reg_ptr = (SENSOR_REG_T*)GC032A_F_ev_tab[level];
 
-    SCI_TRACE_LOW("Set_GC032A_Ev:level=%d", level);
+    SCI_TRACE_LOW("Set_GC032A_F_Ev:level=%d", level);
     SCI_ASSERT(PNULL != sensor_reg_ptr);
     SCI_ASSERT(level < 7);
 
-    GC032A_Write_Group_Regs(sensor_reg_ptr );
+    GC032A_F_Write_Group_Regs(sensor_reg_ptr );
 
     return 0;
 }
@@ -2227,159 +2219,159 @@ LOCAL uint32 Set_GC032A_Ev(uint32 level)
 // Note:
 //
 /******************************************************************************/
-LOCAL uint32 Set_GC032A_Anti_Flicker(uint32 mode)
+LOCAL uint32 Set_GC032A_F_Anti_Flicker(uint32 mode)
 {
-    SCI_TRACE_LOW("Set_GC032A_Anti_Flicker:mode=%d", mode);
+    SCI_TRACE_LOW("Set_GC032A_F_Anti_Flicker:mode=%d", mode);
     switch(mode)
     {
     case DCAMERA_FLICKER_50HZ:
-        bl_GC_50Hz_GC032A = TRUE;
+        bl_GC_50Hz_GC032A_F = TRUE;
 
-#if defined(GC032A_OUTPUT_MODE_PACKET_DDR_2BIT)
+#if defined(GC032A_F_OUTPUT_MODE_PACKET_DDR_2BIT)
 
-        GC032A_WriteReg(0xfe,0x00);
-        GC032A_WriteReg(0x05,0x01);
-        GC032A_WriteReg(0x06,0xad); // ad
-        GC032A_WriteReg(0x07,0x00);
-        GC032A_WriteReg(0x08,0x10);
+        GC032A_F_WriteReg(0xfe,0x00);
+        GC032A_F_WriteReg(0x05,0x01);
+        GC032A_F_WriteReg(0x06,0xad); // ad
+        GC032A_F_WriteReg(0x07,0x00);
+        GC032A_F_WriteReg(0x08,0x10);
 
-        GC032A_WriteReg(0xfe,0x01);
-        GC032A_WriteReg(0x25,0x00);//step
-        GC032A_WriteReg(0x26,0x4d);
+        GC032A_F_WriteReg(0xfe,0x01);
+        GC032A_F_WriteReg(0x25,0x00);//step
+        GC032A_F_WriteReg(0x26,0x4d);
 
-        GC032A_WriteReg(0x27,0x01);
-        GC032A_WriteReg(0x28,0xce);//16.6fps
-        GC032A_WriteReg(0x29,0x03);
-        GC032A_WriteReg(0x2a,0x02);//12.5fps
-        GC032A_WriteReg(0x2b,0x03);
-        GC032A_WriteReg(0x2c,0x9c);//10fps
-        GC032A_WriteReg(0x2d,0x04);
-        GC032A_WriteReg(0x2e,0xd0);//8.33fps
-        GC032A_WriteReg(0x2f,0x05);
-        GC032A_WriteReg(0x30,0x94);//5.88fps
-        GC032A_WriteReg(0x31,0x07);
-        GC032A_WriteReg(0x32,0x8c);//4.34fps
-        GC032A_WriteReg(0x33,0x08);
-        GC032A_WriteReg(0x34,0x34);//3.99fps
-        GC032A_WriteReg(0x3c,0x30);
-        GC032A_WriteReg(0xfe,0x00);
+        GC032A_F_WriteReg(0x27,0x01);
+        GC032A_F_WriteReg(0x28,0xce);//16.6fps
+        GC032A_F_WriteReg(0x29,0x03);
+        GC032A_F_WriteReg(0x2a,0x02);//12.5fps
+        GC032A_F_WriteReg(0x2b,0x03);
+        GC032A_F_WriteReg(0x2c,0x9c);//10fps
+        GC032A_F_WriteReg(0x2d,0x04);
+        GC032A_F_WriteReg(0x2e,0xd0);//8.33fps
+        GC032A_F_WriteReg(0x2f,0x05);
+        GC032A_F_WriteReg(0x30,0x94);//5.88fps
+        GC032A_F_WriteReg(0x31,0x07);
+        GC032A_F_WriteReg(0x32,0x8c);//4.34fps
+        GC032A_F_WriteReg(0x33,0x08);
+        GC032A_F_WriteReg(0x34,0x34);//3.99fps
+        GC032A_F_WriteReg(0x3c,0x30);
+        GC032A_F_WriteReg(0xfe,0x00);
 
-#elif defined(GC032A_OUTPUT_MODE_CCIR656_2BIT)
+#elif defined(GC032A_F_OUTPUT_MODE_CCIR656_2BIT)
 
-        GC032A_WriteReg(0xfe,0x00);
-        GC032A_WriteReg(0x05,0x01);//hb
-        GC032A_WriteReg(0x06,0xe4);
-        GC032A_WriteReg(0x07,0x00);//vb
-        GC032A_WriteReg(0x08,0x08);
+        GC032A_F_WriteReg(0xfe,0x00);
+        GC032A_F_WriteReg(0x05,0x01);//hb
+        GC032A_F_WriteReg(0x06,0xe4);
+        GC032A_F_WriteReg(0x07,0x00);//vb
+        GC032A_F_WriteReg(0x08,0x08);
 
-        GC032A_WriteReg(0xfe,0x01);
-        GC032A_WriteReg(0x25,0x00);//step
-        GC032A_WriteReg(0x26,0x24);
+        GC032A_F_WriteReg(0xfe,0x01);
+        GC032A_F_WriteReg(0x25,0x00);//step
+        GC032A_F_WriteReg(0x26,0x24);
 
-        GC032A_WriteReg(0x27,0x01);//7.1fps
-        GC032A_WriteReg(0x28,0xb0);
-        GC032A_WriteReg(0x29,0x01);//7.1fps
-        GC032A_WriteReg(0x2a,0xb0);
-        GC032A_WriteReg(0x2b,0x01);//7.1fps
-        GC032A_WriteReg(0x2c,0xb0);
-        GC032A_WriteReg(0x2d,0x01);//7.1fps
-        GC032A_WriteReg(0x2e,0xb0);
-        GC032A_WriteReg(0x2f,0x02);//6.24fps
-        GC032A_WriteReg(0x30,0x40);
-        GC032A_WriteReg(0x31,0x02);//4.99fps
-        GC032A_WriteReg(0x32,0xd0);
-        GC032A_WriteReg(0x33,0x03);//4.16fps
-        GC032A_WriteReg(0x34,0x60);
-        GC032A_WriteReg(0x3c,0x30);
-        GC032A_WriteReg(0xfe,0x00);
+        GC032A_F_WriteReg(0x27,0x01);//7.1fps
+        GC032A_F_WriteReg(0x28,0xb0);
+        GC032A_F_WriteReg(0x29,0x01);//7.1fps
+        GC032A_F_WriteReg(0x2a,0xb0);
+        GC032A_F_WriteReg(0x2b,0x01);//7.1fps
+        GC032A_F_WriteReg(0x2c,0xb0);
+        GC032A_F_WriteReg(0x2d,0x01);//7.1fps
+        GC032A_F_WriteReg(0x2e,0xb0);
+        GC032A_F_WriteReg(0x2f,0x02);//6.24fps
+        GC032A_F_WriteReg(0x30,0x40);
+        GC032A_F_WriteReg(0x31,0x02);//4.99fps
+        GC032A_F_WriteReg(0x32,0xd0);
+        GC032A_F_WriteReg(0x33,0x03);//4.16fps
+        GC032A_F_WriteReg(0x34,0x60);
+        GC032A_F_WriteReg(0x3c,0x30);
+        GC032A_F_WriteReg(0xfe,0x00);
 #endif
     break;
     case DCAMERA_FLICKER_60HZ:
 
-        bl_GC_50Hz_GC032A = FALSE;
-#if defined(GC032A_OUTPUT_MODE_PACKET_DDR_2BIT)
+        bl_GC_50Hz_GC032A_F = FALSE;
+#if defined(GC032A_F_OUTPUT_MODE_PACKET_DDR_2BIT)
 
-        /*GC032A_WriteReg(0xfe,0x00);
-        GC032A_WriteReg(0x05,0x01);
-        GC032A_WriteReg(0x06,0xb5);
-        GC032A_WriteReg(0x07,0x00);
-        GC032A_WriteReg(0x08,0x10);
+        /*GC032A_F_WriteReg(0xfe,0x00);
+        GC032A_F_WriteReg(0x05,0x01);
+        GC032A_F_WriteReg(0x06,0xb5);
+        GC032A_F_WriteReg(0x07,0x00);
+        GC032A_F_WriteReg(0x08,0x10);
 
-        GC032A_WriteReg(0xfe,0x01);
-        GC032A_WriteReg(0x25,0x00);
-        GC032A_WriteReg(0x26,0x7f);
+        GC032A_F_WriteReg(0xfe,0x01);
+        GC032A_F_WriteReg(0x25,0x00);
+        GC032A_F_WriteReg(0x26,0x7f);
 
-        GC032A_WriteReg(0x27,0x01);//16.5fps
-        GC032A_WriteReg(0x28,0xfc);
-        GC032A_WriteReg(0x29,0x03);//13.3fps
-        GC032A_WriteReg(0x2a,0x79);
-        GC032A_WriteReg(0x2b,0x07);//10.9fps
-        GC032A_WriteReg(0x2c,0x71);
-        GC032A_WriteReg(0x2d,0x09);//8.56fps
-        GC032A_WriteReg(0x2e,0x6d);
-        GC032A_WriteReg(0x2f,0x04);//7.05fps
-        GC032A_WriteReg(0x30,0xa6);
-        GC032A_WriteReg(0x31,0x06);//5.45fps
-        GC032A_WriteReg(0x32,0x04);
-        GC032A_WriteReg(0x33,0x07);//4.61fps
-        GC032A_WriteReg(0x34,0x1c);
-        GC032A_WriteReg(0x3c,0x30);
-        GC032A_WriteReg(0xfe,0x00);    */
+        GC032A_F_WriteReg(0x27,0x01);//16.5fps
+        GC032A_F_WriteReg(0x28,0xfc);
+        GC032A_F_WriteReg(0x29,0x03);//13.3fps
+        GC032A_F_WriteReg(0x2a,0x79);
+        GC032A_F_WriteReg(0x2b,0x07);//10.9fps
+        GC032A_F_WriteReg(0x2c,0x71);
+        GC032A_F_WriteReg(0x2d,0x09);//8.56fps
+        GC032A_F_WriteReg(0x2e,0x6d);
+        GC032A_F_WriteReg(0x2f,0x04);//7.05fps
+        GC032A_F_WriteReg(0x30,0xa6);
+        GC032A_F_WriteReg(0x31,0x06);//5.45fps
+        GC032A_F_WriteReg(0x32,0x04);
+        GC032A_F_WriteReg(0x33,0x07);//4.61fps
+        GC032A_F_WriteReg(0x34,0x1c);
+        GC032A_F_WriteReg(0x3c,0x30);
+        GC032A_F_WriteReg(0xfe,0x00);    */
 
-        GC032A_WriteReg(0xfe,0x00);
-        GC032A_WriteReg(0x05,0x01);
-        GC032A_WriteReg(0x06,0xaf);
-        GC032A_WriteReg(0x07,0x00);
-        GC032A_WriteReg(0x08,0x10);
+        GC032A_F_WriteReg(0xfe,0x00);
+        GC032A_F_WriteReg(0x05,0x01);
+        GC032A_F_WriteReg(0x06,0xaf);
+        GC032A_F_WriteReg(0x07,0x00);
+        GC032A_F_WriteReg(0x08,0x10);
 
-        GC032A_WriteReg(0xfe,0x01);
-        GC032A_WriteReg(0x25,0x00);
-        GC032A_WriteReg(0x26,0x40);
+        GC032A_F_WriteReg(0xfe,0x01);
+        GC032A_F_WriteReg(0x25,0x00);
+        GC032A_F_WriteReg(0x26,0x40);
 
-        GC032A_WriteReg(0x27,0x01);//16.5fps
-        GC032A_WriteReg(0x28,0xc0);
-        GC032A_WriteReg(0x29,0x03);//13.3fps
-        GC032A_WriteReg(0x2a,0x00);
-        GC032A_WriteReg(0x2b,0x03);//10.9fps
-        GC032A_WriteReg(0x2c,0xc0);
-        GC032A_WriteReg(0x2d,0x05);//8.56fps
-        GC032A_WriteReg(0x2e,0x00);
-        GC032A_WriteReg(0x2f,0x04);//7.05fps
-        GC032A_WriteReg(0x30,0xa6);
-        GC032A_WriteReg(0x31,0x06);//5.45fps
-        GC032A_WriteReg(0x32,0x04);
-        GC032A_WriteReg(0x33,0x07);//4.61fps
-        GC032A_WriteReg(0x34,0x1c);
-        GC032A_WriteReg(0x3c,0x30);
-        GC032A_WriteReg(0xfe,0x00);
+        GC032A_F_WriteReg(0x27,0x01);//16.5fps
+        GC032A_F_WriteReg(0x28,0xc0);
+        GC032A_F_WriteReg(0x29,0x03);//13.3fps
+        GC032A_F_WriteReg(0x2a,0x00);
+        GC032A_F_WriteReg(0x2b,0x03);//10.9fps
+        GC032A_F_WriteReg(0x2c,0xc0);
+        GC032A_F_WriteReg(0x2d,0x05);//8.56fps
+        GC032A_F_WriteReg(0x2e,0x00);
+        GC032A_F_WriteReg(0x2f,0x04);//7.05fps
+        GC032A_F_WriteReg(0x30,0xa6);
+        GC032A_F_WriteReg(0x31,0x06);//5.45fps
+        GC032A_F_WriteReg(0x32,0x04);
+        GC032A_F_WriteReg(0x33,0x07);//4.61fps
+        GC032A_F_WriteReg(0x34,0x1c);
+        GC032A_F_WriteReg(0x3c,0x30);
+        GC032A_F_WriteReg(0xfe,0x00);
 
-#elif defined(GC032A_OUTPUT_MODE_CCIR656_2BIT)
-        GC032A_WriteReg(0xfe,0x00);
-        GC032A_WriteReg(0x05,0x01);
-        GC032A_WriteReg(0x06,0xe2);
-        GC032A_WriteReg(0x07,0x00);
-        GC032A_WriteReg(0x08,0x0e);
+#elif defined(GC032A_F_OUTPUT_MODE_CCIR656_2BIT)
+        GC032A_F_WriteReg(0xfe,0x00);
+        GC032A_F_WriteReg(0x05,0x01);
+        GC032A_F_WriteReg(0x06,0xe2);
+        GC032A_F_WriteReg(0x07,0x00);
+        GC032A_F_WriteReg(0x08,0x0e);
 
-        GC032A_WriteReg(0xfe,0x01);
-        GC032A_WriteReg(0x25,0x00);
-        GC032A_WriteReg(0x26,0x1e);
+        GC032A_F_WriteReg(0xfe,0x01);
+        GC032A_F_WriteReg(0x25,0x00);
+        GC032A_F_WriteReg(0x26,0x1e);
 
-        GC032A_WriteReg(0x27,0x01);//7fps
-        GC032A_WriteReg(0x28,0x68);
-        GC032A_WriteReg(0x29,0x01);//7fps
-        GC032A_WriteReg(0x2a,0x68);
-        GC032A_WriteReg(0x2b,0x01);//7fps
-        GC032A_WriteReg(0x2c,0x68);
-        GC032A_WriteReg(0x2d,0x01);//7fps
-        GC032A_WriteReg(0x2e,0x68);
-        GC032A_WriteReg(0x2f,0x02);//5fps
-        GC032A_WriteReg(0x30,0xd0);
-        GC032A_WriteReg(0x31,0x03);//4.45fps
-        GC032A_WriteReg(0x32,0x2a);
-        GC032A_WriteReg(0x33,0x03);//4fps
-        GC032A_WriteReg(0x34,0x84);
-        GC032A_WriteReg(0x3c,0x30);
-        GC032A_WriteReg(0xfe,0x00);
+        GC032A_F_WriteReg(0x27,0x01);//7fps
+        GC032A_F_WriteReg(0x28,0x68);
+        GC032A_F_WriteReg(0x29,0x01);//7fps
+        GC032A_F_WriteReg(0x2a,0x68);
+        GC032A_F_WriteReg(0x2b,0x01);//7fps
+        GC032A_F_WriteReg(0x2c,0x68);
+        GC032A_F_WriteReg(0x2d,0x01);//7fps
+        GC032A_F_WriteReg(0x2e,0x68);
+        GC032A_F_WriteReg(0x2f,0x02);//5fps
+        GC032A_F_WriteReg(0x30,0xd0);
+        GC032A_F_WriteReg(0x31,0x03);//4.45fps
+        GC032A_F_WriteReg(0x32,0x2a);
+        GC032A_F_WriteReg(0x33,0x03);//4fps
+        GC032A_F_WriteReg(0x34,0x84);
+        GC032A_F_WriteReg(0x3c,0x30);
+        GC032A_F_WriteReg(0xfe,0x00);
 #endif
     break;
 
@@ -2392,7 +2384,7 @@ LOCAL uint32 Set_GC032A_Anti_Flicker(uint32 mode)
     return 0;
 }
 
-__align(4) const SENSOR_REG_T GC032a_preview_mode_exp_level_tab[][4]=
+__align(4) const SENSOR_REG_T GC032a_F_preview_mode_exp_level_tab[][4]=
 {
     // normal mode
     {{0xfe,0x01},{0x3c,0x00},{0xfe,0x00},{0xff,0xff}},
@@ -2404,33 +2396,33 @@ __align(4) const SENSOR_REG_T GC032a_preview_mode_exp_level_tab[][4]=
 };
 
 
-LOCAL uint32 Set_GC032A_Preview_Mode(uint32 preview_mode)
+LOCAL uint32 Set_GC032A_F_Preview_Mode(uint32 preview_mode)
 {
     int i = 0;
     SENSOR_REG_T* sensor_reg_ptr = PNULL;
-    SCI_TRACE_LOW("Set_GC032A_Preview_Mode=%d", preview_mode);
+    SCI_TRACE_LOW("Set_GC032A_F_Preview_Mode=%d", preview_mode);
 
-    sensor_reg_ptr = (SENSOR_REG_T*)GC032a_preview_mode_exp_level_tab[preview_mode];
+    sensor_reg_ptr = (SENSOR_REG_T*)GC032a_F_preview_mode_exp_level_tab[preview_mode];
 
     if(preview_mode > DCAMERA_MODE_MAX ||PNULL == sensor_reg_ptr)
     {
-        SCI_TRACE_LOW("Set_GC032A_Preview_Mode error");
+        SCI_TRACE_LOW("Set_GC032A_F_Preview_Mode error");
         return SCI_ERROR;
     }
 
     for(i = 0; (0xFF != sensor_reg_ptr[i].reg_addr) || (0xFF != sensor_reg_ptr[i].reg_value); i++)
     {
-        GC032A_WriteReg(sensor_reg_ptr[i].reg_addr, sensor_reg_ptr[i].reg_value);
+        GC032A_F_WriteReg(sensor_reg_ptr[i].reg_addr, sensor_reg_ptr[i].reg_value);
     }
 
-#ifdef GC032A_SERIAL_LOAD_FROM_T_FLASH
-     Load_GC032A_RegTab_From_T_Flash();
+#ifdef GC032A_F_SERIAL_LOAD_FROM_T_FLASH
+     Load_GC032A_F_RegTab_From_T_Flash();
 #endif
 
     return 0;
 }
 
-__align(4) const SENSOR_REG_T GC032a_video_mode_nor_tab[][4]=
+__align(4) const SENSOR_REG_T GC032a_F_video_mode_nor_tab[][4]=
 {
     // normal mode
     {{0xff, 0xff}},
@@ -2442,7 +2434,7 @@ __align(4) const SENSOR_REG_T GC032a_video_mode_nor_tab[][4]=
 
 
 
-__align(4) const SENSOR_REG_T GC032A_awb_tab[][5]=
+__align(4) const SENSOR_REG_T GC032A_F_awb_tab[][5]=
 {
     //AUTO
     {{0x77, 0x57},{0x78, 0x4d},{0x79, 0x45},{0x42, 0xcf},{0xff, 0xff}},
@@ -2460,22 +2452,22 @@ __align(4) const SENSOR_REG_T GC032A_awb_tab[][5]=
     {{0x42, 0xcd},{0x77, 0x5a},{0x78, 0x42},{0x79, 0x40},{0xff, 0xff}},
 };
 
-LOCAL uint32 Set_GC032A_AWB(uint32 mode)
+LOCAL uint32 Set_GC032A_F_AWB(uint32 mode)
 {
 
-    SENSOR_REG_T* sensor_reg_ptr = (SENSOR_REG_T*)GC032A_awb_tab[mode];
+    SENSOR_REG_T* sensor_reg_ptr = (SENSOR_REG_T*)GC032A_F_awb_tab[mode];
 
     SCI_ASSERT(mode < 7);
     SCI_ASSERT(PNULL != sensor_reg_ptr);
 
-    GC032A_Write_Group_Regs(sensor_reg_ptr);
+    GC032A_F_Write_Group_Regs(sensor_reg_ptr);
 
     SCI_TRACE_LOW("Set_GC032A_AWB:mode=%d", mode);
 
     return 0;
 }
 
-LOCAL uint32 GC032A_AE_AWB_Enable(uint32 ae_enable, uint32 awb_enable)
+LOCAL uint32 GC032A_F_AE_AWB_Enable(uint32 ae_enable, uint32 awb_enable)
 {
     uint16 ae_value = 0 , awb_value=0;
 
@@ -2497,25 +2489,25 @@ LOCAL uint32 GC032A_AE_AWB_Enable(uint32 ae_enable, uint32 awb_enable)
         awb_value &= 0xfd;
     }
 
-    GC032A_WriteReg(0xa4, ae_value);
-    GC032A_WriteReg(0x42, awb_value);
+    GC032A_F_WriteReg(0xa4, ae_value);
+    GC032A_F_WriteReg(0x42, awb_value);
 
-    SCI_TRACE_LOW("GC032A_AE_AWB_Enable:ae_enable=%d,awb_enable=%d", ae_enable ,awb_enable);
+    SCI_TRACE_LOW("GC032A_F_AE_AWB_Enable:ae_enable=%d,awb_enable=%d", ae_enable ,awb_enable);
     return 0;
 }
 
-LOCAL uint32 GC032A_Before_Snapshot(uint32 para)
+LOCAL uint32 GC032A_F_Before_Snapshot(uint32 para)
 {
     uint8 reg_val = 0;
     uint16 exposal_time=0x00;
 
-    Set_GC032A_Image_Res();
-    GC032A_AE_AWB_Enable(0x00,0x00);   // close aec awb
+    Set_GC032A_F_Image_Res();
+    GC032A_F_AE_AWB_Enable(0x00,0x00);   // close aec awb
 
 
-    reg_val = GC032A_ReadReg(0x04);
+    reg_val = GC032A_F_ReadReg(0x04);
     exposal_time=reg_val&0x00ff;
-    reg_val = GC032A_ReadReg(0x03);
+    reg_val = GC032A_F_ReadReg(0x03);
     exposal_time|=((reg_val&0x00ff)<<0x08);
 
     if(exposal_time<1)
@@ -2524,25 +2516,25 @@ LOCAL uint32 GC032A_Before_Snapshot(uint32 para)
     }
 
     reg_val=exposal_time&0x00ff;
-    GC032A_WriteReg(0x04, reg_val);
+    GC032A_F_WriteReg(0x04, reg_val);
     reg_val=(exposal_time&0xff00)>>8;
-    GC032A_WriteReg(0x03, reg_val);
+    GC032A_F_WriteReg(0x03, reg_val);
 
-    GC032A_Delayms(100);
+    GC032A_F_Delayms(100);
 
-    SCI_TRACE_LOW("SENSOR_GC032A:Before Snapshot");
+    SCI_TRACE_LOW("SENSOR_GC032A_F:Before Snapshot");
 
     return 0;
 }
 
-LOCAL uint32 GC032A_After_Snapshot(uint32 para)
+LOCAL uint32 GC032A_F_After_Snapshot(uint32 para)
 {
-    Set_GC032A_Image_Res();
-    GC032A_AE_AWB_Enable(0x01,0x01);   // Open aec awb
+    Set_GC032A_F_Image_Res();
+    GC032A_F_AE_AWB_Enable(0x01,0x01);   // Open aec awb
 
-    GC032A_Delayms(100);
+    GC032A_F_Delayms(100);
 
-    SCI_TRACE_LOW("SENSOR_GC032A:After Snapshot");
+    SCI_TRACE_LOW("SENSOR_GC032A_F:After Snapshot");
 
     return 0;
 }
@@ -2555,98 +2547,98 @@ LOCAL uint32 GC032A_After_Snapshot(uint32 para)
 // Note:
 //
 /******************************************************************************/
-LOCAL uint32 Set_GC032A_Video_Mode(uint32 mode)
+LOCAL uint32 Set_GC032A_F_Video_Mode(uint32 mode)
 {
     int i = 0;
     SENSOR_REG_T* sensor_reg_ptr = PNULL;
-    SCI_TRACE_LOW("Set_GC032A_Video_Mode=%d",mode);
+    SCI_TRACE_LOW("Set_GC032A_F_Video_Mode=%d",mode);
 
-    sensor_reg_ptr = (SENSOR_REG_T*)GC032a_video_mode_nor_tab[mode];
+    sensor_reg_ptr = (SENSOR_REG_T*)GC032a_F_video_mode_nor_tab[mode];
 
     if(mode > DCAMERA_MODE_MAX ||PNULL == sensor_reg_ptr)
     {
-        SCI_TRACE_LOW("Set_GC032A_Video_Mode error");
+        SCI_TRACE_LOW("Set_GC032A_F_Video_Mode error");
         return SCI_ERROR;
     }
 
     for(i = 0; (0xFF != sensor_reg_ptr[i].reg_addr) || (0xFF != sensor_reg_ptr[i].reg_value); i++)
     {
-        GC032A_WriteReg(sensor_reg_ptr[i].reg_addr, sensor_reg_ptr[i].reg_value);
+        GC032A_F_WriteReg(sensor_reg_ptr[i].reg_addr, sensor_reg_ptr[i].reg_value);
     }
 
     return 0;
 }
 
 
-LOCAL uint32 GC032A_Hmirror_Enable(uint32 hmirror_enable)
+LOCAL uint32 GC032A_F_Hmirror_Enable(uint32 hmirror_enable)
 {
-    SCI_TRACE_LOW("GC032A:cur id=%d,hmirror_enable=%d", Sensor_GetCurId(), hmirror_enable);
+    SCI_TRACE_LOW("GC032A_F:cur id=%d,hmirror_enable=%d", Sensor_GetCurId(), hmirror_enable);
     if(hmirror_enable)
     {
-        mirror_flip &= ~GC032A_MIRROR;
+        mirror_flip &= ~GC032A_F_MIRROR;
     }
     else
     {
-        mirror_flip |= GC032A_MIRROR;
+        mirror_flip |= GC032A_F_MIRROR;
     }
     if(SENSOR_MAIN==Sensor_GetCurId())
     {
-        GC032A_WriteReg(0x17,mirror_flip);
+        GC032A_F_WriteReg(0x17,mirror_flip);
     }
     else
     {
-        SCI_TRACE_LOW("GC032A:cur id is not SENSOR_MAIN");
+        SCI_TRACE_LOW("GC032A_F:cur id is not SENSOR_MAIN");
         return SCI_ERROR;
     }
-    SCI_TRACE_LOW("GC032A_Hmirror_Enable mirror_flip=0x%x", mirror_flip);
+    SCI_TRACE_LOW("GC032A_F_Hmirror_Enable mirror_flip=0x%x", mirror_flip);
 
     return SCI_SUCCESS;
 }
 
-LOCAL uint32 GC032A_Vmirror_Enable(uint32 vmirror_enable)
+LOCAL uint32 GC032A_F_Vmirror_Enable(uint32 vmirror_enable)
 {
-    SCI_TRACE_LOW("GC032A:cur id=%d vmirror_enable=%d", Sensor_GetCurId(), vmirror_enable);
+    SCI_TRACE_LOW("GC032A_F:cur id=%d vmirror_enable=%d", Sensor_GetCurId(), vmirror_enable);
     if(vmirror_enable)
     {
-        mirror_flip |= GC032A_FLIP;
+        mirror_flip |= GC032A_F_FLIP;
     }
     else
     {
-        mirror_flip &= ~GC032A_FLIP;
+        mirror_flip &= ~GC032A_F_FLIP;
     }
 
     if(SENSOR_MAIN==Sensor_GetCurId())
     {
-        GC032A_WriteReg(0x17, mirror_flip);
+        GC032A_F_WriteReg(0x17, mirror_flip);
     }
     else
     {
         return SCI_ERROR;
-        SCI_TRACE_LOW("GC032A:cur id is not SENSOR_MAIN");
+        SCI_TRACE_LOW("GC032A_F:cur id is not SENSOR_MAIN");
     }
-    SCI_TRACE_LOW("GC032A_Vmirror_Enable mirror_flip=0x%x", mirror_flip);
+    SCI_TRACE_LOW("GC032A_F_Vmirror_Enable mirror_flip=0x%x", mirror_flip);
 
     return SCI_SUCCESS;
 }
 
-LOCAL uint32 GC032A_Test_Pattern_Enable(uint32 test_enable)
+LOCAL uint32 GC032A_F_Test_Pattern_Enable(uint32 test_enable)
 {
-    SCI_TRACE_LOW("GC032A_Test_Pattern_Enable %d", test_enable);
+    SCI_TRACE_LOW("GC032A_F_Test_Pattern_Enable %d", test_enable);
     if(test_enable)
     {
-        GC032A_WriteReg(0xfe, 0x00);
-        GC032A_WriteReg(0x4C, 0x08);
+        GC032A_F_WriteReg(0xfe, 0x00);
+        GC032A_F_WriteReg(0x4C, 0x08);
     }
     else
     {
-        GC032A_WriteReg(0xfe, 0x00);
-        GC032A_WriteReg(0x4C, 0x00);
+        GC032A_F_WriteReg(0xfe, 0x00);
+        GC032A_F_WriteReg(0x4C, 0x00);
     }
 
     return SCI_SUCCESS;
 }
 
-__align(4) const SENSOR_REG_T GC032a_image_res_tab[][22]=
+__align(4) const SENSOR_REG_T GC032a_F_image_res_tab[][22]=
 {
     // VGA
     {
@@ -2665,7 +2657,7 @@ __align(4) const SENSOR_REG_T GC032a_image_res_tab[][22]=
 };
 
 
-LOCAL void Set_GC032A_Image_Res()
+LOCAL void Set_GC032A_F_Image_Res()
 {
     int i = 0;
     uint8 reg_val;
@@ -2676,46 +2668,46 @@ LOCAL void Set_GC032A_Image_Res()
     return;
 #endif
 
-#if defined(GC032A_OUTPUT_MODE_QVGA)
-    reg_val = GC032A_ReadReg(GC032A_SPECIAL_EFFECT_REG);
+#if defined(GC032A_F_OUTPUT_MODE_QVGA)
+    reg_val = GC032A_F_ReadReg(GC032A_F_SPECIAL_EFFECT_REG);
 
-    if((reg_val & GC032A_SUBSAMPLE2_EN) == GC032A_SUBSAMPLE2_EN)
+    if((reg_val & GC032A_F_SUBSAMPLE2_EN) == GC032A_F_SUBSAMPLE2_EN)
     {
         res_mode = 0;
-        SCI_TRACE_LOW("GC032A:Set image output VGA");
+        SCI_TRACE_LOW("GC032A_F:Set image output VGA");
     }
     else
     {
         res_mode = 1;
-        SCI_TRACE_LOW("GC032A:Set image output QVGA");
+        SCI_TRACE_LOW("GC032A_F:Set image output QVGA");
     }
-    SCI_TRACE_LOW("GC032A:reg_val=0x%x,res_mode=%d", reg_val, res_mode);
-    sensor_reg_ptr = (SENSOR_REG_T*)GC032a_image_res_tab[res_mode];
+    SCI_TRACE_LOW("GC032A_F:reg_val=0x%x,res_mode=%d", reg_val, res_mode);
+    sensor_reg_ptr = (SENSOR_REG_T*)GC032a_F_image_res_tab[res_mode];
 
     for(i = 0; (0xFF != sensor_reg_ptr[i].reg_addr) || (0xFF != sensor_reg_ptr[i].reg_value); i++)
     {
-        GC032A_WriteReg(sensor_reg_ptr[i].reg_addr, sensor_reg_ptr[i].reg_value);
+        GC032A_F_WriteReg(sensor_reg_ptr[i].reg_addr, sensor_reg_ptr[i].reg_value);
     }
 #endif
 }
 
 typedef enum
 {
-    GC032A_ID_KINGCOM = 0,
-    GC032A_ID_CXT,
+    GC032A_F_ID_KINGCOM = 0,
+    GC032A_F_ID_CXT,
 };
 
 // KINGCOM Pin9_id1 :1 Pin10_id2: 0
 // CXT     Pin9_id1 :1 Pin10_id2: 1
-LOCAL uint32 GC032A_Get_Factory_ID(void)
+LOCAL uint32 GC032A_F_Get_Factory_ID(void)
 {
     return 0;
 }
 
-#ifdef GC032A_SERIAL_LOAD_FROM_T_FLASH
-__align(4) static SENSOR_REG_T GC032A_YUV_Init_Reg[1000] = {{0x00,0x00},};
+#ifdef GC032A_F_SERIAL_LOAD_FROM_T_FLASH
+__align(4) static SENSOR_REG_T GC032A_F_YUV_Init_Reg[1000] = {{0x00,0x00},};
 //#define READ_BUFFER_SIZE  (274*12)    //must be divisible by 12
-LOCAL uint32 Load_GC032A_RegTab_From_T_Flash(void)
+LOCAL uint32 Load_GC032A_F_RegTab_From_T_Flash(void)
 {
     SFS_HANDLE    file_handle = 0;
     FFS_ERROR_E   ffs_err = FFS_NO_ERROR;
@@ -2731,7 +2723,7 @@ LOCAL uint32 Load_GC032A_RegTab_From_T_Flash(void)
     // for(i=0;i<25;i++)
     // unicode_file_name[i] = file_name[i];
 
-    SCI_MEM16CPY(unicode_file_name,L"E:\\GC032A_SERIAL_Initialize_Setting.Bin",sizeof(L"E:\\GC032A_SERIAL_Initialize_Setting.Bin"));
+    SCI_MEM16CPY(unicode_file_name,L"E:\\GC032A_F_SERIAL_Initialize_Setting.Bin",sizeof(L"E:\\GC032A_F_SERIAL_Initialize_Setting.Bin"));
 
     /* Search the setting file in all of the user disk. */
 #if 0
@@ -2818,9 +2810,9 @@ LOCAL uint32 Load_GC032A_RegTab_From_T_Flash(void)
             curr_ptr += 4;
             if (strcmp((const char *)func_ind, "REG") == 0)    /* REG */
             {
-            GC032A_YUV_Init_Reg[regNum].reg_addr = (uint16)strtol(curr_ptr, NULL, 16);
+            GC032A_F_YUV_Init_Reg[regNum].reg_addr = (uint16)strtol(curr_ptr, NULL, 16);
             curr_ptr += 5;
-            GC032A_YUV_Init_Reg[regNum].reg_value = (uint16)strtol(curr_ptr, NULL, 16);
+            GC032A_F_YUV_Init_Reg[regNum].reg_value = (uint16)strtol(curr_ptr, NULL, 16);
             //strNum += 5;
 
             }
@@ -2833,8 +2825,8 @@ LOCAL uint32 Load_GC032A_RegTab_From_T_Flash(void)
             curr_ptr += 2;
         }
     }
-    GC032A_YUV_Init_Reg[regNum].reg_addr = 0xff;
-    GC032A_YUV_Init_Reg[regNum].reg_value =0xff;
+    GC032A_F_YUV_Init_Reg[regNum].reg_addr = 0xff;
+    GC032A_F_YUV_Init_Reg[regNum].reg_value =0xff;
 
     SCI_TRACE_LOW("%d register read", i);
 
@@ -2845,8 +2837,8 @@ LOCAL uint32 Load_GC032A_RegTab_From_T_Flash(void)
 
     SCI_TRACE_LOW("Start apply initialize setting.");
     /* Start apply the initial setting to sensor. */
-    SCI_ASSERT(PNULL != GC032A_YUV_Init_Reg);
-    GC032A_Write_Group_Regs(GC032A_YUV_Init_Reg);
+    SCI_ASSERT(PNULL != GC032A_F_YUV_Init_Reg);
+    GC032A_F_Write_Group_Regs(GC032A_F_YUV_Init_Reg);
 
     return SCI_SUCCESS;
 }

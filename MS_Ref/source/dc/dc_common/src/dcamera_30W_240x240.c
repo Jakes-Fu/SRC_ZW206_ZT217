@@ -217,15 +217,15 @@ static uint32 Preview_init_config(DC_CAMERA_CFG* param)
 
 //bringupTmp shengzhanhe:disable scale&crop, camera full size preview
 
-    pCfg->hal_cfg.colRatio   = COL_RATIO_1_1;
-    pCfg->hal_cfg.rowRatio   = ROW_RATIO_1_1;
+    pCfg->hal_cfg.colRatio   = COL_RATIO_1_2;
+    pCfg->hal_cfg.rowRatio   = ROW_RATIO_1_2;
     pCfg->hal_cfg.scaleEnable = TRUE;
 
     pCfg->hal_cfg.cropEnable     = TRUE;
     pCfg->hal_cfg.dstWinColStart = 0;
-    pCfg->hal_cfg.dstWinColEnd   = 320;
+    pCfg->hal_cfg.dstWinColEnd   = 640;
     pCfg->hal_cfg.dstWinRowStart = 0;
-    pCfg->hal_cfg.dstWinRowEnd   = 240;
+    pCfg->hal_cfg.dstWinRowEnd   = 480;
 
     #ifdef  LCD_INSTALL_ANGLE_90
     pCfg->preview_rot = 1;   //ÆÕÍ¨Ô¤ÀÀÐý×ª90¶È

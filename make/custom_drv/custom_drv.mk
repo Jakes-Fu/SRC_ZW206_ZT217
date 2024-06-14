@@ -236,7 +236,8 @@ SOURCES	   += sensor_ov7670.c \
               sensor_gc2015.c \
               sensor_gc032A.c \
               sensor_NT99250.c \
-              sensor_gc2145.c
+              sensor_gc2145.c \
+	      sensor_gc032A_F.c
 	      
 #ifdef DRV_CAMERA_BF20A6_CUSTOM
 SOURCES	   +=   sensor_bf20a6.c
