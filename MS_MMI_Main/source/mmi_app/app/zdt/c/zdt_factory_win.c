@@ -657,9 +657,9 @@ void ZdtWatch_Display_TimeStop(void);
 static uint32 s_zdt_test_key_flag;
 static uint8 s_zdt_key_ind_buf[2] = {0x00,0x00};
 #if defined(ZDT_W206_FACTORY_KEY_TEST)// only one key
-#define ZDT_TEST_KEY_COMPLETE_FLAG		0x01
+#define ZDT_TEST_KEY_COMPLETE_FLAG		0x3ff
 #else
-#define ZDT_TEST_KEY_COMPLETE_FLAG		0x7f
+#define ZDT_TEST_KEY_COMPLETE_FLAG		0x1f
 #endif
 
 #if defined(ZDT_W206_FACTORY_KEY_TEST)// only one key
@@ -6652,7 +6652,7 @@ LOCAL MMI_RESULT_E  HandleZDT_WatchFactoryWinMsg(
         
     case MSG_KEYUP_RED:
 #ifdef FACTORY_KEY_TEST
-           if(g_em_test_idx == EM_TEST_KEY)
+          /* if(g_em_test_idx == EM_TEST_KEY)
            {
                 ZDT_TestKeyboard(msg_id); 
                 if(ZDT_TEST_KEY_COMPLETE_FLAG==s_zdt_test_key_flag)
@@ -6662,7 +6662,7 @@ LOCAL MMI_RESULT_E  HandleZDT_WatchFactoryWinMsg(
 	                ZdtWatch_Factory_StartNext();
                 }
 	            break;
-           }else
+           }else*/
 #endif 
             {
                 MMK_CloseWin(win_id);
