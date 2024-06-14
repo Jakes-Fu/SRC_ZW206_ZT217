@@ -4162,6 +4162,8 @@ LOCAL void _ISP_ServiceDisplayOneFrame(uint32 block_id,ISP_FRAME_T *p_frame)
 #elif defined MAINLCD_SIZE_240X320 || defined MAINLCD_SIZE_240X240
     #if defined(MAINLCD_DEV_SIZE_240X284)// wuxx add for CAMERA BF20A6,GC6133, 240X284 Ô¤ÀÀÈ«ÆÁ, and isp_service.a
     LCD_InvalidateRect (MAIN_LCD_ID, 0, 0, 239, 283);  //For 8910FF 240x320 screen test
+    #elif defined (MAINLCD_DEV_SIZE_240X320)
+    LCD_InvalidateRect (MAIN_LCD_ID, 0, 0, 239, 319);  //For 8910FF 240x320 screen test
 	#else
 	LCD_InvalidateRect (MAIN_LCD_ID, 0, 0, 239, 239);  //For 8910FF 240x320 screen test
 	#endif
