@@ -1373,22 +1373,39 @@ LOCAL MMI_RESULT_E HandleMathCountWinMsg(
 	{
 		case MSG_OPEN_WINDOW:
 			{
+				uint8 type = MMK_GetWinAddDataPtr(win_id);
 				set_question_time = 15;
 				set_question_range = 100;
-				choose_add_symbol=1;
-				choose_minus_symbol=0;
-				choose_multi_symbol=0;
-				choose_division_symbol=0;
+				if(type == 0){
+				    choose_add_symbol=1;
+				    choose_minus_symbol=0;
+				    choose_multi_symbol=0;
+				    choose_division_symbol=0;
+				}else{
+				    choose_add_symbol=0;
+				    choose_minus_symbol=0;
+				    choose_multi_symbol=1;
+				    choose_division_symbol=0;
+				}
+				
 			}
 			break;
 		case MSG_GET_FOCUS:
 			{
+				uint8 type = MMK_GetWinAddDataPtr(win_id);
 				set_question_time = 15;
 				set_question_range = 100;
-				choose_add_symbol=1;
-				choose_minus_symbol=0;
-				choose_multi_symbol=0;
-				choose_division_symbol=0;
+				if(type == 0){
+				    choose_add_symbol=1;
+				    choose_minus_symbol=0;
+				    choose_multi_symbol=0;
+				    choose_division_symbol=0;
+				}else{
+				    choose_add_symbol=0;
+				    choose_minus_symbol=0;
+				    choose_multi_symbol=1;
+				    choose_division_symbol=0;
+				};
 			}
 			break;
 		case MSG_FULL_PAINT:
@@ -1832,8 +1849,7 @@ WINDOW_TABLE(MMI_MATH_COUNT_SCORE_WIN_TAB) =
 	END_WIN
 };
 
-
-PUBLIC void MMIZMT_CreateMathCountWin(void)
+PUBLIC void MMIZMT_CreateMathCountWin(uint8 type)
 {
 	MMI_WIN_ID_T win_id = MATH_COUNT_MAIN_WIN_ID;
 	MMI_HANDLE_T win_handle = 0;
@@ -1842,7 +1858,7 @@ PUBLIC void MMIZMT_CreateMathCountWin(void)
 	{
 		MMK_CloseWin(win_id);
 	}
-	win_handle = MMK_CreateWin((uint32*)MMI_MATH_COUNT_WIN_TAB, PNULL);
+	win_handle = MMK_CreateWin((uint32*)MMI_MATH_COUNT_WIN_TAB, (ADD_DATA)type);
 }
 
 LOCAL void MMIZMT_CreateCountingWin(void)

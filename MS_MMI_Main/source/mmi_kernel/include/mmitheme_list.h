@@ -1098,6 +1098,10 @@ ADULTWATCH
     GUIITEM_STYLE_POETRY_GRADE_LIST_MS,
     GUIITEM_STYLE_POETRY_ITEM_LIST_MS,
 #endif
+#ifdef FORMULA_SUPPORT
+    GUIITEM_STYLE_FORMULA_LIST_MS,
+    GUIITEM_STYLE_FORMULA_ITEM_LIST_MS,
+#endif
 //============================================================================//
 //                                   For watch                                //
 //============================================================================//

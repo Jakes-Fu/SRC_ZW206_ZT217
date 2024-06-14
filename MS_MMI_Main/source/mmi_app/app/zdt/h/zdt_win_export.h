@@ -140,11 +140,7 @@ PUBLIC void LIBXMLYAPI_CreateXysdkMainWin(void);
 #endif
 
 #ifdef FORMULA_SUPPORT
-PUBLIC void Create_Formula_Win();
-#endif
-
-#ifdef MATH_COUNT_SUPPORT
-PUBLIC void MMIZMT_CreateMathCountWin(void);
+PUBLIC void MMI_CreateMathMnemonicWin(void);
 #endif
 
 #ifdef LISTENING_PRATICE_SUPPORT
@@ -286,8 +282,8 @@ extern PUBLIC uint8 Video_Call_Incoming_Test();
 #define MENU_VIDEO_INCOMING_TEST {9, 0,video_call_text,res_app_ic_video_call, dark_red_bg, Video_Call_Incoming_Test} //视频通话来电
 #endif
 
-#ifdef MATH_COUNT_SUPPORT
-#define MENU_MNEMONICS {19, 0, mnemonics_text, res_app_ic_mnemonics, light_pink_bg, MMIZMT_CreateMathCountWin} 
+#ifdef FORMULA_SUPPORT
+#define MENU_MNEMONICS {19, 0, mnemonics_text, res_app_ic_mnemonics, light_pink_bg, MMI_CreateMathMnemonicWin} 
 #endif
 
 #ifdef LISTENING_PRATICE_SUPPORT

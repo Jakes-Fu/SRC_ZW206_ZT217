@@ -629,4 +629,5 @@ HANZI_CARD_SUPPORT = TRUE			#汉字卡
 ZMT_GPT_SUPPORT = TRUE				#对话GPT
 
 LYRIC_PARSER_SUPPORT = TRUE			#lrc歌词解析
-FORMULA_SUPPORT=TRUE                   ##乘法口诀	
+
+FORMULA_SUPPORT = TRUE				#乘法口诀	

@@ -49,4 +49,3 @@ typedef struct rank_info_struct{
 	uint16 rank_score;
 }rank_info_struct_struct;
 
-PUBLIC void MMIZMT_CreateMathCountWin(void);

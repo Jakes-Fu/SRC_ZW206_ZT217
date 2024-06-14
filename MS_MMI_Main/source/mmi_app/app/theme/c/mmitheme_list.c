@@ -80,6 +80,9 @@
 #ifdef POETRY_LISTEN_SUPPORT
 #include "zmt_poetry_main.h"
 #endif
+#ifdef FORMULA_SUPPORT
+#include "formula_export.h"
+#endif
 /**---------------------------------------------------------------------------*
  **                         Macro Declaration                                 *
  **---------------------------------------------------------------------------*/
@@ -6017,6 +6020,64 @@ LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_poetry_item_list_ms =
     0, MMILIST_INVALID_ITEM_INDEX
 };
 #endif
+#ifdef FORMULA_SUPPORT
+//GUIITEM_STYLE_FORMULA_LIST_MS
+LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_formula_list_ms =
+{
+    3*FORMULA_LIST_ITEM_HIGHT, 3*FORMULA_LIST_ITEM_HIGHT,
+    {
+        //bg
+        {
+            0,
+            {0, 0, MMI_MAINSCREEN_WIDTH, 3*FORMULA_LIST_ITEM_HIGHT},
+            {0, 0, MMI_MAINSCREEN_WIDTH, 3*FORMULA_LIST_ITEM_HIGHT},
+            0, 0,
+            0, 0
+        }, 
+        //icon
+        {
+            0,
+            {0.4*FORMULA_LINE_WIDTH, 0, 1.4*FORMULA_LINE_WIDTH, 2.5*POETRY_LINE_HIGHT},
+            {0.4*FORMULA_LINE_WIDTH, 0, 1.4*FORMULA_LINE_WIDTH, 2.5*POETRY_LINE_HIGHT},
+            0, 0
+        }, 
+        //text
+        {
+            0,
+            {1.6*FORMULA_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH, 2.5*POETRY_LINE_HIGHT},
+            {1.6*FORMULA_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH, 2.5*POETRY_LINE_HIGHT},
+            SONG_FONT_16, SONG_FONT_16,
+            0, 0
+        },      
+        {0},
+        {0},
+        {0},
+    },
+    0, MMILIST_INVALID_ITEM_INDEX
+};
+
+//GUIITEM_STYLE_FORMULA_ITEM_LIST_MS
+LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_formula_item_list_ms =
+{
+    FORMULA_LIST_ITEM_HIGHT, FORMULA_LIST_ITEM_HIGHT,
+    {
+        //text
+        {
+            0,
+            {10, 0, MMI_MAINSCREEN_WIDTH/2, FORMULA_LIST_ITEM_HIGHT},
+            {10, 0, MMI_MAINSCREEN_WIDTH/2, FORMULA_LIST_ITEM_HIGHT},
+            SONG_FONT_20, SONG_FONT_20,
+            0, 0
+        }, 
+        {0},
+        {0},
+        {0},
+        {0},
+        {0},
+    },
+    0, MMILIST_INVALID_ITEM_INDEX
+};
+#endif
 //============================================================================//
 //                                  End For engineer mode                     //
 //============================================================================//
@@ -6321,6 +6382,10 @@ LOCAL THEMELIST_STYLE_TABLE_T const s_style_table[] =
 #ifdef POETRY_LISTEN_SUPPORT
     {GUIITEM_STYLE_POETRY_GRADE_LIST_MS, &s_item_style_poetry_grade_list_ms},
     {GUIITEM_STYLE_POETRY_ITEM_LIST_MS, &s_item_style_poetry_item_list_ms},
+#endif
+#ifdef FORMULA_SUPPORT
+    {GUIITEM_STYLE_FORMULA_LIST_MS, &s_item_style_formula_list_ms},
+    {GUIITEM_STYLE_FORMULA_ITEM_LIST_MS, &s_item_style_formula_item_list_ms},
 #endif
 //============================================================================//
 //                                   For watch                                //

@@ -306,6 +306,10 @@ LOCAL BOOLEAN SetItemStyle(
     case GUIITEM_STYLE_POETRY_GRADE_LIST_MS:
     case GUIITEM_STYLE_POETRY_ITEM_LIST_MS:
 #endif
+#ifdef FORMULA_SUPPORT
+    case GUIITEM_STYLE_FORMULA_LIST_MS:
+    case GUIITEM_STYLE_FORMULA_ITEM_LIST_MS:
+#endif
         break;
         
     default:

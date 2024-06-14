@@ -10835,6 +10835,3 @@ RES_ADD_STRING(TXT_CHARGE_LOW_TEMP2,"Charge temperature lower threshold")
 
 
 RES_ADD_IMG(IMAGE_APP_COMMON_BG,"\\MMI_RES_##\\IMAG\\Bg\\common_bg.png",IMG_CMP_PNG_ARGB_RLE,0)
-
-
-RES_ADD_STRING(TXT_FORMULA_ACTION, "让我们开始口诀学习吧！")
