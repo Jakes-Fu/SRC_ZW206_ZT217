@@ -3153,6 +3153,8 @@ void MMIZDT_FriendPPWin_TimeStop(void)
     }
 }
 
+#ifdef ZDT_GSENSOR_SUPPORT
+
 void MMIZDT_FriendPPWin_GSENSOR_Data(void)
 {
     ZDT_GSENSOR_IC_TYPE_E gsenser_type = ZDT_GSensor_GetType();
@@ -3244,6 +3246,9 @@ void MMIZDT_FriendPPWin_GSENSOR_Start(void)
     }
     return;
 }
+
+#endif
+
 PUBLIC void MMIZDT_OpenFriendPPWin(void)
 {
     if(ZDT_SIM_Exsit() == FALSE)
@@ -3320,6 +3325,7 @@ LOCAL MMI_RESULT_E  HandleZDT_FriendPPWinMsg(
     switch(msg_id)
     {
         case MSG_OPEN_WINDOW:
+#ifdef ZDT_GSENSOR_SUPPORT
                 s_friend_pp_status = 3;
                 g_friendPP_shakecount = 0;
                /* s_friend_pp_status = 0;
@@ -3341,7 +3347,11 @@ LOCAL MMI_RESULT_E  HandleZDT_FriendPPWinMsg(
                 SCI_TRACE_LOW("HandleZDT_FriendPPWinMsg:gsensor_x=%d,gsensor_y=%d,gsensor_z=%d",gsensor_x,gsensor_y,gsensor_z);
 #endif
                 MMIZDT_FriendPPWin_TimeStart(200, MMIZDT_FriendPPWin_GSENSOR_HandleTimer);
-                //MMIZDT_FriendPPWin_GSENSOR_Start();               
+                //MMIZDT_FriendPPWin_GSENSOR_Start();
+#else
+            s_friend_pp_status = 0;
+            ZdtTalk_BackLight(FALSE);
+#endif
 
             break;
             
@@ -3438,7 +3448,9 @@ LOCAL MMI_RESULT_E  HandleZDT_FriendPPWinMsg(
                 YX_Net_Friend_Start(&g_yx_app);
                 MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);*/
                 s_friend_pp_status = 3;
+#ifdef ZDT_GSENSOR_SUPPORT
                 MMIZDT_FriendPPWin_GSENSOR_Start();
+#endif
                 MMIZDT_PPDisplay_TimerStop();
                 ZdtTalk_BackLight(FALSE);
                 MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
@@ -3471,7 +3483,9 @@ LOCAL MMI_RESULT_E  HandleZDT_FriendPPWinMsg(
 		break;
 	case MSG_LOSE_FOCUS:
 	case MSG_CLOSE_WINDOW:
+#ifdef ZDT_GSENSOR_SUPPORT
 	    MMIZDT_FriendPPWin_GSENSOR_Exit();
+#endif
         MMIZDT_PPDisplay_TimerStop();
         ZdtTalk_BackLight(FALSE);
     	break;

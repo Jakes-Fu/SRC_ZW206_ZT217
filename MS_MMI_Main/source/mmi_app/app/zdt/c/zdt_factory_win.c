@@ -6084,8 +6084,10 @@ LOCAL BOOLEAN Show_Softkey(void)
 {
 	if((g_em_test_idx == EM_TEST_SWVER)||(g_em_test_idx == EM_TEST_LOOPBACK)||(g_em_test_idx == EM_TEST_SPEAKER)
 		||(g_em_test_idx == EM_TEST_MAINL)||(g_em_test_idx == EM_TEST_WIFI)||(g_em_test_idx == EM_TEST_SIM)
+	    #ifdef ZDT_GSENSOR_SUPPORT
 		||(g_em_test_idx == EM_TEST_GSENSOR)
-                #if defined(ZDT_GPS_SUPPORT)||defined(ZDT_W217_FACTORY_GPS)
+		#endif
+        #if defined(ZDT_GPS_SUPPORT)||defined(ZDT_W217_FACTORY_GPS)
 		||(g_em_test_idx == EM_TEST_GPS)
 		#endif
 		||(g_em_test_idx == EM_TEST_CALL))

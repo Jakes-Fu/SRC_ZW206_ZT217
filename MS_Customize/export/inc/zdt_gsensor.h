@@ -42,7 +42,9 @@ typedef enum {
   GSENSOR_TYPE_MAX
 }ZDT_GSENSOR_IC_TYPE_E;
 
+#ifdef ZDT_GSENSOR_SUPPORT
 extern BOOLEAN  APP_SendSigTo_GSensor(ZDT_GSENSOR_TASK_SIG_E sig_id, const char * data_ptr,uint32 data_len);
+#endif
 extern int ZDT_GSensor_Init(void);
 extern int ZDT_GSensor_Step(uint32 once_step);
 extern int ZDT_GSensor_Open(void);
