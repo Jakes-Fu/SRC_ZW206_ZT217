@@ -18,7 +18,9 @@
 #include "mmicl_export.h"
 #include "mmialarm_export.h"
 #ifdef ZTE_WATCH
+#if defined(ZDT_GSENSOR_SUPPORT) &&  defined(ZTE_PEDOMETER_SUPPORT)
 #include "pedometer_export.h"
+#endif
 #include "zteweather_main.h"
 #include "zte_stopwatch_win.h"
 #endif

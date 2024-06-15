@@ -25,7 +25,9 @@
 #include "zdt_net.h"
 #include "mmi_modu_main.h"
 #include "zdthttp_api.h"
+#if defined(ZDT_GSENSOR_SUPPORT) &&  defined(ZTE_PEDOMETER_SUPPORT)
 #include "pedometer_nv.h"
+#endif
 #include "version.h"
 
 LOCAL ZDT_ICCID s_zdt_iccid = {0};
@@ -665,7 +667,9 @@ PUBLIC void MMIZDT_NV_ResetFactory()
     MMIZDT_NV_Set_Auto_Low_Battery(0);
     MMIZDT_Set_CTA_Net_Id("");
     MMIZDT_NV_Set_Target_Step(3000); //д╛хо3000
+#if defined(ZDT_GSENSOR_SUPPORT) &&  defined(ZTE_PEDOMETER_SUPPORT)
     MMI_Pedometer_Factory();
+#endif
     MMIZDT_NV_Set_Device_Report_Status(0);
 #endif
 }
