@@ -572,9 +572,8 @@ PUBLIC MMI_RESULT_E WatchLAUNCHER_HandleCommonWinMsg(
             break;
         }
 
-        //case MSG_KEYUP_RED:
-        //    WatchSLIDEAGE_SetCurrentPageIndex(1);
-        //    break;
+        case MSG_KEYUP_DOWN:
+            break;
 
         case MSG_NOTIFY_CANCEL:
         case MSG_APP_CANCEL:
@@ -585,18 +584,30 @@ PUBLIC MMI_RESULT_E WatchLAUNCHER_HandleCommonWinMsg(
             break;
         case MSG_KEYDOWN_8:
             // TODO:
-#ifdef PRODUCT_CONFIG_UWS6131_XTC_I23
-        case MSG_APP_RED:
+        case MSG_KEYUP_RED:
             SCI_TRACE_LOW("WatchLAUNCHER_HandleCommonWinMsg() msg_id = %d.", msg_id);
-#endif
-            if(TRUE == MMIDEFAULT_IsBacklightOn())
+            //主页按power键 如果是亮屏那就灭屏
+            if(WATCH_LAUNCHER_APP_PAGE_START_WIN_ID + 1 == win_id)
             {
-                MMIDEFAULT_TurnOffBackLight();
-                MMIDEFAULT_CloseAllLight_Watch();//close LCD
-            }else
-            {
-                MMIDEFAULT_TurnOnBackLight();
+                if(TRUE == MMIDEFAULT_IsBacklightOn())
+                {
+                    MMIDEFAULT_TurnOffBackLight();
+                    MMIDEFAULT_CloseAllLight_Watch();//close LCD
+                }
+                else
+                {
+                    MMIDEFAULT_TurnOnBackLight();
+                }
             }
+            break;
+        case MSG_KEYDOWN_UPSIDE:
+        case MSG_KEYDOWN_VOL_UP:
+            MMIAPISET_RingToneVolumeWin();
+            break;
+
+        case MSG_KEYDOWN_DOWNSIDE:
+        case MSG_KEYDOWN_VOL_DOWN:
+            MMIAPISET_RingToneVolumeWin();
             break;
         default:
             recode = MMI_RESULT_FALSE;
