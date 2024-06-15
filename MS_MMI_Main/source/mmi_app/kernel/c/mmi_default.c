@@ -3163,7 +3163,7 @@ PUBLIC void MMK_HandlePublicKey(
                     {
                         MMIDEFAULT_TurnOnBackLight();
                         //MMIAPICC_QuitForPowerOff();
-                    #ifdef ZTE_WATCH
+                    #ifdef POWER_LONG_PRESS_TO_SOS
                         MMIZDT_OpenSosWin();
                     #else
                         MMIAPIPHONE_PowerOff(); //¹Ø»ú
