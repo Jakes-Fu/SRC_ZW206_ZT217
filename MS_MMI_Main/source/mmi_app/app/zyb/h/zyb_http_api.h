@@ -151,6 +151,9 @@ PUBLIC BOOLEAN ZYB_HTTP_RCV_Add(uint8 * pRcv, uint32 rcv_len);
 PUBLIC BOOLEAN ZYB_HTTP_RCV_AddExt(uint8 * pRcv, uint32 rcv_len);
 PUBLIC BOOLEAN  ZYB_HTTP_RCV_Get(ZYB_HTTP_RCV_DATA_T * pUDPData);
 
+PUBLIC uint32 SIO_Stream_Data_Get_Origin_File_Size();
+PUBLIC void SIO_Stream_Data_Set_Origin_File_Size(uint32 size);
+
 #ifdef __cplusplus
     }
 #endif

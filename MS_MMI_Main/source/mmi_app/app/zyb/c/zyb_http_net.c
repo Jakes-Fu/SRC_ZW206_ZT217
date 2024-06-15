@@ -125,6 +125,31 @@ void ZybHttp_GetSignalStruct(DPARAM param, void *signal_struct_ptr, uint16 struc
 #define ZYB_HTTP_RANGE_HEADER_LEN  60
 #define ZYB_HTTP_RANGE_HEADER_PREFIX  "bytes="
 
+
+// 从 Content-Range 字符串中提取文件长度
+uint32 extractFileLength(char *contentRange) {
+    char *start = strstr(contentRange, "/");
+    if (start) {
+        start++;
+        return atoi(start);
+    }
+    return 0;
+}
+
+// 从响应头字符串中查找并提取文件长度
+uint32 extractFileLengthFromHeader(char *header) {
+    char *contentRange = strstr(header, "Content-Range: ");
+    if (contentRange) {
+        char *end;
+        contentRange += strlen("Content-Range: ");
+        end = strchr(contentRange, '\r');
+        if (end) {
+            return extractFileLength(contentRange);
+        }
+    }
+    return 0;
+}
+
 LOCAL MMI_RESULT_E ZybHttp_HandleGetRequest(ZYBHTTP_HTTP_CONTEXT * http_context_ptr, DPARAM param)
 {
     int base_len = 0;
@@ -380,15 +405,25 @@ LOCAL MMI_RESULT_E ZybHttp_HandleDataInd(ZYBHTTP_HTTP_CONTEXT * http_context_ptr
     g_cur_zybhttp_rcv_count += signal.data_len;
     ZYB_HTTP_LOG("ZybHttp_HandleDataInd receive len=%d,g_all_http_need_rcv_len=%d",signal.data_len,g_cur_zybhttp_rcv_count);
     //ZYB_HTTPRcvTraceU8(signal.data_ptr, signal.data_len);
-    if(g_cur_zybhttp_file_len > 0)
+    if(g_cur_zybhttp_file_len> 0)
     {
         ZYB_HTTP_RCV_Add(signal.data_ptr,signal.data_len);
     }
-    else
+    else //if(s_cur_zybhttp_content_len == g_cur_zybhttp_rcv_count)//文件分段已接收完成
     {
-        if(s_cur_zybhttp_content_len != 0 && g_cur_zybhttp_file_start_len >= s_cur_zybhttp_content_len)
+        //g_cur_zybhttp_rcv_count = 0;
+        if(s_cur_zybhttp_content_len == g_cur_zybhttp_rcv_count)//文件分段已接收完成
         {
-            //文件已接收完成
+             g_cur_zybhttp_file_start_len += s_cur_zybhttp_content_len;
+            if(g_cur_zybhttp_file_start_len == SIO_Stream_Data_Get_Origin_File_Size()) //文件已经全部接收
+            {
+                //文件已经全部接收完成
+                ZYB_HTTP_LOG("ZybHttp_HandleDataInd g_cur_zybhttp_file_start_len=%d,g_cur_zybhttp_file_end_len=%d",g_cur_zybhttp_file_start_len,g_cur_zybhttp_file_end_len);
+            }
+            if(s_zybhttphttp.flags && pCurData != PNULL && pCurData->rcv_handle != PNULL)
+            {
+                pCurData->rcv_handle(TRUE,signal.data_ptr,signal.data_len,g_cur_zybhttp_rcv_count,HTTP_SUCCESS);
+            }
         }
         else
         {
@@ -471,7 +506,7 @@ LOCAL MMI_RESULT_E ZybHttp_HandleCloseCnf(ZYBHTTP_HTTP_CONTEXT *http_context_ptr
         {
             //文件已接收完成
             s_zybhttphttp.flags = FALSE;
-            err_id = HTTP_ERROR_SERVER_CLOSE;
+            err_id = HTTP_SUCCESS;
         }
 
         ZYBHTTP_Net_Send_CallBack(s_zybhttphttp.flags,err_id);
@@ -507,6 +542,11 @@ MMI_RESULT_E Zyb_HandleHttpMsg(PWND app_ptr, uint16 msg_id, DPARAM param)
                 SCI_FREE(s_zyb_p_refresh_url);
                 s_zyb_p_refresh_url = PNULL;
             }
+            if(SIO_Stream_Data_Get_Origin_File_Size() > 0 && g_cur_zybhttp_file_start_len >= SIO_Stream_Data_Get_Origin_File_Size())
+            {
+                ZYB_HTTP_LOG(" HTTP_SIG_INIT_CNF file_len=%d,%d-%d",SIO_Stream_Data_Get_Origin_File_Size(),g_cur_zybhttp_file_start_len,g_cur_zybhttp_file_end_len);
+                return MMI_RESULT_TRUE;
+            }
             s_zybhttphttp.need_refresh = FALSE;
             s_zybhttphttp.flags = FALSE;
             if(MMIZYB_HTTP_IsGetType())
@@ -541,38 +581,54 @@ MMI_RESULT_E Zyb_HandleHttpMsg(PWND app_ptr, uint16 msg_id, DPARAM param)
 	 		ZYB_HTTP_LOG("response_code:%d",signal.rsp_header_info.response_code);
 	 		ZYB_HTTP_LOG("context_id:%ld,app_instance:%ld,request_id:%ld",
 	 						http_context_ptr->context_id,http_context_ptr->app_instance,http_context_ptr->request_id);
-                   if(signal.header_ptr != PNULL)
-                   {
-                        s_cur_zybhttp_content_len = signal.rsp_header_info.content_length;
-                       ZYB_HTTP_LOG("content_length=%d",s_cur_zybhttp_content_len);
-                       ZYB_HTTPTraceCR(signal.header_ptr,strlen(signal.header_ptr));
-                   }
+            if(signal.header_ptr != PNULL)
+            {
+                s_cur_zybhttp_content_len = signal.rsp_header_info.content_length;
+                ZYB_HTTP_LOG("content_length=%d",s_cur_zybhttp_content_len);
+                ZYB_HTTPTraceCR(signal.header_ptr,strlen(signal.header_ptr));
+            }
 	 		if(signal.rsp_header_info.response_code == 200 || signal.rsp_header_info.response_code == 206)
-	 		{	 			
-	 			result=HTTP_HeaderResponse(http_context_ptr->context_id,http_context_ptr->app_instance,
-	 								http_context_ptr->request_id,HTTP_DATA_TRANS_STYLE_BUFFER,PNULL,0);
-                          
-                          if(signal.rsp_header_info.refresh_url_ptr != NULL)
-                          {
-                                uint32 len = strlen(signal.rsp_header_info.refresh_url_ptr);
-                                if(s_zyb_p_refresh_url != PNULL)
-                                {
-                                    SCI_FREE(s_zyb_p_refresh_url);
-                                    s_zyb_p_refresh_url = PNULL;
-                                }
-                                s_zyb_p_refresh_url = SCI_ALLOC_APPZ(len+1);
-                                if(s_zyb_p_refresh_url != PNULL)
-                                {
-                                    strcpy((char*)s_zyb_p_refresh_url,(const char*)(signal.rsp_header_info.refresh_url_ptr));
-                                }
-                                s_zybhttphttp.need_refresh = TRUE;
-                                ZYB_HTTP_LOG("refresh time=%d, url_ptr:%s",signal.rsp_header_info.refresh_time,signal.rsp_header_info.refresh_url_ptr);
+	 		{	
+                ZYB_HTTP_LOG("HTTP_SIG_HEADER_IND size:%d",SIO_Stream_Data_Get_Origin_File_Size());
+                if(SIO_Stream_Data_Get_Origin_File_Size()==0)
+                {
+                    if(signal.rsp_header_info.response_code == 200)
+                    {
+                        SIO_Stream_Data_Set_Origin_File_Size(signal.rsp_header_info.content_length);
+                    }
+                    else //分段请求
+                    {
+                        uint32 fileLen = extractFileLengthFromHeader(signal.header_ptr);
+                        ZYB_HTTP_LOG("HTTP_SIG_HEADER_IND fileLen:%d",fileLen);
+                        if(fileLen == 0)
+                        {
+                            fileLen = signal.rsp_header_info.content_length;
+                        }
+                        SIO_Stream_Data_Set_Origin_File_Size(fileLen);
+                    }
+                }
+	 			result=HTTP_HeaderResponse(http_context_ptr->context_id,http_context_ptr->app_instance,http_context_ptr->request_id,HTTP_DATA_TRANS_STYLE_BUFFER,PNULL,0);                         
+                if(signal.rsp_header_info.refresh_url_ptr != NULL)
+                {
+                    uint32 len = strlen(signal.rsp_header_info.refresh_url_ptr);
+                    if(s_zyb_p_refresh_url != PNULL)
+                    {
+                        SCI_FREE(s_zyb_p_refresh_url);
+                        s_zyb_p_refresh_url = PNULL;
+                    }
+                    s_zyb_p_refresh_url = SCI_ALLOC_APPZ(len+1);
+                    if(s_zyb_p_refresh_url != PNULL)
+                    {
+                        strcpy((char*)s_zyb_p_refresh_url,(const char*)(signal.rsp_header_info.refresh_url_ptr));
+                    }
+                    s_zybhttphttp.need_refresh = TRUE;
+                    ZYB_HTTP_LOG("refresh time=%d, url_ptr:%s",signal.rsp_header_info.refresh_time,signal.rsp_header_info.refresh_url_ptr);
                                 
-                          }
-                          else
-                          {
-                                s_zybhttphttp.flags = TRUE;
-                          }
+                }
+                else
+                {
+                    s_zybhttphttp.flags = TRUE;
+                }
 	 		}
 	 		else
 	 		{

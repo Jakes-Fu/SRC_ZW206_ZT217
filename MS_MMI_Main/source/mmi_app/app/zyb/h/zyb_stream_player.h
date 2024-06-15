@@ -28,6 +28,13 @@ typedef enum
 	ZYB_STREAM_PLAYER_STATUS_MAX,
 } zyb_stream_player_status_t;
 
+typedef enum 
+{
+    AUDIO_UNKOWN_FORMAT = 0,
+    AUDIO_AMR_FORMAT, //amr格式音频
+    AUDIO_MP3_FORMAT, //mp3格式
+} AUDIO_FORMAT_TYPE;
+
 PUBLIC int ZYB_StreamPlayer_Pause(void);
 PUBLIC int ZYB_StreamPlayer_Resume(void);
 PUBLIC int ZYB_StreamPlayer_Stop(void);

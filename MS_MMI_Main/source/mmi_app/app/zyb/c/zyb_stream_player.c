@@ -15,13 +15,15 @@
 #include "zyb_http_api.h"
 
 
-#define ZYB_STREAM_PLAY_AMR
+//#define ZYB_STREAM_PLAY_AMR
 
 #if 1
 
 #define STREAM_DATA_ORIGIN_MAX_LEN 102400
 #define STREAM_DATA_ORIGIN_FIRST_PLAY_LEN 10240
 #define STREAM_DATA_ORIGIN_LEFT_LEN 5120
+
+#define STREAM_DATA_REQUEST_LEN 51200
 
 typedef struct
 {
@@ -31,6 +33,8 @@ typedef struct
     volatile uint32  status;            // Indicate the buffer status.
     uint32  lost_num;          //
     uint8   *sio_origin_buf_ptr;      // Sio buffer address.
+    uint32  file_size;              // Total Size of the file.文件长度
+    uint32  play_size;              // had play size 已经塞给播发器的长度
 } SIO_ORIGIN_BUF_S;
 
 static uint8  sio_stream_data_origin_buf[STREAM_DATA_ORIGIN_MAX_LEN+1];
@@ -236,6 +240,16 @@ int32 SIO_Stream_Data_Origin_Put(uint16 ori_data)
     return ret;
 }
 
+PUBLIC void SIO_Stream_Data_Set_Origin_File_Size(uint32 size)
+{        
+    sio_stream_data_origin_s.file_size = size;
+}
+
+PUBLIC uint32 SIO_Stream_Data_Get_Origin_File_Size()
+{        
+    return sio_stream_data_origin_s.file_size;
+}
+
 void SIO_Stream_Data_Init(void)
 {        
     sio_stream_data_origin_s.sio_origin_buf_ptr    = sio_stream_data_origin_buf;
@@ -244,6 +258,8 @@ void SIO_Stream_Data_Init(void)
     sio_stream_data_origin_s.end_point      = 0;
     sio_stream_data_origin_s.status         = 0;
     sio_stream_data_origin_s.lost_num       = 0;
+    sio_stream_data_origin_s.file_size      = 0;
+    sio_stream_data_origin_s.play_size      = 0;
     return;
 }
 #endif
@@ -261,7 +277,7 @@ typedef struct
 
 typedef struct
 {
-    HAUDIO       mp3_handle;    /*device handle*/
+    HAUDIO       audioHandle;    /*device handle*/
     MP3_Info_T   MP3_Info;  /*mp3 information*/
     int          i_state;
 }mp3_dec_ctx_t;
@@ -279,6 +295,9 @@ BOOLEAN zyb_mp3_data_regetting = FALSE;
 static SCI_MUTEX_PTR zyb_streamplayer_mutexPtr = NULL;
 static char * zyb_audio_url = PNULL;
 static zyb_stream_player_status_t zyb_playerStatus = ZYB_STREAM_PLAYER_STATUS_STOP;
+
+//音频格式
+LOCAL AUDIO_FORMAT_TYPE audio_format_type = AUDIO_UNKOWN_FORMAT;
 
 uint8 zyb_mp3_buf[MP3_DRIVER_BUF_SIZE]= {0}; 
 LOCAL uint32 zyb_mp3_buf_offset = 0; 
@@ -319,6 +338,8 @@ int ZYB_StreamPlayer_Status_CB(zyb_stream_player_status_t  cur_status)
 
 PUBLIC int  MMIZYB_HTTP_ReGetMp3Data(void)
 {
+    ZYB_STREAM_LOG("MMIZYB_HTTP_ReGetMp3Data zyb_mp3_data_regetting=%d zyb_mp3_data_is_getting=%d",zyb_mp3_data_regetting,zyb_mp3_data_is_getting);
+    ZYB_STREAM_LOG("MMIZYB_HTTP_ReGetMp3Data zyb_mp3_data_is_over=%d s_zyb_http_is_poping_data=%d",zyb_mp3_data_is_over,MMIZYB_HTTP_IsSending());
     if(zyb_mp3_data_regetting == FALSE && zyb_mp3_data_is_getting == FALSE && zyb_mp3_data_is_over == FALSE && FALSE == MMIZYB_HTTP_IsSending() && SIO_Stream_Data_Origin_GetLeftLen() >= STREAM_DATA_ORIGIN_LEFT_LEN)
     {
         SCI_GetMutex(zyb_streamplayer_mutexPtr, SCI_WAIT_FOREVER);
@@ -355,18 +376,19 @@ LOCAL AUDIO_STREAM_GET_SRC_RESULT_E ZYB_MP3_callback(//HAUDIO hAudio, uint8** co
         return AUDIO_STREAM_GET_SRC_ERROR;
     }
       
-    puiDataLength = SIO_Stream_Data_Origin_Get_Stream(zyb_mp3_buf,MP3_DRIVER_BUF_SIZE,512);
+    puiDataLength = SIO_Stream_Data_Origin_Get_Stream(zyb_mp3_buf,MP3_DRIVER_BUF_SIZE,MP3_DRIVER_BUF_SIZE);
     ZYB_STREAM_LOG("ZYB_MP3_callback puiDataLength=%d,offset=%ld",puiDataLength,zyb_mp3_buf_offset);
     if(puiDataLength > 0)
     {
         ptSrcDataInfo->tStreamCurSrcDataInfo.pucDataAddr  = (uint8*)zyb_mp3_buf;	
         ptSrcDataInfo->tStreamCurSrcDataInfo.uiDataLength = puiDataLength;
         MMIZYB_HTTP_ReGetMp3Data();
+        sio_stream_data_origin_s.play_size += puiDataLength;
     }
     else
     {
-        ZYB_STREAM_LOG("ZYB_MP3_callback Err No Data Wait is_over=%d",zyb_mp3_data_is_over);
-        if(zyb_mp3_data_is_over)
+        ZYB_STREAM_LOG("ZYB_MP3_callback Err No Data Wait is_over=%d play_size:%d fileSize;%d",zyb_mp3_data_is_over,sio_stream_data_origin_s.play_size,SIO_Stream_Data_Get_Origin_File_Size());
+        if(zyb_mp3_data_is_over || sio_stream_data_origin_s.play_size >= SIO_Stream_Data_Get_Origin_File_Size())
         {
             MMIZYB_SendSigTo_APP(ZYBHTTP_APP_SIGNAL_HTTP_AUDIOSTOP,PNULL,0);
             return AUDIO_STREAM_GET_SRC_ERROR;
@@ -453,41 +475,20 @@ LOCAL AUDIO_STREAM_GET_SRC_RESULT_E ZYB_AMR_callback(//HAUDIO hAudio, uint8** co
 LOCAL int MP3_Play_Start(void)
 {
     ZYB_STREAM_LOG("MP3_Play_Start");
-#ifdef ZYB_STREAM_PLAY_AMR
     s_dec_ctx.i_state = DECODING;
     AUDIO_SetDevMode(AUDIO_DEVICE_MODE_HANDFREE);
     AUDIO_SetVolume(zyb_player_Volume);
-    AUDIO_Play(s_dec_ctx.mp3_handle, 0);
-#else
-    s_dec_ctx.i_state = DECODING;
-    AUDIO_SetDevMode(AUDIO_DEVICE_MODE_HANDFREE);
-    AUDIO_SetVolume(zyb_player_Volume);
-    AUDIO_Play(s_dec_ctx.mp3_handle, 0);
-#endif
-
+    AUDIO_Play(s_dec_ctx.audioHandle, 0);
     return TRUE;
 }
 
-/*****************************************************************************/
-//  Description : API of start mp3 stream open
-//  Global resource dependence : none
-//  Author:
-//  Note: 
-/*****************************************************************************/
-LOCAL int MP3_Play_Open(void)
+LOCAL int amr_CreateStreamBufferHandle()
 {
     uint32 track_buf_size = (80 * 150);
-    ZYB_STREAM_LOG("MP3_Play_Open");
-
-    if (s_dec_ctx.i_state == DECODING)
-    {
-        return SCI_ERROR;
-    }
-#ifdef ZYB_STREAM_PLAY_AMR
-#ifndef WIN32
+    #ifndef WIN32
     __es83xx_cfg_spk_out_mod(1);
 #endif
-    s_dec_ctx.mp3_handle = AUDIO_CreateStreamBufferHandle(
+    s_dec_ctx.audioHandle = AUDIO_CreateStreamBufferHandle(
                                         hAMRCodec,
                                         PNULL,
                                         hAUDDEV,
@@ -499,18 +500,21 @@ LOCAL int MP3_Play_Open(void)
                                         amr_dec_dummy_callbak,
                                         ZYB_AMR_callback
                                         );
-    if ( !s_dec_ctx.mp3_handle)
+    if ( !s_dec_ctx.audioHandle)
     {
 #ifndef WIN32
     __es83xx_cfg_spk_out_mod(0);
 #endif
         return SCI_ERROR;
     }
-#else
+    return SCI_SUCCESS;
+}
 
+LOCAL int mp3_CreateStreamBufferHandle()
+{
+    uint32 track_buf_size;
     s_dec_ctx.MP3_Info.audioSamplingRate = mp3_header_info.unMp3StreamData.tMp3FormatInfo.uiSampleRate;
     s_dec_ctx.MP3_Info.audioChannels = mp3_header_info.unMp3StreamData.tMp3FormatInfo.uiChannelNum;
-#if 0
     if (s_dec_ctx.MP3_Info.audioSamplingRate <= 12000)
     {
         track_buf_size = MP3_DRIVER_BUF_SIZE >> 2;
@@ -523,9 +527,7 @@ LOCAL int MP3_Play_Open(void)
     {
         track_buf_size = MP3_DRIVER_BUF_SIZE;
     }
-#endif
-
-    s_dec_ctx.mp3_handle = AUDIO_CreateStreamBufferHandle(
+    s_dec_ctx.audioHandle = AUDIO_CreateStreamBufferHandle(
                                             hMP3DSPCodec,
                                             PNULL,
                                             hAUDDEV,
@@ -537,15 +539,38 @@ LOCAL int MP3_Play_Open(void)
                                             zyb_mp3_dec_dummy_callbak,
                                             ZYB_MP3_callback
                                             );
-
-
-    if ( !s_dec_ctx.mp3_handle)
+    if ( !s_dec_ctx.audioHandle)
     {
         return SCI_ERROR;
     }
-#endif
     return SCI_SUCCESS;
+}
 
+/*****************************************************************************/
+//  Description : API of start mp3 stream open
+//  Global resource dependence : none
+//  Author:
+//  Note: 
+/*****************************************************************************/
+LOCAL int MP3_Play_Open(void)
+{
+    ZYB_STREAM_LOG("MP3_Play_Open");
+    if (s_dec_ctx.i_state == DECODING)
+    {
+        return SCI_ERROR;
+    }
+    if(audio_format_type == AUDIO_AMR_FORMAT)
+    {
+        return amr_CreateStreamBufferHandle();
+    }
+    else if(audio_format_type == AUDIO_MP3_FORMAT)
+    {
+        return mp3_CreateStreamBufferHandle();
+    }
+    else
+    {
+        ZYB_STREAM_LOG("MP3_Play_Open error unkown audio format");
+    }
 }
 
 /*****************************************************************************/
@@ -580,12 +605,12 @@ LOCAL void MP3_Demo_Stop(void)
     if (s_dec_ctx.i_state == DECODING)
     {
         s_dec_ctx.i_state = IDLE;
-        AUDIO_Stop(s_dec_ctx.mp3_handle);
+        AUDIO_Stop(s_dec_ctx.audioHandle);
     }
-    if (s_dec_ctx.mp3_handle)
+    if (s_dec_ctx.audioHandle)
     {
-        AUDIO_CloseHandle(s_dec_ctx.mp3_handle);
-        s_dec_ctx.mp3_handle = NULL;
+        AUDIO_CloseHandle(s_dec_ctx.audioHandle);
+        s_dec_ctx.audioHandle = NULL;
 #ifndef WIN32
         __es83xx_cfg_spk_out_mod(0);
 #endif
@@ -603,7 +628,7 @@ LOCAL void MP3_Demo_Pause(void)
 {
     if (s_dec_ctx.i_state == DECODING)
     {
-        AUDIO_Pause(s_dec_ctx.mp3_handle);
+        AUDIO_Pause(s_dec_ctx.audioHandle);
         s_dec_ctx.i_state = IDLE;
     }
 
@@ -620,14 +645,14 @@ LOCAL void MP3_Demo_Resume(void)
     if (s_dec_ctx.i_state == IDLE)
     {
         s_dec_ctx.i_state = DECODING;
-        AUDIO_Resume(s_dec_ctx.mp3_handle);
+        AUDIO_Resume(s_dec_ctx.audioHandle);
     }
 }
 
 LOCAL void MP3_Demo_SetVolume(uint32 vol)
 {
     ZYB_STREAM_LOG("MP3_Demo_SetVolume vol=%d");
-    if (s_dec_ctx.mp3_handle)
+    if (s_dec_ctx.audioHandle)
     {
         AUDIO_SetVolume(vol);
     }
@@ -944,70 +969,33 @@ BOOLEAN MMIZYB_HTTP_Handle_AudioStopDelay(void)
     return TRUE;
 }
 
-#ifdef ZYB_STREAM_PLAY_AMR
-PUBLIC int  MMIZYB_HTTP_UrlGetFirst_CB(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 file_len,uint32 err_id)
+LOCAL uint32 get_audio_header_len(const char *header, const int check_size)
 {
-    int id3_len = 6;
-    ZYB_STREAM_LOG("MMIZYB_HTTP_UrlGetFirst_CB(%d) file_len=%d,Rcv_len=%d",is_ok,file_len,Rcv_len);
-    if(is_ok)
+    int totalSize = 0;
+    //amr 格式头最少6个byte
+    if(check_size < 6)
     {
-        if(pRcv == NULL || Rcv_len < 10)
-        {
-            ZYB_StreamPlayer_Status_CB(ZYB_STREAM_PLAYER_STATUS_ERROR);
-            return 0;
-        }
-        ZYB_StreamPlayer_Status_CB(ZYB_STREAM_PLAYER_STATUS_CACHED);
-
-        ZYB_STREAM_LOG("MMIZYB_HTTP_UrlGetFirst_CB id3_len=%d",id3_len);
-        zyb_mp3_data_offset = id3_len;
-        zyb_mp3_data_is_over = FALSE;
-        zyb_mp3_data_cur_start_offset = 0;
-        zyb_mp3_data_is_getting = FALSE;
-        SCI_GetMutex(zyb_streamplayer_mutexPtr, SCI_WAIT_FOREVER);
-        zyb_mp3_data_regetting = FALSE;
-        SCI_PutMutex(zyb_streamplayer_mutexPtr);
-        if(id3_len == 0)
-        {
-            zyb_mp3_data_need_check = FALSE;
-            MMIZYB_HTTP_CheckMp3Format(pRcv,Rcv_len);
-            MMIZYB_HTTP_PutMp3Data(pRcv,Rcv_len);
-            MMIZYB_SendSigTo_APP(ZYBHTTP_APP_SIGNAL_HTTP_AUDIOGET,PNULL,Rcv_len);
-            MMIZYB_SendSigTo_APP(ZYBHTTP_APP_SIGNAL_HTTP_AUDIOPLAY,PNULL,0);
-        }
-        else
-        {
-            uint32 left_len = 0;
-            if(Rcv_len > id3_len)
-            {
-                left_len = Rcv_len-id3_len;
-                if(left_len < 512)
-                {
-                    zyb_mp3_data_need_check = TRUE;
-                    MMIZYB_SendSigTo_APP(ZYBHTTP_APP_SIGNAL_HTTP_AUDIOGET,PNULL,zyb_mp3_data_offset);
-                }
-                else
-                {
-                    zyb_mp3_data_need_check = FALSE;
-                    MMIZYB_HTTP_CheckMp3Format(pRcv+id3_len,left_len);
-                    MMIZYB_HTTP_PutMp3Data(pRcv+id3_len,left_len);
-                    MMIZYB_SendSigTo_APP(ZYBHTTP_APP_SIGNAL_HTTP_AUDIOGET,PNULL,Rcv_len);
-                    MMIZYB_SendSigTo_APP(ZYBHTTP_APP_SIGNAL_HTTP_AUDIOPLAY,PNULL,0);
-                }
-            }
-            else
-            {
-                zyb_mp3_data_need_check = TRUE;
-                MMIZYB_SendSigTo_APP(ZYBHTTP_APP_SIGNAL_HTTP_AUDIOGET,PNULL,zyb_mp3_data_offset);
-            }
-        }
+        totalSize == 0;
+    }
+    else if(header[0] == '#' && header[1] == '!'&& header[2] == 'A' && header[3] == 'M'&& header[4] == 'R')
+    {
+        totalSize == 6; //amr格式
     }
     else
     {
-        ZYB_StreamPlayer_Status_CB(ZYB_STREAM_PLAYER_STATUS_ERROR);
+	    if (check_size < 10) 
+        {
+		    totalSize == 0;
+        }
+	    else if (header[0] == 'I' && header[1] == 'D' && header[2] == '3')
+        {
+		   totalSize =	(header[6] & 0x7F) * 0x200000 + (header[7] & 0x7F) * 0x4000 + (header[8] & 0x7F) * 0x80 + (header[9] & 0x7F) + 10;
+        }	    
     }
-    return 0;
+    ZYB_STREAM_LOG("get_audio_header_len header[0]:%c header[1]:%c header[2]:%c",header[0],header[1],header[2]);
+	return totalSize;
 }
-#else
+
 PUBLIC int  MMIZYB_HTTP_UrlGetFirst_CB(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 file_len,uint32 err_id)
 {
     int id3_len = 0;
@@ -1020,10 +1008,12 @@ PUBLIC int  MMIZYB_HTTP_UrlGetFirst_CB(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len
             return 0;
         }
         ZYB_StreamPlayer_Status_CB(ZYB_STREAM_PLAYER_STATUS_CACHED);
-        id3_len = rtmp_mp3_id3_length(pRcv,Rcv_len);
+
+        id3_len = get_audio_header_len(pRcv,Rcv_len);
 
         ZYB_STREAM_LOG("MMIZYB_HTTP_UrlGetFirst_CB id3_len=%d",id3_len);
         zyb_mp3_data_offset = id3_len;
+        sio_stream_data_origin_s.play_size = zyb_mp3_data_offset;
         zyb_mp3_data_is_over = FALSE;
         zyb_mp3_data_cur_start_offset = 0;
         zyb_mp3_data_is_getting = FALSE;
@@ -1033,6 +1023,7 @@ PUBLIC int  MMIZYB_HTTP_UrlGetFirst_CB(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len
         if(id3_len == 0)
         {
             zyb_mp3_data_need_check = FALSE;
+            audio_format_type = AUDIO_MP3_FORMAT;
             MMIZYB_HTTP_CheckMp3Format(pRcv,Rcv_len);
             MMIZYB_HTTP_PutMp3Data(pRcv,Rcv_len);
             MMIZYB_SendSigTo_APP(ZYBHTTP_APP_SIGNAL_HTTP_AUDIOGET,PNULL,Rcv_len);
@@ -1044,14 +1035,23 @@ PUBLIC int  MMIZYB_HTTP_UrlGetFirst_CB(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len
             if(Rcv_len > id3_len)
             {
                 left_len = Rcv_len-id3_len;
-                if(left_len < 30720)
+                //amr 格式
+                if(id3_len == 6 && left_len < 512)
+                {
+                    zyb_mp3_data_need_check = FALSE;
+                    audio_format_type = AUDIO_AMR_FORMAT;
+                    MMIZYB_SendSigTo_APP(ZYBHTTP_APP_SIGNAL_HTTP_AUDIOGET,PNULL,zyb_mp3_data_offset);
+                }
+                else if(left_len < 30720) //mp3 格式
                 {
                     zyb_mp3_data_need_check = TRUE;
+                    audio_format_type = AUDIO_MP3_FORMAT;
                     MMIZYB_SendSigTo_APP(ZYBHTTP_APP_SIGNAL_HTTP_AUDIOGET,PNULL,zyb_mp3_data_offset);
                 }
                 else
                 {
                     zyb_mp3_data_need_check = FALSE;
+                    audio_format_type = AUDIO_UNKOWN_FORMAT;
                     MMIZYB_HTTP_CheckMp3Format(pRcv+id3_len,left_len);
                     MMIZYB_HTTP_PutMp3Data(pRcv+id3_len,left_len);
                     MMIZYB_SendSigTo_APP(ZYBHTTP_APP_SIGNAL_HTTP_AUDIOGET,PNULL,Rcv_len);
@@ -1071,7 +1071,6 @@ PUBLIC int  MMIZYB_HTTP_UrlGetFirst_CB(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len
     }
     return 0;
 }
-#endif
 
 PUBLIC BOOLEAN  MMIZYB_HTTP_UrlGetFirst(char * url)
 {

@@ -69,10 +69,8 @@ PUBLIC void ZYB_HTTP_SendTimer_Start(uint32 time_ms)
         MMK_StopTimer(s_zyb_http_send_timer_id);
         s_zyb_http_send_timer_id = 0;
     }
-    s_zyb_http_send_timer_id = MMK_CreateTimerCallback(time_ms, 
-                                                                        ZYB_HTTP_SendTimer_Handle, 
-                                                                        PNULL, 
-                                                                        FALSE);
+    s_zyb_http_send_timer_id = MMK_CreateTimerCallback(time_ms, ZYB_HTTP_SendTimer_Handle, PNULL, FALSE);
+    ZYB_HTTP_LOG("ZYB_HTTP_SendTimer_Start timeId:%d",s_zyb_http_send_timer_id);
 }
 
 PUBLIC void ZYB_HTTP_SendTimer_Stop(void)
@@ -1030,7 +1028,7 @@ BOOLEAN  MMIZYB_HTTP_Handle_SendSuccess(DPARAM param)
     
     if(p_getdata->need_stop)
     {
-        ZYBHTTP_Net_Close();
+        //ZYBHTTP_Net_Close();
     }
     
     if(p_getdata->is_sucess)
@@ -1278,7 +1276,8 @@ PUBLIC BOOLEAN  MMIZYB_HTTP_Test(void)
 {
     char send_buf[512] = {0};
     sprintf(send_buf,"https://iotcdn.cdnjtzy.com/iot-server/system/voice/2023/02/14/c4b1fa62da02412ea05502c45aace7a1887.mp3");
-    MMIZYB_HTTP_AppSend(TRUE,(char *)send_buf,(uint8 *)PNULL,0,1,0,0,0,0,0,0,MMIZYB_HTTP_Test_CB);
+    //MMIZYB_HTTP_AppSend(TRUE,(char *)send_buf,(uint8 *)PNULL,0,1,0,0,0,0,0,0,MMIZYB_HTTP_Test_CB);
+    ZYB_StreamPlayer_Start(send_buf);
     return TRUE;
 }
 
