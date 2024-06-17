@@ -21,23 +21,27 @@ extern "C"
 #define HANZI_BASE_DEVICE_IMEI "868750061006384"
 #define HANZI_BOOK_HEADER_PATH "http://8.130.95.8:8866/"
 #define HANZI_BOOK_AUDIO_BASE_PATH "http://8.130.95.8:8866/file/"
+#define HANZI_BOOK_PUBLISH_PATH "hanzi/getPublisher"
 #define HANZI_BOOK_GRADE_PATH "hanzi/get?gradeId=%d"
 #define HANZI_BOOK_CHAPTER_PATH "hanzi/get?contentId=%d"
 #define HANZI_BOOK_AUDIO_PATH "%saudio/word/%s/name/%s.mp3"
 
+#define HANZI_CARD_BOOK_INFO_PATH "E:/hanzi/publish_name.json"
 #define HANZI_CARD_GRADE_CHAPTER_PATH "E:/hanzi/grade_%d/grade_%d.json"
 #define HANZI_CARD_CHAPTER_WORD_PATH "E:/hanzi/grade_%d/%d.json"
 #define HANZI_CARD_NEW_WORD_PATH "E:/hanzi/unmaster_hanzi.json"
 #define HANZI_CARD_WORD_AUDIO_PATH "E:/hanzi/grade_%d/%s.mp3"
 
+#define HANZI_PUBLISH_BOOK_MAX 10
 #define HANZI_CONTENT_CHAPTER_MAX 20
 #define HANZI_CHAPTER_WORD_MAX 50
-#define HANZI_BOOK_TOTAL 18 
 
 typedef struct
 {
-	char name[20];
-}ZMT_HANZI_GRADE_NAME;
+    uint8 id;
+    char * book_name;
+    char * publish_name;
+}ZMT_HANZI_PUBLISH_BOOK_INFO;
 
 typedef struct HANZI_BOOK_INFO_T
 {
@@ -76,6 +80,10 @@ PUBLIC void MMI_CreateHanziWin(void);
 PUBLIC void MMI_CreateHanziChapterWin(void);
 PUBLIC void MMI_CreateHanziDetailWin(void);
 PUBLIC MMI_RESULT_E MMI_CloseHanziDetailWin(void);
+
+PUBLIC void Hanzi_ReleaseBookInfo(void);
+PUBLIC void Hanzi_ParseBookInfo(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id);
+PUBLIC void Hanzi_requestBookInfo(void);
 
 PUBLIC void Hanzi_ReleaseChapterInfo(void);
 PUBLIC void Hanzi_ParseChapterInfo(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id);

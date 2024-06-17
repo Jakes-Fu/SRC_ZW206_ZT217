@@ -50,6 +50,8 @@ LOCAL GUI_RECT_T hanzi_tip_rect = {HANZI_CARD_LINE_WIDTH,4*HANZI_CARD_LINE_HIGHT
 LOCAL int16 main_tp_down_x = 0;
 LOCAL int16 main_tp_down_y = 0;
 
+extern int8 hanzi_book_count;
+extern ZMT_HANZI_PUBLISH_BOOK_INFO * hanzi_publish_info[HANZI_PUBLISH_BOOK_MAX];
 extern HANZI_CONTENT_INFO_T * hanzi_content_info[HANZI_CONTENT_CHAPTER_MAX];
 extern int16 hanzi_chapter_count;
 extern int16 hanzi_chapter_children_count[20];
@@ -74,13 +76,6 @@ int cur_chapter_unmaster_idx[HANZI_CHAPTER_WORD_MAX] = {0};
 LOCAL MMI_RESULT_E MMI_CloseHanziWin(void);
 LOCAL MMI_RESULT_E MMI_CloseHanziChapterWin(void);
 LOCAL void HanziDetail_ShowTip(void);
-
-LOCAL ZMT_HANZI_GRADE_NAME hanzi_grade_name[HANZI_BOOK_TOTAL] = {
-    "一年级上册","一年级下册","二年级上册","二年级下册",
-    "三年级上册","三年级下册","四年级上册","四年级下册","五年级上册",
-    "五年级下册","六年级上册", "六年级下册","七年级上册","七年级下册",
-    "八年级上册","八年级下册","九年级上册","九年级下册"
-};
 
 LOCAL void Hanzi_InitButton(MMI_CTRL_ID_T ctrl_id)
 {
@@ -118,9 +113,10 @@ LOCAL void Hanzi_DisplayBookList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
     GUILIST_ITEM_T item_t = {0};
     GUIITEM_STATE_T item_state = {0};
     GUILIST_ITEM_DATA_T item_data = {0};
+    MMI_STRING_T text_wchar = {0};
     MMI_STRING_T text_str = {0};
     wchar name_wchar[50] = {0};
-    char name_str[50] = {0};
+    wchar name_str[50] = {0};
     uint8 length = 0;
     MMI_STRING_T text_string = {0};
     char tmp[10]={0};
@@ -132,12 +128,10 @@ LOCAL void Hanzi_DisplayBookList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
 
     MMK_SetAtvCtrl(win_id, ctrl_id);
     GUILIST_RemoveAllItems(ctrl_id);
-    GUILIST_SetMaxItem(ctrl_id, HANZI_BOOK_TOTAL, FALSE);
+    GUILIST_SetMaxItem(ctrl_id, HANZI_PUBLISH_BOOK_MAX, FALSE);
 
-    for(index = 0;index < HANZI_BOOK_TOTAL; index++)
+    for(index = 0;index < hanzi_book_count && index < HANZI_PUBLISH_BOOK_MAX; index++)
     {
-        length = strlen(hanzi_grade_name[index].name);
-
     #ifdef WORD_CARD_SUPPORT
         item_t.item_style = GUIITEM_SYTLE_DSL_ENGLISH_BOOK;
     #else
@@ -148,7 +142,8 @@ LOCAL void Hanzi_DisplayBookList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
 		
         memset(name_wchar, 0, 50);
         memset(name_str, 0, 50);
-
+        length = strlen(hanzi_publish_info[index]->book_name);
+        
     #ifdef WORD_CARD_SUPPORT
         item_data.item_content[0].item_data_type = GUIITEM_DATA_IMAGE_ID;
         item_data.item_content[0].item_data.image_id = IMG_ZMT_CONTACT_ICON;
@@ -162,17 +157,20 @@ LOCAL void Hanzi_DisplayBookList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
         item_data.item_content[1].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
         item_data.item_content[1].item_data.text_buffer = text_str;
 
-        GUI_GBToWstr(name_wchar, hanzi_grade_name[index].name, length);
-        text_str.wstr_len = MMIAPICOM_Wstrlen(name_wchar);
-        text_str.wstr_ptr = name_wchar;
+        GUI_UTF8ToWstr(name_wchar, 50, hanzi_publish_info[index]->book_name, length);
+        text_wchar.wstr_len = MMIAPICOM_Wstrlen(name_wchar);
+        text_wchar.wstr_ptr = name_wchar;
         item_data.item_content[2].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
-        item_data.item_content[2].item_data.text_buffer = text_str;
+        item_data.item_content[2].item_data.text_buffer = text_wchar;
 
-        item_data.item_content[3].item_data_type = GUIITEM_DATA_TEXT_ID;
-        item_data.item_content[3].item_data.text_id = HANZI_RENJIAO_EDITION;
+        length = strlen(hanzi_publish_info[index]->publish_name);
+        GUI_UTF8ToWstr(name_str, 50, hanzi_publish_info[index]->publish_name, length);
+        text_str.wstr_len = MMIAPICOM_Wstrlen(name_str);
+        text_str.wstr_ptr = name_str;
+        item_data.item_content[3].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
+        item_data.item_content[3].item_data.text_buffer = text_str;
     #else
-        //book name
-        GUI_GBToWstr(name_wchar, hanzi_grade_name[index].name, length);
+        GUI_GBToWstr(name_wchar, hanzi_publish_info[index]->book_name, length);
         text_str.wstr_ptr = name_wchar;
         text_str.wstr_len = MMIAPICOM_Wstrlen(text_str.wstr_ptr);
         item_data.item_content[0].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
@@ -216,6 +214,7 @@ LOCAL MMI_RESULT_E HandleHanziWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_id
                 GUILABEL_SetAlign(MMI_ZMT_HANZI_MAIN_LABEL_NUM_CTRL_ID, GUILABEL_ALIGN_RIGHT);
 
                 memset(&hanzi_book_info, 0, sizeof(HANZI_BOOK_INFO_T));
+                Hanzi_requestBookInfo();
             }
             break;
         case MSG_FULL_PAINT:
@@ -234,7 +233,49 @@ LOCAL MMI_RESULT_E HandleHanziWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_id
                 text_style.font = DP_FONT_20;
                 text_style.font_color = MMI_WHITE_COLOR;
 
-                Hanzi_DisplayBookList(win_id, MMI_ZMT_HANZI_MAIN_LIST_CTRL_ID);
+                if(hanzi_book_count == 0)
+                {
+                    MMIRES_GetText(WORD_LOADING, win_id, &text_string);
+                    GUISTR_DrawTextToLCDInRect(
+                        (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
+                        &hanzi_win_rect,
+                        &hanzi_win_rect,
+                        &text_string,
+                        &text_style,
+                        text_state,
+                        GUISTR_TEXT_DIR_AUTO
+                    );
+                }
+                else if(hanzi_book_count == -1)
+                {
+                    MMIRES_GetText(WORD_LOADING_FAILED, win_id, &text_string);
+                    GUISTR_DrawTextToLCDInRect(
+                        (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
+                        &hanzi_win_rect,
+                        &hanzi_win_rect,
+                        &text_string,
+                        &text_style,
+                        text_state,
+                        GUISTR_TEXT_DIR_AUTO
+                    );
+                }
+                else if(hanzi_book_count == -2)
+                {
+                    MMIRES_GetText(WORD_NO_DATA, win_id, &text_string);
+                    GUISTR_DrawTextToLCDInRect(
+                        (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
+                        &hanzi_win_rect,
+                        &hanzi_win_rect,
+                        &text_string,
+                        &text_style,
+                        text_state,
+                        GUISTR_TEXT_DIR_AUTO
+                    );
+                }
+                else
+                {
+                    Hanzi_DisplayBookList(win_id, MMI_ZMT_HANZI_MAIN_LIST_CTRL_ID);
+                }
             }
             break;
         case MSG_KEYUP_RED:
@@ -254,7 +295,9 @@ LOCAL MMI_RESULT_E HandleHanziWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_id
             break;
         case MSG_CLOSE_WINDOW:
             {
+                hanzi_book_count = 0;
                 memset(&hanzi_book_info, 0, sizeof(HANZI_BOOK_INFO_T));
+                Hanzi_ReleaseBookInfo();
             }
             break;
          default:
@@ -490,7 +533,7 @@ LOCAL MMI_RESULT_E HandleHanziChapterWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
                 GUILABEL_SetFont(MMI_ZMT_HANZI_CHAPTER_LABEL_NUM_CTRL_ID, DP_FONT_16,MMI_BLACK_COLOR);
                 GUILABEL_SetAlign(MMI_ZMT_HANZI_CHAPTER_LABEL_NUM_CTRL_ID, GUILABEL_ALIGN_RIGHT);
 
-                Hanzi_requestChapterInfo(hanzi_book_info.cur_book_idx+1);
+                Hanzi_requestChapterInfo(hanzi_publish_info[hanzi_book_info.cur_book_idx]->id);
 
                 if (UILAYER_IsMultiLayerEnable())
                 {
@@ -519,8 +562,8 @@ LOCAL MMI_RESULT_E HandleHanziChapterWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
                 GUI_FillRect(&lcd_dev_info, hanzi_win_rect, GUI_RGB2RGB565(80, 162, 254));
                 GUI_FillRect(&lcd_dev_info, hanzi_title_rect, GUI_RGB2RGB565(108, 181, 255));
 
-                sprintf(text_str, "%s", hanzi_grade_name[hanzi_book_info.cur_book_idx].name);
-                GUI_GBToWstr(text_wchar, text_str, strlen(text_str));
+                sprintf(text_str, "%s", hanzi_publish_info[hanzi_book_info.cur_book_idx]->book_name);
+                GUI_UTF8ToWstr(text_wchar, 100, text_str, strlen(text_str));
                 text_string.wstr_ptr = text_wchar;
                 text_string.wstr_len = MMIAPICOM_Wstrlen(text_string.wstr_ptr);
                 GUIBUTTON_SetText(MMI_ZMT_HANZI_CHAPTER_LABEL_BACK_CTRL_ID, text_string.wstr_ptr, text_string.wstr_len);              
