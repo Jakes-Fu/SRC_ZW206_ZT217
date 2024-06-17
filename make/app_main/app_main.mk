@@ -2596,7 +2596,7 @@ endif
 ifeq ($(strip $(WORD_CARD_SUPPORT)), TRUE)
 MINCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_word/h
 MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_word/c
-SOURCES			+=  zmt_word_main.c zmt_word_id.c
+SOURCES			+=  zmt_word_main.c zmt_word_id.c zmt_word_data.c
 endif
 
 ifeq ($(strip $(POETRY_LISTEN_SUPPORT)), TRUE)
