@@ -5406,6 +5406,7 @@ LOCAL MMI_RESULT_E  HandleZDT_InsertSimWinMsg(
             anim_result = GUIANIM_SetParam(&ctrl_info,&data_info,PNULL,&display_info);
         }
         #else
+        LCD_FillRect(&lcd_dev_info, bg_rect, MMI_BLACK_COLOR);
         GUIRES_DisplayImg(PNULL,
             &bg_rect,
             PNULL,
