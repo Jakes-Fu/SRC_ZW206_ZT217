@@ -53,14 +53,14 @@ LOCAL GUI_RECT_T formula_left_button_rect = {9, MMI_MAINSCREEN_HEIGHT - 1.5*FORM
 LOCAL GUI_RECT_T formula_right_button_rect = {125, MMI_MAINSCREEN_HEIGHT - 1.5*FORMULA_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-9, MMI_MAINSCREEN_HEIGHT - 2};
 
 LOCAL FORMULA_MULTI_TEXT_T formula_multi_text[FORMULA_COUNT_ITEM_MAX] = {
-    "1  X  1  =  1", "1  X  2  =  2", "1  X  3  =  3", "1  X  4  =  4", "1  X  5  =  5", "1  X  6  =  6", "1  X  7  =  7", "1  X  8  =  8", "1  X  9  =  9",
-    "2  X  2  =  4", "2  X  3  =  6", "2  X  4  =  8", "2  X  5  =  10", "2  X  6  =  12", "2  X  7  =  14", "2  X  8  =  16", "2  X  9  =  18", 
-    "3  X  3  =  9", "3  X  4  =  12", "3  X  5  =  15", "3  X  6  =  18", "3  X  7  =  21", "3  X  8  =  24", "3  X  9  =  27",
-    "4  X  4  =  16", "4  X  5  =  20", "4  X  6  =  24", "4  X  7  =  28", "4  X  8  =  32", "4  X  9  =  36", 
-    "5  X  5  =  25", "5  X  6  =  30", "5  X  7  =  35", "5  X  8  =  40", "5  X  9  =  45", 
-    "6  X  6  =  36", "6  X  7  =  42", "6  X  8  =  48", "6  X  9  =  54", 
-    "7  X  7  =  49", "7  X  8  =  56", "7  X  9  =  63", 
-    "8  X  8  =  64", "8  X  9  =  72", "9  X  9  =  81"
+    "1  x  1  =  1", "1  x  2  =  2", "1  x  3  =  3", "1  x  4  =  4", "1  x  5  =  5", "1  x  6  =  6", "1  x  7  =  7", "1  x  8  =  8", "1  x  9  =  9",
+    "2  x  2  =  4", "2  x  3  =  6", "2  x  4  =  8", "2  x  5  =  10", "2  x  6  =  12", "2  x  7  =  14", "2  x  8  =  16", "2  x  9  =  18", 
+    "3  x  3  =  9", "3  x  4  =  12", "3  x  5  =  15", "3  x  6  =  18", "3  x  7  =  21", "3  x  8  =  24", "3  x  9  =  27",
+    "4  x  4  =  16", "4  x  5  =  20", "4  x  6  =  24", "4  x  7  =  28", "4  x  8  =  32", "4  x  9  =  36", 
+    "5  x  5  =  25", "5  x  6  =  30", "5  x  7  =  35", "5  x  8  =  40", "5  x  9  =  45", 
+    "6  x  6  =  36", "6  x  7  =  42", "6  x  8  =  48", "6  x  9  =  54", 
+    "7  x  7  =  49", "7  x  8  =  56", "7  x  9  =  63", 
+    "8  x  8  =  64", "8  x  9  =  72", "9  x  9  =  81"
 };
 
 LOCAL FORMULA_PLAY_INFO_T formula_play_info = {0};
@@ -585,6 +585,10 @@ LOCAL void FormulaTableWin_CTL_PENOK(MMI_WIN_ID_T win_id, DPARAM param)
         play_idx += num - i;
     }
     play_idx += cur_idx;
+    if(cur_ctrl_idx % 2 == 1 && cur_idx != 0 && ctrl_id != FORMULA_FORM_CHILD_4_LIST_2_CTRL_ID)
+    {
+        play_idx--;
+    }
     SCI_TRACE_LOW("%s: play_idx = %d", __FUNCTION__, play_idx);
     FormulaWin_PlayRing(play_idx);
 }
