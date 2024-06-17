@@ -1387,7 +1387,7 @@ LOCAL MMI_RESULT_E HandleMathCountWinMsg(
 				    choose_multi_symbol=1;
 				    choose_division_symbol=0;
 				}
-				
+				WATCHCOM_Backlight(TRUE);
 			}
 			break;
 		case MSG_GET_FOCUS:
@@ -1813,6 +1813,7 @@ LOCAL MMI_RESULT_E HandleMathCountWinMsg(
 			}
 			break;
 		case MSG_CLOSE_WINDOW:
+			WATCHCOM_Backlight(FALSE);
 			break;
 		default:
 			recode = MMI_RESULT_FALSE;

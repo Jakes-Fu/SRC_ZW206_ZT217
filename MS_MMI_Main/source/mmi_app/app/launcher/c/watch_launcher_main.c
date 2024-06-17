@@ -1158,7 +1158,7 @@ PUBLIC BOOLEAN WatchLAUNCHER_IsFoucsIdleWin(MMI_WIN_ID_T win_id)
     uint8 page_size = (APP_MENU_SIZE+1)%LAUNCHER_MENUS_IN_PAGE == 0?APP_MENU_SIZE/LAUNCHER_MENUS_IN_PAGE:(APP_MENU_SIZE/LAUNCHER_MENUS_IN_PAGE+1);
     for(i = 0; i < page_size;i++)
     {
-        if(WATCH_LAUNCHER_APP_PAGE_START_WIN_ID + i == win_id)
+        if(WATCH_LAUNCHER_APP_PAGE_START_WIN_ID + i + 1 == win_id)
         {
             is_focus = TRUE;
             break;
