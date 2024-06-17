@@ -1,14 +1,3 @@
-/*
- * @Author: yfm
- * @Date: 2022-07-28 15:37:09
- * @LastEditors: yfm
- * @LastEditTime: 2022-08-11 11:38:17
- * @FilePath: dsl_word_main.h
- * @Description: 
- */
-
-#ifndef _ZMT_WORD_MAIN_H_
-#define _ZMT_WORD_MAIN_H_
 #include "sci_types.h"
 #include "mmk_type.h"
 /*----------------------------------------------------------------------------*/
@@ -26,57 +15,78 @@ extern "C"
 #define WORD_CARD_LINE_HIGHT MMI_MAINSCREEN_HEIGHT/10
 #define ENGLISE_BOOK_ITEM_PANDDING 10
 
-#define BASE_DEVICE_IMEI "868750061006384"
-#define BASE_URL_PATH "http://api.ebag.readboy.com/wisdom-school/"
-#define LOCAL_AUDIO_PATH "E:/Word/audio/%s.mp3"
-#define LOCAL_BOOK_DIR "E:\\Word"
-#define LOCAL_BOOK_INFO_BATH "book_info.json"
-typedef struct word_audio{
-	char *audio_data_url;
-	char *audio_data;
-	uint32 audio_data_len;
-}ZMT_WORD_AUDIO_T;
-typedef struct word{
-    char *word;
-    char *us;
-	int us_audio_request_idx;
-	char *us_audio_data;
-	int32 us_audio_data_len;
-    char *uk;
-	int uk_audio_request_idx;
-	char *uk_audio_data;
-	int32 uk_audio_data_len;
-    char *explain;
-}ZMT_WORD_T;
-typedef struct book{
-    char *name;
-	char *editionName;
-	char *path;
-    char *basepath;
-    char id[11];
-}ZMT_BOOK_T;
-typedef struct chapter{
-    char *name;
-	char *path;
-    char id[11];
-}ZMT_CHAPTER_T;
-typedef struct pageInfo{
-    char bookId[11];
-    int curIdx;           
-    uint8 realIdx;        
-    int16 total;         
-    uint8 bookIdx;    
-    uint8 chapterIdx;   
-    uint8 curPageNum;    
-    uint8 curPage;
-}ZMT_PAGE_INFO;
+#define WORD_BOOK_HEADR_PATH "http://8.130.95.8:8866/"
+#define WORD_BOOK_PUBLISH_PATH "english/getPublisher"
+#define WORD_BOOK_ID_PATH "english/get?bookId=%d"
+#define WORD_CHAPTER_ID_PATH "english/get?contentId=%d"
+#define WORD_BOOK_AUDIO_BASE_PATH "%s%s.mp3"
+#define WORD_BOOK_AUDIO_BASE_URL "http://8.130.95.8:8866/file/english/"
+
+#define WORD_PUBLISH_NAME_PATH "E:/word/publish_name.json"
+#define WORD_BOOK_CHAPTER_PATH "E:/word/book_%d/book_%d.json"
+#define WORD_BOOK_AUDIO_PATH "E:/word/book_%d/%s.mp3"
+#define WORD_BOOK_NEW_WORD_PATH "E:/word/book_%d/unmaster_word_%d.json"
+
+#define WORD_PUBLISH_BOOK_MAX 30
+#define WORD_CHAPTER_NUM_MAX 30
+#define WORD_CHAPTER_WORD_MAX 50
+
+typedef struct
+{
+    int cur_book_idx;
+    int cur_chapter_idx;
+    int cur_detail_idx;
+}WORD_BOOK_INFO_T;
+
+typedef struct
+{
+    int book_id;
+    char * book_name;
+    int grade;
+}WORD_BOOK_PUBLISH_ITEM_INFO_T;
+
+typedef struct
+{
+    char * publish_name;
+    int publish_id;
+    int item_count;
+    WORD_BOOK_PUBLISH_ITEM_INFO_T * item_info[WORD_PUBLISH_BOOK_MAX];
+}WORD_BOOK_PUBLISH_INFO_T;
+
+typedef struct
+{
+    char * word;
+    char * audio_uri;
+    char * audio_data;
+    int16 audio_len;
+    char * phonetic;
+    char * translation;
+}WORD_BOOK_DETAIL_T;
+
+typedef struct
+{
+    int chapter_id;
+    char * chapter_name;
+    uint8 detail_count;
+    WORD_BOOK_DETAIL_T * detail[WORD_CHAPTER_WORD_MAX];
+}WORD_BOOK_CHAPTER_T;
+
 PUBLIC void MMI_CreateWordWin(void);
+PUBLIC void MMI_CreateWordChapterWin(void);
 PUBLIC void MMI_CreateWordDetailWin(void);
 
+PUBLIC void Word_ParseMp3Response(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id);
+PUBLIC void WordDetail_PlayPinyinAudio(void);
+
+PUBLIC void Word_ReleaseChapterDetailInfo(void);
+PUBLIC void Word_requestChapterDetailInfo(uint16 book_id);
+PUBLIC void Word_ReleaseBookInfo(void);
+PUBLIC void Word_requestBookInfo(void);
+
+PUBLIC void Word_WriteUnmasterChapterWord(uint16 book_id, uint16 chap_id, char * chap_name, uint8 write_count);
 /*----------------------------------------------------------------------------*/
 /* Compiler Flag */
 /*----------------------------------------------------------------------------*/
 #ifdef _cplusplus
 }
-#endif
 #endif
