@@ -170,6 +170,12 @@ PUBLIC uint8* WATCHCOM_GetSoftwareVersion();
 
 PUBLIC void WATCHCOM_Backlight(BOOLEAN is_alway_on);
 
+//获取1970到当前时间的时间戳 注意平台不支持uint32(long int)转字符串 用sprintf转字符串可能会越界
+PUBLIC uint32 GetCurrentTimeStamp(void);
+
+//平台不支持uint32(long int)转字符串可能会越界
+PUBLIC uint8* GetCurrentTimeStampString(void);
+
 #define WINDOW_TITLE_RECT {0,0,240,30}
 
 #define WINDOW_BACK_RECT {0,0,45,MMI_SPECIAL_TITLE_HEIGHT}

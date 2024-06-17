@@ -448,4 +448,51 @@ PUBLIC uint8* WATCHCOM_GetSoftwareVersion()
 
 #endif
 
+PUBLIC uint32 GetCurrentTimeStamp(void)
+{
+    SCI_TM_T sys_time = {0};
+    uint32   second = 0;
+    TM_GetTime(&sys_time);
+    second = MMIAPICOM_Tm2Second(sys_time.tm_sec, sys_time.tm_min, sys_time.tm_hour, sys_time.tm_mday, sys_time.tm_mon, sys_time.tm_year);
+    return second;
+    //MMIAPICOM_GetCurTime();//从1980年到现在
+    //(TM_GetTotalSeconds();//从1980年到现在
+    //(365*23+366*7)*24*3600)
+    /*1970年1月1日零点到1999年12月31日23点59分59秒以来经过的秒数*/
+}
+
+/*
+* 获取当前时间戳字符串(因为平台不支持sprintf(%ld) long转字符串)
+* 调用后记得free
+*/
+PUBLIC uint8* GetCurrentTimeStampString(void)
+{
+    int index = 0;
+    uint8 *time;
+    uint32 timestamp = GetCurrentTimeStamp();
+    //uint32 转字符串 平台不支持long sprintf(%ld)
+    uint8 length = 1; 
+    uint32 temp = timestamp;
+    while (temp >= 10) {  
+        length++;  
+        temp /= 10;  
+    }
+    time = (uint8 *)SCI_ALLOC_APPZ(length+1);
+    index = length-1;
+    while (timestamp > 0) {  
+        uint32 digit = timestamp % 10; // 获取最后一位数字  
+        time[index--] = '0' + digit; // 将数字转换为字符并添加到字符串中  
+        timestamp /= 10; // 去掉最后一位数字  
+    } 
+    return time;
+}
+
+PUBLIC uint8* WATCHCOM_GetImei()
+{
+    #ifdef ZTE_WATCH
+    return ZDT_SFR_SW_VER;
+    #else
+    return "";
+    #endif
+}
 
