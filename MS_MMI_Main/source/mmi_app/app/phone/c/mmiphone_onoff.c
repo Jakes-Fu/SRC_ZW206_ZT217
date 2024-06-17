@@ -1625,10 +1625,9 @@ LOCAL BOOLEAN PlayDefaultPowerOnOffAnimation(BOOLEAN is_power_on_off)    //TRUE:
     //set anim control init param
     anim_init.both_rect.h_rect = anim_init.both_rect.v_rect = MMITHEME_GetFullScreenRect();
 // Bug 1321510,1334016 start
-    anim_init.both_rect.h_rect.bottom = anim_init.both_rect.h_rect.right;
-    anim_init.both_rect.v_rect.bottom = anim_init.both_rect.v_rect.right;
+    //anim_init.both_rect.h_rect.bottom = anim_init.both_rect.h_rect.right;
+    //anim_init.both_rect.v_rect.bottom = anim_init.both_rect.v_rect.right;
 // Bug 1321510,1334016 end
-
     //creat anim
     anim_ctrl.ctrl_id           = ctrl_info.ctrl_id;
     anim_ctrl.guid              = SPRD_GUI_ANIM_ID;
