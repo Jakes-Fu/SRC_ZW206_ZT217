@@ -10,6 +10,8 @@
 #include "zdt_net.h"
 #include "cJSON.h"
 #include "zdt_nv.h"
+#include "mbedtls/md5.h"
+#include "watch_common.h"
 
 LOCAL BOOLEAN                  s_zdt_http_is_init = FALSE;
 LOCAL uint8                       s_zdt_http_send_timer_id = 0;
@@ -115,6 +117,70 @@ uint16  MMIHTTP_Get_IMSI_Str(MN_IMSI_T imsi,char * imsi_ptr)
 	imsi_ptr[HTTP_IMSI_LEN] = 0x00;
 	
 	return HTTP_IMSI_LEN;
+}
+
+/*
+* 生成 api 验证的 sign 
+* sign = md5(app_key + app_secret + timestamp)
+* time_stamp 调用 GetCurrentTimeStampString() 去获取 #include "watch_common.h"
+* 记得free 掉
+*/
+PUBLIC uint8 *makeSignString(uint8 *app_id,uint8 *app_secret,uint8 *time_stamp)
+{
+    mbedtls_md5_context md5_ctx = {0};
+    uint8 digest[16] = {0};
+    uint16 i = 0;
+    uint8 sign[128] = {0};
+    uint8 *md5 = (uint8 *)SCI_ALLOC_APPZ(33);
+    sprintf(sign,"%s%s%s",app_id,app_secret,time_stamp);
+#ifndef WIN32
+    mbedtls_md5_init( &md5_ctx );
+    mbedtls_md5_starts( &md5_ctx );
+    mbedtls_md5_update( &md5_ctx, sign, strlen(sign));
+    mbedtls_md5_finish( &md5_ctx, digest);
+    mbedtls_md5_free( &md5_ctx );
+#endif
+   for(i = 0; i < 16; i++)
+   {
+        sprintf(md5+(i*2),"%02x",digest[i]);
+   }
+   ZDTHTTP_LOG("ZDT_HTTP makeSignString md5:%s",md5);
+   return md5;
+}
+
+/*
+* 生成带sign 要求的url 参数
+* sign=xx&timestamp=xx&app_id=xxx&model=xx&SoftwareVersion=xx&deviceId=xxx
+* 记得free
+*/
+PUBLIC uint8 *makeBaseQueryUrlString(uint8 *app_id,uint8 *app_secret)
+{
+    uint8 *query = (uint8 *)SCI_ALLOC_APPZ(256);
+    uint8 *timestamp = GetCurrentTimeStampString();
+    uint8 *sign = makeSignString(app_id,app_secret,timestamp);
+    sprintf(query,"sign=%s&timestamp=%s&app_id=%s&model=%s&SoftwareVersion=%s&deviceId=%s",sign
+        , timestamp, app_id, WATCHCOM_GetDeviceModel(),WATCHCOM_GetSoftwareVersion(),g_http_phone_imei);
+    ZDTHTTP_LOG("ZDT_HTTP makeBaseQueryUrlString query:%s",query);
+    SCI_Free(sign);
+    SCI_Free(timestamp);
+    return query;
+}
+
+/*
+* 生成带sign 要求的header 参数
+* sign:xx\r\ntimestamp=xx\r\napp_id:xxx\r\nmodel:xx\r\nSoftwareVersion:xx\r\ndeviceId:xxx
+* 记得 free
+*/
+PUBLIC uint8 *makeHttpHeaderString(uint8 *app_id,uint8 *app_secret)
+{
+    uint8 *header = (uint8 *)SCI_ALLOC_APPZ(256);
+    uint8 *timestamp = GetCurrentTimeStampString();
+    uint8 *sign = makeSignString(app_id,app_secret,timestamp);   
+    sprintf(header,"sign:%s\r\ntimestamp:%s\r\napp_id:%s\r\nmodel:%s\r\nSoftwareVersion:%s\r\ndeviceId:%s\r\n",sign
+        , timestamp, app_id, WATCHCOM_GetDeviceModel(),WATCHCOM_GetSoftwareVersion(),g_http_phone_imei);
+    SCI_Free(sign);
+    SCI_Free(timestamp);
+    return header;
 }
 
 PUBLIC BOOLEAN  MMIZDT_HTTP_SendSigTo_APP(ZDTHTTP_APP_SIG_E sig_id, ZDT_HTTP_DATA_T * p_http_data)
@@ -965,6 +1031,7 @@ PUBLIC BOOLEAN MMIZDT_HTTP_AppSend(BOOLEAN is_get,char * ip_str,uint8 *str,uint3
     p_http_data->is_get = is_get;
     if(str != PNULL && str_len > 0)
     {
+        str_len = strlen(str);
         p_http_data->str = SCI_ALLOC_APPZ(str_len+1);//free it in AT task
         if (p_http_data->str == PNULL)
         {

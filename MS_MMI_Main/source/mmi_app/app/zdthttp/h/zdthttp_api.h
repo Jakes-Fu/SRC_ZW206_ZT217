@@ -162,6 +162,28 @@ PUBLIC BOOLEAN  ZDT_HTTP_RCV_Get(ZDT_HTTP_RCV_DATA_T * pUDPData);
 
 PUBLIC BOOLEAN  MMIZDT_HTTP_ZTE_Device_Report(void);
 
+/*
+* 生成 api 验证的 sign 
+* sign = md5(app_key + app_secret + timestamp)
+* time_stamp 调用 GetCurrentTimeStampString() 去获取 #include "watch_common.h"
+* 记得free 掉
+*/
+PUBLIC uint8 *makeSignString(uint8 *app_id,uint8 *app_secret,uint8 *time_stamp);
+
+/*
+* 生成带sign 要求的url 参数
+* sign=xx&timestamp=xx&app_id=xxx&model=xx&SoftwareVersion=xx&deviceId=xxx
+* 记得free
+*/
+PUBLIC uint8 *makeBaseQueryUrlString(uint8 *app_id,uint8 *app_secret);
+
+/*
+* 生成带sign 要求的header 参数
+* sign:xx\r\ntimestamp=xx\r\napp_id:xxx\r\nmodel:xx\r\nSoftwareVersion:xx\r\ndeviceId:xxx
+* 记得 free
+*/
+PUBLIC uint8 *makeHttpHeaderString(uint8 *app_id,uint8 *app_secret);
+
 extern char         g_http_phone_imei[HTTP_IMEI_LEN+1];
 extern char         g_http_phone_imei_2[HTTP_IMEI_LEN+1];
 extern char         g_http_sim_imsi[HTTP_IMSI_LEN+1];
