@@ -665,6 +665,7 @@ typedef enum{
     ICON_DV_CANCEL,
     ICON_DV_CONFIRM,
 //    ICON_WAITING,
+    ICON_SWITCH_CAMERA,
     ICON_MAX
 }DC_ICON_INDEX_E;
 typedef struct _DC_ICON_INFO_T{

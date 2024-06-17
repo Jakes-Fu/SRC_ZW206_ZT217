@@ -19,6 +19,7 @@ RES_ADD_IMG(IMG_DC_WATCH_PAUSE_PLAY ,"\\MMI_RES_##\\IMAG\\WATCH\\res_camera_ic_p
 RES_ADD_IMG(IMG_DC_WATCH_PLAY ,"\\MMI_RES_##\\IMAG\\WATCH\\res_camera_ic_play.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(IMG_DC_WATCH_RECORDING_INDICATOR ,"\\MMI_RES_##\\IMAG\\WATCH\\res_camera_indicator_recording.png",IMG_CMP_PNG_ARGB_RLE,0)
 //RES_ADD_IMG(IMG_DC_WATCH_WAIT ,"\\MMI_RES_##\\IMAG\\WATCH\\res_camera_ic_waiting.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(IMG_DC_WATCH_SWITCH_CAMERA ,"\\MMI_RES_##\\IMAG\\WATCH\\bg_switch_camera.png",IMG_CMP_PNG_ARGB_RLE,0)
 
 #endif
 

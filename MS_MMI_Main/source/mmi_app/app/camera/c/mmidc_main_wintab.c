@@ -7004,6 +7004,7 @@ ACTION s_icon_action_table[ICON_MAX] = {
     Watch_DVCancel, //ICON_DV_CANCEL
     Watch_DVConfirm, //ICON_DV_CONFIRM 
 //    noop, //ICON_WAITING
+    MMIDC_ShortcutForSwitchSensor,
 };
 
 
