@@ -37,8 +37,8 @@ LOCAL GUI_RECT_T hanzi_auto_play_rect = {4*HANZI_CARD_LINE_WIDTH, 0, MMI_MAINSCR
 LOCAL GUI_RECT_T hanzi_list_rect = {0, HANZI_CARD_LINE_HIGHT, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT-5};//列表
 LOCAL GUI_RECT_T hanzi_dir_rect = {5*HANZI_CARD_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH, HANZI_CARD_LINE_HIGHT};
 LOCAL GUI_RECT_T hanzi_word_rect = {5, HANZI_CARD_LINE_HIGHT, MMI_MAINSCREEN_WIDTH, 2*HANZI_CARD_LINE_HIGHT};//汉字
-LOCAL GUI_RECT_T hanzi_pinyin_rect = {5, 1.8*HANZI_CARD_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-5, 2.8*HANZI_CARD_LINE_HIGHT};//音标
-LOCAL GUI_RECT_T hanzi_text_rect = {5,2.8*HANZI_CARD_LINE_HIGHT+1,MMI_MAINSCREEN_WIDTH-5,MMI_MAINSCREEN_HEIGHT-1.5*HANZI_CARD_LINE_HIGHT-5};//释义
+LOCAL GUI_RECT_T hanzi_pinyin_audio_rect = {5*HANZI_CARD_LINE_WIDTH, HANZI_CARD_LINE_HIGHT, MMI_MAINSCREEN_WIDTH, 2*HANZI_CARD_LINE_HIGHT};//音标icon
+LOCAL GUI_RECT_T hanzi_text_rect = {5,2.2*HANZI_CARD_LINE_HIGHT+1,MMI_MAINSCREEN_WIDTH-5,MMI_MAINSCREEN_HEIGHT-1.5*HANZI_CARD_LINE_HIGHT-5};//释义
 LOCAL GUI_RECT_T hanzi_msg_rect = {HANZI_CARD_LINE_WIDTH, 3*HANZI_CARD_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-HANZI_CARD_LINE_WIDTH, 5*HANZI_CARD_LINE_HIGHT};//界面的信息提示
 LOCAL GUI_RECT_T hanzi_left_rect = {10, MMI_MAINSCREEN_HEIGHT-1.5*HANZI_CARD_LINE_HIGHT, 3*HANZI_CARD_LINE_WIDTH-10, MMI_MAINSCREEN_HEIGHT-2};//汉字学习/掌握
 LOCAL GUI_RECT_T hanzi_right_rect = {3*HANZI_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-1.5*HANZI_CARD_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-10, MMI_MAINSCREEN_HEIGHT-2};//生词本/未掌握
@@ -465,7 +465,7 @@ LOCAL MMI_RESULT_E HandleHanziChapterWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
                 font.color = MMI_WHITE_COLOR;
         
                 GUIBUTTON_SetRect(MMI_ZMT_HANZI_CHAPTER_LABEL_BACK_CTRL_ID, &hanzi_title_rect);
-                GUIBUTTON_SetCallBackFunc(MMI_ZMT_HANZI_CHAPTER_LABEL_BACK_CTRL_ID, MMI_CloseHanziWin);
+                GUIBUTTON_SetCallBackFunc(MMI_ZMT_HANZI_CHAPTER_LABEL_BACK_CTRL_ID, MMI_CloseHanziChapterWin);
                 GUIBUTTON_SetFont(MMI_ZMT_HANZI_CHAPTER_LABEL_BACK_CTRL_ID, &font);
                 GUIBUTTON_SetTextAlign(MMI_ZMT_HANZI_CHAPTER_LABEL_BACK_CTRL_ID,ALIGN_LVMIDDLE);
 
@@ -744,7 +744,7 @@ LOCAL void Hanzi_ChatPlayMp3Data(uint8 *data,uint32 data_len)
     }
     else
     {
-        SCI_TRACE_LOW("%s mp3_player_handle <=> 0", __FUNCTION__);
+        SCI_TRACE_LOW("%s mp3_player_handle <= 0", __FUNCTION__);
     }
 }
 
@@ -786,7 +786,6 @@ LOCAL void HanziDetail_NextChapterInfo(void)
 
 PUBLIC void HanziDetail_TipTimeout(uint8 timer_id,uint32 param)
 {
-    SCI_TRACE_LOW("DSLCHAT_WIN %s start", __FUNCTION__);
     if(0 != hanzi_tip_timer)
     {
         MMK_StopTimer(hanzi_tip_timer);
@@ -798,7 +797,6 @@ PUBLIC void HanziDetail_TipTimeout(uint8 timer_id,uint32 param)
 
 LOCAL void HanziDetail_DisplayTip(uint type)
 {
-    SCI_TRACE_LOW("DSLCHAT_WIN %s start", __FUNCTION__);
     if(0 != hanzi_tip_timer)
     {
         MMK_StopTimer(hanzi_tip_timer);
@@ -977,39 +975,41 @@ LOCAL void HanziDetail_DisplayDtailInfo(MMI_WIN_ID_T win_id)
     wchar wstr_remark[2048] = {0};
     uint16 size = 0;
     uint16 text_width_piex = 0;
+    GUI_RECT_T word_rect = {0};
     GUI_RECT_T pinyin_rect = {0};
     GUI_RECT_T audio_rect = {0};
 
     size = strlen(hanzi_detail_info[hanzi_detail_cur_idx]->word);
-    GUILABEL_SetRect(MMI_ZMT_HANZI_DETAIL_LABEL_WORD_CTRL_ID, &hanzi_word_rect, FALSE);
     GUI_UTF8ToWstr(wstr_word, 10, hanzi_detail_info[hanzi_detail_cur_idx]->word, size); 
     text_word.wstr_ptr = wstr_word;
     text_word.wstr_len = MMIAPICOM_Wstrlen(text_word.wstr_ptr);
+    text_width_piex = GUI_CalculateStringPiexlNum(text_word.wstr_ptr, text_word.wstr_len, DP_FONT_22, 1);
+    word_rect = hanzi_word_rect;
+    word_rect.right = word_rect.left + text_width_piex + 10;
+    GUILABEL_SetRect(MMI_ZMT_HANZI_DETAIL_LABEL_WORD_CTRL_ID, &word_rect, FALSE);
     GUILABEL_SetText(MMI_ZMT_HANZI_DETAIL_LABEL_WORD_CTRL_ID, &text_word, FALSE);
-
+    
     size = strlen(hanzi_detail_info[hanzi_detail_cur_idx]->pingy);
     GUI_UTF8ToWstr(wstr_pinyin, 30, hanzi_detail_info[hanzi_detail_cur_idx]->pingy, size);
     text_pinyin.wstr_ptr = wstr_pinyin;
     text_pinyin.wstr_len = MMIAPICOM_Wstrlen(text_pinyin.wstr_ptr);
-    text_width_piex = GUI_CalculateStringPiexlNum(text_pinyin.wstr_ptr, text_pinyin.wstr_len, DP_FONT_16, 1);
-    pinyin_rect = hanzi_pinyin_rect;
+    text_width_piex = GUI_CalculateStringPiexlNum(text_pinyin.wstr_ptr, text_pinyin.wstr_len, DP_FONT_22, 1);
+    pinyin_rect = word_rect;
+    pinyin_rect.left = word_rect.right;
     pinyin_rect.right = pinyin_rect.left + text_width_piex + 10;
     GUILABEL_SetRect(MMI_ZMT_HANZI_DETAIL_LABEL_PINYIN_CTRL_ID, &pinyin_rect, FALSE);
     GUILABEL_SetText(MMI_ZMT_HANZI_DETAIL_LABEL_PINYIN_CTRL_ID, &text_pinyin, FALSE);
-    
-    audio_rect = hanzi_pinyin_rect;
-    audio_rect.left = pinyin_rect.right;
-    GUIBUTTON_SetRect(MMI_ZMT_HANZI_DETAIL_BUTTON_AUDIO_CTRL_ID, &audio_rect);
 
-    LCD_DrawHLine(&lcd_dev_info, hanzi_pinyin_rect.left, hanzi_pinyin_rect.bottom, hanzi_pinyin_rect.right, MMI_WHITE_COLOR);
+    GUIBUTTON_SetRect(MMI_ZMT_HANZI_DETAIL_BUTTON_AUDIO_CTRL_ID, &hanzi_pinyin_audio_rect);
 
-    size = strlen(hanzi_detail_info[hanzi_detail_cur_idx]->remark);
-    GUITEXT_SetRect(MMI_ZMT_HANZI_DETAIL_TEXT_INFO_CTRL_ID, &hanzi_text_rect);
+    LCD_DrawHLine(&lcd_dev_info, hanzi_word_rect.left, hanzi_word_rect.bottom, hanzi_word_rect.right, MMI_WHITE_COLOR);
+
+    size = strlen(hanzi_detail_info[hanzi_detail_cur_idx]->remark); 
     GUI_UTF8ToWstr(wstr_remark, 2048, hanzi_detail_info[hanzi_detail_cur_idx]->remark, size);
     text_remark.wstr_ptr = wstr_remark;
     text_remark.wstr_len = MMIAPICOM_Wstrlen(text_remark.wstr_ptr);
-    GUITEXT_SetAlign(MMI_ZMT_HANZI_DETAIL_TEXT_INFO_CTRL_ID, ALIGN_LVMIDDLE);
-    GUITEXT_SetFont(MMI_ZMT_HANZI_DETAIL_TEXT_INFO_CTRL_ID, &text_font,&text_color);
+    GUITEXT_SetRect(MMI_ZMT_HANZI_DETAIL_TEXT_INFO_CTRL_ID, &hanzi_text_rect);
+    GUITEXT_SetAlign(MMI_ZMT_HANZI_DETAIL_TEXT_INFO_CTRL_ID, ALIGN_LEFT);
     GUITEXT_SetString(MMI_ZMT_HANZI_DETAIL_TEXT_INFO_CTRL_ID, text_remark.wstr_ptr,text_remark.wstr_len, TRUE);
 }
 
@@ -1073,7 +1073,7 @@ LOCAL MMI_RESULT_E HandleHanziDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
                 GUILABEL_SetAlign(MMI_ZMT_HANZI_DETAIL_LABEL_NUM_CTRL_ID, GUILABEL_ALIGN_MIDDLE);
 
                 GUILABEL_SetFont(MMI_ZMT_HANZI_DETAIL_LABEL_WORD_CTRL_ID, DP_FONT_22,MMI_WHITE_COLOR);
-                GUILABEL_SetFont(MMI_ZMT_HANZI_DETAIL_LABEL_PINYIN_CTRL_ID, DP_FONT_20,MMI_WHITE_COLOR);
+                GUILABEL_SetFont(MMI_ZMT_HANZI_DETAIL_LABEL_PINYIN_CTRL_ID, DP_FONT_22,MMI_WHITE_COLOR);
 
                 memset(cur_chapter_unmaster_idx, 0, sizeof(cur_chapter_unmaster_idx));
                 if(is_open_new_hanzi){
@@ -1188,6 +1188,7 @@ LOCAL MMI_RESULT_E HandleHanziDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
                             GUIBUTTON_SetCallBackFunc(MMI_ZMT_HANZI_DETAIL_RIGHT_CTRL_ID, HanziDetail_RightDetail);
                             GUIBUTTON_SetVisible(MMI_ZMT_HANZI_DETAIL_DELETE_CTRL_ID,TRUE,TRUE);
                             GUIBUTTON_SetCallBackFunc(MMI_ZMT_HANZI_DETAIL_DELETE_CTRL_ID, HanziDetail_DeleteNewWord);
+                            Hanzi_SetDiretionText(MMI_ZMT_HANZI_DETAIL_LABEL_NUM_CTRL_ID, cur_new_word_page_idx * HANZI_CHAPTER_WORD_MAX + hanzi_detail_cur_idx, hanzi_detail_count);
                         }
                         else
                         {
@@ -1195,8 +1196,8 @@ LOCAL MMI_RESULT_E HandleHanziDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
                             GUIBUTTON_SetTextId(MMI_ZMT_HANZI_DETAIL_RIGHT_CTRL_ID, HANZI_UNMASTERED);
                             GUIBUTTON_SetCallBackFunc(MMI_ZMT_HANZI_DETAIL_LEFT_CTRL_ID, HanziDetail_LeftDetail);
                             GUIBUTTON_SetCallBackFunc(MMI_ZMT_HANZI_DETAIL_RIGHT_CTRL_ID, HanziDetail_RightDetail);
-                        }
-                        Hanzi_SetDiretionText(MMI_ZMT_HANZI_DETAIL_LABEL_NUM_CTRL_ID, cur_new_word_page_idx * HANZI_CHAPTER_WORD_MAX + hanzi_detail_cur_idx, hanzi_detail_count);                   
+                            Hanzi_SetDiretionText(MMI_ZMT_HANZI_DETAIL_LABEL_NUM_CTRL_ID, hanzi_detail_cur_idx, hanzi_detail_count);
+                        }                 
                         HanziDetail_DisplayDtailInfo(win_id);
                     }
                     else
@@ -1276,13 +1277,13 @@ LOCAL MMI_RESULT_E HandleHanziDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
             break;
         case MSG_CLOSE_WINDOW:
             {
+                Hanzi_StopPlayMp3Data();
                 Hanzi_WriteUnmasterHanzi(cur_chapter_unmaster_count);
                 Hanzi_ReleaseDetailInfo();
                 hanzi_detail_cur_idx = 0;
                 hanzi_detail_count = 0;
                 cur_chapter_unmaster_count = 0;
                 cur_new_word_page_idx = 0;
-                Hanzi_StopPlayMp3Data();
                 memset(cur_chapter_unmaster_idx, 0, sizeof(cur_chapter_unmaster_idx));
             }
             break;

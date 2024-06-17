@@ -454,7 +454,7 @@ LOCAL void Hanzi_AddDetailInfo(uint8 idx, cJSON* text, cJSON * audio, cJSON * pi
     hanzi_detail_info[idx] = (HANZI_BOOK_HANZI_INFO *)SCI_ALLOC_APP(sizeof(HANZI_BOOK_HANZI_INFO));
     memset(hanzi_detail_info[idx], 0, sizeof(HANZI_BOOK_HANZI_INFO));
 
-    if(text->valuestring != NULL){
+    if(text != NULL && text->type != cJSON_NULL && text->valuestring != NULL){
         size = strlen(text->valuestring);
         if(size > 0){
             hanzi_detail_info[idx]->word = (char *)SCI_ALLOC_APP(size + 1);
@@ -467,7 +467,7 @@ LOCAL void Hanzi_AddDetailInfo(uint8 idx, cJSON* text, cJSON * audio, cJSON * pi
         hanzi_detail_info[idx]->word = NULL;
     }
 
-    if(pinyin->valuestring != NULL){
+    if(pinyin != NULL && pinyin->type != cJSON_NULL && pinyin->valuestring != NULL){
         size = strlen(pinyin->valuestring);
         if(size > 0){
             hanzi_detail_info[idx]->pingy = (char *)SCI_ALLOC_APP(size + 1);
@@ -480,7 +480,7 @@ LOCAL void Hanzi_AddDetailInfo(uint8 idx, cJSON* text, cJSON * audio, cJSON * pi
         hanzi_detail_info[idx]->pingy = NULL;
     }
 
-    if(baseUrl == NULL && audio->valuestring != NULL){
+    if(baseUrl == NULL && audio != NULL && audio->type != cJSON_NULL && audio->valuestring != NULL){
         size = strlen(audio->valuestring);
         if(size > 0){
             hanzi_detail_info[idx]->audio_uri = (char *)SCI_ALLOC_APP(size + 1);
@@ -500,7 +500,7 @@ LOCAL void Hanzi_AddDetailInfo(uint8 idx, cJSON* text, cJSON * audio, cJSON * pi
         }
     }
                         
-    if(similar_word->valuestring != NULL){
+    if(similar_word != NULL && similar_word->type != cJSON_NULL && similar_word->valuestring != NULL){
         similar_word_size = strlen(similar_word->valuestring);
         if(similar_word_size > 0){
             hanzi_detail_info[idx]->similar_word = (char *)SCI_ALLOC_APP(similar_word_size + 1);
@@ -513,7 +513,7 @@ LOCAL void Hanzi_AddDetailInfo(uint8 idx, cJSON* text, cJSON * audio, cJSON * pi
         hanzi_detail_info[idx]->similar_word = NULL;
     }
                         
-    if(annotation->valuestring != NULL){
+    if(annotation != NULL && annotation->type != cJSON_NULL && annotation->valuestring != NULL){
         annotation_size = strlen(annotation->valuestring);
         if(annotation_size > 0){
             hanzi_detail_info[idx]->annotation = (char *)SCI_ALLOC_APP(annotation_size + 1);
@@ -866,6 +866,10 @@ PUBLIC void Hanzi_ParseMp3Response(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uin
     SCI_TRACE_LOW("%s: is_ok = %d, Rcv_len = %d", __FUNCTION__, is_ok, Rcv_len);
     if (is_ok && pRcv != PNULL && Rcv_len> 2)
     {
+        if(hanzi_detail_info[hanzi_detail_cur_idx] == NULL){
+            SCI_TRACE_LOW("%s: hanzi_detail_info empty", __FUNCTION__);
+            return;
+        }
         hanzi_detail_info[hanzi_detail_cur_idx]->audio_len = Rcv_len;
         if(hanzi_detail_info[hanzi_detail_cur_idx]->audio_data != PNULL)
         {
@@ -891,6 +895,10 @@ PUBLIC void Hanzi_ParseMp3Response(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uin
     }
     else
     {
+		if(hanzi_detail_info[hanzi_detail_cur_idx] == NULL){
+            SCI_TRACE_LOW("%s: hanzi_detail_info empty", __FUNCTION__);
+            return;
+        }
         hanzi_detail_info[hanzi_detail_cur_idx]->audio_len = -2;
     }
     HanziDetail_PlayPinyinAudio();
