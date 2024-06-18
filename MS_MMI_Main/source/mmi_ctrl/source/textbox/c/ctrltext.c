@@ -5687,3 +5687,46 @@ PUBLIC BOOLEAN GUITEXT_GetHighlightInfo(
     return result;
 }
 
+/*****************************************************************************/
+//  Description : set text string display top index
+//  Global resource dependence : 
+//  Author: fys
+//  Note:2024.06.18
+/*****************************************************************************/
+PUBLIC BOOLEAN CTRLTEXT_SetResetTopDisplay(MMI_CTRL_ID_T ctrl_id, int32 top_index)
+{
+    BOOLEAN         result = FALSE;
+    int32           display_top = 0;
+    CTRLTEXT_OBJ_T      *text_ctrl_ptr = PNULL;
+    CTRLBASE_OBJ_T  *base_ctrl_ptr = PNULL;
+    
+    text_ctrl_ptr = GetTextPtr(ctrl_id);
+    if(text_ctrl_ptr == PNULL){
+        return result;
+    }
+    
+    base_ctrl_ptr = (CTRLBASE_OBJ_T*)text_ctrl_ptr;
+    if(base_ctrl_ptr == PNULL){
+        return result;
+    }
+
+    display_top = top_index;
+    if (GUITEXT_SetDisplayRect(display_top,text_ctrl_ptr))
+    {
+        //get top and bottom index
+        GetTopBottomIndex(text_ctrl_ptr);
+    }
+
+    if ((GUI_BG_NONE == text_ctrl_ptr->theme.bg.bg_type) && (text_ctrl_ptr->is_time_scroll))
+    {
+        CTRLMSG_SendNotifyEx(base_ctrl_ptr->handle,MSG_NOTIFY_TEXT_SCROLL, NULL);
+    }
+    else
+    {
+        //update text
+        GUITEXT_DisplayText(TRUE,text_ctrl_ptr);
+    }
+
+    return (result);
+}
+

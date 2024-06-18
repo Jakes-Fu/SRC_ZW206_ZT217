@@ -51,7 +51,7 @@
 #define GUITEXT_SetClipboardEnabled     CTRLTEXT_SetClipboardEnabled
 #define GUITEXT_GetPosInfo              CTRLTEXT_GetPosInfo
 #define GUITEXT_GetHighlightInfo        CTRLTEXT_GetHighlightInfo
-
+#define GUITEXT_SetResetTopDisplay  CTRLTEXT_SetResetTopDisplay
 /**--------------------------------------------------------------------------*
  **                         Compiler Flag                                    *
  **--------------------------------------------------------------------------*/

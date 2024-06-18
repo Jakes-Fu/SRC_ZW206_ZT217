@@ -540,6 +540,17 @@ PUBLIC BOOLEAN CTRLTEXT_GetHighlightInfo(
                                         uint16             *highlight_max_ptr
                                         );
 
+
+/*****************************************************************************/
+//  Description : set text string display top index
+//  Global resource dependence : 
+//  Author: fys
+//  Note:2024.06.18
+/*****************************************************************************/
+PUBLIC BOOLEAN CTRLTEXT_SetResetTopDisplay(
+                                        MMI_CTRL_ID_T ctrl_id, 
+                                        int32 top_index
+                                        );
 /**--------------------------------------------------------------------------*
  **                         Compiler Flag                                    *
  **--------------------------------------------------------------------------*/
