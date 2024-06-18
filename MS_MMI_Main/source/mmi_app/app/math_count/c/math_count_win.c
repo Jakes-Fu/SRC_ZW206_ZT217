@@ -477,7 +477,7 @@ LOCAL void MathCount_ShowKeyboardImg(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_d
     init_rect.right += img_width;
     init_rect.bottom += img_height;
     text_style.align = ALIGN_HVMIDDLE;
-    text_style.font = SONG_FONT_28;
+    text_style.font = DP_FONT_28;
     text_style.font_color = math_count_button_color;
     bg_rect = init_rect;
     for(i = 0;i < MATCH_COUNT_KEYBOARD_VER_NUM;i++){
@@ -530,7 +530,7 @@ LOCAL void MathCount_ClickKeyboardUpdateBg(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO
     GUI_RECT_T num_rect = {0};
 
     text_style.align = ALIGN_HVMIDDLE;
-    text_style.font = SONG_FONT_28;
+    text_style.font = DP_FONT_28;
     text_style.font_color = math_count_button_color;
     if(is_press){
         GUIRES_DisplayImg(PNULL, &math_count_keyboard_rect[index], PNULL, win_id, MATH_COUNT_NUM_CLICK_BG, &lcd_dev_info);
@@ -587,7 +587,7 @@ LOCAL void MathCount_ShowKeyboard(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_dev_
 	ver_line_rect.left = MATCH_COUNT_KEYBOARD_WIDTH;
 	ver_line_rect.right = MATCH_COUNT_KEYBOARD_WIDTH+1;
 	text_style.align = ALIGN_HVMIDDLE;
-	text_style.font = SONG_FONT_20;
+	text_style.font = DP_FONT_20;
 	text_style.font_color = MMI_BLACK_COLOR;
 	for(i = 0;i < MATCH_COUNT_KEYBOARD_VER_NUM;i++){
 		num_rect.top = hor_line_rect.top;
@@ -796,7 +796,7 @@ LOCAL MMI_RESULT_E HandleCountingWinMsg(
 					text_str.wstr_ptr=tmp;
 					text_str.wstr_len= (MMIAPICOM_Wstrlen(tmp));
 					formula_text_style.align = ALIGN_HVMIDDLE;
-					formula_text_style.font = SONG_FONT_28;
+					formula_text_style.font = DP_FONT_28;
 					formula_text_style.font_color = MMI_WHITE_COLOR;
 					GUISTR_DrawTextToLCDInRect(
 						(const GUI_LCD_DEV_INFO *)&lcd_dev_info,
@@ -818,7 +818,7 @@ LOCAL MMI_RESULT_E HandleCountingWinMsg(
 				GUI_FillRect(&lcd_dev_info, show_time_bar_rect, GUI_RGB2RGB565(71,235,255));
 				
 				text_style.align = ALIGN_HVMIDDLE;
-				text_style.font = SONG_FONT_16;
+				text_style.font = DP_FONT_16;
 				text_style.font_color = MMI_WHITE_COLOR;
 				text_state = GUISTR_STATE_ALIGN;
 				sprintf(time_and_index_text_temp_char,"%dS",(set_question_time-counting_used_time));
@@ -836,7 +836,7 @@ LOCAL MMI_RESULT_E HandleCountingWinMsg(
 					GUISTR_TEXT_DIR_AUTO
 					);
                 
-				text_style.font = SONG_FONT_24;
+				text_style.font = DP_FONT_24;
 				show_index_text_rect = math_title_rect;
 				SCI_MEMSET(time_and_index_tmp,0,200);
 				sprintf(time_and_index_text_temp_char,"%d/%d",(counting_question_index+1), math_learn_count);
@@ -1138,7 +1138,7 @@ LOCAL MMI_RESULT_E HandleScoreWinMsg(
 
 				MMIRES_GetText(MATH_COUNT_TITLE, win_id, &text_string);
 				text_style.align = ALIGN_HVMIDDLE;
-				text_style.font = SONG_FONT_22;
+				text_style.font = DP_FONT_22;
 				text_style.font_color = MMI_WHITE_COLOR;
 				GUISTR_DrawTextToLCDInRect(
 					(const GUI_LCD_DEV_INFO *)&lcd_dev_info,
@@ -1150,7 +1150,7 @@ LOCAL MMI_RESULT_E HandleScoreWinMsg(
 					GUISTR_TEXT_DIR_AUTO
 					);
 
-				text_style.font = SONG_FONT_24;
+				text_style.font = DP_FONT_24;
 				sprintf(total_score_temp_char,"答对:%d题",correct_answer_num);
 				GUI_GBToWstr(wchar_tmp,total_score_temp_char,strlen(total_score_temp_char));
 				temp_mmi_string_str.wstr_ptr=wchar_tmp;
@@ -1183,7 +1183,7 @@ LOCAL MMI_RESULT_E HandleScoreWinMsg(
 					GUISTR_TEXT_DIR_AUTO
 					);
 
-				text_style.font = SONG_FONT_28;
+				text_style.font = DP_FONT_28;
 				SCI_MEMSET(wchar_tmp,0,100);
 				SCI_MEMSET(total_score_temp_char,0,100);
 				sprintf(total_score_temp_char,"总分:%d分",(set_question_range*(35 - set_question_time)*(choose_add_symbol+choose_minus_symbol+choose_multi_symbol+choose_division_symbol)*correct_answer_num)/10);
@@ -1202,7 +1202,7 @@ LOCAL MMI_RESULT_E HandleScoreWinMsg(
 					GUISTR_TEXT_DIR_AUTO
 					);
 
-				text_style.font = SONG_FONT_20;
+				text_style.font = DP_FONT_20;
 				//LCD_DrawRect(&lcd_dev_info, math_count_back_rect, MMI_BLACK_COLOR);
 				GUIRES_DisplayImg(PNULL, &math_count_back_rect, PNULL, win_id, MATH_COUNT_BOTTOM_BG, &lcd_dev_info);
 				text_style.font_color = math_count_button_color;
@@ -1426,7 +1426,7 @@ LOCAL MMI_RESULT_E HandleMathCountWinMsg(
 				
 				GUI_FillRect(&lcd_dev_info, math_title_rect, math_count_title_color);
 				text_style.align = ALIGN_HVMIDDLE;
-				text_style.font = SONG_FONT_22;
+				text_style.font = DP_FONT_22;
 				text_style.font_color = MMI_WHITE_COLOR;
 				GUISTR_DrawTextToLCDInRect(
 					(const GUI_LCD_DEV_INFO *)&lcd_dev_info,
@@ -1464,7 +1464,7 @@ LOCAL MMI_RESULT_E HandleMathCountWinMsg(
 					GUISTR_TEXT_DIR_AUTO
 					);
 			#endif
-                font_all.font = SONG_FONT_22;//
+                font_all.font = DP_FONT_22;//
                 font_all.color = MMI_WHITE_COLOR;
                 
 				GUIBUTTON_SetRect(MMI_MATH_COUNT_SET_TIME_ADD_BTN,&set_time_add_btn_rect);
@@ -1488,7 +1488,7 @@ LOCAL MMI_RESULT_E HandleMathCountWinMsg(
                 //GUIBUTTON_SetFont(MMI_MATH_COUNT_SET_RANGE_REDUCE_BTN, &font_all);
 
                 text_style.font_color = math_count_button_color;
-				text_style.font = SONG_FONT_24;
+				text_style.font = DP_FONT_24;
 				memset(&set_time_and_range_tmp, 0, 100);
 				GUI_GBToWstr(set_time_and_range_tmp,"开始挑战",strlen("开始挑战"));
 				set_time_and_range_text_str.wstr_ptr = set_time_and_range_tmp;
@@ -1581,7 +1581,7 @@ LOCAL MMI_RESULT_E HandleMathCountWinMsg(
 					//GUI_FillRect(&lcd_dev_info, set_question_range_black_rect, MMI_BLACK_COLOR);
 
 					text_style.align = ALIGN_BOTTOM;
-					text_style.font = SONG_FONT_16;
+					text_style.font = DP_FONT_16;
 					text_style.font_color = MMI_WHITE_COLOR;
 					sprintf(set_time_and_range_temp_char,"答题时间:%d S",set_question_time);
 					GUI_GBToWstr(set_time_and_range_tmp,set_time_and_range_temp_char,strlen(set_time_and_range_temp_char));
@@ -1635,7 +1635,7 @@ LOCAL MMI_RESULT_E HandleMathCountWinMsg(
 						);
 
 					text_style.align = ALIGN_HVMIDDLE;
-					text_style.font = SONG_FONT_22;
+					text_style.font = DP_FONT_22;
 					SCI_MEMSET(set_time_and_range_tmp,0,200);
 					text_state = GUISTR_STATE_ALIGN;
 					GUI_GBToWstr(set_time_and_range_tmp,"加法",strlen("加法"));

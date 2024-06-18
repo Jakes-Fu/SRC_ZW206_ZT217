@@ -65,8 +65,8 @@ LOCAL GUI_RECT_T poetry_grade_text_rect = {1.6*POETRY_LINE_WIDTH,1.2*POETRY_LINE
 LOCAL GUI_RECT_T poetry_item_line_rect = {10,1.2*POETRY_LINE_HIGHT,MMI_MAINSCREEN_WIDTH-10,2.7*POETRY_LINE_HIGHT};
 LOCAL GUI_RECT_T poetry_item_line_rect_array[POETRY_ITEM_LIST_SHOW_ITEM] = {0};
 LOCAL GUI_RECT_T poetry_content_title_rect = {0.2*POETRY_LINE_WIDTH, 1.8*POETRY_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-0.2*POETRY_LINE_WIDTH, 3.3*POETRY_LINE_HIGHT};
-LOCAL GUI_RECT_T poetry_content_rect = {0.8*POETRY_LINE_WIDTH, 3.5*POETRY_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-0.8*POETRY_LINE_WIDTH, 8*POETRY_LINE_HIGHT};
-LOCAL GUI_RECT_T poetry_content_other_rect = {0.8*POETRY_LINE_WIDTH, 1.8*POETRY_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-0.8*POETRY_LINE_WIDTH, 8*POETRY_LINE_HIGHT};
+LOCAL GUI_RECT_T poetry_content_rect = {0.2*POETRY_LINE_WIDTH, 3.5*POETRY_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-0.2*POETRY_LINE_WIDTH, 9*POETRY_LINE_HIGHT};
+LOCAL GUI_RECT_T poetry_content_other_rect = {0.2*POETRY_LINE_WIDTH, 1.5*POETRY_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-0.2*POETRY_LINE_WIDTH, 9*POETRY_LINE_HIGHT};
 LOCAL GUI_RECT_T poetry_bottom_option_rect = {0,9*POETRY_LINE_HIGHT,MMI_MAINSCREEN_WIDTH,MMI_MAINSCREEN_HEIGHT};
 LOCAL GUI_RECT_T poetry_bottom_option_rect_array[4] = {0};
 
@@ -1509,7 +1509,7 @@ LOCAL MMI_RESULT_E HandlePoetryItemWinMsg(
 LOCAL void PoetryDetailWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
 {
     MMI_CTRL_ID_T ctrl_id = MMI_ZMT_POETRY_APPRE_TEXT_ID;
-    GUI_FONT_T text_font = DP_FONT_18;
+    GUI_FONT_T text_font = DP_FONT_22;
     GUI_COLOR_T text_color = MMI_WHITE_COLOR;
     GUI_BG_T bg = {0};
     
@@ -1614,7 +1614,7 @@ LOCAL void PoetryDetailWin_ShowText(MMI_WIN_ID_T win_id)
     GUI_RECT_T rect = {0};
 
     text_style.align = ALIGN_HVMIDDLE;
-    text_style.font = DP_FONT_18;
+    text_style.font = DP_FONT_22;
     text_style.font_color = MMI_WHITE_COLOR;
     switch(poetery_info.detail_idx)
     {
@@ -1632,9 +1632,6 @@ LOCAL void PoetryDetailWin_ShowText(MMI_WIN_ID_T win_id)
                 text_string.wstr_ptr = text_str;
                 text_string.wstr_len = MMIAPICOM_Wstrlen(text_string.wstr_ptr);
                 line_num = GUI_CalculateStringLinesByPixelNum(poetry_content_title_rect.right-poetry_content_title_rect.left,text_string.wstr_ptr,text_string.wstr_len,DP_FONT_20,0,TRUE);
-                if(line_num > 1){
-                    text_style.font = DP_FONT_16;
-                }
                 GUISTR_DrawTextToLCDInRect(
                     (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
                     &poetry_content_title_rect,
@@ -1654,7 +1651,6 @@ LOCAL void PoetryDetailWin_ShowText(MMI_WIN_ID_T win_id)
                 memset(text_char, 0, strlen(poetry_detail_infos->content)+1);
                 strcpy(text_char, poetry_detail_infos->content);
 
-                text_style.font = DP_FONT_18;
                 text_style.align = ALIGN_HMIDDLE;
                 rect = poetry_content_rect;
             }
@@ -1700,6 +1696,7 @@ LOCAL void PoetryDetailWin_ShowText(MMI_WIN_ID_T win_id)
         GUITEXT_SetRect(MMI_ZMT_POETRY_APPRE_TEXT_ID, &rect);
         GUITEXT_SetAlign(MMI_ZMT_POETRY_APPRE_TEXT_ID, text_style.align);
         GUITEXT_SetString(MMI_ZMT_POETRY_APPRE_TEXT_ID, text_string.wstr_ptr, text_string.wstr_len, TRUE);
+        GUITEXT_SetResetTopDisplay(MMI_ZMT_POETRY_APPRE_TEXT_ID, 0);
 
         SCI_FREE(text_char);
         text_char = NULL;
@@ -1722,7 +1719,7 @@ LOCAL void PoetryDetailWin_FULL_PAINT(MMI_WIN_ID_T win_id)
     GUI_FillRect(&lcd_dev_info, poetry_title_rect, GUI_RGB2RGB565(108, 181, 255));
 
     text_style.align = ALIGN_LVMIDDLE;
-    text_style.font = DP_FONT_20;
+    text_style.font = DP_FONT_22;
     text_style.font_color = MMI_WHITE_COLOR;
     MMIRES_GetText(ZMT_TXT_POETRY, win_id, &text_string);
     GUISTR_DrawTextToLCDInRect(
