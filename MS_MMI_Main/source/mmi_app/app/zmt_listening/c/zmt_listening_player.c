@@ -54,19 +54,23 @@ char listening_intput_lrc[50] = {0};
 int g_lrc_sel_index = -1;
 int g_lrc_all_index = -1;
 #endif
+LOCAL GUI_LCD_DEV_INFO listening_play_volume_layer={0};
+LOCAL uint16 listening_lrc_timers = 0;
 LOCAL uint8 listening_lrc_timer_id=0;
 LOCAL uint8 listening_all_lrc_timer_id=0;
+LOCAL uint16 listening_all_lrc_timers = 0;
+BOOLEAN listening_all_lrc_download = FALSE;
 
 extern GUI_RECT_T listen_win_rect;
 extern GUI_RECT_T listen_title_rect;
-LOCAL GUI_RECT_T listening_pre_rect = {0.8*LISTEN_LINE_WIDTH, 1.8*LISTEN_LINE_HIGHT, 1.8*LISTEN_LINE_WIDTH, 3.2*LISTEN_LINE_HIGHT};
-LOCAL GUI_RECT_T listening_play_rect = {2*LISTEN_LINE_WIDTH, LISTEN_LINE_HIGHT, 4*LISTEN_LINE_WIDTH, 4*LISTEN_LINE_HIGHT};
-LOCAL GUI_RECT_T listening_next_rect = {4.2*LISTEN_LINE_WIDTH ,1.8*LISTEN_LINE_HIGHT, 5.2*LISTEN_LINE_WIDTH, 3.2*LISTEN_LINE_HIGHT};
+LOCAL GUI_RECT_T listening_pre_rect = {0.8*LISTEN_LINE_WIDTH, 2.3*LISTEN_LINE_HIGHT, 1.8*LISTEN_LINE_WIDTH, 3.7*LISTEN_LINE_HIGHT};
+LOCAL GUI_RECT_T listening_play_rect = {2*LISTEN_LINE_WIDTH, 1.5*LISTEN_LINE_HIGHT, 4*LISTEN_LINE_WIDTH, 4.5*LISTEN_LINE_HIGHT};
+LOCAL GUI_RECT_T listening_next_rect = {4.2*LISTEN_LINE_WIDTH ,2.3*LISTEN_LINE_HIGHT, 5.2*LISTEN_LINE_WIDTH, 3.7*LISTEN_LINE_HIGHT};
 LOCAL GUI_RECT_T listening_play_time_rect = {0.5*LISTEN_LINE_WIDTH, 4*LISTEN_LINE_HIGHT, 2*LISTEN_LINE_WIDTH, 5*LISTEN_LINE_HIGHT};
 LOCAL GUI_RECT_T listening_dis_play_rect = {0.5*LISTEN_LINE_WIDTH, 4.9*LISTEN_LINE_HIGHT, 5.5*LISTEN_LINE_WIDTH, 5.3*LISTEN_LINE_HIGHT};
 LOCAL GUI_RECT_T listening_dis_total_rect = {0.5*LISTEN_LINE_WIDTH, 4.9*LISTEN_LINE_HIGHT, 5.5*LISTEN_LINE_WIDTH, 5.3*LISTEN_LINE_HIGHT};
 LOCAL GUI_RECT_T listening_total_rect = {5*LISTEN_LINE_WIDTH, 4*LISTEN_LINE_HIGHT, MMI_MAINSCREEN_WIDTH, 5*LISTEN_LINE_HIGHT};
-LOCAL GUI_RECT_T listening_lrc_rect = {1.2*LISTEN_LINE_WIDTH, 5.3*LISTEN_LINE_HIGHT+5, 4.8*LISTEN_LINE_WIDTH, 8*LISTEN_LINE_HIGHT};
+LOCAL GUI_RECT_T listening_lrc_rect = {5, 5.3*LISTEN_LINE_HIGHT+5, MMI_MAINSCREEN_WIDTH - 5, MMI_MAINSCREEN_HEIGHT};
 LOCAL GUI_RECT_T listening_rect_empty_bottom = {0, 6*LISTEN_LINE_HIGHT+5, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT};
 LOCAL GUI_RECT_T listening_play_style_rect = {0.5*LISTEN_LINE_WIDTH, 6*LISTEN_LINE_HIGHT+7, 1.5*LISTEN_LINE_WIDTH, 7*LISTEN_LINE_HIGHT+7};
 LOCAL GUI_RECT_T listening_rect_style_loop = {0.8*LISTEN_LINE_WIDTH, 8*LISTEN_LINE_HIGHT, 1.8*LISTEN_LINE_WIDTH, 9*LISTEN_LINE_HIGHT};
@@ -77,7 +81,7 @@ LOCAL GUI_RECT_T listening_rect_empty = {0, 7*LISTEN_LINE_HIGHT+5, MMI_MAINSCREE
 LOCAL GUI_RECT_T listening_rect_decrese = {7, 8.2*LISTEN_LINE_HIGHT, 2*LISTEN_LINE_WIDTH, 9*LISTEN_LINE_HIGHT};
 LOCAL GUI_RECT_T listening_rect_volume = {LISTEN_LINE_WIDTH-2, 8.2*LISTEN_LINE_HIGHT, 5*LISTEN_LINE_WIDTH+2, 9*LISTEN_LINE_HIGHT};
 LOCAL GUI_RECT_T listening_rect_increse = {5*LISTEN_LINE_WIDTH+10, 8.2*LISTEN_LINE_HIGHT, MMI_MAINSCREEN_WIDTH, 9*LISTEN_LINE_HIGHT};
-LOCAL GUI_RECT_T listening_lrc_txt_rect = {0, LISTEN_LINE_HIGHT+5, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT};
+LOCAL GUI_RECT_T listening_lrc_txt_rect = {5, LISTEN_LINE_HIGHT+5, MMI_MAINSCREEN_WIDTH-5, MMI_MAINSCREEN_HEIGHT};
 
 LOCAL void ListeningPlayer_InitPlayerInfo(void);
 LOCAL void ListeningPlayer_ButtonPreCallback(void);
@@ -402,6 +406,16 @@ LOCAL void ListeningPlayerWin_DisplayPlayChoose(MMI_WIN_ID_T win_id, GUI_LCD_DEV
 
 LOCAL void ListeningPlayerWin_DisplayPlayBottom(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_dev_info)
 {
+#if LISTENING_PLAYER_USE_STYLE_VOLUME != 1
+	UILAYER_APPEND_BLT_T append_layer = {0};
+	UILAYER_Clear(&lcd_dev_info);
+	append_layer.lcd_dev_info = listening_play_volume_layer;
+	append_layer.layer_level = UILAYER_LEVEL_HIGH;
+	UILAYER_AppendBltLayer(&append_layer);
+	lcd_dev_info = listening_play_volume_layer;
+	listening_rect_empty.top = listening_rect_volume.top;
+	listening_rect_empty.bottom = listening_rect_volume.bottom;
+#endif
 	GUI_FillRect(&lcd_dev_info, listening_rect_empty, GUI_RGB2RGB565(80, 162, 254));
 	if(player_play_info.bottom_type == 1)
 	{
@@ -440,23 +454,35 @@ LOCAL void ListeningPlayerWin_DisplayPlayBottom(MMI_WIN_ID_T win_id, GUI_LCD_DEV
 	}
 	else if(player_play_info.bottom_type == 2)
 	{
-		uint count = 0;
+		uint8 img_width = 7;
+		uint8 img_space = 5;
+		uint8 count = 2*player_play_info.volume;
 		uint8 i = 0;
+        #if LISTENING_PLAYER_USE_STYLE_VOLUME != 0
 		GUI_RECT_T rect_volume = {LISTEN_LINE_WIDTH, 8.3*LISTEN_LINE_HIGHT, LISTEN_LINE_WIDTH+7, 9*LISTEN_LINE_HIGHT};
-
-		count = 2*player_play_info.volume;
 		GUIRES_DisplayImg(PNULL, &listening_rect_decrese, PNULL, win_id, MATH_COUNT_REDUCE_IMG, &lcd_dev_info);
 		GUIRES_DisplayImg(PNULL, &listening_rect_increse, PNULL, win_id, MATH_COUNT_ADD_IMG, &lcd_dev_info);
-		
+        #else
+		GUI_RECT_T rect_volume = {15, 8.3*LISTEN_LINE_HIGHT, 22, 9*LISTEN_LINE_HIGHT};
+		listening_rect_volume.left = 10;
+		listening_rect_volume.right = MMI_MAINSCREEN_WIDTH - 10;
+        #endif
+        
 		LCD_FillRoundedRect(&lcd_dev_info, listening_rect_volume, listening_rect_volume, GUI_RGB2RGB565(43, 121, 208));
 		LCD_DrawRoundedRect(&lcd_dev_info, listening_rect_volume, listening_rect_volume, GUI_RGB2RGB565(43, 121, 208));
 		for(i = 0; i < count && i < 2*MMISRVAUD_VOLUME_LEVEL_MAX; i++)
 		{
 		    GUIRES_DisplayImg(PNULL,&rect_volume, PNULL,win_id, MATH_COUNT_PROCESS_IMG, &lcd_dev_info);
-		    rect_volume.left = rect_volume.right + 2;
-		    rect_volume.right += 9;
+		    rect_volume.left = rect_volume.right + img_space;
+		    rect_volume.right += img_width + img_space;
 		}
 	}
+#if LISTENING_PLAYER_USE_STYLE_VOLUME != 1
+	else
+	{
+	    UILAYER_RemoveBltLayer(&listening_play_volume_layer);
+	}
+#endif
 }
 
 LOCAL void ListeningPlayer_DecreseVolume(void)
@@ -803,7 +829,6 @@ LOCAL void ListeningPlayer_ButtonNextCallback(void)
 LOCAL void ListeningPlayerWin_HandleTpPressUp(MMI_WIN_ID_T win_id, GUI_POINT_T point)
 {
 	GUI_LCD_DEV_INFO lcd_dev_info = {GUI_MAIN_LCD_ID, GUI_BLOCK_MAIN};
-	SCI_TRACE_LOW("%s: player_play_info.bottom_type = %d", __FUNCTION__, player_play_info.bottom_type);
 	if(GUI_PointIsInRect(point, listening_lrc_rect))
 	{
             LISTENING_PLAYER_INFO * player_infos = NULL;
@@ -816,6 +841,7 @@ LOCAL void ListeningPlayerWin_HandleTpPressUp(MMI_WIN_ID_T win_id, GUI_POINT_T p
             player_play_info.lrc_ready = 1;
             MMI_CreateListeningPlayerLrcWin(player_infos);
 	}
+#if LISTENING_PLAYER_USE_STYLE_VOLUME != 0
 	//bottom type
 	else if(GUI_PointIsInRect(point, listening_play_style_rect))
 	{
@@ -898,6 +924,7 @@ LOCAL void ListeningPlayerWin_HandleTpPressUp(MMI_WIN_ID_T win_id, GUI_POINT_T p
 	ListeningPlayerWin_DisplayPlayChoose(win_id, lcd_dev_info);
 	ListeningPlayerWin_DisplayPlayBottom(win_id, lcd_dev_info);
 	ListeningPlayerWin_LrcShowText(TRUE);
+#endif
 }
 
 #ifdef LYRIC_PARSER_SUPPORT
@@ -934,7 +961,7 @@ LOCAL void ListeningPlayerWin_LrcShowText(BOOLEAN is_full_paint)
         SCI_TRACE_LOW("%s: play_info.cur_time = %d", __FUNCTION__, play_info.cur_time);
         curtimsMs = play_info.cur_time * 1000;
     #else
-        curtimsMs = 3500;
+        curtimsMs = listening_lrc_timers*1000;
     #endif  
         lyric_sel_index = lyric_get_node_index(listening_lrc_p, (long) curtimsMs);
         SCI_TRACE_LOW("%s: lyric_sel_index = %d", __FUNCTION__, lyric_sel_index);
@@ -950,6 +977,7 @@ LOCAL void ListeningPlayerWin_LrcShowText(BOOLEAN is_full_paint)
             text_string.wstr_ptr = text_str;
             text_string.wstr_len = MMIAPICOM_Wstrlen(text_str);
             GUITEXT_SetString(LISTENING_TEXTBOX_PLAYER_CTRL_ID, text_string.wstr_ptr, text_string.wstr_len, TRUE);
+            GUITEXT_SetResetTopDisplay(LISTENING_TEXTBOX_PLAYER_CTRL_ID, 0);
             SCI_FREE(text_str);
             g_lrc_sel_index = lyric_sel_index;
         }
@@ -979,7 +1007,7 @@ PUBLIC void ListeningPlayerWin_LrcParser(MMI_WIN_ID_T win_id, char * lrc_path)
 LOCAL void ListeningPlayerWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
 {
     MMI_CTRL_ID_T ctrl_id = LISTENING_TEXTBOX_PLAYER_CTRL_ID;
-    GUI_FONT_T text_font = DP_FONT_16;
+    GUI_FONT_T text_font = DP_FONT_18;
     GUI_COLOR_T text_color = MMI_WHITE_COLOR;
     GUI_BG_T bg = {0};
     LISTENING_PLAYER_INFO * player_infos = NULL;
@@ -998,7 +1026,7 @@ LOCAL void ListeningPlayerWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
     GUITEXT_IsDisplayPrg(FALSE, ctrl_id);
     GUITEXT_SetHandleTpMsg(FALSE, ctrl_id);
     GUITEXT_SetClipboardEnabled(ctrl_id,FALSE);
-    GUITEXT_SetAlign(ctrl_id, ALIGN_HVMIDDLE);
+    GUITEXT_SetAlign(ctrl_id, ALIGN_HMIDDLE);
     GUITEXT_IsSlide(ctrl_id,FALSE);
     bg.bg_type = GUI_BG_COLOR;
     bg.color = GUI_RGB2RGB565(80, 162, 254);
@@ -1074,7 +1102,22 @@ LOCAL MMI_RESULT_E HandleListeningPlayerWinMsg(
 	{
 		case MSG_OPEN_WINDOW:
 			{
-				ListeningPlayerWin_OPEN_WINDOW(win_id);				
+				ListeningPlayerWin_OPEN_WINDOW(win_id);
+                #if LISTENING_PLAYER_USE_STYLE_VOLUME != 1
+				if (UILAYER_IsMultiLayerEnable())
+				{              
+				    UILAYER_CREATE_T create_info = {0};
+				    create_info.lcd_id = MAIN_LCD_ID;
+				    create_info.owner_handle = win_id;
+				    create_info.offset_x = listening_rect_empty.left;
+				    create_info.offset_y = listening_rect_empty.top;
+				    create_info.width = listening_rect_empty.right - listening_rect_empty.left;
+				    create_info.height = listening_rect_empty.bottom - listening_rect_empty.top;
+				    create_info.is_bg_layer = FALSE;
+				    create_info.is_static_layer = FALSE;
+				    UILAYER_CreateLayer(&create_info, &listening_play_volume_layer);
+				}
+                #endif
 			}
 			break;
 		case MSG_FULL_PAINT:
@@ -1126,7 +1169,9 @@ LOCAL MMI_RESULT_E HandleListeningPlayerWinMsg(
 
 				ListeningPlayerWin_DisplayPlayerButton(win_id, lcd_dev_info);
 				ListeningPlayerWin_DisplayPlayDuration(win_id, lcd_dev_info, player_info);
+                #if LISTENING_PLAYER_USE_STYLE_VOLUME != 0
 				ListeningPlayerWin_DisplayPlayChoose(win_id, lcd_dev_info);
+                #endif
 				ListeningPlayerWin_DisplayPlayBottom(win_id, lcd_dev_info);
 			}
 			break;
@@ -1143,9 +1188,28 @@ LOCAL MMI_RESULT_E HandleListeningPlayerWinMsg(
 			break;
 		case MSG_TIMER:
 			{
+				listening_lrc_timers++;
 				ListeningPlayerWin_LrcShowText(FALSE);
 			}
 			break;
+#if LISTENING_PLAYER_USE_STYLE_VOLUME != 1
+		case MSG_KEYDOWN_UPSIDE:
+		case MSG_KEYDOWN_VOL_UP:
+			{
+			    player_play_info.bottom_type = 2;
+			    ListeningPlayer_IncreseVolume();
+			    player_bottom_show_times = 9;
+			}
+			break;
+		case MSG_KEYDOWN_DOWNSIDE:
+		case MSG_KEYDOWN_VOL_DOWN:
+			{
+			    player_play_info.bottom_type = 2;
+			    ListeningPlayer_DecreseVolume();
+			    player_bottom_show_times = 9;
+			}
+			break;
+#endif
 		case MSG_KEYUP_CANCEL:
 			{
 				MMK_CloseWin(win_id);	
@@ -1173,6 +1237,8 @@ LOCAL MMI_RESULT_E HandleListeningPlayerWinMsg(
 				player_bottom_show_times = 0;
 				MMK_FreeWinAddData(win_id);
 				listening_roller_lrc_free();
+				listening_lrc_timers = 0;
+				WATCHCOM_Backlight(FALSE);
 			}
 			break;
 		default:
@@ -1212,6 +1278,7 @@ PUBLIC void MMI_CreateListeningPlayerWin(LISTENING_PLAYER_INFO * player_info)
 		listening_play_timer_id = 0;
 	}
 	listening_play_timer_id = MMK_CreateTimerCallback(1000, ListeningPlayerTimerCallback, PNULL, TRUE);
+	WATCHCOM_Backlight(TRUE);
 }
 
 LOCAL void ListeningPlayerTimerCallback(uint8 timer_id, uint32 * param)
@@ -1265,10 +1332,10 @@ LOCAL void ListeningPlayerLrcWin_ShowLrcText(MMI_WIN_ID_T win_id, BOOLEAN is_ful
     wchar * text_str = NULL;
     GUI_RECT_T text_rect = listening_lrc_txt_rect;
 
-    text_rect.bottom = text_rect.top + LISTEN_LINE_HIGHT;
     text_style.align = ALIGN_HVMIDDLE;
-    text_style.font = DP_FONT_16;
+    text_style.font = DP_FONT_20;
     text_style.font_color = MMI_WHITE_COLOR;
+    text_style.line_color = MMI_WHITE_COLOR;
 
 #ifndef WIN32
     if(listening_player_handle == PNULL){
@@ -1279,7 +1346,7 @@ LOCAL void ListeningPlayerLrcWin_ShowLrcText(MMI_WIN_ID_T win_id, BOOLEAN is_ful
     //SCI_TRACE_LOW("%s: play_info.cur_time = %d", __FUNCTION__, play_info.cur_time);
     curtimsMs = play_info.cur_time * 1000;
 #else
-    curtimsMs = 5000;
+    curtimsMs = listening_all_lrc_timers*1000;
 #endif  
     lyric_sel_index = lyric_get_node_index(listening_lrc_p, (long) curtimsMs);
     if (lyric_sel_index > 0 && (lyric_sel_index != g_lrc_all_index || is_full_paint == TRUE))
@@ -1299,23 +1366,20 @@ LOCAL void ListeningPlayerLrcWin_ShowLrcText(MMI_WIN_ID_T win_id, BOOLEAN is_ful
             if (node != NULL && last_node != NULL){
                 if(0 != strcmp(last_node->content, node->content) || lrc_index < listening_lrc_p->lyric_num - LISTEN_LRC_LABEL_NUM)
                 {
+                    uint8 line_num = 0;
                     text_str = SCI_ALLOC_APPZ(3*strlen(node->content));
                     memset(text_str, 0, 3*strlen(node->content));
                     GUI_UTF8ToWstr(text_str, 3*strlen(node->content), node->content, strlen(node->content));
                     text_string.wstr_ptr = text_str;
                     text_string.wstr_len = MMIAPICOM_Wstrlen(text_string.wstr_ptr);
+                    line_num = GUI_CalculateStringLinesByPixelNum(text_rect.right-text_rect.left,text_string.wstr_ptr,text_string.wstr_len,DP_FONT_22,0,TRUE);
+                    text_rect.bottom = text_rect.top + 0.8*line_num*LISTEN_LINE_HIGHT;
                     if(lyric_sel_index == lrc_index){
-                        uint8 line_num = 0;
-                        text_style.font = DP_FONT_20;
-                        line_num = GUI_CalculateStringLinesByPixelNum(text_rect.right-text_rect.left,text_string.wstr_ptr,text_string.wstr_len,DP_FONT_20,0,TRUE);
-                        if(line_num > 1){
-                            text_style.font = DP_FONT_16;
-                        }else if(line_num > 2){
-                            text_style.font = DP_FONT_14;
-                        }
-                        LCD_DrawHLine(&lcd_dev_info, text_rect.left+10, text_rect.bottom-5, text_rect.right-10, MMI_WHITE_COLOR);
+                        text_style.font = DP_FONT_22;
+                        text_style.font_color = MMI_WHITE_COLOR;
                     }else{
-                        text_style.font = DP_FONT_16;
+                        text_style.font = DP_FONT_20;
+                        text_style.font_color = GUI_RGB2RGB565(230, 230, 230);
                     }
                     GUISTR_DrawTextToLCDInRect(
                         (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
@@ -1327,13 +1391,29 @@ LOCAL void ListeningPlayerLrcWin_ShowLrcText(MMI_WIN_ID_T win_id, BOOLEAN is_ful
                         GUISTR_TEXT_DIR_AUTO
                     );
                     text_rect.top = text_rect.bottom;
-                    text_rect.bottom = text_rect.top + LISTEN_LINE_HIGHT;
                     SCI_FREE(text_str);
                 }
             }
         }
         g_lrc_all_index = lyric_sel_index;
     }
+}
+
+PUBLIC void ListeningPlayerLrcWin_LrcParser(MMI_WIN_ID_T win_id, char * lrc_path)
+{
+    if(!zmt_file_exist(lrc_path)){
+        return;
+    }
+    if(listening_intput_lrc != NULL){
+        return;
+    }
+    listening_roller_lrc_free();
+ 
+    strcpy(listening_intput_lrc, lrc_path);
+    
+    listening_lrc_p = lyric_init(listening_intput_lrc);
+    
+    ListeningPlayerLrcWin_ShowLrcText(win_id, FALSE);
 }
 #endif
 
@@ -1363,7 +1443,7 @@ LOCAL MMI_RESULT_E HandleListeningPlayerLrcWinMsg(
 			break;
 		case MSG_FULL_PAINT:
 			{
-				GUISTR_STATE_T text_state = GUISTR_STATE_ALIGN | GUISTR_STATE_ELLIPSIS_EX;
+				GUISTR_STATE_T text_state = GUISTR_STATE_ALIGN | GUISTR_STATE_FROM_HEAD;
 				GUISTR_STYLE_T text_style = {0};
 				MMI_STRING_T text_string = {0};
 				wchar texe_str[50] = {0};
@@ -1411,6 +1491,48 @@ LOCAL MMI_RESULT_E HandleListeningPlayerLrcWinMsg(
 				{
 				    ListeningPlayerLrcWin_ShowLrcText(win_id, TRUE);
 				}
+				else
+				{
+				    char file_str[LIST_ITEM_PATH_SIZE_MAX] = {0};
+				    int module_id = 0;
+				    int album_id = 0;
+				    int audio_id = 0;
+				    if(player_info->is_local_play)
+				    {
+				        LISTEING_LOCAL_INFO * local_info = Listening_GetLocalDataInfo();			        
+				        module_id = local_info->module_info[player_info->moudle_index].module_id;
+				        album_id = local_info->module_info[player_info->moudle_index].album_info[0].album_id;
+				        audio_id = local_info->module_info[player_info->moudle_index].album_info[0].audio_info[player_info->audio_index].audio_id;
+				        Listening_GetLrcFileName(file_str, module_id, album_id, audio_id);
+				        if(zmt_file_exist(file_str)){
+				            ListeningPlayerLrcWin_LrcParser(win_id, file_str);
+				        }else
+				        {
+				            listening_all_lrc_download = TRUE;
+    				            Listening_RequestDownloadAudioLrc(module_id,album_id,audio_id,
+    				                local_info->module_info[player_info->moudle_index].album_info[0].audio_info[player_info->audio_index].audio_name
+    				            );
+				        }
+				    }
+				    else
+				    {
+				        module_id = album_info->module_id;
+				        album_id = album_info->album_id;
+				        audio_id = album_info->item_info[player_info->audio_index].audio_id;
+				        Listening_GetLrcFileName(file_str, module_id, album_id, audio_id);
+				        if(zmt_file_exist(file_str))
+				        {
+				            ListeningPlayerLrcWin_LrcParser(win_id, file_str);
+				        }
+				        else
+				        {
+				            listening_all_lrc_download = TRUE;
+				            Listening_RequestDownloadAudioLrc(module_id,album_id,audio_id,
+    				                album_info->item_info[player_info->audio_index].audio_name
+    				            );
+				        }
+				    }
+				}
 				#endif
 			}
 			break;
@@ -1419,6 +1541,7 @@ LOCAL MMI_RESULT_E HandleListeningPlayerLrcWinMsg(
 			{
 				if(listening_lrc_p != NULL)
 				{
+				    listening_all_lrc_timers++;
 				    ListeningPlayerLrcWin_ShowLrcText(win_id, FALSE);
 				}
 			}

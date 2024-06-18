@@ -43,6 +43,8 @@
 #include "mmifmm_export.h"
 #include "zmt_listening_nv.h"
 
+#define LISTENING_PLAYER_USE_STYLE_VOLUME 0
+
 #define ALBUM_LIST_SHOW_ITEM_MAX 3
 #define AUDIO_LIST_SHOW_ITEM_MAX 4
 
@@ -56,7 +58,7 @@
 #define LISTEN_LINE_HIGHT MMI_MAINSCREEN_HEIGHT/10
 #define LISTEN_LINE_WIDTH MMI_MAINSCREEN_WIDTH/6
 
-#define LISTEN_LRC_LABEL_NUM 10
+#define LISTEN_LRC_LABEL_NUM 8
 
 #define LISTENING_DIRECTORY_BASE_PATH "E:/Listening/%d_%d"
 #define LISTENING_FILE_INFO_PATH "E:/Listening/listening_info.json"

@@ -404,7 +404,7 @@ PUBLIC void MMI_TestToOpenPlayerWin(void)
 	LISTENING_PLAYER_INFO * player_info = NULL;
 	player_info = (LISTENING_PLAYER_INFO *)SCI_ALLOC_APPZ(sizeof(LISTENING_PLAYER_INFO));
 	player_info->is_local_play = TRUE;
-	player_info->moudle_index = 0;
+	player_info->moudle_index = 1;
 	player_info->audio_index = 1;
 	MMI_CreateListeningPlayerWin(player_info);
 }

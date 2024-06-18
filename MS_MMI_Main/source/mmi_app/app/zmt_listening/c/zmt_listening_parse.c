@@ -47,6 +47,7 @@ extern char * listening_player_lrc_buf;
 extern LISTENING_PALYER_PLAY_INFO player_play_info;
 extern char * listening_downloading_audio_path;
 extern uint8 listening_downloading_index;
+extern BOOLEAN listening_all_lrc_download;
 
 PUBLIC void Listening_InsertOneAudioInfoToLocal(LISTENING_ALBUM_INFO * album_info, uint8 index)
 {
@@ -832,7 +833,7 @@ PUBLIC void Listening_ParseAudioLrcResponse(BOOLEAN is_ok,uint8 * pRcv,uint32 Rc
             album_info->module_id,
             album_info->album_id, 
             album_info->item_info[listening_downloading_index].audio_id);
-        if(zmt_file_exist(file_str))
+        //if(zmt_file_exist(file_str))
         {
             LISTENING_PLAYER_INFO * player_infos = NULL;
             LISTENING_PLAYER_INFO * player_info = NULL;
@@ -843,8 +844,12 @@ PUBLIC void Listening_ParseAudioLrcResponse(BOOLEAN is_ok,uint8 * pRcv,uint32 Rc
             player_infos->audio_index = player_info->audio_index;
             player_play_info.lrc_ready = 1;//success
             SCI_TRACE_LOW("%s: player_infos->is_local_play = %d", __FUNCTION__, player_infos->is_local_play);
-            //MMI_CreateListeningPlayerLrcWin(player_infos);
-            ListeningPlayerWin_LrcParser(LISTENING_PLAYER_WIN_ID, file_str);
+            if(MMK_IsFocusWin(LISTENING_PLAYER_WIN_ID)){
+                ListeningPlayerWin_LrcParser(LISTENING_PLAYER_WIN_ID, file_str);
+            }else if(MMK_IsFocusWin(LISTENING_PLAYER_LRC_WIN_ID)){
+                listening_all_lrc_download = FALSE;
+                ListeningPlayerLrcWin_LrcParser(LISTENING_PLAYER_LRC_WIN_ID, file_str);
+            }
         }
     }
     else
