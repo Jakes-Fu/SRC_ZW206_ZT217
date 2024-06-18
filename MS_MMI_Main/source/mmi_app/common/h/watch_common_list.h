@@ -21,10 +21,10 @@
 #ifdef ZTE_SUPPORT_240X284
 
 #ifdef ZTE_WATCH
-#define WATCHK1LIST_RECT                         DP2PX_RECT(0,20,239,195)//list rect
-#define WATCHK1_SETOK_RECT				 DP2PX_RECT(12,214,228,254)//setok rect
+#define WATCHK1LIST_RECT                         DP2PX_RECT(0,20,239,MMI_MAINSCREEN_HEIGHT-89)//list rect
+#define WATCHK1_SETOK_RECT				 DP2PX_RECT(12,250,228,MMI_MAINSCREEN_HEIGHT-30)//setok rect
 #endif
-#define WATCHLIST_RECT                         DP2PX_RECT(0,46,239,283)//list rect
+#define WATCHLIST_RECT                         DP2PX_RECT(0,46,239,MMI_MAINSCREEN_HEIGHT-1)//list rect
 #else
 #ifdef ZTE_WATCH
 #define WATCHK1LIST_RECT                         DP2PX_RECT(0,10,239,195-12)//list rect

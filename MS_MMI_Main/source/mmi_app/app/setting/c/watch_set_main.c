@@ -196,13 +196,14 @@ LOCAL WATCHCOM_LIST_ITEM__ST s_settings_main_text_list_data[] =
     { WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR_1LINE_BIG_LAYOUT1, &list_item_poweroff,       MMIAPISET_ZdtPowerOffWin },
     { WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR_1LINE_BIG_LAYOUT1, &list_item_restart,       MMIAPISET_ZdtPowerRestartWin },
     { WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR_1LINE_BIG_LAYOUT1, &list_item_sound,      MMIAPISET_ZdtVolumeWin},
+#ifndef ZT217_LISENNING_PAD
     { WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR_1LINE_BIG_LAYOUT1, &list_item_watch,       WatchOpen_Panel_SelectWin },
+#endif
 #ifdef FOTA_SUPPORT
     { WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR_1LINE_BIG_LAYOUT1, &list_item_fota,      MMIAPISET_EnterFotaWin},
 #endif
     { WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR_1LINE_BIG_LAYOUT1, &list_item_timeformat,      Watch_Time_Format_Switch},
     { WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR_1LINE_BIG_LAYOUT1, &list_item_more,       Settings_RegardWin_Enter},
-
 #else
     { WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR, &list_item_displaysetting, WatchSET_DisPlaySetting_Enter},
     { WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR, &list_item_notetype,  Settings_NoteTypeSelectWin_Enter},
@@ -217,7 +218,6 @@ LOCAL WATCHCOM_LIST_ITEM__ST s_settings_main_text_list_data[] =
 #endif
     { WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR, &list_item_timeformat,      Watch_Time_Format_Switch},
     { WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR, &list_item_more,       Settings_RegardWin_Enter},
-    
 #endif    
 };
 
