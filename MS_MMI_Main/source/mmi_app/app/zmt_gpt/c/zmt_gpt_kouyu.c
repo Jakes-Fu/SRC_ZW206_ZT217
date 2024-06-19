@@ -60,7 +60,7 @@ LOCAL uint8 * gpt_kouyu_record_text = NULL;
 LOCAL RECORD_SRV_HANDLE gpt_kouyu_record_handle = PNULL;
 LOCAL MMISRV_HANDLE_T gpt_kouyu_player_handle=PNULL;
 LOCAL BOOLEAN gpt_kouyu_load_text = FALSE;
-LOCAL BOOLEAN gpt_kouyu_load_voice = FALSE;
+LOCAL int gpt_kouyu_load_voice = -1;
 
 LOCAL void  ZmtGptKouYuTalk_DispalyRecord(MMI_WIN_ID_T win_id, int record_type);
 LOCAL void ZmtGptKouYuTalk_ShowFormList(MMI_WIN_ID_T win_id);
@@ -144,10 +144,9 @@ LOCAL BOOLEAN ZmtGptKouYuTalk_PlayAmrDataNotify(MMISRV_HANDLE_T handle, MMISRVMG
                 case MMISRVAUD_REPORT_END:  
                     {
                         SCI_TRACE_LOW("%s player end", __FUNCTION__);
-                        ret = MMISRVAUD_Stop(handle);
-                        if(ret){
-                            MMISRVMGR_Free(handle);
-                        }
+                        MMISRVAUD_Stop(handle);
+                        MMISRVMGR_Free(handle);
+                        gpt_kouyu_load_voice = -1;
                     }
                     break;
                 default:
@@ -171,16 +170,20 @@ LOCAL void ZmtGptKouYuTalk_PlayAmrData(uint8 *data,uint32 data_len)
         gpt_kouyu_player_handle = NULL;
     }
 
-    req.is_auto_free = TRUE;
+    req.is_auto_free = FALSE;
     req.notify = ZmtGptKouYuTalk_PlayAmrDataNotify;
     req.pri = MMISRVAUD_PRI_NORMAL;
 
     audio_srv.info.type = MMISRVAUD_TYPE_RING_BUF;
+#if ZMT_GPT_USE_SELF_API != 0
+    audio_srv.info.ring_buf.fmt = MMISRVAUD_RING_FMT_WAVE;
+#else
     audio_srv.info.ring_buf.fmt = MMISRVAUD_RING_FMT_AMR;
+#endif
     audio_srv.info.ring_buf.data = data;
     audio_srv.info.ring_buf.data_len = data_len;
     audio_srv.volume=9;
-    audio_srv.all_support_route = MMISRVAUD_ROUTE_SPEAKER | MMISRVAUD_ROUTE_EARPHONE;//MMISRVAUD_ROUTE_SPEAKER | MMISRVAUD_ROUTE_EARPHONE;
+    audio_srv.all_support_route = MMISRVAUD_ROUTE_SPEAKER | MMISRVAUD_ROUTE_EARPHONE;
 
     gpt_kouyu_player_handle = MMISRVMGR_Request(STR_SRV_AUD_NAME, &req, &audio_srv);
     if(gpt_kouyu_player_handle > 0)
@@ -214,21 +217,117 @@ LOCAL void ZmtGptKouYuTalk_StopAmrData(void)
     }
 }
 
+PUBLIC void ZmtGptKouYuTalk_RecTxtToVoiceResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id)
+{
+    SCI_TRACE_LOW("%s: is_ok = %d, Rcv_len  = %d", __FUNCTION__, is_ok, Rcv_len);
+    if (is_ok && pRcv != PNULL && Rcv_len> 2)
+    {
+        if(MMK_IsOpenWin(ZMT_GPT_KOUYU_TALK_WIN_ID))
+        {
+            ZmtGptKouYuTalk_PlayAmrData(pRcv, Rcv_len);
+        }
+    }
+    else
+    {
+        gpt_kouyu_load_voice = -1;
+        gpt_kouyu_record_type = GPT_RECORD_TYPE_VOICE_ERROR;
+        SCI_TRACE_LOW("%s: 03voice load error!!", __FUNCTION__);
+        MMK_SendMsg(ZMT_GPT_KOUYU_TALK_WIN_ID, MSG_FULL_PAINT, PNULL);
+    }
+}
+
 PUBLIC void ZmtGptKouYuTalk_RecAiVoiceResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id)
 {
     SCI_TRACE_LOW("%s: is_ok = %d, Rcv_len  = %d", __FUNCTION__, is_ok, Rcv_len);
     if (is_ok && pRcv != PNULL && Rcv_len> 2)
     {
-        if(MMK_IsFocusWin(ZMT_GPT_KOUYU_TALK_WIN_ID))
-        {           
+    #if ZMT_GPT_USE_SELF_API != 0
+        cJSON * root = cJSON_Parse(pRcv);
+        if(root != NULL && root->type != cJSON_NULL)
+        {
+            cJSON * code = cJSON_GetObjectItem(root, "code");
+            if(code->valueint == 200){
+                cJSON *msg = cJSON_GetObjectItem(root, "msg");
+                //SCI_TRACE_LOW("%s: msg = %s", __FUNCTION__, msg->valuestring);
+                MMIZDT_HTTP_AppSend(TRUE, msg->valuestring, PNULL, 0, 1000, 0, 0, 10000, 0, 0, ZmtGptKouYuTalk_RecTxtToVoiceResultCb);
+            }else{
+                gpt_kouyu_load_voice = -1;
+                gpt_kouyu_record_type = GPT_RECORD_TYPE_VOICE_ERROR;
+                SCI_TRACE_LOW("%s: 01voice load error, code = %d", __FUNCTION__, code->valueint);
+                MMK_SendMsg(ZMT_GPT_KOUYU_TALK_WIN_ID, MSG_FULL_PAINT, PNULL);
+            }
+        }
+    #else
+        if(MMK_IsOpenWin(ZMT_GPT_KOUYU_TALK_WIN_ID))
+        {
             ZmtGptKouYuTalk_PlayAmrData(pRcv, Rcv_len);
-        }  
+        }
+    #endif
     }
     else
     {
-        SCI_TRACE_LOW("%s: voice load error!!", __FUNCTION__);
+        gpt_kouyu_load_voice = -1;
+        gpt_kouyu_record_type = GPT_RECORD_TYPE_VOICE_ERROR;
+        SCI_TRACE_LOW("%s: 02voice load error!!", __FUNCTION__);
+        MMK_SendMsg(ZMT_GPT_KOUYU_TALK_WIN_ID, MSG_FULL_PAINT, PNULL);
     }
-    gpt_kouyu_load_voice = FALSE;
+}
+
+PUBLIC void ZmtGptKouYuTalk_RecAiSelfTextResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id)
+{
+    SCI_TRACE_LOW("%s: is_ok = %d, Rcv_len  = %d", __FUNCTION__, is_ok, Rcv_len);
+    if (is_ok && pRcv != PNULL && Rcv_len> 2)
+    {
+        uint8 i = 0;
+        cJSON * root = cJSON_Parse(pRcv);
+        if(root != NULL && root->type != cJSON_NULL)
+        {
+            cJSON * code = cJSON_GetObjectItem(root, "code");
+            cJSON * data = cJSON_GetObjectItem(root, "data");
+            if(code->valueint == 200)
+            {
+                if(gpt_kouyu_record_text){
+                    SCI_FREE(gpt_kouyu_record_text);
+                    gpt_kouyu_record_text = NULL;
+                }
+                gpt_kouyu_record_text = SCI_ALLOC_APPZ(strlen(data->valuestring)+1);
+                memset(gpt_kouyu_record_text, 0, strlen(data->valuestring)+1);
+                strcpy(gpt_kouyu_record_text, data->valuestring);
+                gpt_kouyu_record_type = GPT_RECORD_TYPE_SUCCESS;
+            }
+            else
+            {
+                SCI_TRACE_LOW("%s: code error!!, code = %d", __FUNCTION__, code->valueint);
+                if(gpt_kouyu_record_text){
+                    SCI_FREE(gpt_kouyu_record_text);
+                    gpt_kouyu_record_text = NULL;
+                }
+                gpt_kouyu_record_type = GPT_RECORD_TYPE_VOICE_ERROR;
+            }
+        }
+        else
+        {
+            SCI_TRACE_LOW("%s: data error!!", __FUNCTION__);
+            if(gpt_kouyu_record_text){
+                SCI_FREE(gpt_kouyu_record_text);
+                gpt_kouyu_record_text = NULL;
+            }
+            gpt_kouyu_record_type = GPT_RECORD_TYPE_FAIL;
+        }
+    }
+    else
+    {
+        SCI_TRACE_LOW("%s: requset error!!", __FUNCTION__);
+        if(gpt_kouyu_record_text){
+            SCI_FREE(gpt_kouyu_record_text);
+            gpt_kouyu_record_text = NULL;
+        }
+        gpt_kouyu_record_type = GPT_RECORD_TYPE_ERROR;
+    }
+    if(MMK_IsFocusWin(ZMT_GPT_KOUYU_TALK_WIN_ID))
+    {
+        MMK_SendMsg(ZMT_GPT_KOUYU_TALK_WIN_ID, MSG_FULL_PAINT, PNULL);
+    }
 }
 
 PUBLIC void ZmtGptKouYuTalk_RecAiTextResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id)
@@ -460,8 +559,8 @@ LOCAL void ZmtGptKouYuTalk_StartRecord(MMI_WIN_ID_T win_id)
         return;
     }
 
-    if(gpt_kouyu_load_voice){
-        gpt_kouyu_load_voice = FALSE;
+    if(gpt_kouyu_load_voice >= 0){
+        gpt_kouyu_load_voice = -1;
         MMIZDT_HTTP_Close();
     }
 
@@ -488,10 +587,16 @@ LOCAL void ZmtGptKouYuTalk_StartRecord(MMI_WIN_ID_T win_id)
     gpt_kouyu_record_type = GPT_RECORD_TYPE_RECORDING;
     MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
 	
+#if ZMT_GPT_USE_SELF_API != 0  
+    call_name_str.wstr_ptr = ZMT_GPT_RECORD_SELF_FILE_L;
+    call_name_str.wstr_len = MMIAPICOM_Wstrlen(ZMT_GPT_RECORD_SELF_FILE_L);
+    record_param.fmt = MMISRVAUD_RECORD_FMT_AMR;
+#else
     call_name_str.wstr_ptr = ZMT_GPT_RECORD_FILE_L;
     call_name_str.wstr_len = MMIAPICOM_Wstrlen(ZMT_GPT_RECORD_FILE_L);
-
     record_param.fmt = MMISRVAUD_RECORD_FMT_PCM;
+#endif
+
     record_param.prefix_ptr = PNULL;
     record_param.record_dev_ptr = &record_dev;
     record_param.record_file_id_ptr = PNULL;
@@ -522,23 +627,35 @@ LOCAL void ZmtGptKouYuTalk_StopRecord(MMI_WIN_ID_T win_id, BOOLEAN is_send)
         uint8 * data_buf = NULL;
         uint32 data_size = 0;
         uint32 size;
-    #if ZMT_GPT_USE_FOR_TEST != 0
-        gpt_kouyu_record_type = GPT_RECORD_TYPE_SUCCESS;
+    #if ZMT_GPT_USE_SELF_API != 0
+        data_buf = zmt_file_data_read(ZMT_GPT_RECORD_SELF_FILE_C, &data_size);
+        SCI_TRACE_LOW("%s: data_size = %d", __FUNCTION__, data_size);
+        if(data_buf != NULL && data_size > 2){
+            ZmtGpt_SendSelfRecord(1, data_buf, data_size);
+            SCI_FREE(data_buf);
+        }
+        zmt_file_delete(ZMT_GPT_RECORD_SELF_FILE_C);
     #else
-        gpt_kouyu_record_type = GPT_RECORD_TYPE_VOICE_LOADING;
-    #endif
-        MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
         data_buf = zmt_file_data_read(ZMT_GPT_RECORD_FILE_C, &data_size);
         SCI_TRACE_LOW("%s: data_size = %d", __FUNCTION__, data_size);
         if(data_buf != NULL && data_size > 2){
             ZmtGpt_SendRecord(1737, data_buf, data_size);
+            SCI_FREE(data_buf);
         }
         zmt_file_delete(ZMT_GPT_RECORD_FILE_C);
-    }else{
-        gpt_kouyu_record_type = GPT_RECORD_TYPE_NONE;
-        MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
-        zmt_file_delete(ZMT_GPT_RECORD_FILE_C);
+    #endif
+        gpt_kouyu_record_type = GPT_RECORD_TYPE_VOICE_LOADING;
     }
+    else
+    {
+    #if ZMT_GPT_USE_SELF_API != 0
+        zmt_file_delete(ZMT_GPT_RECORD_SELF_FILE_C);
+    #else
+        zmt_file_delete(ZMT_GPT_RECORD_FILE_C);
+    #endif
+        gpt_kouyu_record_type = GPT_RECORD_TYPE_NONE;
+    }
+    MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
 }
 
 LOCAL void ZmtGptKouYuTalk_LeftIndentifyClick(MMI_WIN_ID_T win_id)
@@ -846,7 +963,7 @@ LOCAL void  ZmtGptKouYuTalk_DispalyRecord(MMI_WIN_ID_T win_id, int record_type)
             LCD_DrawRoundedRect(&gpt_kouyu_record_layer, zmt_gpt_record_rect, zmt_gpt_record_rect, MMI_WHITE_COLOR);
             LCD_FillRoundedRect(&gpt_kouyu_record_layer, zmt_gpt_record_rect, zmt_gpt_record_rect, MMI_WHITE_COLOR);
 
-            MMIRES_GetText(ZMT_CHAT_GPT_RECORD_IDENTIFY_FAIL, win_id, &text_string);
+            MMIRES_GetText(ZMT_CHAT_GPT_TXT_IDENTIFY_FAIL, win_id, &text_string);
             GUISTR_DrawTextToLCDInRect(
                 (const GUI_LCD_DEV_INFO *)&gpt_kouyu_record_layer,
                 &zmt_gpt_record_rect,
@@ -874,7 +991,35 @@ LOCAL void  ZmtGptKouYuTalk_DispalyRecord(MMI_WIN_ID_T win_id, int record_type)
             LCD_DrawRoundedRect(&gpt_kouyu_record_layer, zmt_gpt_record_rect, zmt_gpt_record_rect, MMI_WHITE_COLOR);
             LCD_FillRoundedRect(&gpt_kouyu_record_layer, zmt_gpt_record_rect, zmt_gpt_record_rect, MMI_WHITE_COLOR);
             
-            MMIRES_GetText(ZMT_CHAT_GPT_RECORD_REQUESET_ERROR, win_id, &text_string);
+            MMIRES_GetText(ZMT_CHAT_GPT_TXT_REQUESET_ERROR, win_id, &text_string);
+            GUISTR_DrawTextToLCDInRect(
+                (const GUI_LCD_DEV_INFO *)&gpt_kouyu_record_layer,
+                &zmt_gpt_record_rect,
+                &zmt_gpt_record_rect,
+                &text_string,
+                &text_style,
+                text_state,
+                GUISTR_TEXT_DIR_AUTO
+            );
+
+            if(gpt_kouyu_record_identify_timer_id){
+                MMK_StopTimer(gpt_kouyu_record_identify_timer_id);
+                gpt_kouyu_record_identify_timer_id = 0;
+            }
+            gpt_kouyu_record_identify_timer_id = MMK_CreateTimerCallback(2000, ZmtGptKouYuTalk_RecordIndentifyTimerCallback, PNULL, FALSE);
+        }
+        break;
+        case GPT_RECORD_TYPE_VOICE_ERROR:
+        {
+            zmt_gpt_record_rect = zmt_gpt_list_rect;
+            zmt_gpt_record_rect.top = zmt_gpt_record_rect.bottom - 2*ZMT_GPT_LINE_HIGHT;
+            zmt_gpt_record_rect.left += ZMT_GPT_LINE_WIDTH;
+            zmt_gpt_record_rect.right -= ZMT_GPT_LINE_WIDTH;
+            
+            LCD_DrawRoundedRect(&gpt_kouyu_record_layer, zmt_gpt_record_rect, zmt_gpt_record_rect, MMI_WHITE_COLOR);
+            LCD_FillRoundedRect(&gpt_kouyu_record_layer, zmt_gpt_record_rect, zmt_gpt_record_rect, MMI_WHITE_COLOR);
+            
+            MMIRES_GetText(ZMT_CHAT_GPT_VOICE_REQUESET_ERROR, win_id, &text_string);
             GUISTR_DrawTextToLCDInRect(
                 (const GUI_LCD_DEV_INFO *)&gpt_kouyu_record_layer,
                 &zmt_gpt_record_rect,
@@ -1079,14 +1224,14 @@ LOCAL void ZmtGptKouYuTalk_CTL_PENOK(MMI_WIN_ID_T win_id, DPARAM param)
         SCI_TRACE_LOW("%s: load text xxing", __FUNCTION__);
         return;
     }
-    if(gpt_kouyu_load_voice){
+    if(gpt_kouyu_load_voice >= 0 && gpt_kouyu_load_voice == cur_idx){
         SCI_TRACE_LOW("%s: load voice xxing", __FUNCTION__);
         return;
     }
     if( gpt_kouyu_talk_info[cur_idx] != NULL && gpt_kouyu_talk_info[cur_idx]->str != NULL)
     { 
         MMIZDT_HTTP_Close();
-        gpt_kouyu_load_voice = TRUE;
+        gpt_kouyu_load_voice = cur_idx;
         ZmtGpt_SendString(NULL, gpt_kouyu_talk_info[cur_idx]->str);
     }
 }
@@ -1139,7 +1284,7 @@ LOCAL void ZmtGptKouYuTalk_CLOSE_WINDOW(void)
     zmt_gpt_talk_status = 0;
     gpt_kouyu_record_type = GPT_RECORD_TYPE_NONE;
     gpt_kouyu_record_times = 0;
-    gpt_kouyu_load_voice = FALSE;
+    gpt_kouyu_load_voice = -1;
     gpt_kouyu_load_text = FALSE;
     if(gpt_kouyu_record_text){
         SCI_FREE(gpt_kouyu_record_text);

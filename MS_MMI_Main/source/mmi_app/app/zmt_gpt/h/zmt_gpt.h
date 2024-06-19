@@ -25,6 +25,8 @@
 #define ZMT_GPT_SELF_ZUOWEN_TALK_PATH "D:\\self_zuowen_talk.json"
 #define ZMT_GPT_RECORD_FILE_C "D:\\zmt_gpt_record.pcm"
 #define ZMT_GPT_RECORD_FILE_L L"D:\\zmt_gpt_record.pcm"
+#define ZMT_GPT_RECORD_SELF_FILE_C "D:\\zmt_gpt_record.amr"
+#define ZMT_GPT_RECORD_SELF_FILE_L L"D:\\zmt_gpt_record.amr"
 
 #define ZMT_GPT_LINE_WIDTH MMI_MAINSCREEN_WIDTH/6
 #define ZMT_GPT_LINE_HIGHT MMI_MAINSCREEN_HEIGHT/10
@@ -36,9 +38,12 @@
 #define GPT_MAX_RECORD_DURATION 10
 #define GPT_MAX_RECORD_SIZE GPT_MAX_RECORD_DURATION * 16000 + GPT_PCM_HEAD_SIZE
 
-#define GPT_HTTP_SELF_API_BASE_PATH "http://106.13.7.202:8080"
-#define GPT_HTTP_SELF_API_KOUYU_PATH "/aichat/enchat"
-#define GPT_HTTP_SELF_API_ZUOWEN_PATH "/aichat/artchat"
+#define GPT_HTTP_SELF_API_BASE_PATH "http://117.50.185.119:8080"
+#define GPT_HTTP_SELF_API_KOUYU_PATH "/front/aichat/enchat"
+#define GPT_HTTP_SELF_API_ZUOWEN_PATH "/front/aichat/artchat"
+#define GPT_HTTP_SELF_API_TXT2VOICE_PATH "/front/voice/tts"
+#define GPT_HTTP_SELF_API_VOICE2TXT_PATH "/front/voice/asr"
+#define GPT_HTTP_SELF_API_VOICE2TXT_JSON_PATH "/front/voice/asr_extend"
 
 #define GPT_HTTP_BAIDU_TXT_PARSE "http://tsn.baidu.com/text2audio"
 #define GPT_HTTP_BAIDU_VOICE_PARSE "http://vop.baidu.com/server_api"
@@ -94,19 +99,23 @@ typedef enum {
     GPT_RECORD_TYPE_SUCCESS,
     GPT_RECORD_TYPE_FAIL,
     GPT_RECORD_TYPE_ERROR,
+    GPT_RECORD_TYPE_VOICE_ERROR,
 }ZMT_GPT_RECORD_TYPE_E;
 
-//PUBLIC int corepush_base64_encode( unsigned char *dst, unsigned int *dlen,const unsigned char *src, unsigned int slen );
 PUBLIC void gpt_get_baidu_access_token(void);
 PUBLIC void ZmtGpt_SendString(char * save_path, char * string);
 PUBLIC void ZmtGpt_SendRecord(uint32 lan_type, char * record_buf, uint32 record_size);
+PUBLIC void ZmtGpt_SendSelfRecord(uint8 req_type, char * record_buf, uint32 record_size);
 PUBLIC void ZmtGpt_SendTxt(uint32 app_type, char * send_txt, char * sys_param, char * field, int post_type);
 PUBLIC void ZmtGptKouYuTalk_RecvSelfResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id);
 PUBLIC void ZmtGptKouYuTalk_RecvResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id);
+PUBLIC void ZmtGptKouYuTalk_RecAiSelfTextResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id);
 PUBLIC void ZmtGptKouYuTalk_RecAiTextResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id);
+PUBLIC void ZmtGptKouYuTalk_RecTxtToVoiceResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id);
 PUBLIC void ZmtGptKouYuTalk_RecAiVoiceResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id);
 PUBLIC void ZmtGptZuoWen_RecvSelfResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id);
 PUBLIC void ZmtGptZuoWen_RecvResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id);
+PUBLIC void ZmtGptZuoWen_RecAiSelfTextResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id);
 PUBLIC void ZmtGptZuoWen_RecAiTextResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id);
 
 PUBLIC void MMIZMT_CreateZmtGptWin(void);

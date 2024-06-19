@@ -127,6 +127,63 @@ LOCAL void ZmtGptZuoWen_DeleteFrontTwoMsg(void)
     }
 }
 
+PUBLIC void ZmtGptZuoWen_RecAiSelfTextResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id)
+{
+    SCI_TRACE_LOW("%s: is_ok = %d, Rcv_len  = %d", __FUNCTION__, is_ok, Rcv_len);
+    if (is_ok && pRcv != PNULL && Rcv_len> 2)
+    {
+        cJSON * root = cJSON_Parse(pRcv);
+        if(root != NULL && root->type != cJSON_NULL)
+        {
+            cJSON * code = cJSON_GetObjectItem(root, "code");
+            cJSON * data = cJSON_GetObjectItem(root, "data");
+            if(code->valueint == 200)
+            {
+                if(gpt_zuowen_record_text){
+                    SCI_FREE(gpt_zuowen_record_text);
+                    gpt_zuowen_record_text = NULL;
+                }
+                gpt_zuowen_record_text = SCI_ALLOC_APPZ(strlen(data->valuestring)+1);
+                memset(gpt_zuowen_record_text, 0, strlen(data->valuestring)+1);
+                strcpy(gpt_zuowen_record_text, data->valuestring);
+                gpt_zuowen_record_type = GPT_RECORD_TYPE_SUCCESS;
+            }
+            else
+            {
+                SCI_TRACE_LOW("%s: code error!!,code = %d", __FUNCTION__, code->valueint);
+                if(gpt_zuowen_record_text){
+                    SCI_FREE(gpt_zuowen_record_text);
+                    gpt_zuowen_record_text = NULL;
+                }
+                gpt_zuowen_record_type = GPT_RECORD_TYPE_VOICE_ERROR;
+            }
+            cJSON_Delete(root);
+        }
+        else
+        {
+            SCI_TRACE_LOW("%s: data error!!", __FUNCTION__);
+            if(gpt_zuowen_record_text){
+                SCI_FREE(gpt_zuowen_record_text);
+                gpt_zuowen_record_text = NULL;
+            }
+            gpt_zuowen_record_type = GPT_RECORD_TYPE_FAIL;
+        }
+    }
+    else
+    {
+        SCI_TRACE_LOW("%s: request error!!", __FUNCTION__);
+        if(gpt_zuowen_record_text){
+            SCI_FREE(gpt_zuowen_record_text);
+            gpt_zuowen_record_text = NULL;
+        }
+        gpt_zuowen_record_type = GPT_RECORD_TYPE_ERROR;
+    }
+    if(MMK_IsFocusWin(ZMT_GPT_ZUOWEN_WIN_ID))
+    {
+        MMK_SendMsg(ZMT_GPT_ZUOWEN_WIN_ID, MSG_FULL_PAINT, PNULL);
+    }
+}
+
 PUBLIC void ZmtGptZuoWen_RecAiTextResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id)
 {
     SCI_TRACE_LOW("%s: is_ok = %d, Rcv_len  = %d", __FUNCTION__, is_ok, Rcv_len);
@@ -355,23 +412,35 @@ LOCAL void ZmtGptZuoWen_StopRecord(MMI_WIN_ID_T win_id, BOOLEAN is_send)
         uint8 * data_buf = NULL;
         uint32 data_size = 0;
         uint32 size;
+    #if ZMT_GPT_USE_SELF_API != 0  
+        data_buf = zmt_file_data_read(ZMT_GPT_RECORD_SELF_FILE_C, &data_size);
+        SCI_TRACE_LOW("%s: data_size = %d", __FUNCTION__, data_size);
+        if(data_buf != NULL && data_size > 2){
+            ZmtGpt_SendSelfRecord(0, data_buf, data_size);
+            SCI_FREE(data_buf);
+        }
+        zmt_file_delete(ZMT_GPT_RECORD_SELF_FILE_C);
+    #else
         data_buf = zmt_file_data_read(ZMT_GPT_RECORD_FILE_C, &data_size);
         SCI_TRACE_LOW("%s: data_size = %d", __FUNCTION__, data_size);
         if(data_buf != NULL && data_size > 2){
             ZmtGpt_SendRecord(1537, data_buf, data_size);
+            SCI_FREE(data_buf);
         }
         zmt_file_delete(ZMT_GPT_RECORD_FILE_C);
-    #if ZMT_GPT_USE_FOR_TEST != 0
-        gpt_zuowen_record_type = GPT_RECORD_TYPE_SUCCESS;
-    #else
-        gpt_zuowen_record_type = GPT_RECORD_TYPE_VOICE_LOADING;
     #endif
-        MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
-    }else{
-        zmt_file_delete(ZMT_GPT_RECORD_FILE_C);
-        gpt_zuowen_record_type = GPT_RECORD_TYPE_NONE; 
-        MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);       
+        gpt_zuowen_record_type = GPT_RECORD_TYPE_VOICE_LOADING;
     }
+    else
+    {
+    #if ZMT_GPT_USE_SELF_API != 0  
+        zmt_file_delete(ZMT_GPT_RECORD_SELF_FILE_C);
+    #else
+        zmt_file_delete(ZMT_GPT_RECORD_FILE_C);
+    #endif
+        gpt_zuowen_record_type = GPT_RECORD_TYPE_NONE; 
+    }
+    MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL); 
 }
 
 LOCAL void ZmtGptZuoWen_StartRecord(MMI_WIN_ID_T win_id)
@@ -408,11 +477,17 @@ LOCAL void ZmtGptZuoWen_StartRecord(MMI_WIN_ID_T win_id)
     gpt_zuowen_record_times = 0;
     gpt_zuowen_record_type = GPT_RECORD_TYPE_RECORDING;
     MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
-	
+
+#if ZMT_GPT_USE_SELF_API != 0  
+    call_name_str.wstr_ptr = ZMT_GPT_RECORD_SELF_FILE_L;
+    call_name_str.wstr_len = MMIAPICOM_Wstrlen(ZMT_GPT_RECORD_SELF_FILE_L);
+    record_param.fmt = MMISRVAUD_RECORD_FMT_AMR;
+#else
     call_name_str.wstr_ptr = ZMT_GPT_RECORD_FILE_L;
     call_name_str.wstr_len = MMIAPICOM_Wstrlen(ZMT_GPT_RECORD_FILE_L);
-
     record_param.fmt = MMISRVAUD_RECORD_FMT_PCM;
+#endif
+
     record_param.prefix_ptr = PNULL;
     record_param.record_dev_ptr = &record_dev;
     record_param.record_file_id_ptr = PNULL;
@@ -804,7 +879,7 @@ LOCAL void  ZmtGptZuoWen_DispalyRecord(MMI_WIN_ID_T win_id, int record_type)
             LCD_DrawRoundedRect(&gpt_zuowen_record_layer, zmt_gpt_record_rect, zmt_gpt_record_rect, MMI_WHITE_COLOR);
             LCD_FillRoundedRect(&gpt_zuowen_record_layer, zmt_gpt_record_rect, zmt_gpt_record_rect, MMI_WHITE_COLOR);
 
-            MMIRES_GetText(ZMT_CHAT_GPT_RECORD_IDENTIFY_FAIL, win_id, &text_string);
+            MMIRES_GetText(ZMT_CHAT_GPT_TXT_IDENTIFY_FAIL, win_id, &text_string);
             GUISTR_DrawTextToLCDInRect(
                 (const GUI_LCD_DEV_INFO *)&gpt_zuowen_record_layer,
                 &zmt_gpt_record_rect,
@@ -832,7 +907,35 @@ LOCAL void  ZmtGptZuoWen_DispalyRecord(MMI_WIN_ID_T win_id, int record_type)
             LCD_DrawRoundedRect(&gpt_zuowen_record_layer, zmt_gpt_record_rect, zmt_gpt_record_rect, MMI_WHITE_COLOR);
             LCD_FillRoundedRect(&gpt_zuowen_record_layer, zmt_gpt_record_rect, zmt_gpt_record_rect, MMI_WHITE_COLOR);
             
-            MMIRES_GetText(ZMT_CHAT_GPT_RECORD_REQUESET_ERROR, win_id, &text_string);
+            MMIRES_GetText(ZMT_CHAT_GPT_TXT_REQUESET_ERROR, win_id, &text_string);
+            GUISTR_DrawTextToLCDInRect(
+                (const GUI_LCD_DEV_INFO *)&gpt_zuowen_record_layer,
+                &zmt_gpt_record_rect,
+                &zmt_gpt_record_rect,
+                &text_string,
+                &text_style,
+                text_state,
+                GUISTR_TEXT_DIR_AUTO
+            );
+
+            if(gpt_zuowen_record_identify_timer_id){
+                MMK_StopTimer(gpt_zuowen_record_identify_timer_id);
+                gpt_zuowen_record_identify_timer_id = 0;
+            }
+            gpt_zuowen_record_identify_timer_id = MMK_CreateTimerCallback(2000, ZmtGptZuoWen_RecordIndentifyTimerCallback, PNULL, FALSE);
+        }
+        break;
+        case GPT_RECORD_TYPE_VOICE_ERROR:
+        {
+            zmt_gpt_record_rect = zmt_gpt_list_rect;
+            zmt_gpt_record_rect.top = zmt_gpt_record_rect.bottom - 2*ZMT_GPT_LINE_HIGHT;
+            zmt_gpt_record_rect.left += ZMT_GPT_LINE_WIDTH;
+            zmt_gpt_record_rect.right -= ZMT_GPT_LINE_WIDTH;
+            
+            LCD_DrawRoundedRect(&gpt_zuowen_record_layer, zmt_gpt_record_rect, zmt_gpt_record_rect, MMI_WHITE_COLOR);
+            LCD_FillRoundedRect(&gpt_zuowen_record_layer, zmt_gpt_record_rect, zmt_gpt_record_rect, MMI_WHITE_COLOR);
+            
+            MMIRES_GetText(ZMT_CHAT_GPT_VOICE_REQUESET_ERROR, win_id, &text_string);
             GUISTR_DrawTextToLCDInRect(
                 (const GUI_LCD_DEV_INFO *)&gpt_zuowen_record_layer,
                 &zmt_gpt_record_rect,
@@ -934,7 +1037,6 @@ LOCAL void ZmtGptZuoWen_FULL_PAINT(MMI_WIN_ID_T win_id)
 
 LOCAL void ZmtGptZuoWen_CTL_PENOK(MMI_WIN_ID_T win_id, DPARAM param)
 {
-    //uint16 cur_idx = GUILIST_GetCurItemIndex(ZMT_GPT_ZUOWEN_LIST_CTRL_ID);
     uint8 cur_idx = 0;
     MMI_CTRL_ID_T ctrl_id = ((MMI_NOTIFY_T *)param)->src_id;
     cur_idx = ctrl_id - ZMT_GPT_FORM_TEXT_1_CTRL_ID;

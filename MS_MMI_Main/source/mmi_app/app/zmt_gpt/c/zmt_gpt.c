@@ -81,7 +81,36 @@ PUBLIC void ZmtGpt_SendString(char * save_path, char * string)
     char data[2048] = {0};
     char imei[20] = {0};
     char url[50] = {0};
-    //app_adp_get_imei_req(&imei);
+#if ZMT_GPT_USE_SELF_API != 0
+    {
+        char * buf;
+        cJSON * root;
+        cJSON * text;
+        cJSON * sid;
+        cJSON * speed;
+        cJSON * isEn;
+
+        root = cJSON_CreateObject();
+
+        text = cJSON_CreateString(string);
+        cJSON_AddItemToObject(root, "text", text);
+
+        sid = cJSON_CreateNumber(66);
+        cJSON_AddItemToObject(root, "sid", sid);
+
+        speed = cJSON_CreateNumber(1);
+        cJSON_AddItemToObject(root, "speed", speed);
+
+        isEn = cJSON_CreateTrue();
+        cJSON_AddItemToObject(root, "isEn", isEn);
+
+        buf = cJSON_PrintUnformatted(root);
+        SCI_MEMCPY(data, buf, strlen(buf));
+        SCI_FREE(buf);
+        
+        sprintf(url, "%s%s", GPT_HTTP_SELF_API_BASE_PATH, GPT_HTTP_SELF_API_TXT2VOICE_PATH);
+    }
+#else
     sprintf(imei, "%s", "869937060002261");
     if(gpt_baidu_access_token){
         sprintf(data, GPT_HTTP_BAIDU_TXT_HTML_PATH, string, imei, gpt_baidu_access_token);
@@ -90,12 +119,42 @@ PUBLIC void ZmtGpt_SendString(char * save_path, char * string)
         gpt_get_baidu_access_token();
         return;
     }
-    SCI_TRACE_LOW("%s: data = %s", __FUNCTION__, data);
-    
     sprintf(url, "%s", GPT_HTTP_BAIDU_TXT_PARSE);
-    //SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
-    MMIZDT_HTTP_AppSend(FALSE, url, data, strlen(data), 10*1000, 0, 0, 0, 0, 0, ZmtGptKouYuTalk_RecAiVoiceResultCb);
-    //MMIZDT_HTTP_AppSend(TRUE, url, PNULL, 0, 1000, 0, 0, 30*1000, 0, 0, ZmtGptKouYuTalk_RecAiVoiceResultCb);
+#endif
+    SCI_TRACE_LOW("%s: data = %s", __FUNCTION__, data);
+    MMIZDT_HTTP_AppSend(FALSE, url, data, strlen(data), 30*1000, 0, 0, 0, 0, 0, ZmtGptKouYuTalk_RecAiVoiceResultCb);
+}
+
+PUBLIC void ZmtGpt_SendSelfRecord(uint8 req_type, char * record_buf, uint32 record_size)
+{
+    char url[50] = {0};
+    char * out;
+    cJSON * root;
+    cJSON * type;
+    cJSON * audio;
+    uint32 record_rel_len = 0;
+    uint32 record_encry_len = GPT_MAX_RECORD_SIZE;
+
+    root = cJSON_CreateObject();
+    type = cJSON_CreateString("amr");
+    cJSON_AddItemToObject(root, "type", type);
+    memset(&gpt_record_encry_buf, 0, record_encry_len);
+ #ifndef WIN32
+    mbedtls_base64_encode(&gpt_record_encry_buf, record_encry_len, &record_rel_len, record_buf, record_size);
+ #endif
+    gpt_record_encry_buf[record_rel_len] = 0;
+    audio = cJSON_CreateString(gpt_record_encry_buf);
+    cJSON_AddItemToObject(root, "audio", audio);
+    out = cJSON_PrintUnformatted(root);
+    SCI_TRACE_LOW("%s: data_buf = %s", __FUNCTION__, out);
+    sprintf(url, "%s%s", GPT_HTTP_SELF_API_BASE_PATH, GPT_HTTP_SELF_API_VOICE2TXT_JSON_PATH);
+    if(req_type == 0){//req_type = 0 zuowen,req_type = 1 kouyu
+        MMIZDT_HTTP_AppSend(FALSE, url, out, strlen(out),10000, 0, 0, 0, 0, 0, ZmtGptZuoWen_RecAiSelfTextResultCb);
+    }else{
+        MMIZDT_HTTP_AppSend(FALSE, url, out, strlen(out), 10000, 0, 0, 0, 0, 0, ZmtGptKouYuTalk_RecAiSelfTextResultCb);
+    }
+    cJSON_Delete(root);
+    SCI_FREE(out);
 }
 
 PUBLIC void ZmtGpt_SendRecord(uint32 lan_type, char * record_buf, uint32 record_size)
@@ -375,7 +434,9 @@ LOCAL MMI_RESULT_E HandleZmtGptWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_i
     {
         case MSG_OPEN_WINDOW:
             {
+            #if ZMT_GPT_USE_SELF_API == 0
                 gpt_get_baidu_access_token();
+            #endif
             }
             break;
         case MSG_FULL_PAINT:
