@@ -319,9 +319,9 @@ LOCAL uint32 _Get_BL_Finger_Coordinate(void)
     {
         XY_Coordinate_Transform(XY_Coordinate[i].x_position, Reg_Data[i*REG_FINGER_INTERVAL+2], Reg_Data[i*REG_FINGER_INTERVAL+3]);
         XY_Coordinate_Transform(XY_Coordinate[i].y_position, Reg_Data[i*REG_FINGER_INTERVAL+4], Reg_Data[i*REG_FINGER_INTERVAL+5]);
-        if(XY_Coordinate[i].x_position > 240)
-        XY_Coordinate[i].x_position = 240;
-        XY_Coordinate[i].x_position = 240 - XY_Coordinate[i].x_position;
+       // if(XY_Coordinate[i].x_position > 240)
+       // XY_Coordinate[i].x_position = 240;
+        //XY_Coordinate[i].x_position = 240 - XY_Coordinate[i].x_position;
         XY_Coordinate[i].finger_id = (Reg_Data[i*REG_FINGER_INTERVAL+2] & 0xf0)>>4;/*low byte is Touch ID*/
 		//SCI_TraceLow("[BL6133] _Get_Finger_Coordinate Reg_Data[i*REG_FINGER_INTERVAL+2]:%x \n",Reg_Data[i*REG_FINGER_INTERVAL+2]);
         switch(Reg_Data[i*REG_FINGER_INTERVAL+2]&0xf0)//for example: reg0x1
