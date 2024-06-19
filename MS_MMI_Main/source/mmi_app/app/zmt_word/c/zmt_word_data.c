@@ -331,6 +331,7 @@ PUBLIC void Word_requestBookInfo(void)
     char file_path[30] = {0};
     char * data_buf = PNULL;
     uint32 file_len = 0;
+    
     strcpy(file_path, WORD_PUBLISH_NAME_PATH);
     if(zmt_file_exist(file_path)){
         data_buf = zmt_file_data_read(file_path, &file_len);
@@ -343,8 +344,11 @@ PUBLIC void Word_requestBookInfo(void)
     }
     else
     {
-        char url[40] = {0};
-        strcpy(url, WORD_BOOK_PUBLISH_PATH);
+        char url[200] = {0};
+        char * query_str = NULL;
+        query_str = makeBaseQueryUrlString(WORD_BOOK_APP_ID, WORD_BOOK_APP_SECRET);
+        sprintf(url, WORD_BOOK_PUBLISH_PATH, query_str);
+        SCI_FREE(query_str);
         SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
         word_is_load_local = FALSE;
         MMIZDT_HTTP_AppSend(TRUE, WORD_BOOK_HEADR_PATH, url, strlen(url), 1000, 0, 0, 0, 0, 0, Word_ParseBookInfo);
@@ -657,8 +661,10 @@ PUBLIC void Word_requestChapterDetailInfo(uint16 book_id)
     }
     else
     {
-        char url[40] = {0};
-        sprintf(url,WORD_BOOK_ID_PATH,book_id);
+        char url[200] = {0};
+        char * query_str = makeBaseQueryUrlString(WORD_BOOK_APP_ID, WORD_BOOK_APP_SECRET);
+        sprintf(url,WORD_BOOK_ID_PATH,book_id, query_str);
+        SCI_FREE(query_str);
         SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
         word_is_load_local = FALSE;
         MMIZDT_HTTP_AppSend(TRUE, WORD_BOOK_HEADR_PATH, url, strlen(url), 1000, 0, 0, 0, 0, 0, Word_ParseChapterInfo);

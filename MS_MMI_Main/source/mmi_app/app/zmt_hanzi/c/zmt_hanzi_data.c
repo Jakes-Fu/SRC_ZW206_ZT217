@@ -332,8 +332,10 @@ PUBLIC void Hanzi_requestBookInfo(void)
     }
     else
     {
-        char url[30] = {0};
-        strcpy(url, HANZI_BOOK_PUBLISH_PATH);
+        char url[200] = {0};
+        char * query_str = makeBaseQueryUrlString(HANZI_BOOK_APP_ID, HANZI_BOOK_APP_SECRET);
+        sprintf(url, HANZI_BOOK_PUBLISH_PATH, query_str);
+        SCI_FREE(query_str);
         SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
         hanzi_is_load_local = FALSE;
         MMIZDT_HTTP_AppSend(TRUE, HANZI_BOOK_HEADER_PATH, url, strlen(url), 1000, 0, 0, 0, 0, 0, Hanzi_ParseBookInfo);
@@ -485,8 +487,10 @@ PUBLIC void Hanzi_requestChapterInfo(uint8 grade_id)
     }
     else
     {
-        char url[40] = {0};
-        sprintf(url,HANZI_BOOK_GRADE_PATH,grade_id);
+        char url[200] = {0};
+        char * query_str = makeBaseQueryUrlString(HANZI_BOOK_APP_ID, HANZI_BOOK_APP_SECRET);
+        sprintf(url, HANZI_BOOK_GRADE_PATH, grade_id, query_str);
+        SCI_FREE(query_str);
         SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
         hanzi_is_load_local = FALSE;
         MMIZDT_HTTP_AppSend(TRUE, HANZI_BOOK_HEADER_PATH, url, strlen(url), 1000, 0, 0, 0, 0, 0, Hanzi_ParseChapterInfo);
@@ -770,8 +774,10 @@ PUBLIC void Hanzi_requestDetailInfo(uint8 grade_id, uint16 req_id)
     }
     else
     {
-        char url[60] = {0};
-        sprintf(url, HANZI_BOOK_CHAPTER_PATH, req_id);
+        char url[220] = {0};
+        char * query_str = makeBaseQueryUrlString(HANZI_BOOK_APP_ID, HANZI_BOOK_APP_SECRET);
+        sprintf(url, HANZI_BOOK_CHAPTER_PATH, req_id, query_str);
+        SCI_FREE(query_str);
         SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
         hanzi_is_load_local = FALSE;
         MMIZDT_HTTP_AppSend(TRUE, HANZI_BOOK_HEADER_PATH, url, strlen(url), 1000, 0, 0, 0, 0, 0, Hanzi_ParseDetailInfo);

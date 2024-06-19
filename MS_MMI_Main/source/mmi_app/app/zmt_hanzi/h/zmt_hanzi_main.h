@@ -18,12 +18,15 @@ extern "C"
 #define HANZI_CARD_LINE_WIDTH MMI_MAINSCREEN_WIDTH/6
 #define HANZI_CARD_LINE_HIGHT MMI_MAINSCREEN_HEIGHT/10
 
+#define HANZI_BOOK_APP_ID "00000002"
+#define HANZI_BOOK_APP_SECRET "ZmtHanziBookSec"
+
 #define HANZI_BASE_DEVICE_IMEI "868750061006384"
 #define HANZI_BOOK_HEADER_PATH "http://8.130.95.8:8866/"
 #define HANZI_BOOK_AUDIO_BASE_PATH "http://8.130.95.8:8866/file/"
-#define HANZI_BOOK_PUBLISH_PATH "hanzi/getPublisher"
-#define HANZI_BOOK_GRADE_PATH "hanzi/get?gradeId=%d"
-#define HANZI_BOOK_CHAPTER_PATH "hanzi/get?contentId=%d"
+#define HANZI_BOOK_PUBLISH_PATH "hanzi/getPublisher?%s"
+#define HANZI_BOOK_GRADE_PATH "hanzi/get?gradeId=%d&%s"
+#define HANZI_BOOK_CHAPTER_PATH "hanzi/get?contentId=%d&%s"
 #define HANZI_BOOK_AUDIO_PATH "%saudio/word/%s/name/%s.mp3"
 
 #define HANZI_CARD_BOOK_INFO_PATH "E:/hanzi/publish_name.json"

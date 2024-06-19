@@ -15,10 +15,13 @@ extern "C"
 #define WORD_CARD_LINE_HIGHT MMI_MAINSCREEN_HEIGHT/10
 #define ENGLISE_BOOK_ITEM_PANDDING 10
 
+#define WORD_BOOK_APP_ID "00000001"
+#define WORD_BOOK_APP_SECRET "ZmtWordBookSec"
+
 #define WORD_BOOK_HEADR_PATH "http://8.130.95.8:8866/"
-#define WORD_BOOK_PUBLISH_PATH "english/getPublisher"
-#define WORD_BOOK_ID_PATH "english/get?bookId=%d"
-#define WORD_CHAPTER_ID_PATH "english/get?contentId=%d"
+#define WORD_BOOK_PUBLISH_PATH "english/getPublisher?%s"
+#define WORD_BOOK_ID_PATH "english/get?bookId=%d&%s"
+#define WORD_CHAPTER_ID_PATH "english/get?contentId=%d&%s"
 #define WORD_BOOK_AUDIO_BASE_PATH "%s%s.mp3"
 #define WORD_BOOK_AUDIO_BASE_URL "http://8.130.95.8:8866/file/english/"
 
