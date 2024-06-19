@@ -104,6 +104,7 @@
 #include "ual_tele_radio.h"
 #include "ual_tele_sim.h"
 #include "watch_common.h"
+#include "watch_launcher_main.h"
 
 #ifndef ZTE_WATCH
 #define DROPDOWN_USE_ZDT_SUPPORT 1
@@ -353,9 +354,9 @@ PUBLIC void ZDT_DisplaySingal(MMI_WIN_ID_T win_id)
     GUI_LCD_DEV_INFO        lcd_dev_info    = {0};
     MMI_IMAGE_ID_T          signal_icon_id =IMAGE_NULL;
     MMI_IMAGE_ID_T          volte_icon_id =IMAGE_NULL;
-    GUI_RECT_T              signal_str_rect     = {30,4,65,40};
-    GUI_RECT_T              volte_rect     = {12,10,29,40};
-    GUI_RECT_T            text_str_rect     = {27,2,65,40};
+    GUI_RECT_T              signal_str_rect = SIGNAL_IMAGE_RECT;
+    GUI_RECT_T              volte_rect = VOLTE_IMAGE_RECT;
+    GUI_RECT_T            text_str_rect = SIGNAL_TEXT_RECT;
     char                 * str_char = "";
     wchar                str_wchar[10] = {0};
     MMI_STRING_T        txt_string = {0};
@@ -413,6 +414,10 @@ PUBLIC void ZDT_UpdateSingal()
     if (MMK_IsOpenWin(MMIZDT_DROPDOWN_WIN_ID) && MMK_IsFocusWin(MMIZDT_DROPDOWN_WIN_ID) && slide_end)
     {
         MMK_SendMsg(MMIZDT_DROPDOWN_WIN_ID, MSG_FULL_PAINT,PNULL);
+    }
+    else if (MMK_IsOpenWin(WATCH_LAUNCHER_APP_PAGE1_WIN_ID) && MMK_IsFocusWin(WATCH_LAUNCHER_APP_PAGE1_WIN_ID) && isPageSlideEnd())
+    {
+        MMK_SendMsg(WATCH_LAUNCHER_APP_PAGE1_WIN_ID, MSG_FULL_PAINT,PNULL);
     }
 }
 
@@ -548,7 +553,7 @@ PUBLIC void ZDT_DisplayBattery(MMI_WIN_ID_T win_id)
                                     res_stat_battery_100};
     
     MMI_IMAGE_ID_T          bat_icon_id =IMAGE_NULL;
-    GUI_RECT_T              bat_icon_rect     = {185,7,215,30};
+    GUI_RECT_T              bat_icon_rect = BATTERY_IMAGE_RECT;
     GUI_RECT_T              bat_str_rect     = {185,7,215,30};
     GUI_RECT_T              charging_str_rect     = {168,8,190,40};
     GUI_LCD_DEV_INFO        lcd_dev_info    = {0};

@@ -104,7 +104,7 @@ extern void MMIZFB_OpenMainWin(void);
 #define TRACE_APP_LAUNCHER
 #endif
 
-#define WATCH_LAUNCHER_CLOCK_UPDATE_INTERVAL 500
+#define WATCH_LAUNCHER_CLOCK_UPDATE_INTERVAL 30*1000
 
 #define WATCH_LAUNCHER_CLOCK_DIGITAL_UPDATE_INTERVAL (30 * 1000)// W307 notify update
 #ifdef DROPDOWN_NOTIFY_SHORTCUT
@@ -116,7 +116,7 @@ extern void MMIZFB_OpenMainWin(void);
 //水平方向距离屏幕边距
 #define LAUNCHER_HORIZONTAL_PADDING 15
 //垂直方向距离屏幕边距
-#define LAUNCHER_VERTICAL_PADDING 15
+#define LAUNCHER_VERTICAL_PADDING 8
 //菜单有多少列
 #define LAUNCHER_MENU_COLUMNS 2
 //菜单有多少行
@@ -138,6 +138,8 @@ extern void MMIZFB_OpenMainWin(void);
 #define TEXTBOOK_MENU_TEXT_HORIZONTAL_PADDING 108
 //菜单textBook(同步课堂)Tilte垂直方向距离背景边距
 #define TEXTBOOK_MENU_TEXT_VERTICAL_PADDING 52
+//状态栏高度
+#define LAUNCHER_STATUSBAR_HEIGHT MMI_STATUSBAR_HEIGHT
 
 /**--------------------------------------------------------------------------*
 **                         LOCAL VARIABLES                                   *
@@ -243,6 +245,8 @@ LOCAL uint16 app_menu_icon_img_height = 0;
 
 LOCAL uint16 app_menu_bg_img_width = 0; 
 LOCAL uint16 app_menu_bg_img_height = 0; 
+
+LOCAL BOOLEAN is_page_slide_end = FALSE;
 
 /**--------------------------------------------------------------------------*
 **                         LOCAL FUNCTION                                   *
@@ -641,6 +645,7 @@ PUBLIC MMI_RESULT_E WatchLAUNCHER_HandleCb(
             }
 #endif
 #endif
+            is_page_slide_end = FALSE;
             break;
         }
 
@@ -677,6 +682,7 @@ PUBLIC MMI_RESULT_E WatchLAUNCHER_HandleCb(
         }
         case MSG_SLIDEPAGE_END:
         {
+            is_page_slide_end = TRUE;
             MMK_SendMsg(win_id, MSG_SLIDEPAGE_END, PNULL);
             break;
         }
@@ -713,6 +719,103 @@ LOCAL void DisplayLauncherIndicator(MMI_WIN_ID_T win_id)
 
 }
 
+PUBLIC BOOLEAN isPageSlideEnd()
+{
+    return is_page_slide_end;
+}
+
+PUBLIC void getLauncherContentRect(MMI_HANDLE_T win_id, GUI_RECT_T* win_rect)
+{
+    MMK_GetWinRect(win_id, win_rect);
+    win_rect->top += (LAUNCHER_STATUSBAR_HEIGHT + LAUNCHER_VERTICAL_PADDING);
+    win_rect->left += LAUNCHER_HORIZONTAL_PADDING;
+    win_rect->right -= LAUNCHER_HORIZONTAL_PADDING;
+    win_rect->bottom -= LAUNCHER_VERTICAL_PADDING;
+}
+
+//获取菜单之间水平方向的间距
+LOCAL uint8 getHorizontalSpace(MMI_WIN_ID_T win_id, GUI_RECT_T win_rect)
+{
+    if(app_menu_bg_img_width == 0 || app_menu_bg_img_height == 0)
+    {
+        GUIRES_GetImgWidthHeight(&app_menu_bg_img_width, &app_menu_bg_img_height, bright_green_bg, win_id);
+    }   
+    return ((win_rect.right - win_rect.left) - app_menu_bg_img_width*LAUNCHER_MENU_COLUMNS)/(LAUNCHER_MENU_COLUMNS*2);
+}
+
+//获取菜单之间垂直方向的间距
+LOCAL uint8 getVerticalSpace(MMI_WIN_ID_T win_id, GUI_RECT_T win_rect)
+{
+    if(app_menu_bg_img_width == 0 || app_menu_bg_img_height == 0)
+    {
+        GUIRES_GetImgWidthHeight(&app_menu_bg_img_width, &app_menu_bg_img_height, bright_green_bg, win_id);
+    }
+    return ((win_rect.bottom - win_rect.top) - app_menu_bg_img_height*LAUNCHER_MENU_ROWS)/(LAUNCHER_MENU_ROWS*2);
+}
+
+LOCAL void Display_DateTime(MMI_WIN_ID_T win_id)
+{
+    GUI_LCD_DEV_INFO lcd_dev_info = {GUI_MAIN_LCD_ID, GUI_BLOCK_MAIN};
+    SCI_TIME_T  time   = {0};
+    MMI_STRING_T time_str = {0};
+    uint8 date_str[12] = {0};
+    GUISTR_STATE_T txt_state = GUISTR_STATE_ALIGN;
+    GUISTR_STYLE_T txt_style = {0};
+    wchar dateTime[15] = {0};
+    GUI_RECT_T dateTime_rect = {0, 0, MMI_MAINSCREEN_WIDTH,LAUNCHER_STATUSBAR_HEIGHT};
+    TM_GetSysTime(&time);
+    MMK_GetWinLcdDevInfo(win_id,&lcd_dev_info);
+    MMIAPISET_FormatTimeStrByTime(time.hour, time.min, date_str,12);
+    MMI_STRNTOWSTR(dateTime,14,(const uint8*)date_str,(uint32)strlen((char*)date_str),(uint32)strlen((char*)date_str));
+      
+    txt_style.align = ALIGN_HVMIDDLE;
+    txt_style.font_color = MMI_WHITE_COLOR;
+    txt_style.font = DP_FONT_24;
+    time_str.wstr_ptr = dateTime;
+    time_str.wstr_len = MMIAPICOM_Wstrlen(dateTime);
+    GUISTR_DrawTextToLCDInRect((const GUI_LCD_DEV_INFO *)&lcd_dev_info, &dateTime_rect, &dateTime_rect, &time_str, &txt_style, txt_state, GUISTR_TEXT_DIR_AUTO);
+}
+
+PUBLIC void DisplayLauncherStatusBar(MMI_WIN_ID_T win_id)
+{
+    //只在第一页显示
+    if(WATCH_LAUNCHER_APP_PAGE1_WIN_ID == win_id)
+    {
+        ZDT_DisplaySingal(win_id);
+        ZDT_DisplayBattery(win_id);
+        Display_DateTime(win_id);
+    }
+}
+
+LOCAL void startUpdateDateTimeTimer(MMI_WIN_ID_T win_id)
+{
+    if (0 == s_clock_update_timer && win_id == WATCH_LAUNCHER_APP_PAGE1_WIN_ID)
+    {
+        s_clock_update_timer = MMK_CreateWinTimer(WATCH_LAUNCHER_APP_PAGE1_WIN_ID,WATCH_LAUNCHER_CLOCK_UPDATE_INTERVAL,TRUE);
+    }    
+}
+
+LOCAL void stopUpdateDateTimeTimer(MMI_WIN_ID_T win_id)
+{
+    if (s_clock_update_timer != 0)
+    {
+        MMK_StopTimer(s_clock_update_timer);
+        s_clock_update_timer = 0;
+    }
+}
+
+LOCAL void updateDateTimeTimerCallback(MMI_WIN_ID_T win_id)
+{
+    if(MMK_GetFocusWinId() != WATCH_LAUNCHER_APP_PAGE1_WIN_ID)
+    {
+        stopUpdateDateTimeTimer(win_id);            
+    }
+    else
+    {
+        MMK_SendMsg(win_id, MSG_FULL_PAINT,PNULL);
+    }
+}
+
 /*
 * menu_index 菜单索引 即g_app_list_info数组索引号
 * page_index 菜单在page 里面索引 比如4宫格菜单从0-3 
@@ -723,16 +826,11 @@ LOCAL void DisplayAppItem(MMI_WIN_ID_T win_id, uint8 menu_index, uint8 page_inde
     uint8 vertical_space = 0;
     GUI_POINT_T point = {0};
     GUI_RECT_T win_rect = {0};
-    MMK_GetWinRect(win_id, &win_rect);
-    if(app_menu_bg_img_width == 0 || app_menu_bg_img_height == 0)
-    {
-        GUIRES_GetImgWidthHeight(&app_menu_bg_img_width, &app_menu_bg_img_height, bright_green_bg, win_id);
-    }
-    
-    horizontal_space = ((win_rect.right - win_rect.left) - LAUNCHER_HORIZONTAL_PADDING*2 - app_menu_bg_img_width*LAUNCHER_MENU_COLUMNS)/(LAUNCHER_MENU_COLUMNS*2);
-    vertical_space = ((win_rect.bottom - win_rect.top) - LAUNCHER_VERTICAL_PADDING*2 - app_menu_bg_img_height*LAUNCHER_MENU_ROWS)/(LAUNCHER_MENU_ROWS*2); 
-    point.x = win_rect.left + LAUNCHER_HORIZONTAL_PADDING + horizontal_space + (2*horizontal_space + app_menu_bg_img_width)*(page_index%LAUNCHER_MENU_COLUMNS);
-    point.y = win_rect.top + LAUNCHER_VERTICAL_PADDING + vertical_space  + (2*vertical_space + app_menu_bg_img_height)*(page_index/LAUNCHER_MENU_COLUMNS);
+    getLauncherContentRect(win_id, &win_rect);
+    horizontal_space = getHorizontalSpace(win_id,win_rect);
+    vertical_space = getVerticalSpace(win_id,win_rect); 
+    point.x = win_rect.left + horizontal_space + (2*horizontal_space + app_menu_bg_img_width)*(page_index%LAUNCHER_MENU_COLUMNS);
+    point.y = win_rect.top + vertical_space + (2*vertical_space + app_menu_bg_img_height)*(page_index/LAUNCHER_MENU_COLUMNS);
     //画背景
     GUIRES_DisplayImg(&point,PNULL,PNULL,win_id,g_app_list_info[menu_index].bg_img_id,&lcd_dev_info);
     if(menu_index == 0 && page_index == 0)//同步课堂
@@ -804,11 +902,13 @@ LOCAL MMI_RESULT_E HandleLauncherPageWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_
     {
         case MSG_GET_FOCUS:
            // MMK_PostMsg(win_id,MSG_FULL_PAINT,PNULL,PNULL);
+            startUpdateDateTimeTimer(win_id);
             break;
         case MSG_FULL_PAINT:
         {
             DisplayWinPanelBg(win_id);
             DisplayLauncherPage(win_id);
+            DisplayLauncherStatusBar(win_id);
             //DisplayLauncherIndicator(win_id);
             break;
         }
@@ -822,6 +922,19 @@ LOCAL MMI_RESULT_E HandleLauncherPageWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_
             }
             break;
         }
+        case MSG_LOSE_FOCUS:
+            stopUpdateDateTimeTimer(win_id);
+            break;
+
+        case MSG_TIMER:
+            if (NULL != param)
+            {           
+                if (s_clock_update_timer == *(uint8*)param)
+                {
+                    updateDateTimeTimerCallback(win_id);
+                }
+            }
+            break;
 
         default:
             recode = MMI_RESULT_FALSE;
@@ -999,9 +1112,9 @@ LOCAL void Launcher_App_Start(GUI_POINT_T click_point, MMI_WIN_ID_T win_id)
     uint8 vertical_space = 0;
     GUI_RECT_T win_rect = {0};
     uint8 menu_index = 0;
-    MMK_GetWinRect(win_id, &win_rect);
-    horizontal_space = ((win_rect.right - win_rect.left) - LAUNCHER_HORIZONTAL_PADDING*2 - app_menu_bg_img_width*LAUNCHER_MENU_COLUMNS)/(LAUNCHER_MENU_COLUMNS*2);
-    vertical_space = ((win_rect.bottom - win_rect.top) - LAUNCHER_VERTICAL_PADDING*2 - app_menu_bg_img_height*LAUNCHER_MENU_ROWS)/(LAUNCHER_MENU_ROWS*2);
+    getLauncherContentRect(win_id, &win_rect);
+    horizontal_space = getHorizontalSpace(win_id,win_rect);
+    vertical_space = getVerticalSpace(win_id,win_rect); 
     page_index = win_id - WATCH_LAUNCHER_APP_PAGE_START_WIN_ID - 1;
     if(page_index >=0)
     {
@@ -1009,8 +1122,8 @@ LOCAL void Launcher_App_Start(GUI_POINT_T click_point, MMI_WIN_ID_T win_id)
         {
             //第一页只有LAUNCHER_MENUS_IN_PAGE-1个菜单
             menu_index = page_index*LAUNCHER_MENUS_IN_PAGE + i - 1;
-            rect.left = win_rect.left + LAUNCHER_HORIZONTAL_PADDING + horizontal_space + (2*horizontal_space + app_menu_bg_img_width)*(i%LAUNCHER_MENU_COLUMNS);
-            rect.top = win_rect.top + LAUNCHER_VERTICAL_PADDING + vertical_space  + (2*vertical_space + app_menu_bg_img_height)*(i/LAUNCHER_MENU_COLUMNS);
+            rect.left = win_rect.left + horizontal_space + (2*horizontal_space + app_menu_bg_img_width)*(i%LAUNCHER_MENU_COLUMNS);
+            rect.top = win_rect.top + vertical_space  + (2*vertical_space + app_menu_bg_img_height)*(i/LAUNCHER_MENU_COLUMNS);
             if(page_index == 0 && i == 0)
             {
                 rect.right = win_rect.right - LAUNCHER_HORIZONTAL_PADDING;

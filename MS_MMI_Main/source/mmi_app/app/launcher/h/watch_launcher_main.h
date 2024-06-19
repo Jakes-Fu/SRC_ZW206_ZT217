@@ -70,4 +70,6 @@ PUBLIC void WatchLAUNCHER_ZTE_LowBatterSwitch();
 PUBLIC void WatchLAUNCHER_ZTE_LowBatterToIdle();
 #endif
 
+PUBLIC BOOLEAN isPageSlideEnd();
+
 #endif
