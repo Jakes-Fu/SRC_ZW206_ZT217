@@ -1520,13 +1520,11 @@ uint32 YX_Net_Send_UD(YX_APP_T* pMe,uint8 loc_ok)
     GPS_API_GetLastPos(&last_gps);
     if((loc_ok&0x01) == 0)
     {
-        #if defined(ZDT_W217_FACTORY_GPS)// wuxx add 20231129 GPS_NEW_STYLE 20231204
-        // NOT
-        #else
         last_gps.is_valid = 0;
-       #endif
     }
+    SCI_TRACE_LOW("YX_Net_Send_UD loc_ok=%d, gps_is_valid=%d",loc_ok,last_gps.is_valid);
 #endif
+    
     SCI_MEMCPY(send_buf,"UD,",3);
     send_len = 3;
     send_len += YX_Func_GetDateTime(send_buf+send_len);
@@ -1634,6 +1632,11 @@ static int YX_Net_Send_AL_CB(void *pUser,uint8 * pRcv,uint32 Rcv_len)
         if(ret == 2 &&  strncmp( (char *)buf, "AL", ret ) == 0)
         {
             ZDT_LOG("YX_Net_Send_AL_CB Success");
+            return ZDT_TCP_RET_OK;
+        }
+        else if(ret == 7 &&  strncmp( (char *)buf, "SENDSOS", ret ) == 0) //努比亚sos发送位置
+        {
+            ZDT_LOG("YX_Net_Send_ASENDSOS_CB Success");
             return ZDT_TCP_RET_OK;
         }
     }
@@ -2050,8 +2053,8 @@ uint32 YX_Net_Send_PP(YX_APP_T* pMe,uint8 loc_ok)
     send_len += YX_Func_GetStatus(send_buf+send_len,0);
     send_len += YX_Func_GetSSInfo(send_buf+send_len);
     send_len += YX_Func_GetWIFIInfo(send_buf+send_len,loc_ok);
-
-    send_hande = YX_Net_TCPSend(g_zdt_phone_imei,send_buf,send_len,120,0,30000,YX_Net_Send_PP_CB);//默认10 秒 服务器还没返回结果
+    //UI界面超时是30秒，所以设置长比30秒短的时间28秒
+    send_hande = YX_Net_TCPSend(g_zdt_phone_imei,send_buf,send_len,120,0,28000,YX_Net_Send_PP_CB);//默认10 秒 服务器还没返回结果
     
     ZDT_LOG("YX_Net_Send_PP Handle=0x%x",send_hande);
     return send_hande;
@@ -3643,6 +3646,9 @@ int YX_Net_Receive_FIND(YX_APP_T *pMe)
 {
     ZDT_LOG("YX_Net_Receive_FIND");
     YX_Net_TCPRespond(g_zdt_phone_imei,"FIND",4);
+#ifdef XYSDK_SUPPORT
+    LIBXMLYAPI_AppExit();
+#endif
     //if(pMe->m_zdt_is_in_call == 0)
     {
         //yangyu add begin
@@ -4350,6 +4356,9 @@ int YX_Net_Receive_STK(YX_APP_T *pMe,uint8 * pContent,uint32 ContentLen)
     char group_id[101] = {0};
     char tmp_str[101] = {0};
     YX_GROUP_INFO_DATA_T * pInfo = PNULL;
+    uint message_id = 0;
+    char respond[32] = {0};
+    uint8 success = 0;
     
     ZDT_LOG("ZDT__LOG YX_Net_Receive_STK ContentLen=%d",ContentLen);
     //获取ID
@@ -4424,11 +4433,37 @@ int YX_Net_Receive_STK(YX_APP_T *pMe,uint8 * pContent,uint32 ContentLen)
         return -1;
     }
     ZDT_LOG("ZDT__LOG YX_Net_Receive_STK offset=%d,ret=%d,%s",offset,ret,tmp_str);
+#ifdef ZTE_WATCH //努比亚需求（解决消息重复下发导致消息重复问题）
+    {
+        char message_id_str[11] = {0};
+        ret = YX_Func_GetNextPara(&str, &len,message_id_str,10);
+        if(ret > 0)
+        {
+            message_id = atoi(message_id_str);
+            if(FALSE == YX_VCHAT_MessageId_Check(pInfo,message_id))
+            {
+                ZDT_LOG("YX_Net_Receive_STK repeat message_id=%d",message_id);
+                sprintf(respond,"STK,1,%d",message_id);
+                YX_Net_TCPRespond(g_zdt_phone_imei,respond,strlen(respond));
+                return 0;
+            }
+        }
+    }
+#endif
     if(YX_Net_Receive_STK_VocFile(pMe,pContent+offset, ContentLen-offset,group_id,msg_type))
     {
-        YX_Net_TCPRespond(g_zdt_phone_imei,"STK,1",5);
         YX_Net_Send_STKQ(pMe);
+        success = 1;
     }
+    if(message_id !=0)
+    {
+        sprintf(respond,"STK,%d,%d",success,message_id);
+    }
+    else
+    {
+        sprintf(respond,"STK,%d",success);
+    }
+    YX_Net_TCPRespond(g_zdt_phone_imei,respond,strlen(respond));
 #endif
     return 0;
 }
@@ -4444,6 +4479,9 @@ int YX_Net_Receive_TK(YX_APP_T *pMe,uint8 * pContent,uint32 ContentLen)
     char group_id[101] = {0};
     char tmp_str[101] = {0};
     YX_GROUP_INFO_DATA_T * pInfo = PNULL;
+    uint message_id = 0;
+    char respond[16] = {0};
+    uint8 success = 0;
     
     ZDT_LOG("YX_Net_Receive_TK ContentLen=%d",ContentLen);
     if(len == 1)
@@ -4512,13 +4550,38 @@ int YX_Net_Receive_TK(YX_APP_T *pMe,uint8 * pContent,uint32 ContentLen)
         offset += ret;
         offset += 1;
     }
-    
+#ifdef ZTE_WATCH //努比亚需求（解决消息重复下发导致消息重复问题）
+    {
+        char message_id_str[11] = {0};
+        ret = YX_Func_GetNextPara(&str, &len,message_id_str,10);
+        if(ret > 0)
+        {
+            message_id = atoi(message_id_str);
+            if(FALSE == YX_VCHAT_MessageId_Check(pInfo,message_id))
+            {
+                ZDT_LOG("YX_Net_Receive_TK repeat message_id=%d",message_id);
+                sprintf(respond,"TK,1,%d",message_id);
+                YX_Net_TCPRespond(g_zdt_phone_imei,respond,strlen(respond));
+                return 0;
+            }
+        }
+    }
+#endif    
     ZDT_LOG("YX_Net_Receive_TK offset=%d,ret=%d,%s",offset,ret,tmp_str);
     if(YX_Net_Receive_TK_VocFile(pMe,pContent+offset, ContentLen-offset,group_id,msg_type))
     {
-        YX_Net_TCPRespond(g_zdt_phone_imei,"TK,1",4);
         YX_Net_Send_TKQ(pMe);
+        success = 1;
     }
+    if(message_id !=0)
+    {
+        sprintf(respond,"TK,%d,%d",success,message_id);
+    }
+    else
+    {
+        sprintf(respond,"TK,%d",success);
+    }
+    YX_Net_TCPRespond(g_zdt_phone_imei,respond,strlen(respond));
 #endif
     return 0;
 }
@@ -4534,6 +4597,9 @@ int YX_Net_Receive_TK2(YX_APP_T *pMe,uint8 * pContent,uint32 ContentLen)
     char group_id[101] = {0};
     char tmp_str[101] = {0};
     YX_GROUP_INFO_DATA_T * pInfo = PNULL;
+    uint message_id = 0;
+    char respond[16] = {0};
+    uint8 success = 0;
     
     ZDT_LOG("YX_Net_Receive_TK2 ContentLen=%d",ContentLen);
     //获取ID
@@ -4602,12 +4668,38 @@ int YX_Net_Receive_TK2(YX_APP_T *pMe,uint8 * pContent,uint32 ContentLen)
         MMIPUB_OpenAlertWinByTextId(PNULL,TXT_NO_SPACE,TXT_NULL,IMAGE_PUBWIN_FAIL,PNULL,PNULL,MMIPUB_SOFTKEY_ONE,PNULL);
         return -1;
     }
+#ifdef ZTE_WATCH //努比亚需求（解决消息重复下发导致消息重复问题）
+    {
+        char message_id_str[11] = {0};
+        ret = YX_Func_GetNextPara(&str, &len,message_id_str,10);
+        if(ret > 0)
+        {
+            message_id = atoi(message_id_str);
+            if(FALSE == YX_VCHAT_MessageId_Check(pInfo,message_id))
+            {
+                ZDT_LOG("YX_Net_Receive_TK2 repeat message_id=%d",message_id);
+                sprintf(respond,"TK2,1,%d",message_id);
+                YX_Net_TCPRespond(g_zdt_phone_imei,respond,strlen(respond));
+                return 0;
+            }
+        }
+    }
+#endif 
     ZDT_LOG("YX_Net_Receive_TK2 offset=%d,ret=%d,%s",offset,ret,tmp_str);
     if(YX_Net_Receive_TK2_VocFile(pMe,pContent+offset, ContentLen-offset,group_id,msg_type)) 
     {
-        YX_Net_TCPRespond(g_zdt_phone_imei,"TK2,1",5);
         YX_Net_Send_TKQ2(pMe);
+        success = 1;
+    }          
+    if(message_id !=0)
+    {
+        sprintf(respond,"TK2,%d,%d",success,message_id);
     }
+    else
+    {
+        sprintf(respond,"TK2,%d",success);
+    }
+    YX_Net_TCPRespond(g_zdt_phone_imei,respond,strlen(respond));
 #endif
     return 0;
 }
@@ -4842,6 +4934,7 @@ int YX_Net_Receive_PPQ(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen)
     uint8 friend_id[YX_DB_FRIEND_MAX_ID_SIZE+1] = {0};
     uint8 friend_name[YX_DB_FRIEND_MAX_NAME_SIZE+1] = {0};
     uint8 friend_num[YX_DB_FRIEND_MAX_NUMBER_SIZE+1] = {0};
+    BOOLEAN has_friend = FALSE;
     
     ZDT_LOG("ZDT__LOG YX_Net_Receive_PPQ ContentLen=%d",ContentLen);
     YX_DB_FRIEND_ListDelAllBuf();
@@ -4863,6 +4956,7 @@ int YX_Net_Receive_PPQ(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen)
             {
                 SCI_MEMCPY(friend_name,"672A547D540D",SCI_STRLEN("672A547D540D"));
             }
+            has_friend = TRUE;
             ret = YX_Func_GetNextPara(&str, &len,(char *)friend_num,YX_DB_FRIEND_MAX_NUMBER_SIZE);
             YX_DB_FRIEND_ListModifyBuf(i,friend_id,SCI_STRLEN((char *)friend_id),friend_num,SCI_STRLEN((char *)friend_num),(char *)friend_name,SCI_STRLEN((char *)friend_name));
         }
@@ -4872,7 +4966,7 @@ int YX_Net_Receive_PPQ(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen)
     YX_VCHAT_GetAllGroupInfo();
     s_yx_is_first_info_times |= 0x01;
     //if(s_yx_is_first_info_times == 0x03)
-    if(1)
+    if(has_friend)
     {
         if(0==YX_MMI_Get_Bingd_Statues())
         {
@@ -4919,6 +5013,7 @@ int YX_Net_Receive_UPGCUL(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen)
     uint8 appuser_name[YX_DB_APPUSER_MAX_NAME_SIZE+1] = {0};
     uint8 appuser_num[YX_DB_APPUSER_MAX_NUMBER_SIZE+1] = {0};
     uint8 reverse[21] = {0};
+    BOOLEAN has_binded = FALSE;
     ZDT_LOG("ZDT__LOG YX_Net_Receive_UPGCUL ContentLen=%d",ContentLen);
     YX_DB_APPUSER_ListDelAllBuf();
     if(len != 0)
@@ -4939,6 +5034,7 @@ int YX_Net_Receive_UPGCUL(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen)
             {
                 SCI_MEMCPY(appuser_name,"672A547D540D",SCI_STRLEN("672A547D540D"));
             }
+            has_binded = TRUE;//有绑定
             ret = YX_Func_GetNextPara(&str, &len,(char *)appuser_num,YX_DB_APPUSER_MAX_NUMBER_SIZE);
             ret = YX_Func_GetNextPara(&str, &len,(char *)reverse,20);
             YX_DB_APPUSER_ListModifyBuf(i,appuser_id,SCI_STRLEN((char *)appuser_id),appuser_num,SCI_STRLEN((char *)appuser_num),(char *)appuser_name,SCI_STRLEN((char *)appuser_name));
@@ -4948,7 +5044,7 @@ int YX_Net_Receive_UPGCUL(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen)
     YX_VCHAT_CheckAllGroupUser();
     YX_VCHAT_GetAllGroupInfo();
     s_yx_is_first_info_times |= 0x02;
-    if(s_yx_is_first_info_times == 0x03)
+    if(has_binded)
     {
         if(0==YX_MMI_Get_Bingd_Statues())
         {
@@ -4977,6 +5073,7 @@ int YX_Net_Receive_UPGCUL(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen)
             }
         }
     }
+    //YX_Net_TCPRespond(g_zdt_phone_imei,"UPGCUL",6);//这个回复指令不对
     return 0;
 }
 
@@ -5670,21 +5767,22 @@ extern void MMIZDT_StartdelayTimer();//xx_modify_h03d
 
 PUBLIC void ZDT_NV_SetRejectUnknownCall(BOOLEAN isOn)
 {
-    BOOLEAN status = isOn;
-    MMINV_WRITE(MMI_ZDT_NV_REJECT_CALL_ONOFF, &status);
+    uint8 status = isOn;
+    MMI_WriteNVItem(MMI_ZDT_NV_REJECT_CALL_ONOFF, &status);
+    return;
 }
 
-PUBLIC BOOLEAN ZDT_NV_GetRejectUnknownCall()
+PUBLIC uint8 ZDT_NV_GetRejectUnknownCall()
 {
-    BOOLEAN status = FALSE;
+    uint8 status = 0;
     MN_RETURN_RESULT_E  return_value    =   MN_RETURN_FAILURE;
 
-    MMINV_READ(MMI_ZDT_NV_REJECT_CALL_ONOFF, &status, return_value);
-    
-    if (MN_RETURN_SUCCESS != return_value)
+    return_value = MMI_ReadNVItem(MMI_ZDT_NV_REJECT_CALL_ONOFF, &status);
+    ZDT_LOG("ZDT_NV_GetRejectUnknownCall return_value=%d,status=%d",return_value,status);
+    if (MN_RETURN_SUCCESS != return_value || status > 1)
     {
-        status = FALSE;
-        MMINV_WRITE(MMI_ZDT_NV_REJECT_CALL_ONOFF, &status);
+        status = 0;
+        MMI_WriteNVItem(MMI_ZDT_NV_REJECT_CALL_ONOFF, &status);
     }
     return status;
 }
@@ -6095,6 +6193,9 @@ int32 YX_Net_Receive_DOWNVCWW(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen)
 #ifdef BAIRUI_VIDEOCHAT_SUPPORT //佰锐视频通话
     ZDT_WatchVideoChatLogin(videoCallInfo.mUseIdStr, videoCallInfo.appUserIdStr , FALSE);//yangyu add test
 #endif
+#ifdef XYSDK_SUPPORT
+    LIBXMLYAPI_AppExit();
+#endif
     if(Video_Call_Device_Idle_Check()) //在打电话上课禁用直接回复挂断
     {
         YX_Net_Send_UPWATCHHANGUP(&videoCallInfo.video_id);
@@ -6162,6 +6263,7 @@ int32 YX_Net_Receive_DeviceBody(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen
 				yx_DB_Set_Rec.height = height;
 				yx_DB_Set_Rec.weight = weight;
 				YX_DB_SET_ListModify();
+                YX_Net_TCPRespond(g_zdt_phone_imei,"DEVICE_BODY", 11);
 			}
         }
         else
@@ -6198,6 +6300,7 @@ int32 YX_Net_Receive_LongEndurance(YX_APP_T *pMe,uint8 * pContent,uint16 Content
         }
         
 		YX_Net_TCPRespond(g_zdt_phone_imei,"LONG", 4);
+        MMIZDT_CheckLowBatteryMode();
     }
 
 }
@@ -6996,6 +7099,9 @@ static int YX_Net_HandleSendSuccess(YX_APP_T *pMe,uint8 * pData,uint32 Data_len)
                 else
                 #endif
                 {   
+                #ifdef ZTE_WATCH
+                    YX_Net_Send_RESYNC(pMe);
+                #endif
                     YX_Net_Send_TIME(pMe);
                     YX_Net_Send_PHLQ(pMe);
                     YX_Net_Send_WT(pMe,0);
@@ -7013,13 +7119,13 @@ static int YX_Net_HandleSendSuccess(YX_APP_T *pMe,uint8 * pData,uint32 Data_len)
                 #ifdef ZTE_WATCH
 					YX_Net_Send_DeviceModelVersion(pMe);
                     YX_Net_Send_ICCID(pMe);
-					if(0==YX_MMI_Get_Bingd_Statues())
-					{
-						YX_Net_Send_RESYNC(pMe);
-					}
                     if(MMIZDT_Get_CTA_Net_Id_Status() == 1)
                     {
                         YX_Net_Send_CTA(pMe);
+                    }
+                    if(MMIZDT_IsICCIDChanged(g_zdt_sim_iccid))
+                    {
+                        MMIZDT_NVSetICCID(g_zdt_sim_iccid);
                     }
                 #else
                     YX_Net_Send_SCHEDULEQ(pMe);
@@ -7039,6 +7145,13 @@ static int YX_Net_HandleSendSuccess(YX_APP_T *pMe,uint8 * pData,uint32 Data_len)
         }
         else
         {
+        #ifdef ZTE_WATCH //热插拔换卡
+            if(MMIZDT_IsICCIDChanged(g_zdt_sim_iccid))
+            {
+                MMIZDT_NVSetICCID(g_zdt_sim_iccid);
+                YX_Net_Send_ICCID(pMe);
+            }
+        #endif
             if(YX_LocReport_In_LK(g_yx_lk_timers_num))
             {
                 if(YX_LocReport_JudgeSend())
@@ -7382,6 +7495,18 @@ static int YX_Net_HandleSendFail(YX_APP_T *pMe,uint8 * pData,uint32 Data_len,uin
                 MMIZDT_Net_Reset(FALSE);
             }
             pMe->m_yx_rsp_err_num = 0;
+        }
+    }
+    else if(ret == 7 &&  strncmp( (char *)buf, "SENDSOS", ret ) == 0)//努比亚sos上报位置
+    {
+        if(err_id != TCP_ERR_CLEAR)
+        {
+            pMe->m_yx_send_err_num++;
+            ZDT_LOG("YX_Net_HandleSendFail(%d)--SENDSOS--Type(%d) retry(%d)",err_id,YX_NET_ALERT_TYPE_SOS,pMe->m_yx_send_err_num);
+            if(pMe->m_yx_send_err_num < 3)
+            {
+                YX_Net_Send_AL(pMe,YX_NET_ALERT_TYPE_SOS,0);
+            }
         }
     }
     return ret;

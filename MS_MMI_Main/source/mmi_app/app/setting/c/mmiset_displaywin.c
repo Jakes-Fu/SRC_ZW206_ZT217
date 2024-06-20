@@ -1971,7 +1971,7 @@ LOCAL MMI_RESULT_E HandleBrightnessWindow(
                 //uint8 percent = (point.x - rect.left)*100/(rect.right-rect.left);
                 progress_down_flag = 1;
                 cur_item_index =  ROUND((float)(MMISET_CONTRAST_SEVEN)
-                        *(point.x - progressrect.left)
+                        *(down_point.x - progressrect.left)
                         /(progressrect.right-progressrect.left)); //0 is not in total num, eg total=100, progressbar display 0~100
                 if(cur_item_index > MMISET_CONTRAST_SEVEN)
                     cur_item_index = MMISET_CONTRAST_SEVEN -1;

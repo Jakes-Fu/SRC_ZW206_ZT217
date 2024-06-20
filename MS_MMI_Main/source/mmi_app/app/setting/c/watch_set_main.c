@@ -1404,3 +1404,11 @@ PUBLIC void WatchSET_MainWin_Enter( void )
     if(win_handle != NULL)
         MMK_SetWinRect(win_handle, &rect);
 }
+
+PUBLIC void WatchSET_MainWin_Exit( void )
+{
+    if(MMK_IsOpenWin(MMISET_MAIN_WIN_ID))
+    {
+        MMK_CloseWin(MMISET_MAIN_WIN_ID);
+    }
+}

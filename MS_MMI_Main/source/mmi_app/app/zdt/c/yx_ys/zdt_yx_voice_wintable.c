@@ -69,7 +69,7 @@ extern void GT_Qcode_show(const unsigned char *QR_TEST_STR,int x0,int y0,int w0,
 
 LOCAL THEMELIST_ITEM_STYLE_T new_style = {0};
 
-LOCAL GUI_LCD_DEV_INFO  s_record_panel_layer_handle = { 0,UILAYER_TRANSPARENT_COLOR };
+LOCAL GUI_LCD_DEV_INFO  s_record_panel_layer_handle = { 0,UILAYER_NULL_HANDLE};
 
 PUBLIC void MMIAPI_Zdt_Alert_Win(MMI_TEXT_ID_T              text_id)
 {
@@ -599,7 +599,7 @@ LOCAL void CreateRecordSecondsPanelPaintLayer(MMI_WIN_ID_T   win_id)
     UILAYER_CREATE_T    create_info = { 0 };
     UILAYER_APPEND_BLT_T        append_layer = { 0 };
 
-    if (UILAYER_HANDLE_MULTI != UILAYER_GetHandleType(&s_record_panel_layer_handle))
+    if (UILAYER_NULL_HANDLE == s_record_panel_layer_handle.block_id)
     {
         //get tips layer width height
         GUILCD_GetLogicWidthHeight(GUI_MAIN_LCD_ID, &layer_width, &layer_height);
@@ -630,12 +630,12 @@ LOCAL void CreateRecordSecondsPanelPaintLayer(MMI_WIN_ID_T   win_id)
 LOCAL void ReleaseRecordPanelPaintLayer()
 {
 
-    if (UILAYER_HANDLE_MULTI == UILAYER_GetHandleType(&s_record_panel_layer_handle))
+    if (UILAYER_NULL_HANDLE != s_record_panel_layer_handle.block_id)
     {
         UILAYER_ReleaseLayer(&s_record_panel_layer_handle);
     }
-    s_record_panel_layer_handle.block_id = 0;
-    s_record_panel_layer_handle.lcd_id = UILAYER_NULL_HANDLE;
+    s_record_panel_layer_handle.block_id = UILAYER_NULL_HANDLE;
+    s_record_panel_layer_handle.lcd_id = 0;
 }
 
 #define EMOJI_SIZE 10
@@ -1071,8 +1071,11 @@ LOCAL int MMIZDT_TinyChatStartPlayAudio(uint16 index, uint8 * url)
     int res = -1;
     YX_APP_T * pMe = &g_yx_app;
     BOOLEAN isLeft = FALSE;
+    char audio_url[512] = {0};
     char file_name[MAX_YX_VOC_GROUP_FULL_PATH_SIZE+1] = {0};
     ZDT_LOG("MMIZDT_TinyChatStartPlayAudio  url=%s",url);
+    sscanf(url,"%[^,]",&audio_url);//努比亚增加了消息标识
+    ZDT_LOG("MMIZDT_TinyChatStartPlayAudio  file_name=%s",file_name);
     SCI_MEMCPY(file_name, m_pCurGroupInfo->file_arr[index].fullname, MAX_YX_VOC_GROUP_FULL_PATH_SIZE);
     isLeft = YX_VOC_IsRcvFile(m_pCurGroupInfo->file_arr[index].fullname);
     if(tinychat_is_play_stream)
@@ -1081,7 +1084,7 @@ LOCAL int MMIZDT_TinyChatStartPlayAudio(uint16 index, uint8 * url)
         MMIZDT_CleanPlayAudioIcon();
     }
     YX_Voice_HandleStop(pMe);
-    res = ZYB_StreamPlayer_Start(url);
+    res = ZYB_StreamPlayer_Start(audio_url);
     #ifdef WIN32
         res = 0;
     #endif
@@ -1346,7 +1349,9 @@ LOCAL void MMIZDT_TinyChatUpdateList()
         else if(m_pCurGroupInfo->status_arr[i].msg_type == 0) //文本
         {
             uint32 read_len = 0;
-            ZDT_File_Read((const uint8*)m_pCurGroupInfo->file_arr[i].fullname , temp_str, 200, &read_len);
+            uint8 text[256] = {0};
+            ZDT_File_Read((const uint8*)m_pCurGroupInfo->file_arr[i].fullname , text, 200, &read_len);
+            sscanf(text,"%[^,]",&temp_str);//努比亚增加了消息标识
             ZDT_UCS_Str16_to_uint16((uint8*)temp_str, SCI_STRLEN(temp_str) ,time_wstr, 100);
             item_data.item_content[4].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
             item_data.item_content[4].item_data.text_buffer.wstr_ptr = time_wstr;
@@ -1361,7 +1366,8 @@ LOCAL void MMIZDT_TinyChatUpdateList()
             uint32 read_len = 0;
             uint16 id = 0;
             ZDT_File_Read((const uint8*)m_pCurGroupInfo->file_arr[i].fullname , temp_str, 100, &read_len);
-            id = atoi(temp_str);
+            //id = atoi(temp_str);
+            sscanf(temp_str,"%d,",&id);//努比亚表情增加了消息标识
             if(id > 11)
             {
                 id = 0;
@@ -1756,7 +1762,7 @@ LOCAL MMI_RESULT_E  HandleZDT_TinyChatWinMsg(
                 }
                 else
                 {
-                    GUILIST_SetTopItemIndex(MMIZDT_TINY_CHAT_LIST_CTRL_ID,s_cur_last_list_top_index);
+                    GUILIST_SetTopItemIndex(MMIZDT_TINY_CHAT_LIST_CTRL_ID,total_item_num-1);
                 }
             }
             else
@@ -1936,10 +1942,12 @@ LOCAL MMI_RESULT_E  HandleZDT_TinyChatWinMsg(
             if(m_pCurGroupInfo->status_arr[index].msg_type == 0) //文本
             {
                 char 						temp_str[512] = {0};
-                wchar                       temp_wstr[201] = {0};
+                wchar                       temp_wstr[254] = {0};
+                uint8 text[512] = {0};
                 uint32 read_len = 0;
                 ZDT_File_Read((const uint8*)m_pCurGroupInfo->file_arr[index].fullname , temp_str, 500, &read_len);
-                ZDT_UCS_Str16_to_uint16((uint8*)temp_str, SCI_STRLEN(temp_str) ,temp_wstr, 200);
+                sscanf(temp_str,"%[^,]",&text);//努比亚增加了消息标识
+                ZDT_UCS_Str16_to_uint16((uint8*)text, SCI_STRLEN(text) ,temp_wstr, 254);
                 MMIZDT_TinyChatStopPlayAudio();//停止音频和播放动画，否则弹框被覆盖
                 MMIZDT_TinyChatShowText(temp_wstr, MMIAPICOM_Wstrlen(temp_wstr));
             }
@@ -1975,6 +1983,7 @@ LOCAL MMI_RESULT_E  HandleZDT_TinyChatWinMsg(
         else if (*(uint8*)param == tiny_chat_max_record_timer_id)
         {
             MMIZDT_TinyChatRecordStop();
+            s_is_chat_tp_long = FALSE;
         }
         else if (*(uint8*)param == tiny_chat_play_anim_timer_id)
         {

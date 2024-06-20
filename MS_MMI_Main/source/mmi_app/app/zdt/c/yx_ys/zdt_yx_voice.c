@@ -80,7 +80,7 @@ static uint8 * YX_VCHAT_GetGroup_Patch(uint8 * utf8_group_id)
     return gb_patch_buf;
 }
 
-static uint8 * YX_VCHAT_GetGroup_FullFileName(uint8 * utf8_group_id)
+static uint8 * YX_VCHAT_GetGroup_FullFileName(uint8 * utf8_group_id, const char *file_name)
 {
     uint32 utf8_len = 0;
     uint32 pach_len = 0;
@@ -95,7 +95,7 @@ static uint8 * YX_VCHAT_GetGroup_FullFileName(uint8 * utf8_group_id)
     }
     
     pach_len = SCI_STRLEN(YX_VCHAT_DIR);
-    file_len = SCI_STRLEN(YX_VCHAT_FILENAME);
+    file_len = SCI_STRLEN(file_name);
     utf8_len = SCI_STRLEN(utf8_group_id);
     gb_buf = (uint8 *)SCI_ALLOC_APPZ(utf8_len+2);
     if(gb_buf == PNULL)
@@ -110,43 +110,7 @@ static uint8 * YX_VCHAT_GetGroup_FullFileName(uint8 * utf8_group_id)
         SCI_MEMCPY(gb_patch_buf,YX_VCHAT_DIR,pach_len);
         SCI_MEMCPY(gb_patch_buf+pach_len,gb_buf,gb_len);
         gb_patch_buf[pach_len+gb_len] = '\\';
-        SCI_MEMCPY(gb_patch_buf+pach_len+gb_len+1,YX_VCHAT_FILENAME,file_len);
-    }
-    SCI_FREE(gb_buf);
-    return gb_patch_buf;
-}
-
-static uint8 * YX_VCHAT_GetGroup_FullFileStatus(uint8 * utf8_group_id)
-{
-    uint32 utf8_len = 0;
-    uint32 pach_len = 0;
-    uint32 file_len = 0;
-    uint32 fullname_len = 0;
-    uint8 * gb_buf = PNULL;
-    uint32 gb_len = 0;
-    uint8 * gb_patch_buf = PNULL;
-    if(utf8_group_id == PNULL)
-    {
-        return PNULL;
-    }
-    
-    pach_len = SCI_STRLEN(YX_VCHAT_DIR);
-    file_len = SCI_STRLEN(YX_VCHAT_FILESTATUS);
-    utf8_len = SCI_STRLEN(utf8_group_id);
-    gb_buf = (uint8 *)SCI_ALLOC_APPZ(utf8_len+2);
-    if(gb_buf == PNULL)
-    {
-        return PNULL;
-    }        
-    gb_len=YX_VCHAT_UTF8_To_GB(utf8_group_id,gb_buf);
-    fullname_len = pach_len+gb_len+file_len;
-    gb_patch_buf = (uint8 *)SCI_ALLOC_APPZ(fullname_len+2);
-    if(gb_patch_buf != PNULL)
-    {
-        SCI_MEMCPY(gb_patch_buf,YX_VCHAT_DIR,pach_len);
-        SCI_MEMCPY(gb_patch_buf+pach_len,gb_buf,gb_len);
-        gb_patch_buf[pach_len+gb_len] = '\\';
-        SCI_MEMCPY(gb_patch_buf+pach_len+gb_len+1,YX_VCHAT_FILESTATUS,file_len);
+        SCI_MEMCPY(gb_patch_buf+pach_len+gb_len+1,file_name,file_len);
     }
     SCI_FREE(gb_buf);
     return gb_patch_buf;
@@ -234,8 +198,7 @@ BOOLEAN YX_VCHAT_GetCurGroupInfo(uint8 * utf8_group_id,YX_GROUP_INFO_DATA_T * gr
     BOOLEAN res = FALSE;
     uint8 * patchname = PNULL;
     uint8 * filename = PNULL;
-    uint8 * statusname = PNULL;
-    
+    uint8 * statusname = PNULL;  
     if(utf8_group_id == PNULL || group_info == PNULL)
     {
         return FALSE;
@@ -247,12 +210,12 @@ BOOLEAN YX_VCHAT_GetCurGroupInfo(uint8 * utf8_group_id,YX_GROUP_INFO_DATA_T * gr
     {
         SCI_MEMSET(group_info->patchname.fullname,0,MAX_YX_VOC_GROUP_FULL_PATH_SIZE+1);
         SCI_MEMCPY(group_info->patchname.fullname,patchname,SCI_STRLEN(patchname));
-        filename = YX_VCHAT_GetGroup_FullFileName(utf8_group_id);
+        filename = YX_VCHAT_GetGroup_FullFileName(utf8_group_id,YX_VCHAT_FILENAME);
         if(filename != PNULL)
         {
             res = TRUE;
             YX_VCHAT_GetCurGroupInfo_File(filename,group_info);
-            statusname = YX_VCHAT_GetGroup_FullFileStatus(utf8_group_id);
+            statusname = YX_VCHAT_GetGroup_FullFileName(utf8_group_id,YX_VCHAT_FILESTATUS);
             if(statusname != PNULL)
             {
                 YX_VCHAT_GetCurGroupInfo_Status(statusname,group_info);
@@ -705,6 +668,34 @@ BOOLEAN YX_Voice_Allow_Receive(YX_APP_T * pMe)
     {
         ZDT_LOG("YX_Voice_Allow_Receive FALSE FULL");
         return FALSE;
+    }
+    return TRUE;
+}
+
+BOOLEAN YX_VCHAT_MessageId_Check(YX_GROUP_INFO_DATA_T * pInfo, uint receive_message_id)
+{
+    uint16 line_num = pInfo->file_num;
+    uint16 i=0;
+    for(i = 0 ; i < line_num ; i++)
+    {
+        uint32 read_len = 0;
+        uint16 id = 0;
+        char temp_str[1049] = {0};
+        uint message_id = 0;
+        uint8 message_text[1024] = {0};
+        if(!ZDT_File_Exsit(pInfo->file_arr[i].fullname))
+        {
+            continue;
+        }
+        ZDT_File_Read((const uint8*)pInfo->file_arr[i].fullname , temp_str, 100, &read_len);
+        if(read_len > 0)
+        {
+            sscanf(temp_str,"%[^,],%d",message_text,&message_id);
+            if(message_id !=0 && message_id == receive_message_id)
+            {
+                return FALSE;
+            }
+        }
     }
     return TRUE;
 }
@@ -1203,7 +1194,7 @@ PUBLIC uint32 YX_VocReadStatusCheck(uint8 * utf8_group_id)
     uint16 line_index = 0;
     uint16 i = 0, j = 0 ;
     uint16 cr_index = 0;
-    uint8 * cur_filegroup = YX_VCHAT_GetGroup_FullFileName(utf8_group_id);
+    uint8 * cur_filegroup = YX_VCHAT_GetGroup_FullFileName(utf8_group_id,YX_VCHAT_FILENAME);
     uint8 * cur_filestatus = PNULL;
     YX_VOC_STATUS_DATA_T  cur_line_status[MAX_YX_VOC_SAVE_SIZE+1] = {0};
     
@@ -1239,7 +1230,7 @@ PUBLIC uint32 YX_VocReadStatusCheck(uint8 * utf8_group_id)
         }
         if(line_index > 0)
         {
-            cur_filestatus = YX_VCHAT_GetGroup_FullFileStatus(utf8_group_id);
+            cur_filestatus = YX_VCHAT_GetGroup_FullFileName(utf8_group_id,YX_VCHAT_FILESTATUS);
             if(cur_filestatus == PNULL)
             {
                 SCI_FREE(cur_filegroup);

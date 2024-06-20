@@ -5323,7 +5323,7 @@ PUBLIC void MMIDC_ErrorTip(MMI_TEXT_ID_T txt_id)
     }
     else
     {
-        WatchCOM_QueryWin_1Btn_Enter(MMIDC_PUB_FAIL_WIN_ID, &commentString, PNULL, IMG_DC_WATCH_CONFIRM, softket_test, PNULL );
+        WatchCOM_QueryWin_1Btn_Enter(MMIDC_PUB_FAIL_WIN_ID, &commentString, PNULL, res_common_ic_confirm_green, softket_test, PNULL );
     }
 #endif	
 #else
@@ -5358,7 +5358,7 @@ PUBLIC void MMIDC_ErrorTipForExit(MMI_TEXT_ID_T txt_id)
     }
     else
     {
-        WatchCOM_QueryWin_1Btn_Enter(MMIDC_PUB_FAIL_WIN_ID, &commentString, PNULL, IMG_DC_WATCH_CONFIRM,  softket_test, PNULL );
+        WatchCOM_QueryWin_1Btn_Enter(MMIDC_PUB_FAIL_WIN_ID, &commentString, PNULL, res_common_ic_confirm_green,  softket_test, PNULL );
     }
 #else
     WatchCOM_QueryWin_1Btn_Enter(MMIDC_PUB_FAIL_WIN_ID, &commentString, &buttonString,PNULL,  softket_test, PNULL );
@@ -5618,7 +5618,7 @@ PUBLIC void  MMIDC_ShowErrorMsg(MMIFILE_ERROR_E fs_error,   //[in] error value
     }
     else
     {
-        WatchCOM_QueryWin_1Btn_Enter(MMIDC_PUB_FAIL_WIN_ID, &commentString, PNULL, IMG_DC_WATCH_CONFIRM, softket_test, PNULL );
+        WatchCOM_QueryWin_1Btn_Enter(MMIDC_PUB_FAIL_WIN_ID, &commentString, PNULL, res_common_ic_confirm_green, softket_test, PNULL );
     }
 #endif
 #else

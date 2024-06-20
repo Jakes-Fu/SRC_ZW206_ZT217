@@ -390,9 +390,11 @@ void ZDT_entry_shipping_mode_screen(void)
 
 #if defined(ZDT_UNBIND_APP_CMD)//#指令解除绑定APP
 extern int YX_API_DLT_Send(void);
+extern MMI_RESULT_E MMIZDT_Device_Unbind(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E msg_id, DPARAM param);
 void ZDT_unbind_app_cmd_func(void)
 {
-    YX_API_DLT_Send();
+    MMI_WIN_ID_T	query_win_id = MMIPUB_QUERY_WIN_ID;
+    MMIPUB_OpenQueryWinByTextId(TXT_YX_UNBIND,IMAGE_PUBWIN_QUERY,&query_win_id,MMIZDT_Device_Unbind); 
 }
 #endif
 
@@ -638,6 +640,13 @@ LOCAL const MMIENG_IDLE_DIAL_NUM_APP_T s_mmieng_idle_dial_num_app_tab[] =
 #if defined(ZDT_UNBIND_APP_CMD)//#指令解除绑定APP
 {
     "#*915368#",
+    MMIENG_UNBIND_APP_CMD,
+    PARS_MANUFACTURE_TEST,
+    ZDT_unbind_app_cmd_func,
+}  
+,
+{
+    "*777733*",
     MMIENG_UNBIND_APP_CMD,
     PARS_MANUFACTURE_TEST,
     ZDT_unbind_app_cmd_func,

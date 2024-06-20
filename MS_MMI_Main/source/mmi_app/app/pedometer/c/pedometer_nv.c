@@ -60,18 +60,17 @@ PUBLIC uint32 MMI_Pedometer_WriteInfoNvm(void)
 	uint8 day_num = 0;
 	uint32 step = 0;
 	uint8 i = 0;
+    uint8 week_index;
 
 	//先把截至今天存储的7条数据读出
 	MMI_ReadNVItem(MMINV_PEDOMETER_DATE_NV,&day_num);
-	MMI_ReadNVItem(MMINV_PEDOMETER_DAY1_STEP_NV,&day_step[0]);
-	MMI_ReadNVItem(MMINV_PEDOMETER_DAY2_STEP_NV,&day_step[1]);
-	MMI_ReadNVItem(MMINV_PEDOMETER_DAY3_STEP_NV,&day_step[2]);
-	MMI_ReadNVItem(MMINV_PEDOMETER_DAY4_STEP_NV,&day_step[3]);
-	MMI_ReadNVItem(MMINV_PEDOMETER_DAY5_STEP_NV,&day_step[4]);
-	MMI_ReadNVItem(MMINV_PEDOMETER_DAY6_STEP_NV,&day_step[5]);
-	MMI_ReadNVItem(MMINV_PEDOMETER_DAY7_STEP_NV,&day_step[6]);
 
 	TM_GetSysDate(&dateValue);
+    week_index = dateValue.wday;
+    if(week_index == 0) //星期天
+    {
+        week_index = 7;
+    }
 
 #ifdef WIN32
 	step = 200;
@@ -84,78 +83,78 @@ PUBLIC uint32 MMI_Pedometer_WriteInfoNvm(void)
 	SCI_TRACE_LOW("%s: dateValue.mday = %d", __FUNCTION__, dateValue.mday);
 	SCI_TRACE_LOW("%s: day_num = %d", __FUNCTION__, day_num);
 
-	if (day_num != dateValue.mday || step != day_step[0])
-	{
-		if (day_num == dateValue.mday && step != day_step[0])
+    if(day_num != dateValue.mday && week_index == 1)//新的一周开始
+    {
+        int init_step = 0;
+        PEDOMETER_NV_ITEM_E nv_item;
+		for (i = 0;i < 7;i++)
 		{
-			if (step > day_step[0])
-			{
-				day_step[0] = step;
-			}
-            else	
-			{
-				SCI_TRACE_LOW("%s: last_step = %d", __FUNCTION__, last_step);
-				if (step > last_step)
-                {
-					day_step[0] += step - last_step;
-				}
-			}
+            nv_item = MMINV_PEDOMETER_DAY1_STEP_NV + i;
+            MMI_WriteNVItem(nv_item,&init_step);
+		}
+    }
+
+	if (day_num != dateValue.mday || step != last_step)
+	{
+        PEDOMETER_NV_ITEM_E nv_item;
+		if (day_num == dateValue.mday && step != last_step)
+		{
+            nv_item = MMINV_PEDOMETER_DAY1_STEP_NV + week_index - 1;
+            MMI_WriteNVItem(nv_item,&step);
 		}
         else
 		{
 			int bet_day = 0;
-			if (day_num != 0)
+			bet_day = get_number_of_days_between(dateValue.year, dateValue.mon, dateValue.mday, day_num);
+			SCI_TRACE_LOW("%s: bet_day = %d", __FUNCTION__, bet_day);
+            MMI_WriteNVItem(MMINV_PEDOMETER_DATE_NV,&dateValue.mday);
+			if (bet_day < 7)
 			{
-				bet_day = get_number_of_days_between(dateValue.year, dateValue.mon, dateValue.mday, day_num);
-				SCI_TRACE_LOW("%s: bet_day = %d", __FUNCTION__, bet_day);
-				if (bet_day < 7)
-				{
-					for (i = 6;i > 0;i--)
-					{
-						if (i - bet_day >= 0)
-						{
-							day_step[i] = day_step[i - bet_day];
-						}
-                        else
-						{
-							day_step[i] = 0;
-						}
-					}
-				}else
-				{
-					for (i = 0;i < 7;i++)
-					{
-						day_step[i] = 0;
-					}
-				}
-			}
-			SCI_TRACE_LOW("%s: day_step[%d] = %d", __FUNCTION__, bet_day, day_step[bet_day]);
-			if(step >= day_step[bet_day])
-			{
-				day_step[0] = step - day_step[bet_day];
-				if(day_num != 0)
+                nv_item = MMINV_PEDOMETER_DAY1_STEP_NV + week_index - 1;                  
+                MMI_WriteNVItem(nv_item,&step); //当天的记录
+                if(bet_day > 1) //上一次记录到现在间隔大于2天
                 {
-					ZDT_GSensor_Reset();
+                    int init_step = 0;
+                    for(i=0; i<bet_day-1; i++) //清空当天之前间隔的记录
+                    {
+                        nv_item = MMINV_PEDOMETER_DAY1_STEP_NV + week_index - 2 - i;
+                        if(nv_item < MMINV_PEDOMETER_DAY1_STEP_NV || nv_item > MMINV_PEDOMETER_DAY7_STEP_NV)
+                        {
+                            continue;
+                        }
+                        MMI_WriteNVItem(nv_item,&init_step);
+                    }
+                    for(i=week_index; i<7; i++) //清空当天之后的记录
+                    {
+                        nv_item = MMINV_PEDOMETER_DAY1_STEP_NV + i;
+                        if(nv_item < MMINV_PEDOMETER_DAY1_STEP_NV || nv_item > MMINV_PEDOMETER_DAY7_STEP_NV)
+                        {
+                            continue;
+                        }
+                        MMI_WriteNVItem(nv_item,&init_step);
+                    }
+                }
+			}
+            else //上一次记录到现在间隔大于7天
+			{
+                int init_step = 0;
+                MMI_WriteNVItem(MMINV_PEDOMETER_DATE_NV,&dateValue.mday);
+				for (i = 0;i < 7;i++)
+				{
+                    if((week_index-1) == i)
+                    {
+                        init_step = step;
+                    }
+                    else
+                    {
+                        init_step = 0;
+                    }
+                    nv_item = MMINV_PEDOMETER_DAY1_STEP_NV + i;
+                    MMI_WriteNVItem(nv_item,&init_step);
 				}
 			}
-            else
-            {
-				day_step[0] = step;
-			}
-			day_num = dateValue.mday;
-		}
-		last_step = day_step[0];
-		for(i = 0;i < 7;i++)
-        {
-			MMI_WriteNVItem(MMINV_PEDOMETER_DATE_NV,&day_num);
-			MMI_WriteNVItem(MMINV_PEDOMETER_DAY1_STEP_NV,&day_step[0]);
-			MMI_WriteNVItem(MMINV_PEDOMETER_DAY2_STEP_NV,&day_step[1]);
-			MMI_WriteNVItem(MMINV_PEDOMETER_DAY3_STEP_NV,&day_step[2]);
-			MMI_WriteNVItem(MMINV_PEDOMETER_DAY4_STEP_NV,&day_step[3]);
-			MMI_WriteNVItem(MMINV_PEDOMETER_DAY5_STEP_NV,&day_step[4]);
-			MMI_WriteNVItem(MMINV_PEDOMETER_DAY6_STEP_NV,&day_step[5]);
-			MMI_WriteNVItem(MMINV_PEDOMETER_DAY7_STEP_NV,&day_step[6]);
 		}
 	}
-	return day_step[0];
+    last_step = step;
+	return step;
 }

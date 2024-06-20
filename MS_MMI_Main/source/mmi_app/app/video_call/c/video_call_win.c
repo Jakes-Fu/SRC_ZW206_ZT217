@@ -151,6 +151,7 @@ LOCAL void video_call_backlight(BOOLEAN is_alway_on)
 {
     if(is_alway_on)
     {
+        MMIDEFAULT_TurnOnBackLight();//¡¡∆¡
         MMIDEFAULT_AllowTurnOffBackLight(FALSE);
     } 
     else 
@@ -328,7 +329,7 @@ LOCAL void Create_Video_Call_Ui_Layer(MMI_WIN_ID_T win_id)
         create_info.offset_x = 0;
         create_info.offset_y = 0;
         create_info.width = 240;
-        create_info.height = 284;
+        create_info.height = 240;
         create_info.is_bg_layer = FALSE;
         create_info.is_static_layer = TRUE; 
         ret = UILAYER_CreateLayer(&create_info, &s_video_call_ui_layer_handle);

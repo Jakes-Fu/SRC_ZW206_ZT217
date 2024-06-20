@@ -818,6 +818,35 @@ LOCAL uint8 qrcode_page_index = 0;
 
 LOCAL uint16 unbind_click_count = 0;
 
+PUBLIC MMI_RESULT_E MMIZDT_Device_Unbind(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E msg_id, DPARAM param)
+{
+    MMI_RESULT_E result = MMI_RESULT_TRUE;
+    switch(msg_id)
+    {
+        case MSG_APP_CANCEL:
+        case MSG_CTL_CANCEL:
+        case MSG_APP_RED:
+            MMK_CloseWin(win_id);
+            break;
+        
+        case MSG_APP_WEB:
+        case MSG_CTL_OK:
+        case MSG_APP_OK:
+        case MSG_CTL_PENOK:
+        case MSG_CTL_MIDSK:
+            {
+                MMK_CloseWin(win_id);
+                YX_API_DLT_Send();
+            }
+            break;
+
+        default:
+            result = MMIPUB_HandleQueryWinMsg(win_id, msg_id, param);
+            break;
+    }
+    return result;
+}
+
 
 LOCAL MMI_RESULT_E  HandleZDT_2VMWinMsg(
                                             MMI_WIN_ID_T        win_id, 
@@ -1287,17 +1316,14 @@ LOCAL MMI_RESULT_E  HandleZDT_2VMWinMsg(
             GUI_POINT_T   point = {0};
             int offset_y =  0;//up to down
             int offset_x =  0;//up to down
+            MMI_WIN_ID_T	query_win_id = MMIZDT_QUERY_WIN_ID;
             point.x = MMK_GET_TP_X(param);
             point.y = MMK_GET_TP_Y(param);
             if(s_is_2vm_tp_down)
             {
                 offset_y =  point.y - s_2vm_tp_y;
-                offset_x =  point.x - s_2vm_tp_x;
-                if(offset_x <= -(20))    
-                {
-                    MMK_CloseWin(win_id);
-                }    
-                else if(offset_x >= (20))
+                offset_x =  point.x - s_2vm_tp_x;  
+                if(offset_x >= (20))
                 {
                     MMK_CloseWin(win_id);
                 }
@@ -1308,7 +1334,7 @@ LOCAL MMI_RESULT_E  HandleZDT_2VMWinMsg(
                     if(unbind_click_count >= 18)
                     {
                         unbind_click_count = 0;
-                        YX_API_DLT_Send();
+                        MMIPUB_OpenQueryWinByTextId(TXT_YX_UNBIND,IMAGE_PUBWIN_QUERY,&query_win_id,MMIZDT_Device_Unbind); 
                     }
                 }
                 else
@@ -2324,8 +2350,9 @@ PUBLIC BOOLEAN MMIZDT_Check_Auto_Answer_Call()
 
 PUBLIC BOOLEAN ZDT_Reject_UnknownCall()
 {
-    ZDT_LOG("zdt__ ZDT_Reject_UnknownCall");
-    return ZDT_NV_GetRejectUnknownCall() ;
+    uint8 res = ZDT_NV_GetRejectUnknownCall();
+    ZDT_LOG("zdt__ ZDT_Reject_UnknownCal res=%d",res);
+    return res;
 }
 
 PUBLIC BOOLEAN ZDT_Reject_Call(uint8 *number)
@@ -2746,9 +2773,10 @@ void  MMIZDT_PB_ShowList(MMI_WIN_ID_T win_id)
     MMI_STRING_T    empty_str = {0};
     GUILIST_EMPTY_INFO_T empty_info = {0};
     //add by James li end
+    MMI_TEXT_ID_T tip_text_id;
     
 #ifdef ZTE_WATCH
-    item_t.item_style = GUIITEM_STYLE_1ICON_1STR_1LINE_LAYOUT1;
+    item_t.item_style = GUIITEM_STYLE_1ICON_2STR_1LINE_LAYOUT;//GUIITEM_STYLE_1ICON_1STR_1LINE_LAYOUT1;
 #else
     item_t.item_style = GUIITEM_STYLE_1ICON_2STR_1ICON;
 #endif
@@ -2813,6 +2841,15 @@ void  MMIZDT_PB_ShowList(MMI_WIN_ID_T win_id)
 
     if (0 == total_item_num)
     {
+        if(struct_yx_statues_data.bingd_statues != 0) //已经绑定但是服务器没有下发就请求一下
+        {
+            tip_text_id = TXT_LOADING_AND_RETRY; //加载中请稍后重试
+            YX_Net_Send_PHLQ(&g_yx_app);
+        }
+        else
+        {
+            tip_text_id = STR_CONTA_NOTE_NO_CONTA_TEXT;
+        }
         MMI_GetLabelTextByLang(STR_CONTA_NOTE_NO_CONTA_TEXT, &empty_str);
         empty_info.text_buffer = empty_str;
         CTRLLIST_SetEmptyInfo(MMIZDT_PB_LIST_CTRL_ID, &empty_info);

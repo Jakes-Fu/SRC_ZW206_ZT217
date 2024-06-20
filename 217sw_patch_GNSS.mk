@@ -62,7 +62,7 @@ MMI_VOLTE_SUPPORT = TRUE                            ### 4G SUPPORT
                                                     # Option2: FALSE
 
 #硬件
-MOCOR_SUPPORT_ARGB888_MODE = FALSE                   #Open/Close ARGB Mode On CAMERA Preview
+MOCOR_SUPPORT_ARGB888_MODE = TRUE                   #Open/Close ARGB Mode On CAMERA Preview
 
 GUIF_PRGBOX_AUTOHIDE = TRUE
 

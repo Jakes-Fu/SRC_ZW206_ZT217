@@ -104,13 +104,13 @@ LOCAL void setButtonControl(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO dev_info_ptr)
 	button5_rect = MMI_ConvertWinRect(MMICOM_WINPOS_WIN2DISP,win_id,button5_rect);
 	button6_rect = MMI_ConvertWinRect(MMICOM_WINPOS_WIN2DISP,win_id,button6_rect);
 	button7_rect = MMI_ConvertWinRect(MMICOM_WINPOS_WIN2DISP,win_id,button7_rect);
-	GUIBUTTON_SetRect(MMI_PEDOMETER_WEEK_1_CTRL_ID,&button7_rect);
-	GUIBUTTON_SetRect(MMI_PEDOMETER_WEEK_2_CTRL_ID,&button6_rect);
-	GUIBUTTON_SetRect(MMI_PEDOMETER_WEEK_3_CTRL_ID,&button5_rect);
+	GUIBUTTON_SetRect(MMI_PEDOMETER_WEEK_1_CTRL_ID,&button1_rect);
+	GUIBUTTON_SetRect(MMI_PEDOMETER_WEEK_2_CTRL_ID,&button2_rect);
+	GUIBUTTON_SetRect(MMI_PEDOMETER_WEEK_3_CTRL_ID,&button3_rect);
 	GUIBUTTON_SetRect(MMI_PEDOMETER_WEEK_4_CTRL_ID,&button4_rect);
-	GUIBUTTON_SetRect(MMI_PEDOMETER_WEEK_5_CTRL_ID,&button3_rect);
-	GUIBUTTON_SetRect(MMI_PEDOMETER_WEEK_6_CTRL_ID,&button2_rect);
-	GUIBUTTON_SetRect(MMI_PEDOMETER_WEEK_7_CTRL_ID,&button1_rect);
+	GUIBUTTON_SetRect(MMI_PEDOMETER_WEEK_5_CTRL_ID,&button5_rect);
+	GUIBUTTON_SetRect(MMI_PEDOMETER_WEEK_6_CTRL_ID,&button6_rect);
+	GUIBUTTON_SetRect(MMI_PEDOMETER_WEEK_7_CTRL_ID,&button7_rect);
 	
 	{
 		GUI_FONT_ALL_T font_type = {0};
@@ -184,13 +184,13 @@ LOCAL void setButtonControl(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO dev_info_ptr)
 		{
 			SCI_DATE_T  sys_date = {0};
 			TM_GetSysDate(&sys_date);
-			GUIBUTTON_SetTextId(MMI_PEDOMETER_WEEK_1_CTRL_ID, TXT_PEDOMETER_7);
-			GUIBUTTON_SetTextId(MMI_PEDOMETER_WEEK_2_CTRL_ID, TXT_PEDOMETER_6);
-			GUIBUTTON_SetTextId(MMI_PEDOMETER_WEEK_3_CTRL_ID, TXT_PEDOMETER_5);
+			GUIBUTTON_SetTextId(MMI_PEDOMETER_WEEK_1_CTRL_ID, TXT_PEDOMETER_1);
+			GUIBUTTON_SetTextId(MMI_PEDOMETER_WEEK_2_CTRL_ID, TXT_PEDOMETER_2);
+			GUIBUTTON_SetTextId(MMI_PEDOMETER_WEEK_3_CTRL_ID, TXT_PEDOMETER_3);
 			GUIBUTTON_SetTextId(MMI_PEDOMETER_WEEK_4_CTRL_ID, TXT_PEDOMETER_4);
-			GUIBUTTON_SetTextId(MMI_PEDOMETER_WEEK_5_CTRL_ID, TXT_PEDOMETER_3);
-			GUIBUTTON_SetTextId(MMI_PEDOMETER_WEEK_6_CTRL_ID, TXT_PEDOMETER_2);
-			GUIBUTTON_SetTextId(MMI_PEDOMETER_WEEK_7_CTRL_ID, TXT_PEDOMETER_1);	
+			GUIBUTTON_SetTextId(MMI_PEDOMETER_WEEK_5_CTRL_ID, TXT_PEDOMETER_5);
+			GUIBUTTON_SetTextId(MMI_PEDOMETER_WEEK_6_CTRL_ID, TXT_PEDOMETER_6);
+			GUIBUTTON_SetTextId(MMI_PEDOMETER_WEEK_7_CTRL_ID, TXT_PEDOMETER_7);	
 		}
 	}
 
@@ -221,18 +221,6 @@ LOCAL void setTextControl(MMI_WIN_ID_T win_id)
 	MMI_ReadNVItem(MMINV_PEDOMETER_DAY6_STEP_NV,&day6_step);
 	MMI_ReadNVItem(MMINV_PEDOMETER_DAY7_STEP_NV,&day7_step);
 
-	//存储的步数不是最新步数，则需要存储最新步数，new_day_step是需要使用ZDT_GSensor_GetStepOneDay函数获得的
-#ifdef WIN32
-	new_day_step = 100;
-#else
-	new_day_step = ZDT_GSensor_GetStepOneDay();
-#endif
-	SCI_TRACE_LOW("setTextControl new_day_step = %d",new_day_step);
-	if (new_day_step != day1_step)
-	{	
-		MMI_WriteNVItem(MMINV_PEDOMETER_DAY1_STEP_NV,&new_day_step);
-	}
-
 	MMI_ReadNVItem(MMINV_PEDOMETER_FLAG,&is_first_open);
 
 	//存储的最后一天日期不是最新日期，则需要重新存数据
@@ -244,26 +232,26 @@ LOCAL void setTextControl(MMI_WIN_ID_T win_id)
 		MMI_WriteNVItem(MMINV_PEDOMETER_FLAG,&is_first_open);
 		day = sys_date.mday;
 		MMI_WriteNVItem(MMINV_PEDOMETER_DATE_NV,&day);
-		MMI_WriteNVItem(MMINV_PEDOMETER_DAY1_STEP_NV,&new_day_step);
-		MMI_WriteNVItem(MMINV_PEDOMETER_DAY2_STEP_NV,&day2_step);
-		MMI_WriteNVItem(MMINV_PEDOMETER_DAY3_STEP_NV,&day3_step);
-		MMI_WriteNVItem(MMINV_PEDOMETER_DAY4_STEP_NV,&day4_step);
-		MMI_WriteNVItem(MMINV_PEDOMETER_DAY5_STEP_NV,&day5_step);
-		MMI_WriteNVItem(MMINV_PEDOMETER_DAY6_STEP_NV,&day6_step);
-		MMI_WriteNVItem(MMINV_PEDOMETER_DAY7_STEP_NV,&day7_step);
+		//MMI_WriteNVItem(MMINV_PEDOMETER_DAY1_STEP_NV,&new_day_step);
+		//MMI_WriteNVItem(MMINV_PEDOMETER_DAY2_STEP_NV,&day2_step);
+		//MMI_WriteNVItem(MMINV_PEDOMETER_DAY3_STEP_NV,&day3_step);
+		//MMI_WriteNVItem(MMINV_PEDOMETER_DAY4_STEP_NV,&day4_step);
+		//MMI_WriteNVItem(MMINV_PEDOMETER_DAY5_STEP_NV,&day5_step);
+		//MMI_WriteNVItem(MMINV_PEDOMETER_DAY6_STEP_NV,&day6_step);
+		//MMI_WriteNVItem(MMINV_PEDOMETER_DAY7_STEP_NV,&day7_step);
 	}else
 	{
 		if (day != sys_date.mday)
 		{
 			day = sys_date.mday;
 			MMI_WriteNVItem(MMINV_PEDOMETER_DATE_NV,&day);
-			MMI_WriteNVItem(MMINV_PEDOMETER_DAY1_STEP_NV,&new_day_step);
-			MMI_WriteNVItem(MMINV_PEDOMETER_DAY2_STEP_NV,&day1_step);
-			MMI_WriteNVItem(MMINV_PEDOMETER_DAY3_STEP_NV,&day2_step);
-			MMI_WriteNVItem(MMINV_PEDOMETER_DAY4_STEP_NV,&day3_step);
-			MMI_WriteNVItem(MMINV_PEDOMETER_DAY5_STEP_NV,&day4_step);
-			MMI_WriteNVItem(MMINV_PEDOMETER_DAY6_STEP_NV,&day5_step);
-			MMI_WriteNVItem(MMINV_PEDOMETER_DAY7_STEP_NV,&day6_step);
+			//MMI_WriteNVItem(MMINV_PEDOMETER_DAY1_STEP_NV,&new_day_step);
+			//MMI_WriteNVItem(MMINV_PEDOMETER_DAY2_STEP_NV,&day1_step);
+			//MMI_WriteNVItem(MMINV_PEDOMETER_DAY3_STEP_NV,&day2_step);
+			//MMI_WriteNVItem(MMINV_PEDOMETER_DAY4_STEP_NV,&day3_step);
+			//MMI_WriteNVItem(MMINV_PEDOMETER_DAY5_STEP_NV,&day4_step);
+			//MMI_WriteNVItem(MMINV_PEDOMETER_DAY6_STEP_NV,&day5_step);
+			//MMI_WriteNVItem(MMINV_PEDOMETER_DAY7_STEP_NV,&day6_step);
 		}
 	}
 
@@ -417,6 +405,9 @@ LOCAL void DisplayWeekStepData(MMI_WIN_ID_T win_id)
 	int day6_step = 0;
 	int day7_step = 0;
 	int days_step[7] = {0};
+    int step = 0;
+    uint8 week_index;
+    SCI_DATE_T  sys_date = {0};
 
 	MMI_ReadNVItem(MMINV_PEDOMETER_DAY1_STEP_NV,&days_step[0]);
 	MMI_ReadNVItem(MMINV_PEDOMETER_DAY2_STEP_NV,&days_step[1]);
@@ -425,74 +416,85 @@ LOCAL void DisplayWeekStepData(MMI_WIN_ID_T win_id)
 	MMI_ReadNVItem(MMINV_PEDOMETER_DAY5_STEP_NV,&days_step[4]);
 	MMI_ReadNVItem(MMINV_PEDOMETER_DAY6_STEP_NV,&days_step[5]);
 	MMI_ReadNVItem(MMINV_PEDOMETER_DAY7_STEP_NV,&days_step[6]);
-
+    TM_GetSysDate(&sys_date);
+    week_index = sys_date.wday;
+    if(week_index == 0)
+    {
+        week_index = 7;
+    }
+#ifdef WIN32
+	step = 200;
+#else
+	step = ZDT_GSensor_GetStepOneDay();
+#endif
+    days_step[week_index-1] = step;//当天的直接读gsensor 否则读nv有5-6步的差异
 	//SCI_TRACE_LOW("%s: step = %d,%d,%d,%d,%d,%d,%d", __FUNCTION__,
 	//	days_step[0], days_step[1], days_step[2], days_step[3], days_step[4],days_step[5], days_step[6]);
-	{
-		SCI_DATE_T  sys_date = {0};
-		TM_GetSysDate(&sys_date);
-		if(sys_date.wday == 1)
-		{
-			day1_step = days_step[1];
-			day2_step = days_step[2];
-			day3_step = days_step[3];
-			day4_step = days_step[4];
-			day5_step = days_step[5];
-			day6_step = days_step[6];
-			day7_step = days_step[0];
-		}
-		else if(sys_date.wday == 2)
-		{
-			day1_step = days_step[2];
-			day2_step = days_step[3];
-			day3_step = days_step[4];
-			day4_step = days_step[5];
-			day5_step = days_step[6];
-			day6_step = days_step[0];
-			day7_step = days_step[1];
-		}
-		else if(sys_date.wday == 3)
-		{
-			day1_step = days_step[3];
-			day2_step = days_step[4];
-			day3_step = days_step[5];
-			day4_step = days_step[6];
-			day5_step = days_step[0];
-			day6_step = days_step[1];
-			day7_step = days_step[2];
-		}
-		else if(sys_date.wday == 4)
-		{
-			day1_step = days_step[4];
-			day2_step = days_step[5];
-			day3_step = days_step[6];
-			day4_step = days_step[0];
-			day5_step = days_step[1];
-			day6_step = days_step[2];
-			day7_step = days_step[3];
-		}
-		else if(sys_date.wday == 5)
-		{
-			day1_step = days_step[5];
-			day2_step = days_step[6];
-			day3_step = days_step[0];
-			day4_step = days_step[1];
-			day5_step = days_step[2];
-			day6_step = days_step[3];
-			day7_step = days_step[4];
-		}
-		else if(sys_date.wday == 6)
-		{
-			day1_step = days_step[6];
-			day2_step = days_step[0];
-			day3_step = days_step[1];
-			day4_step = days_step[2];
-			day5_step = days_step[3];
-			day6_step = days_step[4];
-			day7_step = days_step[5];
-		}
-		else
-		{
+	//{
+	//	SCI_DATE_T  sys_date = {0};
+	//	TM_GetSysDate(&sys_date);
+	//	if(sys_date.wday == 1)
+	//	{
+	//		day1_step = days_step[1];
+	//		day2_step = days_step[2];
+	//		day3_step = days_step[3];
+	//		day4_step = days_step[4];
+	//		day5_step = days_step[5];
+	//		day6_step = days_step[6];
+	//		day7_step = days_step[0];
+	//	}
+	//	else if(sys_date.wday == 2)
+	//	{
+	//		day1_step = days_step[2];
+	//		day2_step = days_step[3];
+	//		day3_step = days_step[4];
+	//		day4_step = days_step[5];
+	//		day5_step = days_step[6];
+	//		day6_step = days_step[0];
+	//		day7_step = days_step[1];
+	//	}
+	//	else if(sys_date.wday == 3)
+	//	{
+	//		day1_step = days_step[3];
+	//		day2_step = days_step[4];
+	//		day3_step = days_step[5];
+	//		day4_step = days_step[6];
+	//		day5_step = days_step[0];
+	//		day6_step = days_step[1];
+	//		day7_step = days_step[2];
+	//	}
+	//	else if(sys_date.wday == 4)
+	//	{
+	//		day1_step = days_step[4];
+	//		day2_step = days_step[5];
+	//		day3_step = days_step[6];
+	//		day4_step = days_step[0];
+	//		day5_step = days_step[1];
+	//		day6_step = days_step[2];
+	//		day7_step = days_step[3];
+	//	}
+	//	else if(sys_date.wday == 5)
+	//	{
+	//		day1_step = days_step[5];
+	//		day2_step = days_step[6];
+	//		day3_step = days_step[0];
+	//		day4_step = days_step[1];
+	//		day5_step = days_step[2];
+	//		day6_step = days_step[3];
+	//		day7_step = days_step[4];
+	//	}
+	//	else if(sys_date.wday == 6)
+	//	{
+	//		day1_step = days_step[6];
+	//		day2_step = days_step[0];
+	//		day3_step = days_step[1];
+	//		day4_step = days_step[2];
+	//		day5_step = days_step[3];
+	//		day6_step = days_step[4];
+	//		day7_step = days_step[5];
+	//	}
+	//	else
+	//	{
 			day1_step = days_step[0];
 			day2_step = days_step[1];
 			day3_step = days_step[2];
@@ -500,27 +502,27 @@ LOCAL void DisplayWeekStepData(MMI_WIN_ID_T win_id)
 			day5_step = days_step[4];
 			day6_step = days_step[5];
 			day7_step = days_step[6];
-		}
-	}
+	//	}
+	//}
 	getMaxNumOfSeven(day1_step,day2_step,day3_step,day4_step,day5_step,day6_step,day7_step);
 	//SCI_TRACE_LOW("%s: max_num = %d, step = %d,%d,%d,%d,%d,%d,%d", __FUNCTION__, max_num,
 	//	day1_step, day2_step, day3_step, day4_step, day5_step,day6_step, day7_step);
 #ifdef ZTE_SUPPORT_240X284
-	box7.top = 232 - getLargestInteger(((float)day1_step / (float)max_num) * 185);
-	box6.top = 232 - getLargestInteger(((float)day2_step / (float)max_num) * 185);
-	box5.top = 232 - getLargestInteger(((float)day3_step / (float)max_num) * 185);
+	box1.top = 232 - getLargestInteger(((float)day1_step / (float)max_num) * 185);
+	box2.top = 232 - getLargestInteger(((float)day2_step / (float)max_num) * 185);
+	box3.top = 232 - getLargestInteger(((float)day3_step / (float)max_num) * 185);
 	box4.top = 232 - getLargestInteger(((float)day4_step / (float)max_num) * 185);
-	box3.top = 232 - getLargestInteger(((float)day5_step / (float)max_num) * 185);
-	box2.top = 232 - getLargestInteger(((float)day6_step / (float)max_num) * 185);
-	box1.top = 232 - getLargestInteger(((float)day7_step / (float)max_num) * 185);
+	box5.top = 232 - getLargestInteger(((float)day5_step / (float)max_num) * 185);
+	box6.top = 232 - getLargestInteger(((float)day6_step / (float)max_num) * 185);
+	box7.top = 232 - getLargestInteger(((float)day7_step / (float)max_num) * 185);
 #elif ZTE_SUPPORT_240X240
-	box7.top = 192 - getLargestInteger(((float)day1_step / (float)max_num) * 155);
-	box6.top = 192 - getLargestInteger(((float)day2_step / (float)max_num) * 155);
-	box5.top = 192 - getLargestInteger(((float)day3_step / (float)max_num) * 155);
+	box1.top = 192 - getLargestInteger(((float)day1_step / (float)max_num) * 155);
+	box2.top = 192 - getLargestInteger(((float)day2_step / (float)max_num) * 155);
+	box3.top = 192 - getLargestInteger(((float)day3_step / (float)max_num) * 155);
 	box4.top = 192 - getLargestInteger(((float)day4_step / (float)max_num) * 155);
-	box3.top = 192 - getLargestInteger(((float)day5_step / (float)max_num) * 155);
-	box2.top = 192 - getLargestInteger(((float)day6_step / (float)max_num) * 155);
-	box1.top = 192 - getLargestInteger(((float)day7_step / (float)max_num) * 155);
+	box5.top = 192 - getLargestInteger(((float)day5_step / (float)max_num) * 155);
+	box6.top = 192 - getLargestInteger(((float)day6_step / (float)max_num) * 155);
+	box7.top = 192 - getLargestInteger(((float)day7_step / (float)max_num) * 155);
 #endif
 	//SCI_TRACE_LOW("%s: top = %d,%d,%d,%d,%d,%d,%d", __FUNCTION__, box7.top, box6.top, box5.top, box4.top, box3.top,box2.top, box1.top);
 	box1 = MMI_ConvertWinRect(MMICOM_WINPOS_WIN2DISP,win_id,box1);
@@ -546,13 +548,13 @@ LOCAL void DisplayWeekStepData(MMI_WIN_ID_T win_id)
 	LCD_FillRoundedRect(&lcd_dev_info, box5, box5, pros_bar_color);
 	LCD_FillRoundedRect(&lcd_dev_info, box6, box6, pros_bar_color);
 	LCD_FillRoundedRect(&lcd_dev_info, box7, box7, pros_bar_color);
-    DisplayDayStep(lcd_dev_info,day1_step,box7);
-    DisplayDayStep(lcd_dev_info,day2_step,box6);
-    DisplayDayStep(lcd_dev_info,day3_step,box5);
+    DisplayDayStep(lcd_dev_info,day1_step,box1);
+    DisplayDayStep(lcd_dev_info,day2_step,box2);
+    DisplayDayStep(lcd_dev_info,day3_step,box3);
     DisplayDayStep(lcd_dev_info,day4_step,box4);
-    DisplayDayStep(lcd_dev_info,day5_step,box3);
-    DisplayDayStep(lcd_dev_info,day6_step,box2);
-    DisplayDayStep(lcd_dev_info,day7_step,box1);
+    DisplayDayStep(lcd_dev_info,day5_step,box5);
+    DisplayDayStep(lcd_dev_info,day6_step,box6);
+    DisplayDayStep(lcd_dev_info,day7_step,box7);
 
 }
 
@@ -813,7 +815,7 @@ PUBLIC MMI_RESULT_E HandlePedometerStepWeekWin(
 	case MSG_TP_PRESS_DOWN:
 		{
 			GUI_POINT_T   point = {0};
-	    		point.x = MMK_GET_TP_X(param);
+	    	point.x = MMK_GET_TP_X(param);
 			point.y = MMK_GET_TP_Y(param);
 			pedometer_statis_tp_down_x = point.x;
 			pedometer_statis_tp_down_y = point.y;
@@ -882,13 +884,9 @@ WINDOW_TABLE(MMI_PEDOMETER_STATISTICS_WIN_TAB) =
 PUBLIC void MMIPEDOMETER_CreateStepWeekWin()
 {
 	MMI_WIN_ID_T win_id = MMI_PEDOMETER_STEP_WEEK_WIN_ID;
-	MMI_HANDLE_T win_handle = 0;
-	GUI_RECT_T rect = {0,0,240,240};
 	if (MMK_IsOpenWin(win_id))
 	{
 		MMK_CloseWin(win_id);
-	}
-
-	win_handle = MMK_CreateWin((uint32*)MMI_PEDOMETER_STATISTICS_WIN_TAB, NULL);
-	MMK_SetWinRect(win_handle, &rect);
+    }
+    MMK_CreateWin((uint32*)MMI_PEDOMETER_STATISTICS_WIN_TAB, NULL);
 }

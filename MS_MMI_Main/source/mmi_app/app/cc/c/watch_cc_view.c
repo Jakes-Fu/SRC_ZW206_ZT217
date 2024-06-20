@@ -1196,7 +1196,6 @@ LOCAL void  CC_UpdateWatchDisconnectedCallStatus(void)
     if (FALSE == MMIAPICC_IsInState(CC_CALL_CONNECTED_STATE))
     {
         WatchCC_ConnectedWin_Exit();
-        MMIZDT_Call_SOS_Over();
     }
 #ifdef MMI_ETWS_SUPPORT
     if( (TRUE == MMIAPISMSCB_GetEMCallStatus()) || (TRUE == MMIAPISMSCB_GetIsNeedRedisplay()) )

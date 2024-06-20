@@ -5138,6 +5138,8 @@ PUBLIC void WatchSET_MainWin_Enter( void );
 
 PUBLIC uint8 MMISET_GetWatchMenuStyle(void);
 
+PUBLIC void WatchSET_MainWin_Exit( void );
+
 /*****************************************************************************/
 //  Description : Is User Update Time
 //  Paramter:

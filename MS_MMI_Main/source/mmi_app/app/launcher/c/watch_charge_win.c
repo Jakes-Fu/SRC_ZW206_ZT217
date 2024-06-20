@@ -928,8 +928,12 @@ PUBLIC void WatchLAUNCHER_BatteryLow_Enter()
     {
         if(Low_Battery_Model_Check())// 绑定的才允许进长续航模式
         {
+            uint8 auto_low_battery_status = MMIZDT_Get_Auto_Low_Battery_Status();
             MMISET_SetLongRangeMode(1);
-            MMIZDT_NV_Set_Auto_Low_Battery_Flag(1);
+            if(auto_low_battery_status)
+            {
+                MMIZDT_NV_Set_Auto_Low_Battery_Flag(1);
+            }
             WatchLAUNCHER_ZTE_LowBatterSwitch();
         }
         return;

@@ -4308,14 +4308,16 @@ LOCAL void Draw_Battery_Charging_Tip(MMI_WIN_ID_T win_id,GUI_LCD_DEV_INFO  lcd_d
     MMI_STRING_T text_str = {0};
     GUI_RECT_T tip_text_rect = TIP_RECT;
     MMI_TEXT_ID_T tip_text_id = TXT_CHARGE_DISABLE;
+    GUI_COLOR_T font_color = GUI_RGB2RGB565(800,800,800);
     if(ZDT_GetIsBatFull() || ZDT_IsChargeDone())
     {
         tip_text_id = TXT_CHARGE_FULL;
+        font_color = GUI_RGB2RGB565(50,250,50);
     }
     MMI_GetLabelTextByLang(tip_text_id,&text_str);
     text_style.align = ALIGN_HVMIDDLE;
     text_style.font = SONG_FONT_24;
-    text_style.font_color = GUI_RGB2RGB565(800,800,800);
+    text_style.font_color = font_color;
     GUISTR_DrawTextToLCDInRect(&lcd_dev_info,&tip_text_rect,&tip_text_rect,&text_str,&text_style,GUISTR_STATE_ALIGN,GUISTR_TEXT_DIR_AUTO);  
 }
 

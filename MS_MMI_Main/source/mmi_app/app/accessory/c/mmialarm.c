@@ -7610,11 +7610,11 @@ LOCAL void OpenAlarmAliveWin(
     }
     else if ( SMART_EVENT_AUTOPOWEROFF == s_arrived_event.event_fast_info.type)
     {
-        alarm_str[0].wstr_len = strlen(time_str);
+        //alarm_str[0].wstr_len = strlen(time_str);
         //alarm_str[0].wstr_ptr = SCI_ALLOC_APP(( alarm_str[0].wstr_len + 1 ) * sizeof(wchar) );
-        alarm_str[0].wstr_ptr = (wchar*)time_unicode_str;
-         SCI_MEMSET(alarm_str[0].wstr_ptr,0,(( alarm_str[0].wstr_len + 1 ) * sizeof(wchar)));
-        MMI_STRNTOWSTR(alarm_str[0].wstr_ptr,alarm_str[0].wstr_len,time_str,strlen(time_str),strlen(time_str));/*lint !e64*/
+        //alarm_str[0].wstr_ptr = (wchar*)time_unicode_str;
+        // SCI_MEMSET(alarm_str[0].wstr_ptr,0,(( alarm_str[0].wstr_len + 1 ) * sizeof(wchar)));
+        //MMI_STRNTOWSTR(alarm_str[0].wstr_ptr,alarm_str[0].wstr_len,time_str,strlen(time_str),strlen(time_str));/*lint !e64*/
 
         MMI_GetLabelTextByLang(TXT_ALARM_WILL_TO, &tmp_str_t1); 
         MMI_GetLabelTextByLang(TXT_ALARM_SHUT_DOWN, &tmp_str_t2);

@@ -16,6 +16,7 @@
 #define YX_VCHAT_DIR "D:\\vChat\\"
 #define YX_VCHAT_FILENAME "vchat_record.txt"
 #define YX_VCHAT_FILESTATUS "vchat_status.db"
+#define YX_VCHAT_MESSAGE_ID_FILENAME "vchat_message_id.txt"
 
 #define YX_VCHAT_DEFAULT_GROUP_ID "common"
 
@@ -186,6 +187,9 @@ extern uint32 YX_VocReadStatusCheck(uint8 * utf8_group_id);
 extern void YX_VocFileStatusWrite(uint8 * full_name ,YX_VOC_STATUS_DATA_T *ui_line_status);
 
 extern BOOLEAN YX_Voice_Allow_Receive(YX_APP_T * pMe);
+
+//努比亚需求（解决表情消息重复下发导致消息重复问题）
+extern BOOLEAN YX_VCHAT_MessageId_Check(YX_GROUP_INFO_DATA_T * pInfo, uint receive_message_id);
 
 extern YX_GROUP_INFO_DATA_T * m_pCurGroupInfo;
 extern YX_GROUP_INFO_DATA_T * m_pCurRcvGroupInfo;

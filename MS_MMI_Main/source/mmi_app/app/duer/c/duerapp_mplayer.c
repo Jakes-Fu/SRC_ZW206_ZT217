@@ -983,6 +983,7 @@ LOCAL MMI_RESULT_E HandlePlayInfoWinMsg(
     GUI_POINT_T start_point = {0};
     RENDER_PLAYER_INFO *playerInfo = PNULL;
     wchar *wstr_ptr = L"²¥·Å³ö´íÁË";
+    LOCAL int volume;
 
     lcd_dev_info.lcd_id     = GUI_MAIN_LCD_ID;
     lcd_dev_info.block_id   = GUI_BLOCK_MAIN;
@@ -993,7 +994,7 @@ LOCAL MMI_RESULT_E HandlePlayInfoWinMsg(
     {
     case MSG_OPEN_WINDOW:
         s_collet_state = FALSE;
-
+        duer_audio_dac_get_volume(&volume);
         WatchRec_MusicwinDrawBG();
         //playerInfo = (RENDER_PLAYER_INFO*) MMK_GetWinAddDataPtr(win_id);
         MMIDUERAPP_MusicOpenWin(win_id, s_renderPlayerInfo);
@@ -1005,6 +1006,7 @@ LOCAL MMI_RESULT_E HandlePlayInfoWinMsg(
 
     case MSG_GET_FOCUS:
         {
+            duer_audio_dac_set_volume(volume);
             if (!UILAYER_IsBltLayer(&s_first_lcd_dev_info)) {
                 UILAYER_APPEND_BLT_T append;
                 append.layer_level = UILAYER_LEVEL_NORMAL;
@@ -1025,6 +1027,7 @@ LOCAL MMI_RESULT_E HandlePlayInfoWinMsg(
         {
             // UILAYER_RemoveBltLayer(&s_first_lcd_dev_info);
             duerapp_close_waiting();
+            duer_audio_dac_get_volume(&volume);
         }
         break;
 

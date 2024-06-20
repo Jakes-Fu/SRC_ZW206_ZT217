@@ -4944,7 +4944,7 @@ PUBLIC void MMIPUBDisplayWin(
 
     //if(win_info_ptr->title_string.wstr_len == 0)
     {
-        win_info_ptr->client_rect.top = win_info_ptr->title_rect.top;
+        //win_info_ptr->client_rect.top = win_info_ptr->title_rect.top;
     }
     
     //yangyu end
@@ -5033,11 +5033,12 @@ PUBLIC void MMIPUBDisplayWin(
 			SCI_TRACE_LOW("[mmmmmm] line[%d] file[%s] func[%s] win_info_ptr->type=%d win_info_ptr->softkey_style=%d", __LINE__, __FILE__, __FUNCTION__,__FUNCTION__,win_info_ptr->type,win_info_ptr->softkey_style);
 
             // 顶上的title图
-            image_rect.bottom = image_rect.top + GetPubWinTopBGHeight( win_info_ptr ) - 1;
+            image_rect.bottom = image_rect.top + 12/*GetPubWinTopBGHeight( win_info_ptr )*/ - 1;
 			//LCD_FillRoundedRect(&lcd_dev_info, image_rect, image_rect , MMI_BLACK_COLOR);
             //DisplayTitleText( win_info_ptr, title_rect, lcd_dev_info );
 			
 			//LCD_FillRoundedRect(&lcd_dev_info, image_rect, image_rect , MMI_WHITE_COLOR);
+            GUIRES_DisplayImg(PNULL,&image_rect,PNULL,win_info_ptr->win_handle,IMG_POPUP_TOP,&lcd_dev_info);
 								
             // 客户区背景
             //image_rect.top = image_rect.bottom + 1;
@@ -5046,12 +5047,12 @@ PUBLIC void MMIPUBDisplayWin(
             //yangyu add
             if(win_info_ptr->title_string.wstr_len == 0)
             {
-                image_rect.top = win_info_ptr->title_rect.top;
+               // image_rect.top = win_info_ptr->title_rect.top;
             }
 
             //yangyu end
-			LCD_FillRoundedRect(&lcd_dev_info, image_rect, image_rect , MMI_WHITE_COLOR);  //xiongkai  弹出框正文背景色
-            //GUI_FillRect(&lcd_dev_info, image_rect, MMI_WHITE_COLOR); //xiongkai  弹出框正文背景色
+			//LCD_FillRoundedRect(&lcd_dev_info, image_rect, image_rect , MMI_WHITE_COLOR);  //xiongkai  弹出框正文背景色
+            GUI_FillRect(&lcd_dev_info, image_rect, MMI_WHITE_COLOR); //xiongkai  弹出框正文背景色
 			
             
             /*GUIRES_DisplayImg(PNULL,
