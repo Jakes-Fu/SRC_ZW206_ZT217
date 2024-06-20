@@ -2803,7 +2803,16 @@ LOCAL void ListDrawItem(
         {
             if(index == list_ctrl_ptr->cur_item_idx)
             {
-                item_bg = WATCHTHEME_GetListHightLightItemBg();				
+                //设置了显示高亮的图片
+                if(list_ctrl_ptr->display_style.is_disp_hilight_image)
+                {
+                    item_bg.bg_type = GUI_BG_IMG;
+                    item_bg.img_id  = list_ctrl_ptr->display_style.highlight_back_image;
+                }
+                else
+                {
+                    item_bg = WATCHTHEME_GetListHightLightItemBg();	
+                }
             }
         }
 
