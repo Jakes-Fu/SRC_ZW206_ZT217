@@ -2207,6 +2207,30 @@ PUBLIC BOOLEAN CTRLLIST_SetIsSupportSlideDecAnim(
                                             BOOLEAN is_support_slide_dec_anim
                                           );
 
+/*****************************************************************************/
+//  Description : set list highlight image
+//  Global resource dependence :
+//  Author:fangfang.yao
+//  设置list高亮条图片
+/*****************************************************************************/
+PUBLIC void CTRLLIST_SetListHighlightImage(MMI_CTRL_ID_T ctrl_id, MMI_IMAGE_ID_T img_id);
+
+/*****************************************************************************/
+//  Description : set list highlight color
+//  Global resource dependence :
+//  Author:fangfang.yao
+//  设置list高亮条颜色
+/*****************************************************************************/
+PUBLIC void CTRLLIST_SetListHighlightColor(MMI_CTRL_ID_T ctrl_id, GUI_COLOR_T highlight_color);
+
+/*****************************************************************************/
+//  Description : set list display highlight image state
+//  Global resource dependence :
+//  Author:fangfang.yao
+//  设置list是否显示高亮条图片
+/*****************************************************************************/
+PUBLIC void CTRLLIST_SetDisplayHighlightImageState(MMI_CTRL_ID_T ctrl_id, BOOLEAN is_true);
+
 /*----------------------------------------------------------------------------*/
 /*                         Compiler Flag                                      */
 /*----------------------------------------------------------------------------*/

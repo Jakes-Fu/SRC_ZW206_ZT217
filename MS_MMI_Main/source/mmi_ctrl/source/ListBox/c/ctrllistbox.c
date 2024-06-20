@@ -13804,3 +13804,55 @@ PUBLIC BOOLEAN CTRLLIST_SetEmptyStyle(MMI_CTRL_ID_T ctrl_id, GUISTR_STYLE_T *sty
 
     return TRUE;
 }
+
+/*****************************************************************************/
+//  Description : set list highlight image
+//  Global resource dependence :
+//  Author:fangfang.yao
+//  设置list高亮条图片
+/*****************************************************************************/
+PUBLIC void CTRLLIST_SetListHighlightImage(MMI_CTRL_ID_T ctrl_id, MMI_IMAGE_ID_T img_id)
+{
+    CTRLLIST_OBJ_T *list_ctrl_ptr = ListGetPtr(ctrl_id);
+    if (PNULL == list_ctrl_ptr)
+    {
+        SCI_TRACE_LOW("[LIST] CTRLLIST_SetListHighlightImage list_ctrl_ptr is PNULL");
+        return;
+    }
+    list_ctrl_ptr->display_style.is_disp_hilight_image = TRUE;
+    list_ctrl_ptr->display_style.highlight_back_image = img_id;
+}
+
+/*****************************************************************************/
+//  Description : set list highlight color
+//  Global resource dependence :
+//  Author:fangfang.yao
+//  设置list高亮条颜色
+/*****************************************************************************/
+PUBLIC void CTRLLIST_SetListHighlightColor(MMI_CTRL_ID_T ctrl_id, GUI_COLOR_T highlight_color)
+{
+    CTRLLIST_OBJ_T *list_ctrl_ptr = ListGetPtr(ctrl_id);
+    if (PNULL == list_ctrl_ptr)
+    {
+        SCI_TRACE_LOW("[LIST] CTRLLIST_SetListHighlightColor list_ctrl_ptr is PNULL");
+        return;
+    }
+    list_ctrl_ptr->display_style.highlight_back_color = highlight_color;
+}
+
+/*****************************************************************************/
+//  Description : set list display highlight image state
+//  Global resource dependence :
+//  Author:fangfang.yao
+//  设置list是否显示高亮条图片
+/*****************************************************************************/
+PUBLIC void CTRLLIST_SetDisplayHighlightImageState(MMI_CTRL_ID_T ctrl_id, BOOLEAN is_true)
+{
+    CTRLLIST_OBJ_T *list_ctrl_ptr = ListGetPtr(ctrl_id);
+    if (PNULL == list_ctrl_ptr)
+    {
+        SCI_TRACE_LOW("[LIST] CTRLLIST_SetDisplayHighlightImageState list_ctrl_ptr is PNULL");
+        return;
+    }
+    list_ctrl_ptr->display_style.is_disp_hilight_image = is_true;
+}

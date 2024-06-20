@@ -1128,6 +1128,30 @@ PUBLIC const uint32 GUILIST_GetItemStyleID(
     uint16        index  //from 0 to total_item_num-1
 );
 
+/*****************************************************************************/
+//  Description : set list highlight image
+//  Global resource dependence :
+//  Author:fangfang.yao
+//  设置list高亮条图片
+/*****************************************************************************/
+#define GUILIST_SetListHighlightImage CTRLLIST_SetListHighlightImage
+
+/*****************************************************************************/
+//  Description : set list highlight color
+//  Global resource dependence :
+//  Author:fangfang.yao
+//  设置list高亮条颜色
+/*****************************************************************************/
+#define GUILIST_SetListHighlightColor CTRLLIST_SetListHighlightColor
+
+/*****************************************************************************/
+//  Description : set list display highlight image state
+//  Global resource dependence :
+//  Author:fangfang.yao
+//  设置list是否显示高亮条图片
+/*****************************************************************************/
+#define GUILIST_SetDisplayHighlightImageState CTRLLIST_SetDisplayHighlightImageState
+
 /*----------------------------------------------------------------------------*/
 /*                         Compiler Flag                                      */
 /*----------------------------------------------------------------------------*/
