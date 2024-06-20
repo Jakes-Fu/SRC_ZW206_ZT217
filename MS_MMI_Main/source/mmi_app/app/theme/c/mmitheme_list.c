@@ -6577,7 +6577,11 @@ PUBLIC BOOLEAN MMITHEME_GetListStyle(
 #endif
 
 #if defined (TOUCH_PANEL_SUPPORT)
+#ifdef ZT217_LISENNING_PAD
+    list_style_ptr->is_disp_hilight_image = TRUE;
+#else
     list_style_ptr->is_disp_hilight_image = FALSE;
+#endif
 #else
     list_style_ptr->is_disp_hilight_image = TRUE;
 #endif
