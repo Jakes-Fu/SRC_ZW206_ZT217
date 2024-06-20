@@ -122293,7 +122293,7 @@
     ITEM_NAME    = ana
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x5
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 12224
     ITEM_PARENT  = 12223
     ITEM_DESC    =  
@@ -122303,7 +122303,7 @@
     ITEM_NAME    = dac
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x3
+    ITEM_CONTENT = 0x0
     ITEM_INDEX   = 12225
     ITEM_PARENT  = 12223
     ITEM_DESC    =  
@@ -122313,7 +122313,7 @@
     ITEM_NAME    = alg
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x0
+    ITEM_CONTENT = 0xFFFD
     ITEM_INDEX   = 12226
     ITEM_PARENT  = 12223
     ITEM_DESC    =  
@@ -134185,7 +134185,7 @@
     ITEM_NAME    = adc
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0x4B0
+    ITEM_CONTENT = 0xBE
     ITEM_INDEX   = 13412
     ITEM_PARENT  = 13410
     ITEM_DESC    = bit7:0 adc volume
@@ -134265,7 +134265,7 @@
     ITEM_NAME    = ana
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xAF
+    ITEM_CONTENT = 0xA3
     ITEM_INDEX   = 13420
     ITEM_PARENT  = 13419
     ITEM_DESC    =  
@@ -134315,7 +134315,7 @@
     ITEM_NAME    = ana
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xAF
+    ITEM_CONTENT = 0x92
     ITEM_INDEX   = 13425
     ITEM_PARENT  = 13424
     ITEM_DESC    =  
@@ -134365,7 +134365,7 @@
     ITEM_NAME    = ana
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xAF
+    ITEM_CONTENT = 0x95
     ITEM_INDEX   = 13430
     ITEM_PARENT  = 13429
     ITEM_DESC    =  
@@ -134415,7 +134415,7 @@
     ITEM_NAME    = ana
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xAF
+    ITEM_CONTENT = 0x98
     ITEM_INDEX   = 13435
     ITEM_PARENT  = 13434
     ITEM_DESC    =  
@@ -134465,7 +134465,7 @@
     ITEM_NAME    = ana
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xAF
+    ITEM_CONTENT = 0x9B
     ITEM_INDEX   = 13440
     ITEM_PARENT  = 13439
     ITEM_DESC    =  
@@ -134515,7 +134515,7 @@
     ITEM_NAME    = ana
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xAF
+    ITEM_CONTENT = 0x9E
     ITEM_INDEX   = 13445
     ITEM_PARENT  = 13444
     ITEM_DESC    =  
@@ -134565,7 +134565,7 @@
     ITEM_NAME    = ana
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xAF
+    ITEM_CONTENT = 0xA1
     ITEM_INDEX   = 13450
     ITEM_PARENT  = 13449
     ITEM_DESC    =  
@@ -134615,7 +134615,7 @@
     ITEM_NAME    = ana
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xAF
+    ITEM_CONTENT = 0xA4
     ITEM_INDEX   = 13455
     ITEM_PARENT  = 13454
     ITEM_DESC    =  
@@ -134665,7 +134665,7 @@
     ITEM_NAME    = ana
     ITEM_ID      = 634
     ITEM_TYPE    = 2 (SHORT)
-    ITEM_CONTENT = 0xAF
+    ITEM_CONTENT = 0xA7
     ITEM_INDEX   = 13460
     ITEM_PARENT  = 13459
     ITEM_DESC    =  
