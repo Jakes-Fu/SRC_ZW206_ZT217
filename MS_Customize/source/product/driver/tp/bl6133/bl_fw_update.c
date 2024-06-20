@@ -114,7 +114,8 @@
 #elif defined(DRV_TP_6133_ZW206_K1_240X284)//wuxx add 
 #include "BL6XX3_ZW206_K1_YH-183_P1F4A1_20230905.h"
 #elif defined(DRV_TP_6133_ZT217_240X320)
-#include "BL6XX3_ZT217-HJ24305T-A_P0F4A2__20240619.h"
+//#include "BL6XX3_ZT217-HJ24305T-A_P0F4A2__20240619.h"
+#include "BL6XX3_ZT217-HJ24305T-A_P0F4A3__20240619.h"
 #else
 //#include "bl_fw.h"
 #include "BL6133.h"
