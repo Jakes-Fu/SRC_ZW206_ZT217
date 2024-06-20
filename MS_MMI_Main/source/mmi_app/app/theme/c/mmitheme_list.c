@@ -6571,7 +6571,11 @@ PUBLIC BOOLEAN MMITHEME_GetListStyle(
     list_style_ptr->highlight_back_image = 0;
 #else
 #if defined MAINLCD_SIZE_240X320
+#ifdef ZT217_LISENNING_PAD //带按键的听力宝
+    list_style_ptr->highlight_back_color = MMI_HIGH_LIGHT_COLOR;
+#else
     list_style_ptr->highlight_back_color = MMI_BLACK_COLOR;
+#endif
 #else
     list_style_ptr->highlight_back_color = MMI_GRAY_WHITE_COLOR;
 #endif
