@@ -12233,18 +12233,8 @@ LOCAL BOOLEAN ListHandleTpUp(
 //     {
 //         item_ptr = LIST_GetItemInfoPtr(list_ctrl_ptr, list_ctrl_ptr->cur_item_idx);
 //     }
-       if(point_ptr->x - list_ctrl_ptr->slide_start_point.x > 30){
-		MMI_NOTIFY_T notify = {0};
-		MMI_MESSAGE_ID_E send_msg_id = MSG_NOTIFY_PENOK;
-		MMK_PostMsg(((CTRLBASE_OBJ_T *)list_ctrl_ptr)->handle,MSG_LIST_PRE_PAGE,0,PNULL);
-	}
-	else if(list_ctrl_ptr->slide_start_point.x -point_ptr->x > 30)
-	{
-		MMI_NOTIFY_T notify = {0};
-		MMI_MESSAGE_ID_E send_msg_id = MSG_NOTIFY_PENOK;
-		MMK_PostMsg(((CTRLBASE_OBJ_T *)list_ctrl_ptr)->handle,MSG_LIST_NEXT_PAGE,0,PNULL);
-	}
-    	else if ((MMK_TP_SLIDE_NONE != list_ctrl_ptr->slide_state || (IS_TP_MOVE_Y(point_ptr->y, list_ctrl_ptr->slide_start_point.y)))
+
+    if ((MMK_TP_SLIDE_NONE != list_ctrl_ptr->slide_state || (IS_TP_MOVE_Y(point_ptr->y, list_ctrl_ptr->slide_start_point.y)))
         && list_ctrl_ptr->display_style.is_slide_used)
     {
         float mDeceleration = 0.0f;
