@@ -9287,7 +9287,7 @@ RES_ADD_STRING(text_softkey_stop_rsk,"Stop")
 
 //RES_ADD_IMG(image_watch_list_bg,"\\MMI_RES_##\\IMAG\\List\\res_list_bg.png",IMG_CMP_PNG_SABM_RLE|SABM_TILE,0)
 RES_ADD_IMG(image_watch_list_bg,"\\MMI_RES_##\\IMAG\\List\\back ground.png",IMG_CMP_PNG_ARGB_RLE,0)//IMG_CMP_PNG_ARGB_RLE,0)//
-RES_ADD_IMG(image_watch_list_highlight_bg,"\\MMI_RES_##\\IMAG\\List\\res_list_highlight_bg.png",IMG_CMP_PNG_SABM_RLE|SABM_TILE,0)
+RES_ADD_IMG(image_watch_list_highlight_bg,"\\MMI_RES_##\\IMAG\\List\\res_list_highlight_bg.png",IMG_CMP_PNG_ARGB_RLE,0)//IMG_CMP_PNG_SABM_RLE|SABM_TILE,0)
 RES_ADD_IMG(common_list_disp_more,"\\MMI_RES_##\\IMAG\\List\\common_list_disp_more.png",IMG_CMP_PNG_SABM_RLE|SABM_TILE,0)
 #ifdef ZTE_WATCH
 RES_ADD_IMG(image_watch_list_bg60,"\\MMI_RES_##\\IMAG\\List\\back ground60.png",IMG_CMP_PNG_ARGB_RLE,0)

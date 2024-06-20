@@ -6583,13 +6583,15 @@ PUBLIC BOOLEAN MMITHEME_GetListStyle(
 #if defined (TOUCH_PANEL_SUPPORT)
 #ifdef ZT217_LISENNING_PAD
     list_style_ptr->is_disp_hilight_image = TRUE;
+    list_style_ptr->highlight_back_image = image_watch_list_highlight_bg;
 #else
     list_style_ptr->is_disp_hilight_image = FALSE;
 #endif
 #else
     list_style_ptr->is_disp_hilight_image = TRUE;
-#endif
     list_style_ptr->highlight_back_image = IMAGE_COMMON_SELECTED_BAR; //Bug 1321334
+#endif
+
 #endif//syy modify 2010.11.30 -end
 
     list_style_ptr->a_percent_lucency    = LIST_HIGHLIGHT_PERCENT_LUCENCY;
