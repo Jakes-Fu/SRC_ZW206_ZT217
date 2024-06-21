@@ -1760,6 +1760,39 @@ LOCAL uint8 Get_ProgressBar_CurrentIndex(uint16 current_percent,uint16 progress_
 		level_index =5;
 	return level_index;
 }
+
+LOCAL void setBrightness(MMI_WIN_ID_T win_id)
+{
+    MMIAPISET_SetCurrentContrast(s_setting_brightness_value); 
+    MMIAPISET_SetMainLCDContrast();
+    MMK_CloseWin(win_id);
+}
+
+LOCAL void updateCurrentBrightness(MMI_WIN_ID_T win_id, uint32 cur_item_index)
+{
+    MMI_IMAGE_ID_T         res_progress_bg = IMAGE_ZTE_CONTROL_PROGRESS_BG;
+    MMI_IMAGE_ID_T         res_progress_fg= IMAGE_ZTE_CONTROL_PROGRESS;
+    MMI_IMAGE_ID_T         res_progress_hand = IMAGE_ZTE_PROGRESS_HAND;
+    GUI_RECT_T progressrect = SET_PROGRESSBAR_RECT;
+    GUI_RECT_T progresstouchrect = SET_PROGRESSBAR_TOUCHRECT;
+    if(cur_item_index > MMISET_CONTRAST_SEVEN)
+    {
+        cur_item_index = MMISET_CONTRAST_SEVEN -1;
+    }
+    if(cur_item_index < 0)
+    {
+        cur_item_index = 0;
+    }
+    if(cur_item_index != s_setting_brightness_value)
+    {
+        s_setting_brightness_value = cur_item_index;
+        WATCHCOM_ProgressBarByIndex(win_id, progressrect, s_setting_brightness_value,MMISET_CONTRAST_SEVEN,res_progress_bg, res_progress_fg, res_progress_hand);
+        //MMIAPISET_SetCurrentContrast(cur_bright_img_id);      
+        MMIAPISET_UpdateLCDContrast(GUI_MAIN_LCD_ID, s_setting_brightness_value);
+        MMK_UpdateScreen();
+    }
+}
+
 LOCAL MMI_RESULT_E HandleBrightnessWindow(
 	                                    MMI_WIN_ID_T    win_id, 
                                            MMI_MESSAGE_ID_E   msg_id, 
@@ -1855,11 +1888,13 @@ LOCAL MMI_RESULT_E HandleBrightnessWindow(
 #endif
         Brightness_Full_Paint(win_id);
         break;
-		
-    case MSG_CTL_MIDSK:
-    case MSG_KEYDOWN_OK:
-    case MSG_CTL_OK:
+	
     case MSG_APP_WEB:
+    case MSG_KEYDOWN_OK:
+        setBrightness(win_id);
+        break;
+    case MSG_CTL_MIDSK:
+    case MSG_CTL_OK:
 #if defined( TOUCH_PANEL_SUPPORT)||defined(ZDT_TOUCHPANEL_TYPE_MULTITP) //IGNORE9527
     case MSG_CTL_PENOK:
 #endif //TOUCH_PANEL_SUPPORT //IGNORE95
@@ -1867,9 +1902,7 @@ LOCAL MMI_RESULT_E HandleBrightnessWindow(
 #ifdef ZTE_WATCH
         if(MMISET_ZTE_WATCH_SETOK_BTN_CTRL_ID == ((MMI_NOTIFY_T*)param)->src_id)//reset button±»Ñ¡ÖÐ
         {
-            MMIAPISET_SetCurrentContrast(s_setting_brightness_value); 
-            MMIAPISET_SetMainLCDContrast();
-            MMK_CloseWin(win_id);
+            setBrightness(win_id);
         }
 
 #else
@@ -1970,21 +2003,8 @@ LOCAL MMI_RESULT_E HandleBrightnessWindow(
             {
                 //uint8 percent = (point.x - rect.left)*100/(rect.right-rect.left);
                 progress_down_flag = 1;
-                cur_item_index =  ROUND((float)(MMISET_CONTRAST_SEVEN)
-                        *(down_point.x - progressrect.left)
-                        /(progressrect.right-progressrect.left)); //0 is not in total num, eg total=100, progressbar display 0~100
-                if(cur_item_index > MMISET_CONTRAST_SEVEN)
-                    cur_item_index = MMISET_CONTRAST_SEVEN -1;
-                if(cur_item_index < 0)
-                    cur_item_index = 0;
-                if(cur_item_index != s_setting_brightness_value)
-                {
-                    s_setting_brightness_value = cur_item_index;
-                    WATCHCOM_ProgressBarByIndex(win_id, progressrect, s_setting_brightness_value,MMISET_CONTRAST_SEVEN,res_progress_bg, res_progress_fg, res_progress_hand);
-                    //MMIAPISET_SetCurrentContrast(s_setting_brightness_value);      
-                    MMIAPISET_UpdateLCDContrast(GUI_MAIN_LCD_ID, s_setting_brightness_value);
-                    MMK_UpdateScreen();
-                }
+                cur_item_index =  ROUND((float)(MMISET_CONTRAST_SEVEN) * (down_point.x - progressrect.left) / (progressrect.right-progressrect.left)); //0 is not in total num, eg total=100, progressbar display 0~100
+                updateCurrentBrightness(win_id, cur_item_index);
                 /*current_percent_brightness = (point.x - progressrect.left)*100/(progressrect.right-progressrect.left);
                 WATCHCOM_ProgressBar(win_id, progressrect, current_percent_brightness,res_progress_bg, res_progress_fg, res_progress_hand);
                 cur_bright_img_id = Get_ProgressBar_CurrentIndex(current_percent_brightness,SET_PROGRESSBAR_TOTAL_LENGTH,SET_PROGRESSBAR_PERLEVEL_LENGTH);
@@ -2018,22 +2038,8 @@ LOCAL MMI_RESULT_E HandleBrightnessWindow(
             point.y = MMK_GET_TP_Y(param);
             if (progress_down_flag /*&& GUI_PointIsInRect(point, progressrect)*/)
             {
-                
-                cur_item_index =  ROUND((float)(MMISET_CONTRAST_SEVEN)
-                            *(point.x - progressrect.left)
-                            /(progressrect.right-progressrect.left)); //0 is not in total num, eg total=100, progressbar display 0~100
-                if(cur_item_index > MMISET_CONTRAST_SEVEN)
-                    cur_item_index = MMISET_CONTRAST_SEVEN -1;
-                if(cur_item_index < 0)
-                    cur_item_index = 0;
-                if(cur_item_index != s_setting_brightness_value)
-                {
-                    s_setting_brightness_value = cur_item_index;
-                    WATCHCOM_ProgressBarByIndex(win_id, progressrect, s_setting_brightness_value,MMISET_CONTRAST_SEVEN,res_progress_bg, res_progress_fg, res_progress_hand);
-                    //MMIAPISET_SetCurrentContrast(cur_bright_img_id);      
-                    MMIAPISET_UpdateLCDContrast(GUI_MAIN_LCD_ID, s_setting_brightness_value);
-                    MMK_UpdateScreen();
-                }
+                cur_item_index =  ROUND((float)(MMISET_CONTRAST_SEVEN) *(point.x - progressrect.left)/(progressrect.right-progressrect.left)); //0 is not in total num, eg total=100, progressbar display 0~100
+                updateCurrentBrightness(win_id, cur_item_index);
             }
             else
                 progress_down_flag = 0;
@@ -2198,7 +2204,13 @@ LOCAL MMI_RESULT_E HandleBrightnessWindow(
         break;
     case MSG_KEYUP_RED:
         MMK_CloseWin(win_id);
-        break;    
+        break;
+    case MSG_KEYDOWN_LEFT:
+        updateCurrentBrightness(win_id, (s_setting_brightness_value-1));
+        break;
+    case MSG_KEYDOWN_RIGHT:
+        updateCurrentBrightness(win_id, (s_setting_brightness_value+1));
+        break;
     default:
         recode = MMI_RESULT_FALSE;
         break;
