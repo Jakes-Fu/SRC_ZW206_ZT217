@@ -55,6 +55,8 @@ LOCAL void Watch_SetAllListState( MMI_CTRL_ID_T ctrlId )
     GUILIST_SetListState( ctrlId, GUILIST_STATE_SPLIT_LINE, FALSE );
     //不画高亮条
     GUILIST_SetListState( ctrlId, GUILIST_STATE_NEED_HIGHTBAR, FALSE );
+    //设置高亮图片
+    GUILIST_SetListHighlightImage( ctrlId, image_watch_list_highlight_bg);
 }
 
 /*****************************************************************************/
