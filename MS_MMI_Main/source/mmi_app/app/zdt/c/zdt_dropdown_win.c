@@ -972,19 +972,13 @@ LOCAL uint8 Get_DropDownProg_CurrentIndex(uint16 current_percent,uint16 progress
 	return level_index;
 }
 
-LOCAL void Set_Brightness(MMI_WIN_ID_T win_id, GUI_POINT_T point)
+LOCAL void updateBrightness(MMI_WIN_ID_T win_id, uint32 cur_item_index)
 {
     MMI_IMAGE_ID_T res_progress_bg = IMAGE_ZTE_DROP_PROGRESS_BG;
 	MMI_IMAGE_ID_T res_progress_fg= IMAGE_ZTE_DROP_PROGRESS;
     MMI_IMAGE_ID_T res_progress_hand = NULL;
-    uint32 cur_item_index = 0;
     GUI_RECT_T progressrect = DROPDOWN_BRIGHTNESS_RECT;
-	GUI_RECT_T progress_volume_rect = DROPDOWN_VOLUME_RECT;
-    uint32  volume_item_total = MMISET_VOL_MAX+1;
-	cur_item_index =  ROUND((float)(MMISET_CONTRAST_SEVEN)
-			            *(point.x - progressrect.left)
-			            /(progressrect.right-progressrect.left)); //0 is not in total num, eg total=100, progressbar display 0~100
-	if(cur_item_index != cur_bright_img_id)
+    if(cur_item_index != cur_bright_img_id)
 	{
 		cur_bright_img_id = cur_item_index;
 		WATCHCOM_ProgressBarByIndex(win_id, progressrect, cur_bright_img_id,MMISET_CONTRAST_SEVEN,res_progress_bg, res_progress_fg, res_progress_hand);
@@ -995,18 +989,23 @@ LOCAL void Set_Brightness(MMI_WIN_ID_T win_id, GUI_POINT_T point)
 	}
 }
 
-LOCAL void Set_RingVolume(MMI_WIN_ID_T win_id, GUI_POINT_T point)
+LOCAL void Set_Brightness(MMI_WIN_ID_T win_id, GUI_POINT_T point)
+{
+    uint32 cur_item_index = 0;
+    GUI_RECT_T progressrect = DROPDOWN_BRIGHTNESS_RECT;
+	GUI_RECT_T progress_volume_rect = DROPDOWN_VOLUME_RECT;
+	cur_item_index =  ROUND((float)(MMISET_CONTRAST_SEVEN)*(point.x - progressrect.left)/(progressrect.right-progressrect.left)); //0 is not in total num, eg total=100, progressbar display 0~100
+    updateBrightness(win_id,cur_item_index);
+}
+
+LOCAL void updateRingVolume(MMI_WIN_ID_T win_id, uint32 cur_item_index)
 {
     MMI_IMAGE_ID_T         res_progress_bg = IMAGE_ZTE_DROP_PROGRESS_BG;
 	MMI_IMAGE_ID_T         res_progress_fg= IMAGE_ZTE_DROP_PROGRESS;
     MMI_IMAGE_ID_T         res_progress_hand = NULL;
-    uint32      cur_item_index = 0;
     GUI_RECT_T progressrect = DROPDOWN_BRIGHTNESS_RECT;
 	GUI_RECT_T progress_volume_rect = DROPDOWN_VOLUME_RECT;
     uint32  volume_item_total = MMISET_VOL_MAX+1;
-	cur_item_index =  ROUND((float)(volume_item_total)
-			                *(point.x - progress_volume_rect.left)
-			                /(progress_volume_rect.right-progress_volume_rect.left)); //0 is not in total num, eg total=100, progressbar display 0~100
 	if(cur_item_index != cur_ring_volume_img_id)
 	{
 		cur_ring_volume_img_id = cur_item_index;
@@ -1018,6 +1017,16 @@ LOCAL void Set_RingVolume(MMI_WIN_ID_T win_id, GUI_POINT_T point)
         MMIAPISET_SetCallRingVolume(cur_ring_volume_img_id);
 		MMK_UpdateScreen();
 	}
+}
+
+LOCAL void Set_RingVolume(MMI_WIN_ID_T win_id, GUI_POINT_T point)
+{
+    uint32  cur_item_index = 0;
+    GUI_RECT_T progressrect = DROPDOWN_BRIGHTNESS_RECT;
+	GUI_RECT_T progress_volume_rect = DROPDOWN_VOLUME_RECT;
+    uint32  volume_item_total = MMISET_VOL_MAX+1;
+	cur_item_index =  ROUND((float)(volume_item_total)*(point.x - progress_volume_rect.left)/(progress_volume_rect.right-progress_volume_rect.left)); //0 is not in total num, eg total=100, progressbar display 0~100
+    updateRingVolume(win_id, cur_item_index);
 }
 
 LOCAL void HandleTpPressDown(MMI_WIN_ID_T win_id, GUI_POINT_T point)
@@ -1294,6 +1303,22 @@ LOCAL MMI_RESULT_E HandleDropDownWinMsg(
         case MSG_KEYDOWN_CANCEL:
             MMK_CloseWin(win_id);
         break;
+
+        case MSG_KEYDOWN_LEFT:
+            updateBrightness(win_id,(cur_bright_img_id - 1));
+            break;
+        case MSG_KEYDOWN_RIGHT:
+            updateBrightness(win_id,(cur_bright_img_id + 1));
+            break;
+        case MSG_KEYDOWN_UPSIDE:
+        case MSG_KEYDOWN_VOL_UP:
+            updateRingVolume(win_id,(cur_ring_volume_img_id + 1));
+            break;
+
+        case MSG_KEYDOWN_DOWNSIDE:
+        case MSG_KEYDOWN_VOL_DOWN:
+            updateRingVolume(win_id,(cur_ring_volume_img_id -1));
+            break;
 
         default:
             result = MMI_RESULT_FALSE;
