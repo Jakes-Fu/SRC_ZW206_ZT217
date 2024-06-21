@@ -6583,7 +6583,7 @@ PUBLIC BOOLEAN MMITHEME_GetListStyle(
 #if defined (TOUCH_PANEL_SUPPORT)
 #ifdef ZT217_LISENNING_PAD
     list_style_ptr->is_disp_hilight_image = TRUE;
-    list_style_ptr->highlight_back_image = image_watch_list_highlight_bg;
+    list_style_ptr->highlight_back_image = IMAGE_COMMON_SELECTED_BAR;//image_watch_list_highlight_bg;
 #else
     list_style_ptr->is_disp_hilight_image = FALSE;
 #endif
