@@ -6969,7 +6969,11 @@ LOCAL MMI_RESULT_E ListCtrlHandleMsg(
                     //非标记状态, 发送notify
                     if (is_need_notify)
                     {
-                        GUICTRL_PostNotify(((CTRLBASE_OBJ_T *)list_ctrl_ptr)->handle, MSG_NOTIFY_MIDSK);
+                    #ifdef TOUCH_PANEL_SUPPORT
+                         GUICTRL_PostNotify(((CTRLBASE_OBJ_T *)list_ctrl_ptr)->handle, MSG_NOTIFY_PENOK);
+                    #else
+                         GUICTRL_PostNotify(((CTRLBASE_OBJ_T *)list_ctrl_ptr)->handle, MSG_NOTIFY_MIDSK);
+                    #endif
                     }
                 }
             }
@@ -6991,7 +6995,11 @@ LOCAL MMI_RESULT_E ListCtrlHandleMsg(
                     //非标记状态, 发送notify
                     if (is_need_notify)
                     {
-                        GUICTRL_PostNotify(((CTRLBASE_OBJ_T *)list_ctrl_ptr)->handle, MSG_NOTIFY_OK);
+                    #ifdef TOUCH_PANEL_SUPPORT
+                         GUICTRL_PostNotify(((CTRLBASE_OBJ_T *)list_ctrl_ptr)->handle, MSG_NOTIFY_PENOK);
+                    #else
+                         GUICTRL_PostNotify(((CTRLBASE_OBJ_T *)list_ctrl_ptr)->handle, MSG_NOTIFY_OK);
+                    #endif                        
                     }
                 }
             }
