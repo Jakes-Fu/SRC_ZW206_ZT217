@@ -2307,7 +2307,6 @@ LOCAL MMI_RESULT_E HandleVolumeWindow(
     case MSG_APP_OK:
     case MSG_APP_WEB:
     case MSG_CTL_MIDSK:
-    case MSG_KEYUP_OK:
         WatchCOM_List_Item_CallBack( MMISET_SET_VOLUME_CTRL_ID );
         break;
 		 
@@ -2522,6 +2521,64 @@ LOCAL void Settings_Volume_SoundUpdate( uint8 volume )
     //MMK_SendMsg( MMISET_MM_SOUND_WIN_ID, MSG_FULL_PAINT, PNULL );
 }
 
+LOCAL void setVolume(MMI_WIN_ID_T win_id,uint32 volume_index, MMIENVSET_SET_OPT_E volumeType)
+{
+    if(volumeType == COMM_VOL)
+    {
+        MMIAPISET_SetCallVolume(volume_index);
+    }
+    else if(volumeType == CALL_RING_VOL)
+    {
+        MMIAPISET_SetCallRingVolume(volume_index);
+    }
+    MMK_CloseWin(win_id);
+}
+
+LOCAL void updateVolumeProgress(MMI_WIN_ID_T win_id, uint32 cur_item_index, uint32 current_volume_img_index,MMIENVSET_SET_OPT_E volumeType)
+{
+    MMI_IMAGE_ID_T         res_progress_bg = IMAGE_ZTE_CONTROL_PROGRESS_BG;
+    MMI_IMAGE_ID_T         res_progress_fg= IMAGE_ZTE_CONTROL_PROGRESS;
+    MMI_IMAGE_ID_T         res_progress_hand = IMAGE_ZTE_PROGRESS_HAND;
+    GUI_RECT_T progressrect = SET_PROGRESSBAR_RECT;
+    GUI_RECT_T prgtouchrect = SET_PROGRESSBAR_TOUCHRECT;
+    uint32 volume_item_total = MMISET_VOL_MAX+1;
+    
+    if(cur_item_index > volume_item_total)
+    {
+        cur_item_index = volume_item_total -1;
+    }
+    if(cur_item_index < 0)
+    {
+        cur_item_index = 0;
+    }
+    if(cur_item_index != current_volume_img_index)
+    {
+        current_volume_img_index = cur_item_index;
+        if(cur_call_volume_img_id < 1 && volumeType == COMM_VOL)
+        {
+            current_volume_img_index = 1;
+        }
+        if(cur_call_volume_img_id < 0 && volumeType == CALL_RING_VOL)
+        {
+            current_volume_img_index = 0;
+        }
+        if(MMISET_VOL_MAX < cur_call_volume_img_id)
+        {
+            current_volume_img_index = MMISET_VOL_MAX;
+        }
+        if(volumeType == COMM_VOL)
+        {
+            cur_call_volume_img_id = current_volume_img_index;
+        }
+        else if(volumeType == CALL_RING_VOL)
+        {
+            cur_ring_volume_img_id = current_volume_img_index;
+        }
+        WATCHCOM_ProgressBarByIndex(win_id, progressrect, current_volume_img_index,volume_item_total,res_progress_bg, res_progress_fg, res_progress_hand);
+        MMK_UpdateScreen();
+    }
+}
+
 LOCAL MMI_RESULT_E HandleCallVolumeSetWindow(
 	                                    MMI_WIN_ID_T    win_id, 
                                            MMI_MESSAGE_ID_E   msg_id, 
@@ -2666,11 +2723,13 @@ LOCAL MMI_RESULT_E HandleCallVolumeSetWindow(
             &lcd_dev_info);	
 #endif
         break;
-		
-    case MSG_CTL_MIDSK:
+	
     case MSG_KEYDOWN_OK:
-    case MSG_CTL_OK:
     case MSG_APP_WEB:
+        setVolume(win_id, cur_call_volume_img_id, COMM_VOL);
+        break;
+    case MSG_CTL_MIDSK:
+    case MSG_CTL_OK:
 #if defined( TOUCH_PANEL_SUPPORT)||defined(ZDT_TOUCHPANEL_TYPE_MULTITP) //IGNORE9527
     case MSG_CTL_PENOK:
 #endif //TOUCH_PANEL_SUPPORT //IGNORE9527
@@ -2678,22 +2737,7 @@ LOCAL MMI_RESULT_E HandleCallVolumeSetWindow(
 #ifdef ZTE_WATCH
         if(MMISET_ZTE_WATCH_SETOK_BTN_CTRL_ID == ((MMI_NOTIFY_T*)param)->src_id)//reset button被选中
         {
-            /*if(cur_call_volume_img_id>1)
-            {
-                //s_setting_call_volume_value = 2*cur_call_volume_img_id+1;
-                s_setting_call_volume_value = 2*cur_call_volume_img_id-2;
-                //cur_call_volume_img_id--;
-            }
-            else
-            {
-                s_setting_call_volume_value = cur_call_volume_img_id;//0;
-            }				
-
-            MMIAPISET_SetCallVolume(s_setting_call_volume_value);     */
-            MMIAPISET_SetCallVolume(cur_call_volume_img_id);  
-            //MMIAPISET_UiPlayRingByVolume(0, FALSE,0, 1, MMISET_RING_TYPE_KEY, PNULL, s_setting_call_volume_value);
-            //Settings_Volume_SoundUpdate(s_setting_call_volume_value);
-            MMK_CloseWin(win_id);
+            setVolume(win_id, cur_call_volume_img_id, COMM_VOL);
         }
 #else
         if(MMISET_COMMON_L_BTN_CTRL_ID == ((MMI_NOTIFY_T*)param)->src_id)//reset button被选中
@@ -2778,24 +2822,8 @@ LOCAL MMI_RESULT_E HandleCallVolumeSetWindow(
             {
                 //uint8 percent = (point.x - rect.left)*100/(rect.right-rect.left);
                 progress_down_flag = 1;
-                cur_item_index =  ROUND((float)(volume_item_total)
-                                *(down_point.x - progressrect.left)
-                                /(progressrect.right-progressrect.left)); //0 is not in total num, eg total=100, progressbar display 0~100
-                if(cur_item_index > volume_item_total)
-                    cur_item_index = volume_item_total -1;
-                if(cur_item_index < 0)
-                    cur_item_index = 0;
-                
-                if(cur_item_index != cur_call_volume_img_id)
-                {
-                    cur_call_volume_img_id = cur_item_index;
-                    if(cur_call_volume_img_id <1)
-                        cur_call_volume_img_id = 1;
-                    if(MMISET_VOL_MAX < cur_call_volume_img_id)
-                        cur_call_volume_img_id = MMISET_VOL_MAX;
-                    WATCHCOM_ProgressBarByIndex(win_id, progressrect, cur_call_volume_img_id,volume_item_total,res_progress_bg, res_progress_fg, res_progress_hand);
-                    MMK_UpdateScreen();
-                }
+                cur_item_index =  ROUND((float)(volume_item_total) * (down_point.x - progressrect.left)/(progressrect.right-progressrect.left)); //0 is not in total num, eg total=100, progressbar display 0~100
+                updateVolumeProgress(win_id, cur_item_index, cur_call_volume_img_id,COMM_VOL);
             }
         }
         break;
@@ -2807,40 +2835,8 @@ LOCAL MMI_RESULT_E HandleCallVolumeSetWindow(
             point.y = MMK_GET_TP_Y(param);
             if (progress_down_flag /*&& GUI_PointIsInRect(point, progressrect)*/)
             {
-                //uint8 percent = (point.x - rect.left)*100/(rect.right-rect.left);
-                /*current_percent_brightness= (point.x - rect.left)*100/(rect.right-rect.left);
-                WATCHCOM_ProgressBar(win_id, progressrect, current_percent_brightness,res_progress_bg, res_progress_fg, res_progress_hand);
-                cur_call_volume_img_id = Get_ProgressBar_CurrentIndex(current_percent_brightness,SET_PROGRESSBAR_TOTAL_LENGTH,SET_PROGRESSBAR_PERLEVEL_LENGTH);
-                cur_call_volume_img_id = Get_ProgressBar_CurrentIndex(current_percent_brightness,SET_PROGRESSBAR_TOTAL_LENGTH,SET_PROGRESSBAR_PERLEVEL_LENGTH);
-                if(cur_call_volume_img_id>1)
-                {
-                //s_setting_call_volume_value = 2*cur_call_volume_img_id+1;
-                s_setting_call_volume_value = 2*cur_call_volume_img_id-2;
-                //cur_call_volume_img_id--;
-                }
-                else
-                {
-                s_setting_call_volume_value = cur_call_volume_img_id;//0;
-                //cur_call_volume_img_id = 1;//0;
-                }
-                MMK_UpdateScreen();*/
-                cur_item_index =  ROUND((float)(volume_item_total)
-                                *(point.x - progressrect.left)
-                                /(progressrect.right-progressrect.left)); //0 is not in total num, eg total=100, progressbar display 0~100
-                 if(cur_item_index > volume_item_total)
-                    cur_item_index = volume_item_total -1;
-                if(cur_item_index < 0)
-                    cur_item_index = 0;
-                if(cur_item_index != cur_call_volume_img_id)
-                {
-                    cur_call_volume_img_id = cur_item_index;
-                    if(cur_call_volume_img_id <1)
-                        cur_call_volume_img_id = 1;
-                    if(MMISET_VOL_MAX < cur_call_volume_img_id)
-                        cur_call_volume_img_id = MMISET_VOL_MAX;
-                    WATCHCOM_ProgressBarByIndex(win_id, progressrect, cur_call_volume_img_id,volume_item_total,res_progress_bg, res_progress_fg, res_progress_hand);
-                    MMK_UpdateScreen();
-                }
+                cur_item_index =  ROUND((float)(volume_item_total)*(point.x - progressrect.left)/(progressrect.right-progressrect.left)); //0 is not in total num, eg total=100, progressbar display 0~100
+                updateVolumeProgress(win_id, cur_item_index, cur_call_volume_img_id,COMM_VOL);
             }
             else
             {
@@ -2967,8 +2963,17 @@ LOCAL MMI_RESULT_E HandleCallVolumeSetWindow(
         Settings_Volume_StopPreviewRing();
         break;
 	case MSG_KEYDOWN_RED:
-        break; 
-
+        break;
+    case MSG_KEYDOWN_DOWNSIDE:
+    case MSG_KEYDOWN_VOL_DOWN:
+    case MSG_KEYDOWN_LEFT:
+        updateVolumeProgress(win_id, (cur_call_volume_img_id-1), cur_call_volume_img_id,COMM_VOL);
+        break;
+    case MSG_KEYDOWN_UPSIDE:
+    case MSG_KEYDOWN_VOL_UP:
+    case MSG_KEYDOWN_RIGHT:
+        updateVolumeProgress(win_id, (cur_call_volume_img_id+1), cur_call_volume_img_id,COMM_VOL);
+        break;
 	default:
 	    recode = MMI_RESULT_FALSE;
 	    break;
@@ -3118,10 +3123,12 @@ LOCAL MMI_RESULT_E HandleRingVolumeSetWindow(
             &lcd_dev_info);	
 #endif
         break;
-    case MSG_CTL_MIDSK:
     case MSG_KEYDOWN_OK:
-    case MSG_CTL_OK:
     case MSG_APP_WEB:
+        setVolume(win_id, cur_ring_volume_img_id,CALL_RING_VOL);
+        break;
+    case MSG_CTL_MIDSK:
+    case MSG_CTL_OK:
 #if defined( TOUCH_PANEL_SUPPORT)||defined(ZDT_TOUCHPANEL_TYPE_MULTITP) //IGNORE9527
     case MSG_CTL_PENOK:
 #endif //TOUCH_PANEL_SUPPORT //IGNORE9527
@@ -3129,21 +3136,7 @@ LOCAL MMI_RESULT_E HandleRingVolumeSetWindow(
 #ifdef ZTE_WATCH
         if(MMISET_ZTE_WATCH_SETOK_BTN_CTRL_ID == ((MMI_NOTIFY_T*)param)->src_id)//reset button被选中
         {
-            /*if(cur_ring_volume_img_id<5)
-            {
-                s_setting_ring_volume_value = 2*cur_ring_volume_img_id+1;
-            }
-            else
-            {
-                s_setting_ring_volume_value = 9;//0;
-                cur_ring_volume_img_id = 5;//0;
-            }	*/				
-
-            MMIAPISET_SetCallRingVolume(cur_ring_volume_img_id);     
-            //MMIAPISET_UiPlayRingByVolume(0, FALSE,0, 1, MMISET_RING_TYPE_KEY, PNULL, s_setting_call_volume_value);
-            //Settings_Volume_SoundUpdate(s_setting_call_volume_value);
-            Settings_Volume_StopPreviewRing();
-            MMK_CloseWin(win_id);
+            setVolume(win_id, cur_ring_volume_img_id, CALL_RING_VOL);
         }
 
 #else
@@ -3224,36 +3217,9 @@ LOCAL MMI_RESULT_E HandleRingVolumeSetWindow(
             down_point.y = MMK_GET_TP_Y(param);
             if (GUI_PointIsInRect(down_point, progress_volume_touchrect))
             {
-                //uint8 percent = (point.x - rect.left)*100/(rect.right-rect.left);
                 progress_down_flag = 1;	
-                cur_item_index =  ROUND((float)(volume_item_total)
-                            *(down_point.x - progress_volume_rect.left)
-                            /(progress_volume_rect.right-progress_volume_rect.left)); //0 is not in total num, eg total=100, progressbar display 0~100
-                if(cur_item_index > volume_item_total)
-                    cur_item_index = volume_item_total -1;
-                if(cur_item_index < 0)
-                    cur_item_index = 0;
-                if(cur_item_index != cur_ring_volume_img_id)
-                {
-                    cur_ring_volume_img_id = cur_item_index;
-                    if(MMISET_VOL_MAX < cur_ring_volume_img_id)
-                        cur_ring_volume_img_id = MMISET_VOL_MAX;
-                    WATCHCOM_ProgressBarByIndex(win_id, progress_volume_rect, cur_ring_volume_img_id,volume_item_total,res_progress_bg, res_progress_fg, res_progress_hand);
-                    MMK_UpdateScreen();
-                }
-                /*current_percent_brightness = (point.x - rect.left)*100/(rect.right-rect.left);
-                WATCHCOM_ProgressBar(win_id, progressrect, current_percent_brightness,res_progress_bg, res_progress_fg, res_progress_hand);
-                cur_ring_volume_img_id = Get_ProgressBar_CurrentIndex(current_percent_brightness,SET_PROGRESSBAR_TOTAL_LENGTH,SET_PROGRESSBAR_PERLEVEL_LENGTH);
-                if(cur_ring_volume_img_id>1)
-                {
-                    s_setting_ring_volume_value = 2*cur_ring_volume_img_id-2;
-                }
-                else
-                {
-                    s_setting_ring_volume_value = cur_ring_volume_img_id;//0;
-                    //cur_ring_volume_img_id = 5;//0;
-                }
-                MMK_UpdateScreen();*/
+                cur_item_index =  ROUND((float)(volume_item_total)*(down_point.x - progress_volume_rect.left)/(progress_volume_rect.right-progress_volume_rect.left)); //0 is not in total num, eg total=100, progressbar display 0~100
+                updateVolumeProgress(win_id, cur_item_index, cur_ring_volume_img_id,CALL_RING_VOL);
             }
         }
         break;
@@ -3264,36 +3230,8 @@ LOCAL MMI_RESULT_E HandleRingVolumeSetWindow(
             point.y = MMK_GET_TP_Y(param);
             if (progress_down_flag /*&& GUI_PointIsInRect(point, progressrect)*/)
             {
-                //uint8 percent = (point.x - rect.left)*100/(rect.right-rect.left);
-                /*current_percent_brightness= (point.x - rect.left)*100/(rect.right-rect.left);
-                current_percent_brightness = (point.x - rect.left)*100/(rect.right-rect.left);
-                WATCHCOM_ProgressBar(win_id, progressrect, current_percent_brightness,res_progress_bg, res_progress_fg, res_progress_hand);
-                cur_ring_volume_img_id = Get_ProgressBar_CurrentIndex(current_percent_brightness,SET_PROGRESSBAR_TOTAL_LENGTH,SET_PROGRESSBAR_PERLEVEL_LENGTH);
-                if(cur_ring_volume_img_id>1)
-                {
-                    s_setting_ring_volume_value = 2*cur_ring_volume_img_id-2;
-                }
-                else
-                {
-                    s_setting_ring_volume_value = cur_ring_volume_img_id;//0;
-                    //cur_ring_volume_img_id = 5;//0;
-                }
-                MMK_UpdateScreen();*/
-                cur_item_index =  ROUND((float)(volume_item_total)
-                            *(point.x - progress_volume_rect.left)
-                            /(progress_volume_rect.right-progress_volume_rect.left)); //0 is not in total num, eg total=100, progressbar display 0~100
-                if(cur_item_index > volume_item_total)
-                    cur_item_index = volume_item_total -1;
-                if(cur_item_index < 0)
-                    cur_item_index = 0;
-                if(cur_item_index != cur_ring_volume_img_id)
-                {
-                    cur_ring_volume_img_id = cur_item_index;
-                    if(MMISET_VOL_MAX < cur_ring_volume_img_id)
-                        cur_ring_volume_img_id = MMISET_VOL_MAX;
-                    WATCHCOM_ProgressBarByIndex(win_id, progress_volume_rect, cur_ring_volume_img_id,volume_item_total,res_progress_bg, res_progress_fg, res_progress_hand);
-                    MMK_UpdateScreen();
-                }
+                cur_item_index =  ROUND((float)(volume_item_total)*(point.x - progress_volume_rect.left)/(progress_volume_rect.right-progress_volume_rect.left)); //0 is not in total num, eg total=100, progressbar display 0~100
+                updateVolumeProgress(win_id, cur_item_index, cur_ring_volume_img_id,CALL_RING_VOL);
             }
             else
                 progress_down_flag = 0;
@@ -3425,7 +3363,16 @@ LOCAL MMI_RESULT_E HandleRingVolumeSetWindow(
         break;
     case MSG_KEYDOWN_RED:
         break;
-        
+    case MSG_KEYDOWN_DOWNSIDE:
+    case MSG_KEYDOWN_VOL_DOWN:
+    case MSG_KEYDOWN_LEFT:
+        updateVolumeProgress(win_id, (cur_ring_volume_img_id-1), cur_ring_volume_img_id,CALL_RING_VOL);
+        break;
+    case MSG_KEYDOWN_UPSIDE:
+    case MSG_KEYDOWN_VOL_UP:
+    case MSG_KEYDOWN_RIGHT:
+        updateVolumeProgress(win_id, (cur_ring_volume_img_id+1), cur_ring_volume_img_id,CALL_RING_VOL);
+        break;
     default:
         recode = MMI_RESULT_FALSE;
         break;
