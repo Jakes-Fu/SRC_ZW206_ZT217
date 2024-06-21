@@ -543,7 +543,8 @@ typedef uint32 GUILIST_STATE_T;
 */
 #define GUILIST_STATE_NEED_TITLE        0x00000004   //list 需要标题状态，默认情况下需要
 /*! @def GUILIST_STATE_NEED_HIGHTBAR
-@brief list 需要高亮条状态，默认情况下需要
+@brief list 需要高亮条状态，默认情况下需要（注意带有MSG_KEYDOWN_UP,MSG_KEYDOWN_DOWN,MSG_KEYDOWN_LEFT,MSG_KEYDOWN_RIGHT按键
+* 的情况下设置了GUILIST_STATE_NEED_HIGHTBAR 为FALSE是无效的ListCtrlHandleMsg会设置为TRUE）
 */
 #define GUILIST_STATE_NEED_HIGHTBAR     0x00000008   //list 需要高亮条状态，默认情况下需要
 /*! @def GUILIST_STATE_NEED_PRGBAR
