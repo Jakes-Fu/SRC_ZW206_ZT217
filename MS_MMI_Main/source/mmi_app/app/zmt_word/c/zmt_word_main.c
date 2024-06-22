@@ -48,6 +48,7 @@ LOCAL GUI_RECT_T word_pre_rect = {0.5*WORD_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGH
 LOCAL GUI_RECT_T word_del_rect = {2.5*WORD_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-WORD_CARD_LINE_HIGHT, 3.5*WORD_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-2};//生词本-删除
 LOCAL GUI_RECT_T word_next_rect = {4.5*WORD_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-WORD_CARD_LINE_HIGHT, 5.5*WORD_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-2};//生词本-下一个
 LOCAL GUI_RECT_T word_tip_rect = {WORD_CARD_LINE_WIDTH,4*WORD_CARD_LINE_HIGHT,MMI_MAINSCREEN_WIDTH-WORD_CARD_LINE_WIDTH,6*WORD_CARD_LINE_HIGHT};//弹框提示
+LOCAL GUI_RECT_T word_Hor_line_rect = {0};
 
 LOCAL int16 main_tp_down_x = 0;
 LOCAL int16 main_tp_down_y = 0;
@@ -927,7 +928,7 @@ LOCAL void WordDetail_ShowTip(void)
         append_layer.layer_level = UILAYER_LEVEL_HIGH;
         UILAYER_AppendBltLayer(&append_layer);
 
-        LCD_FillRoundedRect(&word_detail_tip_layer, word_tip_rect, word_tip_rect, MMI_WHITE_COLOR);
+        LCD_FillRoundedRect(&word_detail_tip_layer, word_msg_rect, word_msg_rect, MMI_WHITE_COLOR);
 
         text_style.align = ALIGN_HVMIDDLE;
         text_style.font = DP_FONT_18;
@@ -951,8 +952,8 @@ LOCAL void WordDetail_ShowTip(void)
         text_string.wstr_len = MMIAPICOM_Wstrlen(text_string.wstr_ptr);
         GUISTR_DrawTextToLCDInRect(
             (const GUI_LCD_DEV_INFO *)&word_detail_tip_layer,
-            &word_tip_rect,
-            &word_tip_rect,
+            &word_msg_rect,
+            &word_msg_rect,
             &text_string,
             &text_style,
             GUISTR_STATE_ALIGN,
@@ -1039,6 +1040,9 @@ LOCAL void WordDetail_DisplayDtailInfo(MMI_WIN_ID_T win_id)
     audio_rect.right = 6*WORD_CARD_LINE_WIDTH;
     GUIBUTTON_SetRect(MMI_ZMT_WORD_DETAIL_BUTTON_AUDIO_CTRL_ID, &audio_rect);
     LCD_DrawHLine(&lcd_dev_info, word_pinyin_rect.left, audio_rect.bottom, word_pinyin_rect.right, MMI_WHITE_COLOR);
+    word_Hor_line_rect = word_pinyin_rect;
+    word_Hor_line_rect.top = audio_rect.top;
+    word_Hor_line_rect.bottom = audio_rect.bottom;
 
     if(is_open_new_word){
         size = strlen(new_word_detail_info[word_detail_cur_idx]->translation);
@@ -1138,10 +1142,10 @@ LOCAL MMI_RESULT_E HandleWordDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E m
                     UILAYER_CREATE_T create_info = {0};
                     create_info.lcd_id = MAIN_LCD_ID;
                     create_info.owner_handle = win_id;
-                    create_info.offset_x = word_tip_rect.left;
-                    create_info.offset_y = word_tip_rect.top;
-                    create_info.width = word_tip_rect.right;
-                    create_info.height = word_tip_rect.bottom;
+                    create_info.offset_x = word_msg_rect.left;
+                    create_info.offset_y = word_msg_rect.top;
+                    create_info.width = word_msg_rect.right - word_msg_rect.left;
+                    create_info.height = word_msg_rect.bottom;
                     create_info.is_bg_layer = FALSE;
                     create_info.is_static_layer = FALSE;
                     UILAYER_CreateLayer(&create_info, &word_detail_tip_layer);
@@ -1182,26 +1186,31 @@ LOCAL MMI_RESULT_E HandleWordDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E m
                 //SCI_TRACE_LOW("%s: word_detail_count = %d", __FUNCTION__, word_detail_count);
                 if(word_detail_count == 0)
                 {
+                    GUIBUTTON_SetVisible(MMI_ZMT_WORD_DETAIL_BUTTON_AUDIO_CTRL_ID, FALSE, FALSE);
                     MMIRES_GetText(WORD_LOADING, win_id, &text_string); 
                     GUITEXT_SetString(MMI_ZMT_WORD_DETAIL_TEXT_INFO_CTRL_ID, text_string.wstr_ptr,text_string.wstr_len, TRUE);
                 }
                 else if(word_detail_count == -1)
                 {
+                    GUIBUTTON_SetVisible(MMI_ZMT_WORD_DETAIL_BUTTON_AUDIO_CTRL_ID, FALSE, FALSE);
                     MMIRES_GetText(WORD_LOADING_FAILED, win_id, &text_string);
                     GUITEXT_SetString(MMI_ZMT_WORD_DETAIL_TEXT_INFO_CTRL_ID, text_string.wstr_ptr,text_string.wstr_len, TRUE);
                 }
                 else if(word_detail_count == -2)
                 {
+                    GUIBUTTON_SetVisible(MMI_ZMT_WORD_DETAIL_BUTTON_AUDIO_CTRL_ID, FALSE, FALSE);
                     MMIRES_GetText(WORD_NO_DATA, win_id, &text_string);
                     GUITEXT_SetString(MMI_ZMT_WORD_DETAIL_TEXT_INFO_CTRL_ID, text_string.wstr_ptr,text_string.wstr_len, TRUE);
                 }
                 else if(word_detail_count == -3)
                 {
+                    GUIBUTTON_SetVisible(MMI_ZMT_WORD_DETAIL_BUTTON_AUDIO_CTRL_ID, FALSE, FALSE);
                     MMIRES_GetText(NEW_WORD_BOOK_NO_DATA, win_id, &text_string);
                     GUITEXT_SetString(MMI_ZMT_WORD_DETAIL_TEXT_INFO_CTRL_ID, text_string.wstr_ptr,text_string.wstr_len, TRUE);
                 }
                 else
                 {
+                    GUIBUTTON_SetVisible(MMI_ZMT_WORD_DETAIL_BUTTON_AUDIO_CTRL_ID, TRUE, TRUE);
                     GUIBUTTON_SetVisible(MMI_ZMT_WORD_DETAIL_LEFT_CTRL_ID,TRUE,FALSE);
                     GUIBUTTON_SetVisible(MMI_ZMT_WORD_DETAIL_RIGHT_CTRL_ID,TRUE,FALSE);
                     if(word_detail_cur_idx < word_detail_count)
@@ -1243,7 +1252,6 @@ LOCAL MMI_RESULT_E HandleWordDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E m
                             {
                                 GUIBUTTON_SetVisible(MMI_ZMT_WORD_MSG_TIPS_CTRL_ID, TRUE, TRUE);
                                 GUIBUTTON_SetTextId(MMI_ZMT_WORD_MSG_TIPS_CTRL_ID, WORD_FINISH);
-                                GUIBUTTON_SetVisible(MMI_ZMT_WORD_DETAIL_BUTTON_AUDIO_CTRL_ID,FALSE,FALSE);
                                 GUIBUTTON_SetTextId(MMI_ZMT_WORD_DETAIL_LEFT_CTRL_ID, HANZI_BACK_CHAPTER);
                                 GUIBUTTON_SetTextId(MMI_ZMT_WORD_DETAIL_RIGHT_CTRL_ID, HANZI_NEXT_CHAPTER);
                                 GUIBUTTON_SetCallBackFunc(MMI_ZMT_WORD_DETAIL_LEFT_CTRL_ID, MMI_CloseWordDetailWin);
@@ -1253,7 +1261,6 @@ LOCAL MMI_RESULT_E HandleWordDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E m
                             {
                                 GUIBUTTON_SetVisible(MMI_ZMT_WORD_MSG_TIPS_CTRL_ID, TRUE, TRUE);
                                 GUIBUTTON_SetTextId(MMI_ZMT_WORD_MSG_TIPS_CTRL_ID, WORD_BOOK_FINISH);
-                                GUIBUTTON_SetVisible(MMI_ZMT_WORD_DETAIL_BUTTON_AUDIO_CTRL_ID,FALSE,FALSE);
                                 GUIBUTTON_SetVisible(MMI_ZMT_WORD_DETAIL_LEFT_CTRL_ID,FALSE,FALSE);
                                 GUIBUTTON_SetTextId(MMI_ZMT_WORD_DETAIL_RIGHT_CTRL_ID, WORD_BACK_CH);            
                                 GUIBUTTON_SetCallBackFunc(MMI_ZMT_WORD_DETAIL_RIGHT_CTRL_ID, MMI_CloseWordDetailWin);
@@ -1264,7 +1271,6 @@ LOCAL MMI_RESULT_E HandleWordDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E m
                                 GUIBUTTON_SetVisible(MMI_ZMT_WORD_DETAIL_DELETE_CTRL_ID,FALSE,FALSE);
                                 GUIBUTTON_SetVisible(MMI_ZMT_WORD_MSG_TIPS_CTRL_ID, TRUE, TRUE);
                                 GUIBUTTON_SetTextId(MMI_ZMT_WORD_MSG_TIPS_CTRL_ID, NEW_WORD_BOOK_FINISH);
-                                GUIBUTTON_SetVisible(MMI_ZMT_WORD_DETAIL_BUTTON_AUDIO_CTRL_ID,FALSE,FALSE);
                                 GUIBUTTON_SetVisible(MMI_ZMT_WORD_DETAIL_LEFT_CTRL_ID,FALSE,FALSE);
                                 GUIBUTTON_SetRect(MMI_ZMT_WORD_DETAIL_RIGHT_CTRL_ID, &word_right_rect);
                                 GUIBUTTON_SetTextAlign(MMI_ZMT_WORD_DETAIL_RIGHT_CTRL_ID,ALIGN_HVMIDDLE);
@@ -1272,6 +1278,7 @@ LOCAL MMI_RESULT_E HandleWordDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E m
                                 GUIBUTTON_SetTextId(MMI_ZMT_WORD_DETAIL_RIGHT_CTRL_ID, WORD_BACK_CH);            
                                 GUIBUTTON_SetCallBackFunc(MMI_ZMT_WORD_DETAIL_RIGHT_CTRL_ID, MMI_CloseWordDetailWin);
                          }
+                         LCD_DrawHLine(&lcd_dev_info, word_Hor_line_rect.left, word_Hor_line_rect.bottom, word_Hor_line_rect.right, MMI_WHITE_COLOR);
                     }
                 }
             }

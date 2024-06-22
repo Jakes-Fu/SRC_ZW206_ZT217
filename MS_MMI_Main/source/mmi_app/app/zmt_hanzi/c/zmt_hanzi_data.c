@@ -128,6 +128,7 @@ PUBLIC void Hanzi_WriteExistUnmasterHanzi(cJSON * hanzis, uint8 write_count)
 PUBLIC void Hanzi_WriteUnmasterHanzi(uint8 write_count)
 {
     uint16 i = 0;
+    uint16 index = 0;
     char * out = NULL;
     char file_path[30] = {0};
     char * pRcv = NULL;
@@ -156,37 +157,38 @@ PUBLIC void Hanzi_WriteUnmasterHanzi(uint8 write_count)
     {       
         if(cur_chapter_unmaster_idx[i] != 0)
         {
+            index = cur_chapter_unmaster_idx[i] - 1;
             hanzis_item = cJSON_CreateObject();
-            if(hanzi_detail_info[i]->word != NULL){
-                text = cJSON_CreateString(hanzi_detail_info[i]->word);
+            if(hanzi_detail_info[index]->word != NULL){
+                text = cJSON_CreateString(hanzi_detail_info[index]->word);
                 cJSON_AddItemToObject(hanzis_item, "text", text);
             }else{
                 cJSON_AddStringToObject(hanzis_item, "text", "");
             }
             
-            if(hanzi_detail_info[i]->audio_uri != NULL){
-                audio = cJSON_CreateString(hanzi_detail_info[i]->audio_uri);
+            if(hanzi_detail_info[index]->audio_uri != NULL){
+                audio = cJSON_CreateString(hanzi_detail_info[index]->audio_uri);
                 cJSON_AddItemToObject(hanzis_item, "audio", audio);
             }else{
                 cJSON_AddStringToObject(hanzis_item, "audio", "");
             }
             
-            if(hanzi_detail_info[i]->pingy != NULL){
-                pinyin = cJSON_CreateString(hanzi_detail_info[i]->pingy);
+            if(hanzi_detail_info[index]->pingy != NULL){
+                pinyin = cJSON_CreateString(hanzi_detail_info[index]->pingy);
                 cJSON_AddItemToObject(hanzis_item, "pinyin", pinyin);
             }else{
                 cJSON_AddStringToObject(hanzis_item, "pinyin", "");
             }
             
-            if(hanzi_detail_info[i]->similar_word != NULL){
-                similar_word = cJSON_CreateString(hanzi_detail_info[i]->similar_word);
+            if(hanzi_detail_info[index]->similar_word != NULL){
+                similar_word = cJSON_CreateString(hanzi_detail_info[index]->similar_word);
                 cJSON_AddItemToObject(hanzis_item, "similar_word", similar_word);
             }else{
                 cJSON_AddStringToObject(hanzis_item, "similar_word", "");
             }
             
-            if(hanzi_detail_info[i]->annotation != NULL){
-                annotation = cJSON_CreateString(hanzi_detail_info[i]->annotation);
+            if(hanzi_detail_info[index]->annotation != NULL){
+                annotation = cJSON_CreateString(hanzi_detail_info[index]->annotation);
                 cJSON_AddItemToObject(hanzis_item, "annotation", annotation);
             }else{
                 cJSON_AddStringToObject(hanzis_item, "annotation", "");

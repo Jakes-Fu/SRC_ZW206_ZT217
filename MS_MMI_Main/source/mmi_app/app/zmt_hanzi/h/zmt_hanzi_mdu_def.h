@@ -12,7 +12,7 @@
 
 //[[define string information
 
-RES_ADD_STRING(HANZI_CARD,"ºº×Ö¿¨")
+RES_ADD_STRING(HANZI_CARD,"ºº×ÖÑ§Ï°")
 RES_ADD_STRING(HANZI_PACTISE,"ºº×ÖÑ§Ï°")
 RES_ADD_STRING(HANZI_NEW_WORD,"Éú´Ê±¾")
 RES_ADD_STRING(HANZI_MASTERED,"ÒÑÕÆÎÕ")

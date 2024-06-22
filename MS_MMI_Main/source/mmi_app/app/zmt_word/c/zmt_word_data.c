@@ -111,6 +111,7 @@ LOCAL void Word_WriteExistUnmasterChapterWord(uint16 book_id, uint16 chap_id,cJS
 PUBLIC void Word_WriteUnmasterChapterWord(uint16 book_id, uint16 chap_id, char * chap_name, uint8 write_count)
 {
     uint16 i = 0;
+    uint16 index = 0;
     char * out = NULL;
     char file_path[50] = {0};
     char * pRcv = NULL;
@@ -152,31 +153,31 @@ PUBLIC void Word_WriteUnmasterChapterWord(uint16 book_id, uint16 chap_id, char *
     {
         if(chapter_unmaster_idx[i] != 0)
         {
+            index = chapter_unmaster_idx[i] - 1;
             word_item = cJSON_CreateObject();
-
-            if(word_chapter_info[word_book_info.cur_chapter_idx]->detail[i]->word != NULL){
-                text = cJSON_CreateString(word_chapter_info[word_book_info.cur_chapter_idx]->detail[i]->word);
+            if(word_chapter_info[word_book_info.cur_chapter_idx]->detail[index]->word != NULL){
+                text = cJSON_CreateString(word_chapter_info[word_book_info.cur_chapter_idx]->detail[index]->word);
                 cJSON_AddItemToObject(word_item, "text", text);
             }else{
                 cJSON_AddStringToObject(word_item, "text", "");
             }
 
-            if(word_chapter_info[word_book_info.cur_chapter_idx]->detail[i]->audio_uri != NULL){
-                audio = cJSON_CreateString(word_chapter_info[word_book_info.cur_chapter_idx]->detail[i]->audio_uri);
+            if(word_chapter_info[word_book_info.cur_chapter_idx]->detail[index]->audio_uri != NULL){
+                audio = cJSON_CreateString(word_chapter_info[word_book_info.cur_chapter_idx]->detail[index]->audio_uri);
                 cJSON_AddItemToObject(word_item, "audio", audio);
             }else{
                 cJSON_AddStringToObject(word_item, "audio", "");
             }
 
-            if(word_chapter_info[word_book_info.cur_chapter_idx]->detail[i]->phonetic != NULL){
-                phonetic = cJSON_CreateString(word_chapter_info[word_book_info.cur_chapter_idx]->detail[i]->phonetic);
+            if(word_chapter_info[word_book_info.cur_chapter_idx]->detail[index]->phonetic != NULL){
+                phonetic = cJSON_CreateString(word_chapter_info[word_book_info.cur_chapter_idx]->detail[index]->phonetic);
                 cJSON_AddItemToObject(word_item, "phonetic", phonetic);
             }else{
                 cJSON_AddStringToObject(word_item, "phonetic", "");
             }
 
-            if(word_chapter_info[word_book_info.cur_chapter_idx]->detail[i]->translation != NULL){
-                translation = cJSON_CreateString(word_chapter_info[word_book_info.cur_chapter_idx]->detail[i]->translation);
+            if(word_chapter_info[word_book_info.cur_chapter_idx]->detail[index]->translation != NULL){
+                translation = cJSON_CreateString(word_chapter_info[word_book_info.cur_chapter_idx]->detail[index]->translation);
                 cJSON_AddItemToObject(word_item, "translation", translation);
             }else{
                 cJSON_AddStringToObject(word_item, "translation", "");
