@@ -253,6 +253,10 @@ extern MMI_APPLICATION_T  gHeroTtsApp;
    extern MMI_APPLICATION_T    g_zyb_app;
 #endif
 
+#ifdef ZMT_NET_SUPPORT
+    extern MMI_APPLICATION_T    mmi_zmt_app;
+#endif
+
 /**-------------------------------------------------------------------------*
  **                         Compile Flag                                   *
  **------------------------------------------------------------------------*/

@@ -127,6 +127,94 @@ LOCAL void ZmtGptZuoWen_DeleteFrontTwoMsg(void)
     }
 }
 
+PUBLIC void ZmtGptZuoWen_SelfRecordRecCallback(void *pUser,uint8 * pRcv,uint32 Rcv_len)
+{
+    uint16 flag= 0;
+    int i = 0;
+    int j = 0;
+    char json_str[4096]={0};
+    char * result;
+
+    result = SCI_ALLOC_APPZ(Rcv_len+1);
+    SCI_MEMSET(result,0,Rcv_len+1);
+    SCI_MEMCPY(result,pRcv,Rcv_len);
+    for (i = 0 ,j = 0;i < Rcv_len ; i++)
+    {
+        if(flag!=0)
+        {
+            if(result[i]!='\n'&&result[i]!='\r'&&result[i]!='\0')
+            {
+                json_str[j++]=result[i];
+            }
+        }
+        if(result[i] == '{'&&flag==0)
+        {
+            flag = i;
+            json_str[j++]=result[i];
+        }else if(result[i] == '}')
+        {
+            json_str[j++]='\0';
+            break;
+        }
+    }
+    SCI_TRACE_LOW("%s: json_str: %s", __FUNCTION__, json_str);
+    if(pRcv != NULL && Rcv_len > 0)
+    {
+        cJSON * root = cJSON_Parse(json_str);
+        cJSON * data = cJSON_GetObjectItem(root, "data");
+        cJSON * code = cJSON_GetObjectItem(root, "code");
+        if(root != NULL && root->type != cJSON_NULL)
+        {
+            if(code->valueint == 200 && data != NULL && data->valuestring != NULL)
+            {
+                if(gpt_zuowen_record_text){
+                    SCI_FREE(gpt_zuowen_record_text);
+                    gpt_zuowen_record_text = NULL;
+                }
+                gpt_zuowen_record_text = SCI_ALLOC_APPZ(strlen(data->valuestring)+1);
+                memset(gpt_zuowen_record_text, 0, strlen(data->valuestring)+1);
+                strcpy(gpt_zuowen_record_text, data->valuestring);
+                gpt_zuowen_record_type = GPT_RECORD_TYPE_SUCCESS;
+            }
+            else
+            {
+                SCI_TRACE_LOW("%s: code error!!,code = %d", __FUNCTION__, code->valueint);
+                if(gpt_zuowen_record_text){
+                    SCI_FREE(gpt_zuowen_record_text);
+                    gpt_zuowen_record_text = NULL;
+                }
+                gpt_zuowen_record_type = GPT_RECORD_TYPE_VOICE_ERROR;
+            }
+            cJSON_Delete(root);
+        }
+        else
+        {
+            SCI_TRACE_LOW("%s: data error!!", __FUNCTION__);
+            if(gpt_zuowen_record_text){
+                SCI_FREE(gpt_zuowen_record_text);
+                gpt_zuowen_record_text = NULL;
+            }
+            gpt_zuowen_record_type = GPT_RECORD_TYPE_FAIL;
+        }
+    }
+    else
+    {
+        SCI_TRACE_LOW("%s: request error!!", __FUNCTION__);
+        if(gpt_zuowen_record_text){
+            SCI_FREE(gpt_zuowen_record_text);
+            gpt_zuowen_record_text = NULL;
+        }
+        gpt_zuowen_record_type = GPT_RECORD_TYPE_ERROR;
+    }
+    SCI_FREE(result);
+    ZmtGptZuoWen_DispalyRecord(ZMT_GPT_ZUOWEN_WIN_ID, gpt_zuowen_record_type);
+    //这里不能直接走app msg处理，需要添加个图层来重绘full paint
+    /*if(MMK_IsFocusWin(ZMT_GPT_ZUOWEN_WIN_ID))
+    {
+        MMK_SendMsg(ZMT_GPT_ZUOWEN_WIN_ID, MSG_FULL_PAINT, PNULL);
+    }*/
+}
+
 PUBLIC void ZmtGptZuoWen_RecAiSelfTextResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id)
 {
     SCI_TRACE_LOW("%s: is_ok = %d, Rcv_len  = %d", __FUNCTION__, is_ok, Rcv_len);
@@ -416,7 +504,7 @@ LOCAL void ZmtGptZuoWen_StopRecord(MMI_WIN_ID_T win_id, BOOLEAN is_send)
         data_buf = zmt_file_data_read(ZMT_GPT_RECORD_SELF_FILE_C, &data_size);
         SCI_TRACE_LOW("%s: data_size = %d", __FUNCTION__, data_size);
         if(data_buf != NULL && data_size > 2){
-            ZmtGpt_SendSelfRecord(0, data_buf, data_size);
+            ZmtGpt_SendSelfRecord(0, data_buf, data_size, ZmtGptZuoWen_SelfRecordRecCallback);
             SCI_FREE(data_buf);
         }
         zmt_file_delete(ZMT_GPT_RECORD_SELF_FILE_C);
@@ -808,11 +896,14 @@ LOCAL void  ZmtGptZuoWen_DispalyRecord(MMI_WIN_ID_T win_id, int record_type)
                 strcpy(gpt_zuowen_record_text, "她俩向着光明和快乐飞走了，飞到那没有寒冷的地方");
             }
          #endif
+            SCI_TRACE_LOW("%s: record_type = %d", __FUNCTION__, record_type);
             if(gpt_zuowen_record_text != NULL && strlen(gpt_zuowen_record_text) > 2)
             {
-                sprintf(text_str, "%s", gpt_zuowen_record_text);
+                memset(&text_str, 0, 1024);
+                memset(&text, 0, 1024);
+                strcpy(text_str, gpt_zuowen_record_text);
              #ifndef WIN32
-                GUI_UTF8ToWstr(text, 1024, text_str, text_str);
+                GUI_UTF8ToWstr(text, 1024, text_str, strlen(text_str));
              #else
                 GUI_GBToWstr(text, text_str, strlen(text_str));
              #endif
@@ -824,7 +915,7 @@ LOCAL void  ZmtGptZuoWen_DispalyRecord(MMI_WIN_ID_T win_id, int record_type)
                 line_num = GUI_CalculateStringLinesByPixelNum(pixel_num,text_string.wstr_ptr,text_string.wstr_len,DP_FONT_16,0,TRUE);
             }
             if(line_num > 0)
-            {               
+            {
                 zmt_gpt_record_rect.top = zmt_gpt_record_rect.bottom - (line_num+1)*0.9*ZMT_GPT_LINE_HIGHT;
                 LCD_DrawRoundedRect(&gpt_zuowen_record_layer, zmt_gpt_record_rect, zmt_gpt_record_rect, MMI_WHITE_COLOR);
                 LCD_FillRoundedRect(&gpt_zuowen_record_layer, zmt_gpt_record_rect, zmt_gpt_record_rect, MMI_WHITE_COLOR);

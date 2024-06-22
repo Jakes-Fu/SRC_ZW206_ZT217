@@ -125,8 +125,9 @@ PUBLIC void ZmtGpt_SendString(char * save_path, char * string)
     MMIZDT_HTTP_AppSend(FALSE, url, data, strlen(data), 30*1000, 0, 0, 0, 0, 0, ZmtGptKouYuTalk_RecAiVoiceResultCb);
 }
 
-PUBLIC void ZmtGpt_SendSelfRecord(uint8 req_type, char * record_buf, uint32 record_size)
+PUBLIC void ZmtGpt_SendSelfRecord(uint8 req_type, char * record_buf, uint32 record_size, ZMTTCPRCVHANDLER rec_handle)
 {
+#if ZMT_GPT_USE_TCP_POST_VOICE == 0
     char url[50] = {0};
     char * out;
     cJSON * root;
@@ -155,6 +156,22 @@ PUBLIC void ZmtGpt_SendSelfRecord(uint8 req_type, char * record_buf, uint32 reco
     }
     cJSON_Delete(root);
     SCI_FREE(out);
+#else
+    BOOLEAN result = TRUE;
+    ZMT_DATA_CONTENT_T * chatdata = NULL;
+    char * data_buf = NULL;
+    uint32 data_size = 0;
+    chatdata=(ZMT_DATA_CONTENT_T*)SCI_ALLOC_APPZ(sizeof(ZMT_DATA_CONTENT_T));
+    SCI_MEMSET(chatdata, 0, sizeof(ZMT_DATA_CONTENT_T));
+    chatdata->data_type = ZMT_DATA_AUDIO;
+    chatdata->data = record_buf;
+    chatdata->data_len = record_size;
+    chatdata->rec_handle = rec_handle;
+    chatdata->time_stamp = MMIAPICOM_GetCurTime();
+    result = ZMT_Net_TCPSendFile(chatdata);
+    SCI_FREE(chatdata);
+    SCI_TRACE_LOW("%s: result = %d", __FUNCTION__, result);
+#endif
 }
 
 PUBLIC void ZmtGpt_SendRecord(uint32 lan_type, char * record_buf, uint32 record_size)
@@ -437,6 +454,11 @@ LOCAL MMI_RESULT_E HandleZmtGptWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_i
             #if ZMT_GPT_USE_SELF_API == 0
                 gpt_get_baidu_access_token();
             #endif
+            #if ZMT_GPT_USE_TCP_POST_VOICE != 0
+                MMIZmt_AppInit();
+                MMIZMT_Net_Init();				
+                MMIZMT_Net_Open();
+            #endif
             }
             break;
         case MSG_FULL_PAINT:
@@ -457,7 +479,7 @@ LOCAL MMI_RESULT_E HandleZmtGptWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_i
             break;
         case MSG_CLOSE_WINDOW:
             {
-                
+                ZMT_Net_TCP_Close();
             }
             break;
         default:

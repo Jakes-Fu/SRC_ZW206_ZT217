@@ -2621,3 +2621,9 @@ MINCPATH		+=  MS_MMI_Main/source/mmi_app/app/lyric_parser/h
 MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/lyric_parser/c
 SOURCES			+=  lyric_parser.c
 endif
+
+ifeq ($(strip $(ZMT_NET_SUPPORT)), TRUE)
+MINCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_net/h
+MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_net/c
+SOURCES			+=  zmt_net_main.c zmt_http.c zmt_net.c zmt_tcp.c
+endif

@@ -1375,6 +1375,36 @@ typedef enum _ZYB_APP_SIGNAL
 }ZYB_APP_SIG_E;
 #endif
 
+#ifdef ZMT_NET_SUPPORT
+typedef enum _ZMT_APP_SIGNAL
+{
+    ZMT_APP_SIGNAL_START = 5000 ,
+
+    ZMT_APP_SIGNAL_NET_INIT,
+    ZMT_APP_SIGNAL_NET_OPEN,
+    ZMT_APP_SIGNAL_NET_CLOSE,
+    ZMT_APP_SIGNAL_NET_RESET,
+    ZMT_APP_SIGNAL_NET_ACTIVE_SUCCESS,
+    ZMT_APP_SIGNAL_NET_ACTIVE_FAIL,
+    ZMT_APP_SIGNAL_NET_CONNET_FAIL,
+
+    ZMT_APP_SIGNAL_TCP_UNREG,
+    ZMT_APP_SIGNAL_TCP_REG,
+    ZMT_APP_SIGNAL_TCP_REG_SUCCESS,
+    ZMT_APP_SIGNAL_TCP_REG_FAIL,
+    ZMT_APP_SIGNAL_TCP_CONNECT_SUCCESS,
+    ZMT_APP_SIGNAL_TCP_WRITE_ADD,
+    ZMT_APP_SIGNAL_TCP_WRITE_START,
+    ZMT_APP_SIGNAL_TCP_WRITE_RESTART,
+    ZMT_APP_SIGNAL_TCP_WRITE_SUCCESS,
+    ZMT_APP_SIGNAL_TCP_WRITE_FAIL,
+    ZMT_APP_SIGNAL_TCP_RCV_DATA,
+    ZMT_APP_SIGNAL_TCP_DISCONNECTED,
+
+    ZMT_APP_SIGNAL_END,
+    ZMT_APP_SIGNAL_MAX
+} ZMT_APP_SIG_E;
+#endif
 /**---------------------------------------------------------------------------*
  **                         Global Variables                                  *
  **---------------------------------------------------------------------------*/

@@ -9,6 +9,10 @@
 #include "sci_types.h"
 #include "mmk_type.h"
 #include "os_api.h"
+#ifdef ZMT_NET_SUPPORT
+#include "zmt_net_export.h"
+#include "zmt_net.h"
+#endif
 
 #ifdef WIN32
 #define ZMT_GPT_USE_FOR_TEST 1
@@ -17,6 +21,7 @@
 #endif
 
 #define ZMT_GPT_USE_SELF_API 1
+#define ZMT_GPT_USE_TCP_POST_VOICE 1
 
 #define ZMT_GPT_TOPIC_LIST_PATH "D:\\topic_list.json"
 #define ZMT_GPT_KOUYU_TALK_PATH "D:\\kouyu_talk.json"
@@ -105,7 +110,7 @@ typedef enum {
 PUBLIC void gpt_get_baidu_access_token(void);
 PUBLIC void ZmtGpt_SendString(char * save_path, char * string);
 PUBLIC void ZmtGpt_SendRecord(uint32 lan_type, char * record_buf, uint32 record_size);
-PUBLIC void ZmtGpt_SendSelfRecord(uint8 req_type, char * record_buf, uint32 record_size);
+PUBLIC void ZmtGpt_SendSelfRecord(uint8 req_type, char * record_buf, uint32 record_size, ZMTTCPRCVHANDLER rec_handle);
 PUBLIC void ZmtGpt_SendTxt(uint32 app_type, char * send_txt, char * sys_param, char * field, int post_type);
 PUBLIC void ZmtGptKouYuTalk_RecvSelfResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id);
 PUBLIC void ZmtGptKouYuTalk_RecvResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id);
