@@ -7398,4 +7398,30 @@ PUBLIC void ZMTHandle_UdsikPlugCloseFoucsWindow(void)
     MMK_HandleRedKeyProcess();
 }
 
+/***********************************************
+// 关闭当前foucs界面
+//
+/*********************************************/
+PUBLIC BOOLEAN MMIDEFAULT_CloseFoucsWindow(void)
+{
+    BOOLEAN result = FALSE;
+    MMI_HANDLE_T win_handle = MMK_GetFocusWinHandle();
+    if (!MMIAPICC_IsInState(CC_IN_CALL_STATE) && MMIAPICC_IsCallByMMI())
+    {
+        BOOLEAN is_connecting = TRUE;
+        is_connecting = MMIAPICC_IsInState(CC_MO_CONNECTING_STATE) 
+                        || MMIAPICC_IsInState(CC_MT_CONNECTING_STATE)
+                        || MMIAPICC_IsInState(CC_CALL_DISCONNECTED_STATE);
+        if (!is_connecting)
+        {
+            MMK_CloseWin(win_handle);
+            result = TRUE;
+        }
+    }
+    else if (!MMIAPICC_IsInState(CC_IN_CALL_STATE))
+    {
+        MMK_CloseWin(win_handle);
+        result = TRUE;
+    }
+    return result;
 }

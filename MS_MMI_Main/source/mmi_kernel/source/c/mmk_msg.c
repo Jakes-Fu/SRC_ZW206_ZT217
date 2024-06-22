@@ -1040,6 +1040,14 @@ BOOLEAN  MMK_DispMsgToFocusWin(
 #endif
     result = MMK_DispatchToHandle( win_handle, msg_id, param_ptr );
 
+    if(!result && msg_id == MSG_APP_CANCEL)
+    {
+        if(!MMK_GetWinDisplayStyleState( win_handle, WS_DISABLE_RETURN_WIN) && MMK_IsNeedCloseWin(win_handle))
+        {
+             result = MMIDEFAULT_CloseFoucsWindow();  
+        }
+    }
+
     return result;
 }
 

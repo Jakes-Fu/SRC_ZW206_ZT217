@@ -858,6 +858,10 @@ PUBLIC void MMIDEFAULT_OnlyTurnOffBackLight(void);
 /*****************************************************************************/
 PUBLIC void MMIDEFAULT_CloseAllLight_Watch(void);
 
+/***********************************************
+// 关闭当前foucs界面
+/*********************************************/
+PUBLIC BOOLEAN MMIDEFAULT_CloseFoucsWindow(void);
 
 #ifdef   __cplusplus
     }
