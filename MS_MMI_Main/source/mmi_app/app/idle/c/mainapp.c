@@ -228,7 +228,7 @@
  **---------------------------------------------------------------------------*/
 // main application modual
 MMI_APPLICATION_T   g_main_app;   
-const MMI_WIN_ID_T  g_idle_win = WATCH_LAUNCHER_PANEL_WIN_ID;       // idle窗口的id
+const MMI_WIN_ID_T  g_idle_win = WATCH_LAUNCHER_APP_PAGE1_WIN_ID;//WATCH_LAUNCHER_PANEL_WIN_ID;       // idle窗口的id
 LOCAL uint8         g_animal_time_id = 0;    //动画时钟
 
 #ifndef FLASH_SUPPORT
