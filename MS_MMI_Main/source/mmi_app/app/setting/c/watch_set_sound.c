@@ -819,6 +819,34 @@ LOCAL uint16 SoundGetNoteTypeSelectedIndex( void )
     }
     return index;
 }
+
+LOCAL void setCallRingNoteType(MMI_WIN_ID_T win_id)
+{
+    MN_DUAL_SYS_E   dualSys = MMIAPISET_GetActiveSim();
+    uint16 curIdx = GUILIST_GetCurItemIndex( MMISET_NOTE_TYPE_SELECT_LIST_CTRL_ID );
+	Settings_StopPreviewRing();
+	if( SETTINGS_SOUND_NOTE_TYPE_RING == curIdx )
+	{
+	    MMIENVSET_SetActiveModeOptValue( CALL_RING_TYPE, MMISET_CALL_RING, dualSys );
+	    MMIENVSET_SetActiveModeOptValue( MSG_RING_TYPE, MMISET_MSG_RING, dualSys );
+	    MMIENVSET_SetActiveModeOptValue( ALARM_RING_TYPE, MMISET_MSG_RING, dualSys ); // alarm use msg type
+	}
+	else if( SETTINGS_SOUND_NOTE_TYPE_VIBRA == curIdx )
+	{
+	    //MMISET_RING_TYPE_MAX not play ring
+	    MMIENVSET_SetActiveModeOptValue( CALL_RING_TYPE, MMISET_CALL_VIBRA, dualSys );
+	    MMIENVSET_SetActiveModeOptValue( MSG_RING_TYPE, MMISET_MSG_VIBRA, dualSys );
+	    MMIENVSET_SetActiveModeOptValue( ALARM_RING_TYPE, MMISET_MSG_VIBRA, dualSys );
+	}
+	else
+	{
+	    MMIENVSET_SetActiveModeOptValue( CALL_RING_TYPE, MMISET_CALL_VIBRA_AND_RING, dualSys );
+	    MMIENVSET_SetActiveModeOptValue( MSG_RING_TYPE, MMISET_MSG_VIBRA_AND_RING, dualSys );
+	    MMIENVSET_SetActiveModeOptValue( ALARM_RING_TYPE, MMISET_MSG_VIBRA_AND_RING, dualSys );
+	}
+	MMK_CloseWin(win_id);
+}
+
 LOCAL MMI_RESULT_E Handle_NoteTypeSelectWin( MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E msg_id, DPARAM param )
 {
     MMI_RESULT_E    recode =  MMI_RESULT_TRUE;
@@ -826,37 +854,37 @@ LOCAL MMI_RESULT_E Handle_NoteTypeSelectWin( MMI_WIN_ID_T win_id, MMI_MESSAGE_ID
 
     switch(msg_id)
     {
-	case MSG_OPEN_WINDOW:
-	{
-		uint16 listNum=0;
-		uint16 notetype_id =0;
+	    case MSG_OPEN_WINDOW:
+	    {
+		    uint16 listNum=0;
+		    uint16 notetype_id =0;
 
-		GUI_RECT_T list_rect = WATCHK1LIST_RECT;
-		GUI_RECT_T watchk1_setok_rect = WATCHK1_SETOK_RECT;
-		GUI_BG_T    bg_info ={0};
-		bg_info.bg_type = GUI_BG_IMG;
-		bg_info.img_id = IMAGE_COMMON_ONEBTN_BG_IMAG;
-		GUIBUTTON_SetRect(MMISET_ZTE_WATCH_SETOK_BTN_CTRL_ID, &watchk1_setok_rect);
-		//CTRLBUTTON_SetTextId(MMISET_ZTE_WATCH_SETOK_BTN_CTRL_ID,TXT_COMMON_OK );
-		//CTRLBUTTON_SetFontSize(MMISET_ZTE_WATCH_SETOK_BTN_CTRL_ID,SONG_FONT_24 );
-		//CTRLBUTTON_SetFontColor(MMISET_ZTE_WATCH_SETOK_BTN_CTRL_ID,MMI_WHITE_COLOR);
-		//CTRLBUTTON_SetBg(MMISET_ZTE_WATCH_SETOK_BTN_CTRL_ID,&bg_info);
-		GUILIST_SetRect(MMISET_NOTE_TYPE_SELECT_LIST_CTRL_ID,&list_rect);
-		listNum = sizeof(s_sound_note_type_list)/sizeof(WATCHCOM_LIST_ITEM__ST);
-		WatchCOM_RadioList_Create(s_sound_note_type_list,listNum,MMISET_NOTE_TYPE_SELECT_LIST_CTRL_ID);
-		/* append list items*/
-		//change to radio list
-		//CTRLLIST_ChangeDisplayType(MMISET_NOTE_TYPE_SELECT_LIST_CTRL_ID,GUILIST_RADIOLIST_E,TRUE);
-		notetype_id = SoundGetNoteTypeSelectedIndex( );
-		 //set selected item
-		GUILIST_SetSelectedItem(MMISET_NOTE_TYPE_SELECT_LIST_CTRL_ID, notetype_id, TRUE);
+		    GUI_RECT_T list_rect = WATCHK1LIST_RECT;
+		    GUI_RECT_T watchk1_setok_rect = WATCHK1_SETOK_RECT;
+		    GUI_BG_T    bg_info ={0};
+		    bg_info.bg_type = GUI_BG_IMG;
+		    bg_info.img_id = IMAGE_COMMON_ONEBTN_BG_IMAG;
+		    GUIBUTTON_SetRect(MMISET_ZTE_WATCH_SETOK_BTN_CTRL_ID, &watchk1_setok_rect);
+		    //CTRLBUTTON_SetTextId(MMISET_ZTE_WATCH_SETOK_BTN_CTRL_ID,TXT_COMMON_OK );
+		    //CTRLBUTTON_SetFontSize(MMISET_ZTE_WATCH_SETOK_BTN_CTRL_ID,SONG_FONT_24 );
+		    //CTRLBUTTON_SetFontColor(MMISET_ZTE_WATCH_SETOK_BTN_CTRL_ID,MMI_WHITE_COLOR);
+		    //CTRLBUTTON_SetBg(MMISET_ZTE_WATCH_SETOK_BTN_CTRL_ID,&bg_info);
+		    GUILIST_SetRect(MMISET_NOTE_TYPE_SELECT_LIST_CTRL_ID,&list_rect);
+		    listNum = sizeof(s_sound_note_type_list)/sizeof(WATCHCOM_LIST_ITEM__ST);
+		    WatchCOM_RadioList_Create(s_sound_note_type_list,listNum,MMISET_NOTE_TYPE_SELECT_LIST_CTRL_ID);
+		    /* append list items*/
+		    //change to radio list
+		    //CTRLLIST_ChangeDisplayType(MMISET_NOTE_TYPE_SELECT_LIST_CTRL_ID,GUILIST_RADIOLIST_E,TRUE);
+		    notetype_id = SoundGetNoteTypeSelectedIndex( );
+		     //set selected item
+		    GUILIST_SetSelectedItem(MMISET_NOTE_TYPE_SELECT_LIST_CTRL_ID, notetype_id, TRUE);
 
-		//set current item
-		GUILIST_SetCurItemIndex( MMISET_NOTE_TYPE_SELECT_LIST_CTRL_ID, notetype_id );
+		    //set current item
+		    GUILIST_SetCurItemIndex( MMISET_NOTE_TYPE_SELECT_LIST_CTRL_ID, notetype_id );
 
-		MMK_SetAtvCtrl( win_id, MMISET_NOTE_TYPE_SELECT_LIST_CTRL_ID );
-		break;
-	}
+		    MMK_SetAtvCtrl( win_id, MMISET_NOTE_TYPE_SELECT_LIST_CTRL_ID );
+		    break;
+	    }
         case MSG_NOTIFY_LIST_SET_SELECT:
         {
             uint16 curIdx = GUILIST_GetCurItemIndex( MMISET_NOTE_TYPE_SELECT_LIST_CTRL_ID );
@@ -896,22 +924,22 @@ LOCAL MMI_RESULT_E Handle_NoteTypeSelectWin( MMI_WIN_ID_T win_id, MMI_MESSAGE_ID
         case MSG_GET_FOCUS:// Bug 2113002
         case MSG_FULL_PAINT:
         {
-		uint16 curSelection = 0;
-		int32 listOffset = 0;
-		uint16         notetype_id =0;
-		WATCHCOM_DisplayBackground(win_id);
+		    uint16 curSelection = 0;
+		    int32 listOffset = 0;
+		    uint16         notetype_id =0;
+		    WATCHCOM_DisplayBackground(win_id);
 
-		GUILIST_GetTopItemOffset(MMISET_NOTE_TYPE_SELECT_LIST_CTRL_ID, &listOffset);
+		    GUILIST_GetTopItemOffset(MMISET_NOTE_TYPE_SELECT_LIST_CTRL_ID, &listOffset);
 
-		curSelection = GUILIST_GetCurItemIndex( MMISET_NOTE_TYPE_SELECT_LIST_CTRL_ID );
+		    curSelection = GUILIST_GetCurItemIndex( MMISET_NOTE_TYPE_SELECT_LIST_CTRL_ID );
 
-		GUILIST_SetSelectedItem(MMISET_NOTE_TYPE_SELECT_LIST_CTRL_ID, curSelection, TRUE);
+		    GUILIST_SetSelectedItem(MMISET_NOTE_TYPE_SELECT_LIST_CTRL_ID, curSelection, TRUE);
 
-		//set current item
-		GUILIST_SetCurItemIndex(MMISET_NOTE_TYPE_SELECT_LIST_CTRL_ID, curSelection);
+		    //set current item
+		    GUILIST_SetCurItemIndex(MMISET_NOTE_TYPE_SELECT_LIST_CTRL_ID, curSelection);
 
-		// set top item offset
-		GUILIST_SetTopItemOffset(MMISET_NOTE_TYPE_SELECT_LIST_CTRL_ID, listOffset);
+		    // set top item offset
+		    GUILIST_SetTopItemOffset(MMISET_NOTE_TYPE_SELECT_LIST_CTRL_ID, listOffset);
             break;
         }
 #ifdef TOUCH_PANEL_SUPPORT
@@ -922,31 +950,19 @@ LOCAL MMI_RESULT_E Handle_NoteTypeSelectWin( MMI_WIN_ID_T win_id, MMI_MESSAGE_ID
        case MSG_APP_WEB:
        case MSG_CTL_MIDSK:
         {
-		if(MMISET_ZTE_WATCH_SETOK_BTN_CTRL_ID ==((MMI_NOTIFY_T*)param)->src_id)
-		{
-			uint16 curIdx = GUILIST_GetCurItemIndex( MMISET_NOTE_TYPE_SELECT_LIST_CTRL_ID );
-			Settings_StopPreviewRing();
-			 if( SETTINGS_SOUND_NOTE_TYPE_RING == curIdx )
-	            {
-	                MMIENVSET_SetActiveModeOptValue( CALL_RING_TYPE, MMISET_CALL_RING, dualSys );
-	                MMIENVSET_SetActiveModeOptValue( MSG_RING_TYPE, MMISET_MSG_RING, dualSys );
-	                MMIENVSET_SetActiveModeOptValue( ALARM_RING_TYPE, MMISET_MSG_RING, dualSys ); // alarm use msg type
-	            }
-	            else if( SETTINGS_SOUND_NOTE_TYPE_VIBRA == curIdx )
-	            {
-	                //MMISET_RING_TYPE_MAX not play ring
-	                MMIENVSET_SetActiveModeOptValue( CALL_RING_TYPE, MMISET_CALL_VIBRA, dualSys );
-	                MMIENVSET_SetActiveModeOptValue( MSG_RING_TYPE, MMISET_MSG_VIBRA, dualSys );
-	                MMIENVSET_SetActiveModeOptValue( ALARM_RING_TYPE, MMISET_MSG_VIBRA, dualSys );
-	            }
-	            else
-	            {
-	                MMIENVSET_SetActiveModeOptValue( CALL_RING_TYPE, MMISET_CALL_VIBRA_AND_RING, dualSys );
-	                MMIENVSET_SetActiveModeOptValue( MSG_RING_TYPE, MMISET_MSG_VIBRA_AND_RING, dualSys );
-	                MMIENVSET_SetActiveModeOptValue( ALARM_RING_TYPE, MMISET_MSG_VIBRA_AND_RING, dualSys );
-	            }
-			MMK_CloseWin(win_id);
-		}
+            MMI_NOTIFY_T *notify = (MMI_NOTIFY_T*)param;
+			if(MMISET_NOTE_TYPE_SELECT_LIST_CTRL_ID == notify->src_id)
+            {
+                //选择中后再按OK键 记得在close window 调用 MMIAPI_ItemSelectedState(FALSE)
+                if(MMIAPI_CheckOkKeyAndItemSelected(MMISET_NOTE_TYPE_SELECT_LIST_CTRL_ID,notify))
+                {
+                    setCallRingNoteType(win_id);
+                }
+            }
+			else if(MMISET_ZTE_WATCH_SETOK_BTN_CTRL_ID == notify->src_id)
+		    {
+			    setCallRingNoteType(win_id);
+		    }
             break;
         }
         case MSG_CTL_CANCEL:
@@ -962,6 +978,7 @@ LOCAL MMI_RESULT_E Handle_NoteTypeSelectWin( MMI_WIN_ID_T win_id, MMI_MESSAGE_ID
             break;
         case MSG_CLOSE_WINDOW:
         {
+            MMIAPI_ItemSelectedState(FALSE);
             Settings_StopPreviewRing();
             break;
         }
