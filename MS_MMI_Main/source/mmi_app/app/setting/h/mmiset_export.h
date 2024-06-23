@@ -5157,6 +5157,18 @@ PUBLIC void WATCHAPISET_SetWearType(MMISET_WATCH_WEAR_E wear_type);
 PUBLIC BOOLEAN WATCHAPISET_GetRaiseWrist(void);
 PUBLIC void WATCHAPISET_SetRaiseWrist(BOOLEAN is_raise_wrist_on);
 #endif
+
+/********************************************************
+// listbox radio checkbox 选中后按OK键 返回TRUE 否则 FALSE
+// 注意要跟 MMIAPI_ItemSelectedState 配对调用 在close window 调用 MMIAPI_ItemSelectedState(FALSE)
+/*******************************************************/
+PUBLIC BOOLEAN MMIAPI_CheckOkKeyAndItemSelected(MMI_CTRL_ID_T ctrl_id, MMI_NOTIFY_T *notify);
+/********************************************************
+// listbox radio checkbox 选中后按OK键后调用
+// 在close window 调用 MMIAPI_ItemSelectedState(FALSE)
+/*******************************************************/
+PUBLIC BOOLEAN MMIAPI_ItemSelectedState(BOOLEAN state);
+
 /**--------------------------------------------------------------------------*
 **                         Compiler Flag                                    *
 **--------------------------------------------------------------------------*/

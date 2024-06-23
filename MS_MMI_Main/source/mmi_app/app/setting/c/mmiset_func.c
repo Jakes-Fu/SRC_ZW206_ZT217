@@ -6422,3 +6422,37 @@ PUBLIC void MMIAPISET_RestoreGPRSModeSetting(void)
     MMIAPISET_SetGPRSModeType(DATA_CARD_MANUAL_SELECT);
 }
 #endif
+
+LOCAL BOOLEAN itemSelectState = FALSE;
+/********************************************************
+// listbox radio checkbox 选中后按OK键 返回TRUE 否则 FALSE
+// 注意要跟 MMIAPI_ItemSelectedState 配对调用 在close window 调用 MMIAPI_ItemSelectedState(FALSE)
+/*******************************************************/
+PUBLIC BOOLEAN MMIAPI_CheckOkKeyAndItemSelected(MMI_CTRL_ID_T ctrl_id, MMI_NOTIFY_T *notify)
+{
+    //选择中后再按OK键
+    if(itemSelectState && (notify->code == MSG_CTL_PENOK || notify->code == MSG_CTL_OK || notify->code == MSG_CTL_MIDSK))
+    {
+        itemSelectState = FALSE;
+        return TRUE;
+
+    }
+    else
+    {
+        const GUILIST_ITEM_T *item = GUILIST_GetItemPtrByIndex(ctrl_id,GUILIST_GetCurItemIndex(ctrl_id));
+        if(item->item_state == GUIITEM_STATE_SELECTED)
+        {
+            itemSelectState = TRUE;
+        }
+    }
+    return FALSE;
+}
+
+/********************************************************
+// listbox radio checkbox 选中后按OK键后调用
+// 在close window 调用 MMIAPI_ItemSelectedState(FALSE)
+/*******************************************************/
+PUBLIC BOOLEAN MMIAPI_ItemSelectedState(BOOLEAN state)
+{
+    itemSelectState = FALSE;
+}
