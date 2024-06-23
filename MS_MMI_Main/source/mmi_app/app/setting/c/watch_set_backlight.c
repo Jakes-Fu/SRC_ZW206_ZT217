@@ -240,7 +240,12 @@ LOCAL void Settings_BackLight_APP_WEB(void)
 #endif
 }
 
-
+LOCAL void setBacklight(MMI_WIN_ID_T  winId)
+{
+    MMIAPISET_SetBackLightInfo(g_backlightinfo);
+    MMIDEFAULT_StartLcdBackLightTimer();
+    MMK_CloseWin(winId);
+}
 
 LOCAL MMI_RESULT_E HandleSettingsBacklightWindow(
     MMI_WIN_ID_T      winId,
@@ -289,15 +294,24 @@ LOCAL MMI_RESULT_E HandleSettingsBacklightWindow(
        case MSG_APP_WEB:
        case MSG_CTL_MIDSK:
         {
-			if(MMISET_BACKLIGHT_LIST_CTRL_ID == ((MMI_NOTIFY_T*)param)->src_id)
-				Settings_BackLight_APP_WEB();
+            MMI_NOTIFY_T *notify = (MMI_NOTIFY_T*)param;
+			if(MMISET_BACKLIGHT_LIST_CTRL_ID == notify->src_id)
+            {
+                //选择中后再按OK键
+                if(MMIAPI_CheckOkKeyAndItemSelected(MMISET_BACKLIGHT_LIST_CTRL_ID,notify))
+                {
+                    setBacklight(winId);
+                }
+                else
+                {
+				    Settings_BackLight_APP_WEB();
+                }
+            }
 			#ifdef ZTE_WATCH
-			else if(MMISET_ZTE_WATCH_SETOK_BTN_CTRL_ID ==((MMI_NOTIFY_T*)param)->src_id)
-				{
-				 MMIAPISET_SetBackLightInfo(g_backlightinfo);
-    				MMIDEFAULT_StartLcdBackLightTimer();//bug 2130532
-    				MMK_CloseWin(MMISET_BACKLIGHT_WIN_ID);
-				}
+			else if(MMISET_ZTE_WATCH_SETOK_BTN_CTRL_ID == notify->src_id)
+			{
+				setBacklight(winId);
+			}
 			#endif
             break;
         }
@@ -323,6 +337,9 @@ LOCAL MMI_RESULT_E HandleSettingsBacklightWindow(
             MMK_CloseWin(winId);
             break;
         }
+        case MSG_CLOSE_WINDOW:
+            MMIAPI_ItemSelectedState(FALSE);
+            break;
         default:
             recode = MMI_RESULT_FALSE;
             break;
