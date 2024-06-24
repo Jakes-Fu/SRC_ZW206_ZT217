@@ -1186,6 +1186,21 @@ LOCAL MMI_RESULT_E HandleListeningPlayerWinMsg(
 				}
 			}
 			break;
+		case MSG_APP_LEFT:
+			{
+			    ListeningPlayer_ButtonPreCallback();
+			}
+			break;
+		case MSG_APP_OK:
+			{
+			    ListeningPlayer_ButtonPlayCallback();
+			}
+			break;
+		case MSG_APP_RIGHT:
+			{
+			    ListeningPlayer_ButtonNextCallback();
+			}
+			break;
 		case MSG_TIMER:
 			{
 				listening_lrc_timers++;

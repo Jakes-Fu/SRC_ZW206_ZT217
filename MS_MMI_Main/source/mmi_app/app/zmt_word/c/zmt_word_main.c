@@ -31,6 +31,9 @@
 #include "zmt_hanzi_image.h"
 #include "zmt_hanzi_text.h"
 #endif
+#ifdef POETRY_LISTEN_SUPPORT
+#include "zmt_poetry_image.h"
+#endif
 
 LOCAL GUI_RECT_T word_win_rect = {0, 0, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT};//窗口
 LOCAL GUI_RECT_T word_title_rect = {0, 0, MMI_MAINSCREEN_WIDTH, WORD_CARD_LINE_HIGHT};//顶部
@@ -54,10 +57,12 @@ LOCAL int16 main_tp_down_x = 0;
 LOCAL int16 main_tp_down_y = 0;
 
 WORD_BOOK_INFO_T word_book_info = {0};
+int8 word_publish_count = 0;
 int8 word_book_count = 0;
 int8 word_chapter_count = 0;
 int16 word_detail_count = 0;
-WORD_BOOK_PUBLISH_INFO_T * word_publish_info;
+WORD_BOOK_PUBLISH_INFO_T * word_publish_info[WORD_PUBLISH_MAX];
+WORD_GRADE_BOOK_T word_publish_grade_book_count[WORD_PUBLISH_BOOK_TOTAL_MAX];
 WORD_BOOK_CHAPTER_T * word_chapter_info[WORD_CHAPTER_NUM_MAX];
 WORD_BOOK_DETAIL_T * new_word_detail_info[WORD_CHAPTER_WORD_MAX];
 BOOLEAN word_open_auto_play = TRUE;
@@ -104,10 +109,209 @@ LOCAL void Word_SetDiretionText(MMI_CTRL_ID_T ctrl_id, int cur_idx, int total)
     GUILABEL_SetText(ctrl_id, &text, TRUE);
 }
 
+LOCAL BOOLEAN Word_GetPublishAndBookIdx(uint16 idx)
+{
+    uint8 i = 0;
+    uint8 j = 0;
+    uint16 k = 0;
+    BOOLEAN is_get = FALSE;
+    for(i = 0;i < word_publish_count && i < WORD_PUBLISH_MAX; i++)
+    {
+        for(j = 0;j < word_publish_info[i]->item_count && j < WORD_PUBLISH_BOOK_MAX;j++)
+        {
+            if(k == idx){
+                is_get = TRUE;
+                break;
+            }
+            k++;
+        }
+        if(is_get){
+            break;
+        }
+    }
+    SCI_TRACE_LOW("%s: i = %d, j = %d", __FUNCTION__, i, j);
+    if(is_get){
+        word_book_info.cur_publish_idx = i;
+        word_book_info.cur_book_idx = j;
+    }
+    return is_get;
+}
+
 LOCAL void Word_DisplayBookList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
 {
+    uint8 i = 0;
+    uint8 j = 0;
+    uint16 k = 0;
     uint8 index = 0;
-    uint8 num = 0;
+    uint8 book_count = 0;
+    uint16 cur_publish_idx = 0;
+    wchar text_str[100] = {0};
+    MMI_STRING_T text_string = {0};
+    GUILIST_INIT_DATA_T list_init = {0};
+    GUILIST_ITEM_T item_t = {0};
+    GUIITEM_STATE_T item_state = {0};
+    GUILIST_ITEM_DATA_T item_data = {0};
+    
+    list_init.both_rect.v_rect = word_list_rect;
+    list_init.type = GUILIST_TEXTLIST_E;
+    GUILIST_CreateListBox(win_id, 0, ctrl_id, &list_init);
+
+    MMK_SetAtvCtrl(win_id, ctrl_id);
+    GUILIST_RemoveAllItems(ctrl_id);
+    
+    cur_publish_idx = word_book_info.cur_publish_grade_idx;
+    if(cur_publish_idx == 0){
+        book_count = word_publish_grade_book_count[0].count;
+        index = 0;
+    }else{
+        book_count = word_publish_grade_book_count[cur_publish_idx].count - word_publish_grade_book_count[cur_publish_idx-1].count;
+        index = word_publish_grade_book_count[cur_publish_idx-1].count;
+    }
+    GUILIST_SetMaxItem(ctrl_id, book_count, FALSE);
+
+    for(i = 0;i < word_publish_count && i < WORD_PUBLISH_MAX; i++)
+    {
+        for(j = 0;j < word_publish_info[i]->item_count && j < WORD_PUBLISH_BOOK_MAX;j++)
+        {
+            if(k >= index && k <  index + book_count)
+            {
+                item_t.item_style = GUIITEM_STYLE_POETRY_ITEM_LIST_MS;
+                item_t.item_data_ptr = &item_data;
+                item_t.item_state = GUIITEM_STATE_SELFADAPT_RECT|GUIITEM_STATE_CONTENT_CHECK;
+
+                item_data.item_content[0].item_data_type = GUIITEM_DATA_IMAGE_ID;
+                item_data.item_content[0].item_data.image_id = IMG_POETRY_ITEM_BG;
+
+                GUI_UTF8ToWstr(text_str, 100, word_publish_info[i]->item_info[j]->book_name, strlen(word_publish_info[i]->item_info[j]->book_name));
+                text_string.wstr_ptr = text_str;
+                text_string.wstr_len = MMIAPICOM_Wstrlen(text_str);
+                item_data.item_content[1].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
+                item_data.item_content[1].item_data.text_buffer = text_string;
+
+                GUILIST_AppendItem(ctrl_id, &item_t);
+            }
+            else
+            {
+                if(k >= index + book_count){
+                    break;
+                }
+            }
+            k++;
+        }
+    }
+    //不画分割线
+    GUILIST_SetListState(ctrl_id, GUILIST_STATE_SPLIT_LINE, FALSE);
+    //不画高亮条
+    GUILIST_SetListState(ctrl_id, GUILIST_STATE_NEED_HIGHTBAR, FALSE);
+    GUILIST_SetListState(ctrl_id, GUILIST_STATE_AUTO_SCROLL, TRUE);
+    GUILIST_SetNeedPrgbarBlock(ctrl_id,FALSE);
+    GUILIST_SetBgColor(ctrl_id, GUI_RGB2RGB565(80, 162, 254));
+    GUILIST_SetTextFont(ctrl_id, DP_FONT_20, GUI_RGB2RGB565(80, 162, 254));
+}
+
+LOCAL MMI_RESULT_E HandleWordBookMainWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_id, DPARAM param)
+{
+    MMI_RESULT_E recode = MMI_RESULT_TRUE;
+    switch (msg_id) 
+    {
+        case MSG_OPEN_WINDOW:
+            {
+                
+            }
+            break;
+        case MSG_FULL_PAINT:
+            {
+                GUI_LCD_DEV_INFO lcd_dev_info = {GUI_MAIN_LCD_ID,GUI_BLOCK_MAIN};
+                GUISTR_STATE_T text_state = GUISTR_STATE_ALIGN | GUISTR_STATE_ELLIPSIS_EX;
+                GUISTR_STYLE_T text_style = {0};
+                MMI_STRING_T text_string = {0};
+
+                GUI_FillRect(&lcd_dev_info, word_win_rect, GUI_RGB2RGB565(80, 162, 254));
+                GUI_FillRect(&lcd_dev_info, word_title_rect, GUI_RGB2RGB565(108, 181, 255));
+
+                text_style.align = ALIGN_HVMIDDLE;
+                text_style.font = DP_FONT_22;
+                text_style.font_color = MMI_WHITE_COLOR;
+
+                MMIRES_GetText(WORD_TITLE, win_id, &text_string);
+                GUISTR_DrawTextToLCDInRect(
+                    (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
+                    &word_title_rect,
+                    &word_title_rect,
+                    &text_string,
+                    &text_style,
+                    text_state,
+                    GUISTR_TEXT_DIR_AUTO
+                );
+
+                Word_DisplayBookList(win_id, MMI_ZMT_WORD_MAIN_LIST_BOOK_CTRL_ID);
+            }
+            break;
+        case MSG_KEYUP_RED:
+        case MSG_KEYUP_CANCEL:
+            {
+                MMK_CloseWin(win_id);
+            }
+            break;
+        case MSG_CTL_OK:
+        case MSG_CTL_PENOK:
+            { 
+                uint16 cur_idx = GUILIST_GetCurItemIndex(MMI_ZMT_WORD_MAIN_LIST_BOOK_CTRL_ID);
+                uint16 cur_publish_idx = word_book_info.cur_publish_grade_idx;
+                uint8 start_idx = 0;
+                if(cur_publish_idx == 0){
+                    start_idx = 0;
+                }else{
+                    start_idx = word_publish_grade_book_count[cur_publish_idx-1].count;
+                }
+                if(Word_GetPublishAndBookIdx(start_idx + cur_idx))
+                {
+                    MMI_CreateWordChapterWin();
+                }
+            }
+            break;
+        case MSG_CLOSE_WINDOW:
+            {
+                
+            }
+            break;
+         default:
+            recode = MMI_RESULT_FALSE;
+            break;
+    }
+      return recode;
+}
+
+WINDOW_TABLE(MMI_WORD_BOOK_WIN_TAB) = {
+    WIN_ID(MMI_WORD_BOOK_MAIN_WIN_ID),
+    WIN_FUNC((uint32)HandleWordBookMainWinMsg),
+    WIN_HIDE_STATUS,
+    END_WIN
+};
+
+PUBLIC void MMI_CreateWordBookWin(void)
+{
+    if(MMK_IsOpenWin(MMI_WORD_BOOK_MAIN_WIN_ID)){
+        MMK_CloseWin(MMI_WORD_BOOK_MAIN_WIN_ID);
+    }
+    MMK_CreateWin((uint32 *)MMI_WORD_BOOK_WIN_TAB, PNULL);
+}
+
+PUBLIC MMI_RESULT_E MMI_CloseWordBookWin(void)
+{
+    MMI_RESULT_E result = MMI_RESULT_TRUE;
+
+    MMK_CloseWin(MMI_WORD_BOOK_MAIN_WIN_ID);
+    return result;
+}
+
+LOCAL void Word_DisplayPublishList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
+{
+    uint8 i = 0;
+    uint8 j = 0;
+    uint8 k = 0;
+    uint8 grade_num = 0;
+    uint8 cur_grade = 0;
     GUILIST_INIT_DATA_T list_init = {0};
     GUILIST_ITEM_T item_t = {0};
     GUIITEM_STATE_T item_state = {0};
@@ -120,51 +324,70 @@ LOCAL void Word_DisplayBookList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
     MMI_STRING_T text_string = {0};
     char tmp[10]={0};
     uint16 wstr0[10] = {0};
+    MMI_TEXT_ID_T grade_text[9] = {
+        WORD_GRADE_1, WORD_GRADE_2, WORD_GRADE_3, WORD_GRADE_4, WORD_GRADE_5,
+        WORD_GRADE_6, WORD_GRADE_7, WORD_GRADE_8, WORD_GRADE_9
+    };
 
+    memset(word_publish_grade_book_count, 0 ,WORD_PUBLISH_BOOK_TOTAL_MAX*sizeof(WORD_GRADE_BOOK_T));
     list_init.both_rect.v_rect = word_list_rect;
     list_init.type = GUILIST_TEXTLIST_E;
     GUILIST_CreateListBox(win_id, 0, ctrl_id, &list_init);
 
     MMK_SetAtvCtrl(win_id, ctrl_id);
     GUILIST_RemoveAllItems(ctrl_id);
-    GUILIST_SetMaxItem(ctrl_id, WORD_PUBLISH_BOOK_MAX, FALSE);
+    GUILIST_SetMaxItem(ctrl_id, WORD_PUBLISH_BOOK_TOTAL_MAX, FALSE);
 
-    for(index = 0;index < word_book_count && index < WORD_PUBLISH_BOOK_MAX; index++)
-    {        
-        item_t.item_style = GUIITEM_SYTLE_DSL_ENGLISH_BOOK;
-        item_t.item_data_ptr = &item_data;
-        item_t.item_state = GUIITEM_STATE_SELFADAPT_RECT|GUIITEM_STATE_CONTENT_CHECK;
-		
-        memset(name_wchar, 0, 50);
-        memset(name_str, 0, 50);
+    for(i = 0;i < word_publish_count && i < WORD_PUBLISH_BOOK_MAX; i++)
+    {
+        cur_grade = 0;
+        for(j = 0;j < word_publish_info[i]->item_count && j < WORD_PUBLISH_BOOK_MAX;j++)
+        {
+            if(word_publish_info[i]->item_info[j]->grade != cur_grade)
+            {
+                cur_grade = word_publish_info[i]->item_info[j]->grade;
+                
+                item_t.item_style = GUIITEM_SYTLE_DSL_ENGLISH_BOOK;
+                item_t.item_data_ptr = &item_data;
+                item_t.item_state = GUIITEM_STATE_SELFADAPT_RECT|GUIITEM_STATE_CONTENT_CHECK;
+        		
+                memset(name_wchar, 0, 50);
+                memset(name_str, 0, 50);
 
-        item_data.item_content[0].item_data_type = GUIITEM_DATA_IMAGE_ID;
-        item_data.item_content[0].item_data.image_id = IMG_ZMT_CONTACT_ICON;
+                item_data.item_content[0].item_data_type = GUIITEM_DATA_IMAGE_ID;
+                item_data.item_content[0].item_data.image_id = IMG_ZMT_CONTACT_ICON;
 
-        itoa(index+1,tmp, 10);
-        GUI_UTF8ToWstr(wstr0,10,tmp, strlen(tmp)+1);
-        text_str.wstr_len = MMIAPICOM_Wstrlen(wstr0);
-        text_str.wstr_ptr = wstr0;
-        item_data.item_content[1].is_default =TRUE;
-        item_data.item_content[1].font_color_id = MMITHEME_COLOR_LIGHT_BLUE;
-        item_data.item_content[1].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
-        item_data.item_content[1].item_data.text_buffer = text_str;
+                itoa(k+1,tmp, 10);
+                GUI_UTF8ToWstr(wstr0,10,tmp, strlen(tmp)+1);
+                text_str.wstr_len = MMIAPICOM_Wstrlen(wstr0);
+                text_str.wstr_ptr = wstr0;
+                item_data.item_content[1].is_default =TRUE;
+                item_data.item_content[1].font_color_id = MMITHEME_COLOR_LIGHT_BLUE;
+                item_data.item_content[1].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
+                item_data.item_content[1].item_data.text_buffer = text_str;
 
-        length = strlen(word_publish_info->item_info[index]->book_name);
-        GUI_UTF8ToWstr(name_wchar, 50, word_publish_info->item_info[index]->book_name, length);
-        text_str.wstr_len = MMIAPICOM_Wstrlen(name_wchar);
-        text_str.wstr_ptr = name_wchar;
-        item_data.item_content[2].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
-        item_data.item_content[2].item_data.text_buffer = text_str;
+                item_data.item_content[2].item_data_type = GUIITEM_DATA_TEXT_ID;
+                item_data.item_content[2].item_data.text_id = grade_text[cur_grade - 1];
 
-        length = strlen(word_publish_info->publish_name);
-        GUI_UTF8ToWstr(name_str, 50, word_publish_info->publish_name, length);
-        text_str2.wstr_len = MMIAPICOM_Wstrlen(name_str);
-        text_str2.wstr_ptr = name_str;
-        item_data.item_content[3].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
-        item_data.item_content[3].item_data.text_buffer = text_str2;
+                length = strlen(word_publish_info[i]->publish_name);
+                GUI_UTF8ToWstr(name_str, 50, word_publish_info[i]->publish_name, length);
+                text_str2.wstr_len = MMIAPICOM_Wstrlen(name_str);
+                text_str2.wstr_ptr = name_str;
+                item_data.item_content[3].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
+                item_data.item_content[3].item_data.text_buffer = text_str2;
 
-        GUILIST_AppendItem(ctrl_id, &item_t);
+                GUILIST_AppendItem(ctrl_id, &item_t);
+                word_publish_grade_book_count[k].count++;
+                k++;
+                word_publish_grade_book_count[k].count = word_publish_grade_book_count[k-1].count;
+            }
+            else
+            {
+                word_publish_grade_book_count[k-1].count++;
+                word_publish_grade_book_count[k].count = word_publish_grade_book_count[k-1].count;
+            }
+            SCI_TRACE_LOW("%s: book_count[%d].count = %d", __FUNCTION__, k-1, word_publish_grade_book_count[k-1].count);
+        }
     }
     //不画分割线
     GUILIST_SetListState(ctrl_id, GUILIST_STATE_SPLIT_LINE, TRUE);
@@ -177,9 +400,7 @@ LOCAL void Word_DisplayBookList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
 
     GUILIST_SetBgColor(ctrl_id,GUI_RGB2RGB565(80, 162, 254));
 
-    GUILIST_SetTextFont(ctrl_id, DP_FONT_16, MMI_WHITE_COLOR);
-
-    GUILIST_SetCurItemIndex(ctrl_id, word_book_info.cur_book_idx);
+    GUILIST_SetCurItemIndex(ctrl_id, word_book_info.cur_publish_grade_idx);
 }
 
 LOCAL MMI_RESULT_E HandleWordMainWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_id, DPARAM param)
@@ -218,11 +439,11 @@ LOCAL MMI_RESULT_E HandleWordMainWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg
                     GUISTR_TEXT_DIR_AUTO
                 );
 
-                if(word_book_count > 0)
-                {           
-                    Word_DisplayBookList(win_id, MMI_ZMT_WORD_MAIN_LIST_CTRL_ID);
+                if(word_publish_count > 0)
+                {
+                    Word_DisplayPublishList(win_id, MMI_ZMT_WORD_MAIN_LIST_CTRL_ID);
                 }
-                else if (word_book_count == 0)
+                else if (word_publish_count == 0)
                 {
                     MMIRES_GetText(WORD_LOADING, win_id, &text_string);
                     GUISTR_DrawTextToLCDInRect(
@@ -235,7 +456,7 @@ LOCAL MMI_RESULT_E HandleWordMainWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg
                         GUISTR_TEXT_DIR_AUTO
                     );
                 }
-                else if(word_book_count == -1)
+                else if(word_publish_count == -1)
                 {
                     MMIRES_GetText(WORD_LOADING_FAILED, win_id, &text_string);
                     GUISTR_DrawTextToLCDInRect(
@@ -248,7 +469,7 @@ LOCAL MMI_RESULT_E HandleWordMainWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg
                         GUISTR_TEXT_DIR_AUTO
                     );
                 }
-                else if(word_book_count == -2)
+                else if(word_publish_count == -2)
                 {
                     MMIRES_GetText(WORD_NO_DATA, win_id, &text_string);
                     GUISTR_DrawTextToLCDInRect(
@@ -273,13 +494,14 @@ LOCAL MMI_RESULT_E HandleWordMainWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg
         case MSG_CTL_PENOK:
             { 
                 uint16 cur_idx = GUILIST_GetCurItemIndex(MMI_ZMT_WORD_MAIN_LIST_CTRL_ID);
-                word_book_info.cur_book_idx = cur_idx;
-                MMI_CreateWordChapterWin();
+                word_book_info.cur_publish_grade_idx = cur_idx;
+                MMI_CreateWordBookWin();
             }
             break;
         case MSG_CLOSE_WINDOW:
             {
                 memset(&word_book_info, 0, sizeof(WORD_BOOK_INFO_T));
+                memset(word_publish_grade_book_count, 0 ,WORD_PUBLISH_BOOK_TOTAL_MAX*sizeof(WORD_GRADE_BOOK_T));
                 Word_ReleaseBookInfo();
             }
             break;
@@ -499,7 +721,7 @@ LOCAL MMI_RESULT_E HandleWordChapterWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
                 GUILABEL_SetFont(MMI_ZMT_WORD_CHAPTER_LABEL_NUM_CTRL_ID, DP_FONT_16,MMI_BLACK_COLOR);
                 GUILABEL_SetAlign(MMI_ZMT_WORD_CHAPTER_LABEL_NUM_CTRL_ID, GUILABEL_ALIGN_RIGHT);
 
-                Word_requestChapterDetailInfo(word_publish_info->item_info[word_book_info.cur_book_idx]->book_id);
+                Word_requestChapterDetailInfo(word_publish_info[word_book_info.cur_publish_idx]->item_info[word_book_info.cur_book_idx]->book_id);
 
                 if (UILAYER_IsMultiLayerEnable())
                 {
@@ -528,7 +750,7 @@ LOCAL MMI_RESULT_E HandleWordChapterWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
                 GUI_FillRect(&lcd_dev_info, word_win_rect, GUI_RGB2RGB565(80, 162, 254));
                 GUI_FillRect(&lcd_dev_info, word_title_rect, GUI_RGB2RGB565(108, 181, 255));
 
-                sprintf(text_str, "%s", word_publish_info->item_info[word_book_info.cur_book_idx]->book_name);
+                sprintf(text_str, "%s", word_publish_info[word_book_info.cur_publish_idx]->item_info[word_book_info.cur_book_idx]->book_name);
                 GUI_UTF8ToWstr(text_wchar, 100, text_str, strlen(text_str));
                 text_string.wstr_ptr = text_wchar;
                 text_string.wstr_len = MMIAPICOM_Wstrlen(text_string.wstr_ptr);
@@ -774,7 +996,7 @@ PUBLIC void WordDetail_PlayPinyinAudio(void)
         {
             char file_path[40] = {0};
             sprintf(file_path, WORD_BOOK_AUDIO_PATH, 
-                word_publish_info->item_info[word_book_info.cur_book_idx]->book_id, 
+                word_publish_info[word_book_info.cur_publish_idx]->item_info[word_book_info.cur_book_idx]->book_id, 
                 new_word_detail_info[word_detail_cur_idx]->word
             );
             if(zmt_file_exist(file_path)){
@@ -818,7 +1040,7 @@ PUBLIC void WordDetail_PlayPinyinAudio(void)
     {
         char file_path[40] = {0};
         sprintf(file_path, WORD_BOOK_AUDIO_PATH, 
-            word_publish_info->item_info[word_book_info.cur_book_idx]->book_id, 
+            word_publish_info[word_book_info.cur_publish_idx]->item_info[word_book_info.cur_book_idx]->book_id, 
             word_chapter_info[word_book_info.cur_chapter_idx]->detail[word_detail_cur_idx]->word
         );
         if(zmt_file_exist(file_path)){
@@ -895,7 +1117,7 @@ LOCAL void WordDetail_NextChapterInfo(void)
     if(word_book_info.cur_chapter_idx < word_chapter_count)
     {
         Word_WriteUnmasterChapterWord(
-            word_publish_info->item_info[word_book_info.cur_book_idx]->book_id,
+            word_publish_info[word_book_info.cur_publish_idx]->item_info[word_book_info.cur_book_idx]->book_id,
             word_chapter_info[word_book_info.cur_chapter_idx]->chapter_id,
             word_chapter_info[word_book_info.cur_chapter_idx]->chapter_name,
             chapter_unmaster_count
@@ -1020,7 +1242,9 @@ LOCAL void WordDetail_DisplayDtailInfo(MMI_WIN_ID_T win_id)
     }
     text_pinyin.wstr_ptr = wstr_pinyin;
     text_pinyin.wstr_len = MMIAPICOM_Wstrlen(text_pinyin.wstr_ptr);
-    if(width_rect < MMI_MAINSCREEN_WIDTH / 2){
+    if(width_rect < MMI_MAINSCREEN_WIDTH / 2 || 
+        word_chapter_info[word_book_info.cur_chapter_idx]->detail[word_detail_cur_idx]->phonetic == NULL)
+    {
         text_width_piex = GUI_CalculateStringPiexlNum(text_pinyin.wstr_ptr, text_pinyin.wstr_len, DP_FONT_20, 1);
         pinyin_rect = word_rect;
         pinyin_rect.left = word_rect.right;
@@ -1038,6 +1262,7 @@ LOCAL void WordDetail_DisplayDtailInfo(MMI_WIN_ID_T win_id)
     }
     audio_rect.left = 5*WORD_CARD_LINE_WIDTH;
     audio_rect.right = 6*WORD_CARD_LINE_WIDTH;
+    GUIBUTTON_SetVisible(MMI_ZMT_WORD_DETAIL_BUTTON_AUDIO_CTRL_ID,TRUE,FALSE);
     GUIBUTTON_SetRect(MMI_ZMT_WORD_DETAIL_BUTTON_AUDIO_CTRL_ID, &audio_rect);
     LCD_DrawHLine(&lcd_dev_info, word_pinyin_rect.left, audio_rect.bottom, word_pinyin_rect.right, MMI_WHITE_COLOR);
     word_Hor_line_rect = word_pinyin_rect;
@@ -1128,7 +1353,7 @@ LOCAL MMI_RESULT_E HandleWordDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E m
                 memset(chapter_unmaster_idx, 0, sizeof(chapter_unmaster_idx));
                 if(is_open_new_word){
                     Word_RequestNewWord(
-                        word_publish_info->item_info[word_book_info.cur_book_idx]->book_id,
+                        word_publish_info[word_book_info.cur_publish_idx]->item_info[word_book_info.cur_book_idx]->book_id,
                         word_chapter_info[word_book_info.cur_chapter_idx]->chapter_id
                     );
                 }else{
@@ -1210,12 +1435,10 @@ LOCAL MMI_RESULT_E HandleWordDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E m
                 }
                 else
                 {
-                    GUIBUTTON_SetVisible(MMI_ZMT_WORD_DETAIL_BUTTON_AUDIO_CTRL_ID, TRUE, TRUE);
                     GUIBUTTON_SetVisible(MMI_ZMT_WORD_DETAIL_LEFT_CTRL_ID,TRUE,FALSE);
                     GUIBUTTON_SetVisible(MMI_ZMT_WORD_DETAIL_RIGHT_CTRL_ID,TRUE,FALSE);
                     if(word_detail_cur_idx < word_detail_count)
                     {
-                        GUIBUTTON_SetVisible(MMI_ZMT_WORD_DETAIL_BUTTON_AUDIO_CTRL_ID,TRUE,FALSE);
                         GUIBUTTON_SetCallBackFunc(MMI_ZMT_WORD_DETAIL_BUTTON_AUDIO_CTRL_ID, WordDetail_PlayPinyinAudio);
                         if(is_open_new_word)
                         {
@@ -1322,7 +1545,7 @@ LOCAL MMI_RESULT_E HandleWordDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E m
                 if(is_open_new_word && new_word_haved_delete)
                 {
                     Word_SaveDeleteNewWord(
-                        word_publish_info->item_info[word_book_info.cur_book_idx]->book_id,
+                        word_publish_info[word_book_info.cur_publish_idx]->item_info[word_book_info.cur_book_idx]->book_id,
                         word_chapter_info[word_book_info.cur_chapter_idx]->chapter_id,
                         word_chapter_info[word_book_info.cur_chapter_idx]->chapter_name                        
                     );
@@ -1330,7 +1553,7 @@ LOCAL MMI_RESULT_E HandleWordDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E m
                 else if(!is_open_new_word && chapter_unmaster_count > 0)
                 {
                     Word_WriteUnmasterChapterWord(
-                        word_publish_info->item_info[word_book_info.cur_book_idx]->book_id,
+                        word_publish_info[word_book_info.cur_publish_idx]->item_info[word_book_info.cur_book_idx]->book_id,
                         word_chapter_info[word_book_info.cur_chapter_idx]->chapter_id,
                         word_chapter_info[word_book_info.cur_chapter_idx]->chapter_name,
                         chapter_unmaster_count

@@ -30,12 +30,21 @@ extern "C"
 #define WORD_BOOK_AUDIO_PATH "E:/word/book_%d/%s.mp3"
 #define WORD_BOOK_NEW_WORD_PATH "E:/word/book_%d/unmaster_word_%d.json"
 
+#define WORD_PUBLISH_MAX 20
 #define WORD_PUBLISH_BOOK_MAX 30
+#define WORD_PUBLISH_BOOK_TOTAL_MAX 120
 #define WORD_CHAPTER_NUM_MAX 30
 #define WORD_CHAPTER_WORD_MAX 50
 
 typedef struct
 {
+    uint8 count;
+}WORD_GRADE_BOOK_T;
+
+typedef struct
+{
+    int cur_publish_grade_idx;
+    int cur_publish_idx;
     int cur_book_idx;
     int cur_chapter_idx;
     int cur_detail_idx;

@@ -20,10 +20,11 @@
 BOOLEAN word_is_load_local = FALSE;
 
 extern WORD_BOOK_INFO_T word_book_info;
-extern uint8 word_book_count;
-extern uint8 word_chapter_count;
-extern uint16 word_detail_count;
-extern WORD_BOOK_PUBLISH_INFO_T * word_publish_info;
+extern int8 word_publish_count;
+extern int8 word_book_count;
+extern int8 word_chapter_count;
+extern int16 word_detail_count;
+extern WORD_BOOK_PUBLISH_INFO_T * word_publish_info[WORD_PUBLISH_MAX];
 extern WORD_BOOK_CHAPTER_T * word_chapter_info[WORD_CHAPTER_NUM_MAX];
 extern WORD_BOOK_DETAIL_T * new_word_detail_info[WORD_CHAPTER_WORD_MAX];
 extern int chapter_unmaster_idx[WORD_CHAPTER_WORD_MAX];
@@ -205,24 +206,31 @@ PUBLIC void Word_WriteUnmasterChapterWord(uint16 book_id, uint16 chap_id, char *
 PUBLIC void Word_ReleaseBookInfo(void)
 {
     uint8 i = 0;
-    if(word_publish_info != NULL){
-        for(i = 0;i < WORD_PUBLISH_BOOK_MAX;i++)
+    uint8 j = 0;
+    for(i = 0;i < WORD_PUBLISH_MAX;i++)
+    {
+        if(word_publish_info[i] != NULL)
         {
-            if(word_publish_info->item_info[i] != NULL){
-                if(word_publish_info->item_info[i]->book_name != NULL){
-                    SCI_FREE(word_publish_info->item_info[i]->book_name);
-                    word_publish_info->item_info[i]->book_name = NULL;
+            for(j = 0;j < WORD_PUBLISH_BOOK_MAX;j++)
+            {
+                if(word_publish_info[i]->item_info[j] != NULL)
+                {
+                    if(word_publish_info[i]->item_info[j]->book_name != NULL)
+                    {
+                        SCI_FREE(word_publish_info[i]->item_info[j]->book_name);
+                        word_publish_info[i]->item_info[j]->book_name = NULL;
+                    }
+                    SCI_FREE(word_publish_info[i]->item_info[j]);
+                    word_publish_info[i]->item_info[j] = NULL;
                 }
-                SCI_FREE(word_publish_info->item_info[i]);
-                word_publish_info->item_info[i] = NULL;
             }
+			if(word_publish_info[i]->publish_name != NULL){
+				SCI_FREE(word_publish_info[i]->publish_name);
+				word_publish_info[i]->publish_name = NULL;
+			}
+			SCI_FREE(word_publish_info[i]);
+			word_publish_info[i] = NULL;
         }
-        if(word_publish_info->publish_name != NULL){
-            SCI_FREE(word_publish_info->publish_name);
-            word_publish_info->publish_name = NULL;
-        }
-        SCI_FREE(word_publish_info);
-        word_publish_info = NULL;
     }
 }
 
@@ -237,32 +245,33 @@ PUBLIC void Word_ParseBookInfo(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 
         cJSON *root = cJSON_Parse(pRcv);
         if(root != NULL && root->type != cJSON_NULL)
         {
-            for(i = 0;i < 1;i++)
+            word_publish_count = cJSON_GetArraySize(root);
+            for(i = 0;i < word_publish_count && i < WORD_PUBLISH_MAX;i++)
             {              
                 cJSON *list_item =  cJSON_GetArrayItem(root, i);
                 cJSON *publishId = cJSON_GetObjectItem(list_item, "id");
                 cJSON *publishName = cJSON_GetObjectItem(list_item, "publishName");
                 cJSON *book = cJSON_GetObjectItem(list_item, "book");
                 
-                if(word_publish_info != NULL){
-                    SCI_FREE(word_publish_info);
-                    word_publish_info = NULL;
+                if(word_publish_info[i] != NULL){
+                    SCI_FREE(word_publish_info[i]);
+                    word_publish_info[i] = NULL;
                 }
-                word_publish_info = SCI_ALLOC_APPZ(sizeof(WORD_BOOK_PUBLISH_INFO_T));
-                memset(word_publish_info, 0, sizeof(WORD_BOOK_PUBLISH_INFO_T));
+                word_publish_info[i] = SCI_ALLOC_APPZ(sizeof(WORD_BOOK_PUBLISH_INFO_T));
+                memset(word_publish_info[i], 0, sizeof(WORD_BOOK_PUBLISH_INFO_T));
                 
-                word_publish_info->publish_id = publishId->valueint;
+                word_publish_info[i]->publish_id = publishId->valueint;
                 
-                if(word_publish_info->publish_name != NULL){
-                    SCI_FREE(word_publish_info->publish_name);
-                    word_publish_info->publish_name = NULL;
+                if(word_publish_info[i]->publish_name != NULL){
+                    SCI_FREE(word_publish_info[i]->publish_name);
+                    word_publish_info[i]->publish_name = NULL;
                 }
                 size = strlen(publishName->valuestring);
-                word_publish_info->publish_name = SCI_ALLOC_APPZ(size + 1);
-                memset(word_publish_info->publish_name, 0, size + 1);
-                SCI_MEMCPY(word_publish_info->publish_name, publishName->valuestring, size);
+                word_publish_info[i]->publish_name = SCI_ALLOC_APPZ(size + 1);
+                memset(word_publish_info[i]->publish_name, 0, size + 1);
+                SCI_MEMCPY(word_publish_info[i]->publish_name, publishName->valuestring, size);
 
-                word_publish_info->item_count = cJSON_GetArraySize(book);
+                word_publish_info[i]->item_count = cJSON_GetArraySize(book);
                 word_book_count = cJSON_GetArraySize(book);
                 for(m = 0;m < cJSON_GetArraySize(book) && m < WORD_PUBLISH_BOOK_MAX;m++)
                 {
@@ -270,25 +279,25 @@ PUBLIC void Word_ParseBookInfo(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 
                     cJSON *bookId = cJSON_GetObjectItem(book_item, "id");
                     cJSON *bookName = cJSON_GetObjectItem(book_item, "bookName");
                     cJSON *grade = cJSON_GetObjectItem(book_item, "grade");
-
-                    if(word_publish_info->item_info[m] != NULL){
-                        SCI_FREE(word_publish_info->item_info[m]);
-                        word_publish_info->item_info[m] = NULL;
+                    
+                    if(word_publish_info[i]->item_info[m] != NULL){
+                        SCI_FREE(word_publish_info[i]->item_info[m]);
+                        word_publish_info[i]->item_info[m] = NULL;
                     }
-                    word_publish_info->item_info[m] = SCI_ALLOC_APPZ(sizeof(WORD_BOOK_PUBLISH_ITEM_INFO_T));
-                    memset(word_publish_info->item_info[m], 0, sizeof(WORD_BOOK_PUBLISH_ITEM_INFO_T));
+                    word_publish_info[i]->item_info[m] = SCI_ALLOC_APPZ(sizeof(WORD_BOOK_PUBLISH_ITEM_INFO_T));
+                    memset(word_publish_info[i]->item_info[m], 0, sizeof(WORD_BOOK_PUBLISH_ITEM_INFO_T));
 
-                    word_publish_info->item_info[m]->book_id = bookId->valueint;
-                    word_publish_info->item_info[m]->grade = grade->valueint;
+                    word_publish_info[i]->item_info[m]->book_id = bookId->valueint;
+                    word_publish_info[i]->item_info[m]->grade = grade->valueint;
 
-                    if(word_publish_info->item_info[m]->book_name != NULL){
-                        SCI_FREE(word_publish_info->item_info[m]->book_name);
-                        word_publish_info->item_info[m]->book_name = NULL;
+                    if(word_publish_info[i]->item_info[m]->book_name != NULL){
+                        SCI_FREE(word_publish_info[i]->item_info[m]->book_name);
+                        word_publish_info[i]->item_info[m]->book_name = NULL;
                     }
                     size = strlen(bookName->valuestring);
-                    word_publish_info->item_info[m]->book_name = SCI_ALLOC_APPZ(size + 1);
-                    memset(word_publish_info->item_info[m]->book_name, 0, size + 1);
-                    SCI_MEMCPY(word_publish_info->item_info[m]->book_name, bookName->valuestring, size);
+                    word_publish_info[i]->item_info[m]->book_name = SCI_ALLOC_APPZ(size + 1);
+                    memset(word_publish_info[i]->item_info[m]->book_name, 0, size + 1);
+                    SCI_MEMCPY(word_publish_info[i]->item_info[m]->book_name, bookName->valuestring, size);
                 }
             }
             if(zmt_tfcard_exist() && zmt_tfcard_get_free_kb() > 100 * 1024){
@@ -308,13 +317,13 @@ PUBLIC void Word_ParseBookInfo(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 
         }
         else
         {
-            word_book_count = -2;
+            word_publish_count = -2;
         }
         cJSON_Delete(root);
     }
     else
     {
-        word_book_count = -1;
+        word_publish_count = -1;
     }
     if(word_is_load_local){
         if(pRcv != PNULL)
@@ -613,7 +622,7 @@ PUBLIC void Word_ParseChapterInfo(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint
                 {
                     char * out = NULL;
                     char file_path[40] = {0};
-                    uint16 book_id = word_publish_info->item_info[word_book_info.cur_book_idx]->book_id;
+                    uint16 book_id = word_publish_info[word_book_info.cur_publish_idx]->item_info[word_book_info.cur_book_idx]->book_id;
                     sprintf(file_path, WORD_BOOK_CHAPTER_PATH, book_id, book_id);
                     if(zmt_file_exist(file_path)){
                         zmt_file_delete(file_path);
@@ -822,17 +831,25 @@ PUBLIC void Word_DeleteOneNewWord(uint8 idx, uint8 count)
             new_word_detail[j]->audio_data = NULL;
             new_word_detail[j]->audio_len = 0;
         }
+
+        if(new_word_detail_info[i]->phonetic != NULL){
+            size = strlen(new_word_detail_info[i]->phonetic);
+            new_word_detail[j]->phonetic = SCI_ALLOC_APPZ(size+1);
+            memset(new_word_detail[j]->phonetic, 0, size+1);
+            SCI_MEMCPY(new_word_detail[j]->phonetic, new_word_detail_info[i]->phonetic, size);
+        }else{
+            new_word_detail[j]->phonetic = NULL;
+        }
+
+        if(new_word_detail_info[i]->translation != NULL){
+            size = strlen(new_word_detail_info[i]->translation);
+            new_word_detail[j]->translation = SCI_ALLOC_APPZ(size+1);
+            memset(new_word_detail[j]->translation, 0, size+1);
+            SCI_MEMCPY(new_word_detail[j]->translation, new_word_detail_info[i]->translation, size);
+        }else{
+            new_word_detail[j]->translation = NULL;
+        }
         
-        size = strlen(new_word_detail_info[i]->phonetic);
-        new_word_detail[j]->phonetic = SCI_ALLOC_APPZ(size+1);
-        memset(new_word_detail[j]->phonetic, 0, size+1);
-        SCI_MEMCPY(new_word_detail[j]->phonetic, new_word_detail_info[i]->phonetic, size);
-
-        size = strlen(new_word_detail_info[i]->translation);
-        new_word_detail[j]->translation = SCI_ALLOC_APPZ(size+1);
-        memset(new_word_detail[j]->translation, 0, size+1);
-        SCI_MEMCPY(new_word_detail[j]->translation, new_word_detail_info[i]->translation, size);
-
         j++;
     }
 
@@ -863,15 +880,23 @@ PUBLIC void Word_DeleteOneNewWord(uint8 idx, uint8 count)
             new_word_detail_info[i]->audio_len = 0;
         }
 
-        size = strlen(new_word_detail[i]->phonetic);
-        new_word_detail_info[i]->phonetic = SCI_ALLOC_APPZ(size+1);
-        memset(new_word_detail_info[i]->phonetic, 0, size+1);
-        SCI_MEMCPY(new_word_detail_info[i]->phonetic, new_word_detail[i]->phonetic, size);
+        if(new_word_detail[i]->phonetic != NULL){
+            size = strlen(new_word_detail[i]->phonetic);
+            new_word_detail_info[i]->phonetic = SCI_ALLOC_APPZ(size+1);
+            memset(new_word_detail_info[i]->phonetic, 0, size+1);
+            SCI_MEMCPY(new_word_detail_info[i]->phonetic, new_word_detail[i]->phonetic, size);
+        }else{
+            new_word_detail_info[i]->phonetic = NULL;
+        }
 
-        size = strlen(new_word_detail[i]->translation);
-        new_word_detail_info[i]->translation = SCI_ALLOC_APPZ(size+1);
-        memset(new_word_detail_info[i]->translation, 0, size+1);
-        SCI_MEMCPY(new_word_detail_info[i]->translation, new_word_detail[i]->translation, size);
+        if(new_word_detail[i]->translation != NULL){
+            size = strlen(new_word_detail[i]->translation);
+            new_word_detail_info[i]->translation = SCI_ALLOC_APPZ(size+1);
+            memset(new_word_detail_info[i]->translation, 0, size+1);
+            SCI_MEMCPY(new_word_detail_info[i]->translation, new_word_detail[i]->translation, size);
+        }else{
+            new_word_detail_info[i]->translation = NULL;
+        }
     }
     
     SCI_TRACE_LOW("%s: j = %d", __FUNCTION__, j);
@@ -907,6 +932,9 @@ PUBLIC void Word_DeleteOneNewWord(uint8 idx, uint8 count)
     {
         word_detail_count--;
         MMK_SendMsg(MMI_WORD_DETAIL_WIN_ID, MSG_FULL_PAINT, PNULL);
+        if(word_open_auto_play){
+            WordDetail_PlayPinyinAudio();
+        }
     }
     else
     {
@@ -1026,12 +1054,12 @@ PUBLIC void Word_ParseMp3Response(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint
             char file_path[40] = {0};
             if(is_open_new_word){
                 sprintf(file_path, WORD_BOOK_AUDIO_PATH, 
-                    word_publish_info->item_info[word_book_info.cur_book_idx]->book_id, 
+                    word_publish_info[word_book_info.cur_publish_idx]->item_info[word_book_info.cur_book_idx]->book_id, 
                     new_word_detail_info[word_detail_cur_idx]->word
                 );
             }else{
                 sprintf(file_path, WORD_BOOK_AUDIO_PATH, 
-                    word_publish_info->item_info[word_book_info.cur_book_idx]->book_id, 
+                    word_publish_info[word_book_info.cur_publish_idx]->item_info[word_book_info.cur_book_idx]->book_id, 
                     word_chapter_info[word_book_info.cur_chapter_idx]->detail[word_detail_cur_idx]->word
                 );
             }

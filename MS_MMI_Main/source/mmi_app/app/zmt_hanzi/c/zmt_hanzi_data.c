@@ -978,7 +978,7 @@ PUBLIC void Hanzi_DeleteNewWordItem(uint16 cur_idx)
         cJSON_Delete(root);
         cJSON_Delete(roots);
 
-        SCI_TRACE_LOW("%s: before, hanzi_detail_cur_idx = %d, cur_new_word_page_idx = %d", __FUNCTION__, hanzi_detail_cur_idx, cur_new_word_page_idx);
+        //SCI_TRACE_LOW("%s: before, hanzi_detail_cur_idx = %d, cur_new_word_page_idx = %d", __FUNCTION__, hanzi_detail_cur_idx, cur_new_word_page_idx);
         if(hanzi_detail_cur_idx == 0 && cur_new_word_page_idx > 0){
             hanzi_detail_cur_idx = HANZI_CHAPTER_WORD_MAX - 1;
             cur_new_word_page_idx--;
@@ -988,7 +988,7 @@ PUBLIC void Hanzi_DeleteNewWordItem(uint16 cur_idx)
         }else if(hanzi_detail_cur_idx > 0 && hanzi_detail_cur_idx < HANZI_CHAPTER_WORD_MAX){
             hanzi_detail_cur_idx--;
         }
-        SCI_TRACE_LOW("%s: after, hanzi_detail_cur_idx = %d, cur_new_word_page_idx = %d", __FUNCTION__, hanzi_detail_cur_idx, cur_new_word_page_idx);
+        //SCI_TRACE_LOW("%s: after, hanzi_detail_cur_idx = %d, cur_new_word_page_idx = %d", __FUNCTION__, hanzi_detail_cur_idx, cur_new_word_page_idx);
         Hanzi_ReleaseDetailInfo();
         data_buf = zmt_file_data_read(file_path, &file_len);
         if(data_buf != PNULL && file_len > 0)
