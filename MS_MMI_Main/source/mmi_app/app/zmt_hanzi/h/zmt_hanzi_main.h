@@ -18,6 +18,8 @@ extern "C"
 #define HANZI_CARD_LINE_WIDTH MMI_MAINSCREEN_WIDTH/6
 #define HANZI_CARD_LINE_HIGHT MMI_MAINSCREEN_HEIGHT/10
 
+#define HANZI_BOOK_UPDATE_INTERVAL_TIMES 7*24*3600 //7Ìì
+
 #define HANZI_BOOK_APP_ID "00000002"
 #define HANZI_BOOK_APP_SECRET "ZmtHanziBookSec"
 
@@ -29,6 +31,7 @@ extern "C"
 #define HANZI_BOOK_CHAPTER_PATH "hanzi/get?contentId=%d&%s"
 #define HANZI_BOOK_AUDIO_PATH "%saudio/word/%s/name/%s.mp3"
 
+#define HANZI_CARD_LEARN_INFO_PATH "E:/hanzi/learn_info.json"
 #define HANZI_CARD_BOOK_INFO_PATH "E:/hanzi/publish_name.json"
 #define HANZI_CARD_GRADE_CHAPTER_PATH "E:/hanzi/grade_%d/grade_%d.json"
 #define HANZI_CARD_CHAPTER_WORD_PATH "E:/hanzi/grade_%d/%d.json"
@@ -41,10 +44,17 @@ extern "C"
 
 typedef struct
 {
+    uint32 update_times;
+    uint16 book_id;
+    uint16 unit_id;
+}HANZI_LEARN_INFO_T;
+
+typedef struct
+{
     uint8 id;
     char * book_name;
     char * publish_name;
-}ZMT_HANZI_PUBLISH_BOOK_INFO;
+}HANZI_PUBLISH_BOOK_INFO;
 
 typedef struct HANZI_BOOK_INFO_T
 {
@@ -79,6 +89,7 @@ typedef struct
     char * remark;//ÐÎ½ü×Ö+×¢ÊÍ
 }HANZI_BOOK_HANZI_INFO;
 
+PUBLIC void MMI_CreateHanziTipsWin(void);
 PUBLIC void MMI_CreateHanziWin(void);
 PUBLIC void MMI_CreateHanziChapterWin(void);
 PUBLIC void MMI_CreateHanziDetailWin(void);
@@ -98,3 +109,9 @@ PUBLIC void Hanzi_requestDetailInfo(uint8 grade_id, uint16 req_id);
 
 PUBLIC void Hanzi_ParseMp3Response(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id);
 PUBLIC void HanziDetail_PlayPinyinAudio(void);
+
+PUBLIC void Hanzi_UpdateBookInfo(void);
+PUBLIC void Hanzi_ReleaseLearnInfo(void);
+PUBLIC void Hanzi_WriteLearnInfo(void);
+PUBLIC void Hanzi_UpdateLearnInfo(uint16 book_id, uint16 unit_id);
+PUBLIC BOOLEAN Hanzi_LoadLearnInfo(void);

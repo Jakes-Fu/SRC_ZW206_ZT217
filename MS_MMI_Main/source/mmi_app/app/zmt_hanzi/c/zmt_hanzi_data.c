@@ -13,13 +13,14 @@
 #include "zmt_listening_export.h"
 #endif
 
+extern HANZI_LEARN_INFO_T * hanzi_learn_info;
 extern HANZI_BOOK_INFO_T hanzi_book_info;
 extern BOOLEAN is_open_auto_play;
 extern int cur_chapter_unmaster_idx[HANZI_CHAPTER_WORD_MAX];
 extern uint8 cur_new_word_page_idx;
 
 int8 hanzi_book_count = 0;
-ZMT_HANZI_PUBLISH_BOOK_INFO * hanzi_publish_info[HANZI_PUBLISH_BOOK_MAX];
+HANZI_PUBLISH_BOOK_INFO * hanzi_publish_info[HANZI_PUBLISH_BOOK_MAX];
 HANZI_CONTENT_INFO_T * hanzi_content_info[HANZI_CONTENT_CHAPTER_MAX];
 int16 hanzi_chapter_count = 0;
 int16 hanzi_chapter_children_count[HANZI_CONTENT_CHAPTER_MAX] = {0};
@@ -27,6 +28,129 @@ HANZI_BOOK_HANZI_INFO * hanzi_detail_info[HANZI_CHAPTER_WORD_MAX];
 int16 hanzi_detail_count = 0;
 int16 hanzi_detail_cur_idx = 0;
 BOOLEAN hanzi_is_load_local = FALSE;
+
+PUBLIC void Hanzi_UpdateBookInfo(void)
+{
+    char url[200] = {0};
+    char * query_str = makeBaseQueryUrlString(HANZI_BOOK_APP_ID, HANZI_BOOK_APP_SECRET);
+    sprintf(url, HANZI_BOOK_PUBLISH_PATH, query_str);
+    SCI_FREE(query_str);
+    SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
+    hanzi_is_load_local = FALSE;
+    MMIZDT_HTTP_AppSend(TRUE, HANZI_BOOK_HEADER_PATH, url, strlen(url), 1000, 0, 0, 0, 0, 0, Hanzi_ParseBookInfo);
+}
+
+PUBLIC void Hanzi_ReleaseLearnInfo(void)
+{
+    if(hanzi_learn_info != NULL)
+    {
+        SCI_FREE(hanzi_learn_info);
+        hanzi_learn_info = NULL;
+    }
+}
+
+PUBLIC void Hanzi_WriteLearnInfo(void)
+{
+    char * out = NULL;
+    char file_path[50] = {0};
+    cJSON * root;
+    cJSON * update_times;
+    cJSON * publish_id;
+    cJSON * book_id;
+    cJSON * unit_id;
+    
+    if(hanzi_learn_info == NULL)
+    {
+        SCI_TRACE_LOW("%s: hanzi_learn_info empty!!", __FUNCTION__);
+        return;
+    }
+    
+    root = cJSON_CreateObject();
+    update_times = cJSON_CreateNumber(hanzi_learn_info->update_times);
+    cJSON_AddItemToObject(root, "update_times", update_times);
+    book_id = cJSON_CreateNumber(hanzi_learn_info->book_id);
+    cJSON_AddItemToObject(root, "book_id", book_id);
+    unit_id = cJSON_CreateNumber(hanzi_learn_info->unit_id);
+    cJSON_AddItemToObject(root, "unit_id", unit_id);
+
+    out = cJSON_PrintUnformatted(root);
+    strcpy(file_path, HANZI_CARD_LEARN_INFO_PATH);
+#ifndef WIN32
+    if(zmt_tfcard_exist() && zmt_tfcard_get_free_kb() > 100 * 1024)
+ #endif
+    {
+        if(zmt_file_exist(file_path)){
+            zmt_file_delete(file_path);
+        }
+        zmt_file_data_write(out, strlen(out), file_path);
+    }
+    
+    cJSON_Delete(root);
+    SCI_FREE(out);
+}
+
+PUBLIC void Hanzi_UpdateLearnInfo(uint16 book_id, uint16 unit_id)
+{
+    if(hanzi_learn_info == NULL){
+        uint32 cur_times = MMIAPICOM_GetCurTime();
+        hanzi_learn_info = SCI_ALLOC_APPZ(sizeof(HANZI_LEARN_INFO_T));
+        memset(hanzi_learn_info, 0, sizeof(HANZI_LEARN_INFO_T));
+        hanzi_learn_info->update_times = cur_times;
+    }
+    hanzi_learn_info->book_id = book_id;
+    hanzi_learn_info->unit_id = unit_id;
+}
+
+PUBLIC BOOLEAN Hanzi_LoadLearnInfo(void)
+{   
+    BOOLEAN load_result = FALSE;
+    char file_path[50] = {0};
+    char * data_buf = PNULL;
+    uint32 data_size = 0;
+
+    strcpy(file_path, HANZI_CARD_LEARN_INFO_PATH);
+    if(zmt_file_exist(file_path))
+    {
+        data_buf = zmt_file_data_read(file_path, &data_size);
+        if(data_buf != PNULL && data_size > 0)
+        {
+            cJSON * root;
+            cJSON * update_times;
+            cJSON * book_id;
+            cJSON * unit_id;
+
+            root = cJSON_Parse(data_buf);
+            if(root != NULL && root->type != cJSON_NULL)
+            {
+                update_times = cJSON_GetObjectItem(root, "update_times");
+                book_id = cJSON_GetObjectItem(root, "book_id");
+                unit_id = cJSON_GetObjectItem(root, "unit_id");
+                
+                if(hanzi_learn_info == NULL){
+                    hanzi_learn_info = SCI_ALLOC_APPZ(sizeof(HANZI_LEARN_INFO_T));
+                }
+                memset(hanzi_learn_info, 0, sizeof(HANZI_LEARN_INFO_T));
+                hanzi_learn_info->update_times = update_times->valueint;
+                hanzi_learn_info->book_id = book_id->valueint;
+                hanzi_learn_info->unit_id = unit_id->valueint;
+                
+                load_result = TRUE;
+                cJSON_Delete(root);
+            }
+            SCI_FREE(data_buf);
+        }
+    }
+    if(load_result){
+        uint32 cur_times = MMIAPICOM_GetCurTime();
+        if(cur_times - hanzi_learn_info->update_times >= HANZI_BOOK_UPDATE_INTERVAL_TIMES)
+        {
+            hanzi_learn_info->update_times = cur_times;
+            Hanzi_UpdateBookInfo();
+            load_result = FALSE;
+        }
+    }
+    return load_result;
+}
 
 PUBLIC void Hanzi_WriteExistUnmasterHanzi(cJSON * hanzis, uint8 write_count)
 {
@@ -256,8 +380,8 @@ PUBLIC void Hanzi_ParseBookInfo(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32
                     SCI_FREE(hanzi_publish_info[i]);
                     hanzi_publish_info[i] = NULL;
                 }
-                hanzi_publish_info[i] = (ZMT_HANZI_PUBLISH_BOOK_INFO *)SCI_ALLOC_APP(sizeof(ZMT_HANZI_PUBLISH_BOOK_INFO));
-                memset(hanzi_publish_info[i], 0, sizeof(ZMT_HANZI_PUBLISH_BOOK_INFO));
+                hanzi_publish_info[i] = (HANZI_PUBLISH_BOOK_INFO *)SCI_ALLOC_APP(sizeof(HANZI_PUBLISH_BOOK_INFO));
+                memset(hanzi_publish_info[i], 0, sizeof(HANZI_PUBLISH_BOOK_INFO));
 
                 hanzi_publish_info[i]->id = id->valueint;
 
@@ -314,7 +438,12 @@ PUBLIC void Hanzi_ParseBookInfo(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32
         }
     }
     hanzi_is_load_local = FALSE;
-    MMK_SendMsg(MMI_HANZI_MAIN_WIN_ID, MSG_FULL_PAINT, PNULL);
+    if(MMK_IsFocusWin(MMI_HANZI_MAIN_WIN_ID)){
+        MMK_SendMsg(MMI_HANZI_MAIN_WIN_ID, MSG_FULL_PAINT, PNULL);
+        if(hanzi_book_count > 0 && Hanzi_LoadLearnInfo()){
+            MMI_CreateHanziTipsWin();
+        }
+    }
 }
 
 PUBLIC void Hanzi_requestBookInfo(void)

@@ -30,7 +30,9 @@
 #include "zmt_word_image.h"
 #endif
 
-
+LOCAL GUI_RECT_T hanzi_msg_tips_rect = {HANZI_CARD_LINE_WIDTH, 3*HANZI_CARD_LINE_HIGHT, MMI_MAINSCREEN_WIDTH - HANZI_CARD_LINE_WIDTH, 7*HANZI_CARD_LINE_HIGHT};
+LOCAL GUI_RECT_T hanzi_msg_tips_left_rect = {1.2*HANZI_CARD_LINE_WIDTH, 5.5*HANZI_CARD_LINE_HIGHT, 2.7*HANZI_CARD_LINE_WIDTH, 6.5*HANZI_CARD_LINE_HIGHT};
+LOCAL GUI_RECT_T hanzi_msg_tips_right_rect = {3.3*HANZI_CARD_LINE_WIDTH, 5.5*HANZI_CARD_LINE_HIGHT, 4.8*HANZI_CARD_LINE_WIDTH, 6.5*HANZI_CARD_LINE_HIGHT};
 LOCAL GUI_RECT_T hanzi_win_rect = {0, 0, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT};//窗口
 LOCAL GUI_RECT_T hanzi_title_rect = {0, 0, MMI_MAINSCREEN_WIDTH, HANZI_CARD_LINE_HIGHT};//顶部
 LOCAL GUI_RECT_T hanzi_auto_play_rect = {4*HANZI_CARD_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH, HANZI_CARD_LINE_HIGHT};//自动播放图标
@@ -51,7 +53,7 @@ LOCAL int16 main_tp_down_x = 0;
 LOCAL int16 main_tp_down_y = 0;
 
 extern int8 hanzi_book_count;
-extern ZMT_HANZI_PUBLISH_BOOK_INFO * hanzi_publish_info[HANZI_PUBLISH_BOOK_MAX];
+extern HANZI_PUBLISH_BOOK_INFO * hanzi_publish_info[HANZI_PUBLISH_BOOK_MAX];
 extern HANZI_CONTENT_INFO_T * hanzi_content_info[HANZI_CONTENT_CHAPTER_MAX];
 extern int16 hanzi_chapter_count;
 extern int16 hanzi_chapter_children_count[20];
@@ -59,6 +61,7 @@ extern HANZI_BOOK_HANZI_INFO * hanzi_detail_info[100];
 extern int16 hanzi_detail_count;
 extern int16 hanzi_detail_cur_idx;
 
+HANZI_LEARN_INFO_T * hanzi_learn_info = NULL;
 HANZI_BOOK_INFO_T hanzi_book_info = {0};
 BOOLEAN is_open_auto_play = TRUE;
 LOCAL uint8 open_auto_play_timer = 0;
@@ -91,7 +94,6 @@ LOCAL void Hanzi_InitButton(MMI_CTRL_ID_T ctrl_id)
 	GUIBUTTON_SetFont(ctrl_id, &font);
 }
 
-
 LOCAL void Hanzi_SetDiretionText(MMI_CTRL_ID_T ctrl_id, int cur_idx, int total)
 {
     char str[20] = {0};
@@ -103,6 +105,139 @@ LOCAL void Hanzi_SetDiretionText(MMI_CTRL_ID_T ctrl_id, int cur_idx, int total)
     text.wstr_ptr = wstr;
     text.wstr_len = MMIAPICOM_Wstrlen(wstr);
     GUILABEL_SetText(ctrl_id, &text, TRUE);
+}
+
+LOCAL void HanziPopupWin_FULL_PAINT(MMI_WIN_ID_T win_id)
+{
+    GUI_LCD_DEV_INFO lcd_dev_info = {GUI_MAIN_LCD_ID, GUI_BLOCK_MAIN};
+    GUISTR_STYLE_T text_style = {0};
+    GUI_BORDER_T border  = {0};
+    MMI_STRING_T str_left = {0};
+    MMI_STRING_T str_right = {0};
+    MMI_STRING_T tipstr = {0};
+    GUI_RECT_T rect = {0};
+
+    border.width = 1;
+    border.color = GUI_RGB2RGB565(80, 162, 254);
+    border.type =  GUI_BORDER_ROUNDED;
+
+    text_style.align = ALIGN_HVMIDDLE;
+    text_style.font = SONG_FONT_16;
+    text_style.font_color = GUI_RGB2RGB565(80, 162, 254);
+
+    LCD_FillRoundedRect(&lcd_dev_info,hanzi_msg_tips_rect,hanzi_msg_tips_rect,MMI_WHITE_COLOR);
+    
+    GUI_DisplayBorder(hanzi_msg_tips_rect,hanzi_msg_tips_rect,&border,&lcd_dev_info);
+    rect = hanzi_msg_tips_rect;
+    rect.bottom = hanzi_msg_tips_left_rect.top;
+    MMI_GetLabelTextByLang(WORD_TIPS, &tipstr);
+    GUISTR_DrawTextToLCDInRect(
+        (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
+        &rect,
+        &rect,
+        &tipstr,
+        &text_style,
+        GUISTR_STATE_ALIGN,
+        GUISTR_TEXT_DIR_AUTO
+    );
+
+    GUI_DisplayBorder(hanzi_msg_tips_left_rect,hanzi_msg_tips_left_rect,&border,&lcd_dev_info);
+    MMI_GetLabelTextByLang(WORD_FALSE,&str_left);
+    GUISTR_DrawTextToLCDInRect(
+        (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
+        &hanzi_msg_tips_left_rect,
+        &hanzi_msg_tips_left_rect,
+        &str_left,
+        &text_style,
+        GUISTR_STATE_ALIGN,
+        GUISTR_TEXT_DIR_AUTO
+    );
+
+    GUI_DisplayBorder(hanzi_msg_tips_right_rect,hanzi_msg_tips_right_rect,&border,&lcd_dev_info);
+    MMI_GetLabelTextByLang(WORD_TRUE,&str_right);
+    GUISTR_DrawTextToLCDInRect(
+        (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
+        &hanzi_msg_tips_right_rect,
+        &hanzi_msg_tips_right_rect,
+        &str_right,
+        &text_style,
+        GUISTR_STATE_ALIGN,
+        GUISTR_TEXT_DIR_AUTO
+    );
+}
+
+LOCAL void HanziPopupWin_TP_PRESS_UP(MMI_WIN_ID_T win_id, GUI_POINT_T point)
+{
+    if(GUI_PointIsInRect(point, hanzi_msg_tips_left_rect))
+    {
+        MMK_CloseWin(win_id);
+    }
+    else if(GUI_PointIsInRect(point, hanzi_msg_tips_right_rect))
+    {
+        MMK_CloseWin(win_id);
+        if(hanzi_learn_info != NULL)
+        {
+            uint8 i = 0;
+            for(i = 0;i < hanzi_book_count && i < HANZI_PUBLISH_BOOK_MAX;i++)
+            {
+                if(hanzi_publish_info[i]->id == hanzi_learn_info->book_id){
+                    hanzi_book_info.cur_book_idx = i;
+                    MMI_CreateHanziChapterWin();
+                    break;
+                }
+            }
+        }
+    }
+}
+
+LOCAL MMI_RESULT_E HandleHanziPopupWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E msg_id, DPARAM param)
+{
+    MMI_RESULT_E result = MMI_RESULT_TRUE;
+    switch(msg_id)
+    {
+        case MSG_OPEN_WINDOW:  
+            {
+                
+            }
+            break;
+        case MSG_FULL_PAINT:
+            {    
+                HanziPopupWin_FULL_PAINT(win_id);
+            }
+            break;
+        case MSG_KEYUP_CANCEL:
+            MMK_CloseWin(win_id);
+            break;
+        case MSG_TP_PRESS_UP:
+            {
+                GUI_POINT_T   point = {0};
+                point.x = MMK_GET_TP_X(param);
+                point.y = MMK_GET_TP_Y(param);
+                if(point.y > hanzi_msg_tips_left_rect.top){
+                    HanziPopupWin_TP_PRESS_UP(win_id, point);
+                }
+            }
+            break;
+        default:
+            result = MMI_RESULT_FALSE;
+            break;
+    }
+    return result;
+}
+
+WINDOW_TABLE(MMI_HANZI_TIPS_TAB) = {
+    WIN_FUNC((uint32)HandleHanziPopupWinMsg),
+    WIN_ID(MMI_HANZI_MAIN_TIPS_WIN_ID),
+    WIN_HIDE_STATUS,
+    END_WIN
+};
+
+PUBLIC void MMI_CreateHanziTipsWin(void)
+{
+    if(MMK_IsOpenWin(MMI_HANZI_MAIN_TIPS_WIN_ID)){
+        MMK_CloseWin(MMI_HANZI_MAIN_TIPS_WIN_ID);
+    }
+    MMK_CreateWin((uint32 *)MMI_HANZI_TIPS_TAB, PNULL);
 }
 
 LOCAL void Hanzi_DisplayBookList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
@@ -335,17 +470,19 @@ WINDOW_TABLE(MMI_HANZI_WIN_TAB) = {
     END_WIN
 };
 
-PUBLIC void MMI_CreateHanziWin(void)
-{
-    MMK_CreateWin((uint32 *)MMI_HANZI_WIN_TAB, PNULL);
-}
-
 PUBLIC MMI_RESULT_E MMI_CloseHanziWin(void)
 {
     MMI_RESULT_E result = MMI_RESULT_TRUE;
-
-    MMK_CloseWin(MMI_HANZI_MAIN_WIN_ID);
+    if(MMK_IsOpenWin(MMI_HANZI_MAIN_WIN_ID)){
+        MMK_CloseWin(MMI_HANZI_MAIN_WIN_ID);
+    }
     return result;
+}
+
+PUBLIC void MMI_CreateHanziWin(void)
+{
+    MMI_CloseHanziWin();
+    MMK_CreateWin((uint32 *)MMI_HANZI_WIN_TAB, PNULL);
 }
 
 ////////////////////////////////////////////////////
@@ -546,8 +683,6 @@ LOCAL void HanziChapterWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
     GUILABEL_SetFont(MMI_ZMT_HANZI_CHAPTER_LABEL_NUM_CTRL_ID, DP_FONT_16,MMI_BLACK_COLOR);
     GUILABEL_SetAlign(MMI_ZMT_HANZI_CHAPTER_LABEL_NUM_CTRL_ID, GUILABEL_ALIGN_RIGHT);
 
-    Hanzi_requestChapterInfo(hanzi_publish_info[hanzi_book_info.cur_book_idx]->id);
-
     if (UILAYER_IsMultiLayerEnable())
     {
         UILAYER_CREATE_T create_info = {0};
@@ -694,6 +829,8 @@ LOCAL MMI_RESULT_E HandleHanziChapterWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
         case MSG_OPEN_WINDOW:
             {
                 HanziChapterWin_OPEN_WINDOW(win_id);
+                Hanzi_requestChapterInfo(hanzi_publish_info[hanzi_book_info.cur_book_idx]->id);
+                Hanzi_UpdateLearnInfo(hanzi_publish_info[hanzi_book_info.cur_book_idx]->id, 0);
             }
             break;
         case MSG_FULL_PAINT:
@@ -716,6 +853,7 @@ LOCAL MMI_RESULT_E HandleHanziChapterWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
         case MSG_CLOSE_WINDOW:
             {
                 HanziChapterWin_CLOSE_WINDOW();
+                Hanzi_WriteLearnInfo();
             }
             break;
          default:
@@ -737,17 +875,19 @@ WINDOW_TABLE(MMI_HANZI_CHAPTER_WIN_TAB) = {
     END_WIN
 };
 
-PUBLIC void MMI_CreateHanziChapterWin(void)
-{
-    MMK_CreateWin((uint32 *)MMI_HANZI_CHAPTER_WIN_TAB, PNULL);
-}
-
 LOCAL MMI_RESULT_E MMI_CloseHanziChapterWin(void)
 {
     MMI_RESULT_E result = MMI_RESULT_TRUE;
-
-    MMK_CloseWin(MMI_HANZI_CHAPTER_WIN_ID);
+    if(MMK_IsOpenWin(MMI_HANZI_CHAPTER_WIN_ID)){
+        MMK_CloseWin(MMI_HANZI_CHAPTER_WIN_ID);
+    }
     return result;
+}
+
+PUBLIC void MMI_CreateHanziChapterWin(void)
+{
+    MMI_CloseHanziChapterWin();
+    MMK_CreateWin((uint32 *)MMI_HANZI_CHAPTER_WIN_TAB, PNULL);
 }
 
 ///////////////////////////////////////////////////////////////
@@ -1418,16 +1558,17 @@ WINDOW_TABLE(MMI_HANZI_DETAIL_WIN_TAB) = {
     END_WIN
 };
 
-PUBLIC void MMI_CreateHanziDetailWin(void)
-{
-    MMK_CreateWin((uint32 *)MMI_HANZI_DETAIL_WIN_TAB, PNULL);
-}
-
 PUBLIC MMI_RESULT_E MMI_CloseHanziDetailWin(void)
 {
     MMI_RESULT_E result = MMI_RESULT_TRUE;
-
-    MMK_CloseWin(MMI_HANZI_DETAIL_WIN_ID);
+    if(MMK_IsOpenWin(MMI_HANZI_DETAIL_WIN_ID)){
+        MMK_CloseWin(MMI_HANZI_DETAIL_WIN_ID);
+    }
     return result;
+}
+
+PUBLIC void MMI_CreateHanziDetailWin(void)
+{
+    MMK_CreateWin((uint32 *)MMI_HANZI_DETAIL_WIN_TAB, PNULL);
 }
 

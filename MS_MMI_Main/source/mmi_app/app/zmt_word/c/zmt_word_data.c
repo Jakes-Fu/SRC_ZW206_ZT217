@@ -19,6 +19,7 @@
 
 BOOLEAN word_is_load_local = FALSE;
 
+extern WORD_LEARN_INFO_T * word_learn_info;
 extern WORD_BOOK_INFO_T word_book_info;
 extern int8 word_publish_count;
 extern int8 word_chapter_count;
@@ -30,6 +31,136 @@ extern int chapter_unmaster_idx[WORD_CHAPTER_WORD_MAX];
 extern int16 word_detail_cur_idx;
 extern BOOLEAN word_open_auto_play;
 extern BOOLEAN is_open_new_word;
+
+PUBLIC void Word_UpdateBookInfo(void)
+{
+    char url[200] = {0};
+    char * query_str = NULL;
+    query_str = makeBaseQueryUrlString(WORD_BOOK_APP_ID, WORD_BOOK_APP_SECRET);
+    sprintf(url, WORD_BOOK_PUBLISH_PATH, query_str);
+    SCI_FREE(query_str);
+    SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
+    word_is_load_local = FALSE;
+    MMIZDT_HTTP_AppSend(TRUE, WORD_BOOK_HEADR_PATH, url, strlen(url), 1000, 0, 0, 0, 0, 0, Word_ParseBookInfo);
+}
+
+PUBLIC void Word_ReleaseLearnInfo(void)
+{
+    if(word_learn_info != NULL)
+    {
+        SCI_FREE(word_learn_info);
+        word_learn_info = NULL;
+    }
+}
+
+PUBLIC void Word_WriteLearnInfo(void)
+{
+    char * out = NULL;
+    char file_path[50] = {0};
+    cJSON * root;
+    cJSON * update_times;
+    cJSON * publish_id;
+    cJSON * book_id;
+    cJSON * unit_id;
+    
+    if(word_learn_info == NULL)
+    {
+        SCI_TRACE_LOW("%s: word_learn_info empty!!", __FUNCTION__);
+        return;
+    }
+    
+    root = cJSON_CreateObject();
+    update_times = cJSON_CreateNumber(word_learn_info->update_times);
+    cJSON_AddItemToObject(root, "update_times", update_times);
+    publish_id = cJSON_CreateNumber(word_learn_info->publish_id);
+    cJSON_AddItemToObject(root, "publish_id", publish_id);
+    book_id = cJSON_CreateNumber(word_learn_info->book_id);
+    cJSON_AddItemToObject(root, "book_id", book_id);
+    unit_id = cJSON_CreateNumber(word_learn_info->unit_id);
+    cJSON_AddItemToObject(root, "unit_id", unit_id);
+
+    out = cJSON_PrintUnformatted(root);
+    strcpy(file_path, WORD_LEARN_INFO_PATH);
+#ifndef WIN32
+    if(zmt_tfcard_exist() && zmt_tfcard_get_free_kb() > 100 * 1024)
+ #endif
+    {
+        if(zmt_file_exist(file_path)){
+            zmt_file_delete(file_path);
+        }
+        zmt_file_data_write(out, strlen(out), file_path);
+    }
+    
+    cJSON_Delete(root);
+    SCI_FREE(out);
+}
+
+PUBLIC void Word_UpdateLearnInfo(uint16 publish_id, uint16 book_id, uint16 unit_id)
+{
+    if(word_learn_info == NULL){
+        uint32 cur_times = MMIAPICOM_GetCurTime();
+        word_learn_info = SCI_ALLOC_APPZ(sizeof(WORD_LEARN_INFO_T));
+        memset(word_learn_info, 0, sizeof(WORD_LEARN_INFO_T));
+        word_learn_info->update_times = cur_times;
+    }
+    word_learn_info->publish_id = publish_id;
+    word_learn_info->book_id = book_id;
+    word_learn_info->unit_id = unit_id;
+}
+
+PUBLIC BOOLEAN Word_LoadLearnInfo(void)
+{   
+    BOOLEAN load_result = FALSE;
+    char file_path[50] = {0};
+    char * data_buf = PNULL;
+    uint32 data_size = 0;
+
+    strcpy(file_path, WORD_LEARN_INFO_PATH);
+    if(zmt_file_exist(file_path))
+    {
+        data_buf = zmt_file_data_read(file_path, &data_size);
+        if(data_buf != PNULL && data_size > 0)
+        {
+            cJSON * root;
+            cJSON * update_times;
+            cJSON * publish_id;
+            cJSON * book_id;
+            cJSON * unit_id;
+
+            root = cJSON_Parse(data_buf);
+            if(root != NULL && root->type != cJSON_NULL)
+            {
+                update_times = cJSON_GetObjectItem(root, "update_times");
+                publish_id = cJSON_GetObjectItem(root, "publish_id");
+                book_id = cJSON_GetObjectItem(root, "book_id");
+                unit_id = cJSON_GetObjectItem(root, "unit_id");
+                
+                if(word_learn_info == NULL){
+                    word_learn_info = SCI_ALLOC_APPZ(sizeof(WORD_LEARN_INFO_T));
+                }
+                memset(word_learn_info, 0, sizeof(WORD_LEARN_INFO_T));
+                word_learn_info->update_times = update_times->valueint;
+                word_learn_info->publish_id = publish_id->valueint;
+                word_learn_info->book_id = book_id->valueint;
+                word_learn_info->unit_id = unit_id->valueint;
+                
+                load_result = TRUE;
+                cJSON_Delete(root);
+            }
+            SCI_FREE(data_buf);
+        }
+    }
+    if(load_result){
+        uint32 cur_times = MMIAPICOM_GetCurTime();
+        if(cur_times - word_learn_info->update_times >= WORD_BOOK_UPDATE_INTERVAL_TIMES)
+        {
+            word_learn_info->update_times = cur_times;
+            Word_UpdateBookInfo();
+            load_result = FALSE;
+        }
+    }
+    return load_result;
+}
 
 LOCAL void Word_WriteExistUnmasterChapterWord(uint16 book_id, uint16 chap_id,cJSON * word, uint8 write_count)
 {
@@ -331,7 +462,12 @@ PUBLIC void Word_ParseBookInfo(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 
         }
     }
     word_is_load_local = FALSE;
-    MMK_SendMsg(MMI_WORD_MAIN_WIN_ID, MSG_FULL_PAINT, PNULL);
+    if(MMK_IsFocusWin(MMI_WORD_MAIN_WIN_ID)){
+        MMK_SendMsg(MMI_WORD_MAIN_WIN_ID, MSG_FULL_PAINT, PNULL);
+        if(word_publish_count > 0 && Word_LoadLearnInfo()){
+            MMI_CreateWordTipsWin();
+        }
+    }
 }
 
 PUBLIC void Word_requestBookInfo(void)

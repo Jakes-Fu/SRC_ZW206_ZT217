@@ -15,6 +15,8 @@ extern "C"
 #define WORD_CARD_LINE_HIGHT MMI_MAINSCREEN_HEIGHT/10
 #define ENGLISE_BOOK_ITEM_PANDDING 10
 
+#define WORD_BOOK_UPDATE_INTERVAL_TIMES 7*24*3600 //7Ìì
+
 #define WORD_BOOK_APP_ID "00000001"
 #define WORD_BOOK_APP_SECRET "ZmtWordBookSec"
 
@@ -25,6 +27,7 @@ extern "C"
 #define WORD_BOOK_AUDIO_BASE_PATH "%s%s.mp3"
 #define WORD_BOOK_AUDIO_BASE_URL "http://8.130.95.8:8866/file/english/"
 
+#define WORD_LEARN_INFO_PATH "E:/word/learn_info.json"
 #define WORD_PUBLISH_NAME_PATH "E:/word/publish_name.json"
 #define WORD_BOOK_CHAPTER_PATH "E:/word/book_%d/book_%d.json"
 #define WORD_BOOK_AUDIO_PATH "E:/word/book_%d/%s.mp3"
@@ -38,8 +41,11 @@ extern "C"
 
 typedef struct
 {
-    uint8 count;
-}WORD_GRADE_BOOK_T;
+    uint32 update_times;
+    uint16 publish_id;
+    uint16 book_id;
+    uint16 unit_id;
+}WORD_LEARN_INFO_T;
 
 typedef struct
 {
@@ -83,6 +89,7 @@ typedef struct
     WORD_BOOK_DETAIL_T * detail[WORD_CHAPTER_WORD_MAX];
 }WORD_BOOK_CHAPTER_T;
 
+PUBLIC void MMI_CreateWordTipsWin(void);
 PUBLIC void MMI_CreateWordWin(void);
 PUBLIC void MMI_CreateWordChapterWin(void);
 PUBLIC void MMI_CreateWordDetailWin(void);
@@ -91,11 +98,19 @@ PUBLIC void Word_ParseMp3Response(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint
 PUBLIC void WordDetail_PlayPinyinAudio(void);
 
 PUBLIC void Word_ReleaseChapterDetailInfo(void);
+PUBLIC void Word_ParseChapterInfo(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id);
 PUBLIC void Word_requestChapterDetailInfo(uint16 book_id);
 PUBLIC void Word_ReleaseBookInfo(void);
+PUBLIC void Word_ParseBookInfo(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id);
 PUBLIC void Word_requestBookInfo(void);
 
 PUBLIC void Word_WriteUnmasterChapterWord(uint16 book_id, uint16 chap_id, char * chap_name, uint8 write_count);
+
+PUBLIC void Word_UpdateBookInfo(void);
+PUBLIC void Word_ReleaseLearnInfo(void);
+PUBLIC void Word_WriteLearnInfo(void);
+PUBLIC void Word_UpdateLearnInfo(uint16 publish_id, uint16 book_id, uint16 unit_id);
+PUBLIC BOOLEAN Word_LoadLearnInfo(void);
 /*----------------------------------------------------------------------------*/
 /* Compiler Flag */
 /*----------------------------------------------------------------------------*/
