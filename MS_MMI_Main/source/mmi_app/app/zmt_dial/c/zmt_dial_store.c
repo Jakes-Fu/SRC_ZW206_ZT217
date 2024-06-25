@@ -738,7 +738,7 @@ LOCAL void ZmtDialStore_DisplayDialList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_
     {
         length = strlen(dial_store_list[index]->name_chn);
 		
-        item_t.item_style = GUIITEM_DSL_HANZI_BOOK;
+        item_t.item_style = GUIITEM_SYTLE_ZMT_HANZI_TEXT_MS;
         item_t.item_data_ptr = &item_data;
         item_t.item_state = GUIITEM_STATE_SELFADAPT_RECT|GUIITEM_STATE_CONTENT_CHECK;
 		

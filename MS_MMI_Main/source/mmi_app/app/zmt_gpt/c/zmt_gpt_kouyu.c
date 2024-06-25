@@ -1613,7 +1613,7 @@ LOCAL void ZmtGptKouYuTopic_DisplayList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_
     for(i = 0;i < gpt_kouyu_info.size; i++)
     {
         memset(text_str, 0, 100);
-        item_t.item_style = GUIITEM_DSL_HANZI_BOOK;
+        item_t.item_style = GUIITEM_SYTLE_ZMT_HANZI_TEXT_MS;
         item_t.item_data_ptr = &item_data;
         item_t.item_state = GUIITEM_STATE_SELFADAPT_RECT|GUIITEM_STATE_CONTENT_CHECK;
 

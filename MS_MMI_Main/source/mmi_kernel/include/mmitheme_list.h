@@ -1071,27 +1071,14 @@ ADULTWATCH
     GUIITEM_STYLE_ONE_ICON_AND_ONE_TEXT_MS,
 #endif
 #ifdef WORD_CARD_SUPPORT
-    //|---------------------------|
-    //|       icon      text     text           |
-    //|                   text                     |
-    //|---------------------------|
-    GUIITEM_SYTLE_DSL_ENGLISH_BOOK,
-    
-    //|---------------------------|
-    //|       icon      text                     |
-    //|---------------------------|
-    GUIITEM_SYTLE_DSL_CHECK,
+    GUIITEM_SYTLE_ZMT_PUBLISH_LIST_MS,
+    GUIITEM_SYTLE_ZMT_BOOK_LIST_MS,
+    GUIITEM_SYTLE_ZMT_UNIT_LIST_MS,
 #endif
 #ifdef HANZI_CARD_SUPPORT
-    //|---------------------------|
-    //|       text                                 |
-    //|---------------------------|
-    GUIITEM_DSL_HANZI_BOOK,
+    GUIITEM_SYTLE_ZMT_HANZI_TEXT_MS,
 #endif
 #ifdef ZMT_GPT_SUPPORT
-    //|---------------------------|
-    //|       icon      text                     |
-    //|---------------------------|
     GUIITEM_STYLE_GPT_ONE_ICON_AND_ONE_TEXT_MS,
 #endif
 #ifdef POETRY_LISTEN_SUPPORT

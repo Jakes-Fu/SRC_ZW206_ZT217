@@ -5835,12 +5835,41 @@ LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_1_icon_and_1_text_ms =
 #endif
 
 #ifdef WORD_CARD_SUPPORT
-//|---------------------------|
-//|       icon      text     text                |
-//|                   text                     |
-//|---------------------------|
-//GUIITEM_SYTLE_DSL_ENGLISH_BOOK,
-LOCAL THEMELIST_ITEM_STYLE_T const dsl_english_book_item =
+//GUIITEM_SYTLE_ZMT_PUBLISH_LIST_MS
+LOCAL THEMELIST_ITEM_STYLE_T const zmt_publish_list_item =
+{
+    2*WORD_CARD_LINE_HIGHT, 2*WORD_CARD_LINE_HIGHT,
+    {
+        {
+            0,
+            { ENGLISE_BOOK_ITEM_PANDDING, 0, WORD_CARD_LINE_WIDTH+ENGLISE_BOOK_ITEM_PANDDING, 2*WORD_CARD_LINE_HIGHT},
+            { ENGLISE_BOOK_ITEM_PANDDING, 0, WORD_CARD_LINE_WIDTH+ENGLISE_BOOK_ITEM_PANDDING, 2*WORD_CARD_LINE_HIGHT},
+            0, 0,
+            0, 0
+        },
+        {
+            GUIITEM_CONTENT_STATE_TEXT_M_ALIGN,
+            {ENGLISE_BOOK_ITEM_PANDDING+4,  0,  WORD_CARD_LINE_WIDTH+ENGLISE_BOOK_ITEM_PANDDING, 2*WORD_CARD_LINE_HIGHT},
+            {ENGLISE_BOOK_ITEM_PANDDING+4,  0,  WORD_CARD_LINE_WIDTH+ENGLISE_BOOK_ITEM_PANDDING, 2*WORD_CARD_LINE_HIGHT},
+            SONG_FONT_20, SONG_FONT_20,
+            0, 0
+        },
+        {
+            0,
+            {WORD_CARD_LINE_WIDTH+2*ENGLISE_BOOK_ITEM_PANDDING, 0,  MMI_MAINSCREEN_WIDTH, 2*WORD_CARD_LINE_HIGHT},
+            {WORD_CARD_LINE_WIDTH+2*ENGLISE_BOOK_ITEM_PANDDING, 0,  MMI_MAINSCREEN_WIDTH, 2*WORD_CARD_LINE_HIGHT},
+            SONG_FONT_22, SONG_FONT_22,
+            0, 0
+        },
+        {0},
+        {0},
+        {0},
+    },
+    0, 1
+};
+
+//GUIITEM_SYTLE_ZMT_BOOK_LIST_MS,
+LOCAL THEMELIST_ITEM_STYLE_T const zmt_book_list_item =
 {
     2.5*WORD_CARD_LINE_HIGHT, 2.5*WORD_CARD_LINE_HIGHT,
     {
@@ -5865,7 +5894,7 @@ LOCAL THEMELIST_ITEM_STYLE_T const dsl_english_book_item =
             SONG_FONT_22, SONG_FONT_22,
             0, 0
         },
-     {
+        {
             0,
             {WORD_CARD_LINE_WIDTH+2*ENGLISE_BOOK_ITEM_PANDDING, WORD_CARD_LINE_HIGHT+11, MMI_MAINSCREEN_WIDTH, 2.3*WORD_CARD_LINE_HIGHT},
             {WORD_CARD_LINE_WIDTH+2*ENGLISE_BOOK_ITEM_PANDDING, WORD_CARD_LINE_HIGHT+11, MMI_MAINSCREEN_WIDTH, 2.3*WORD_CARD_LINE_HIGHT},
@@ -5875,15 +5904,11 @@ LOCAL THEMELIST_ITEM_STYLE_T const dsl_english_book_item =
         {0},
         {0},
     },
-
     0, 1
 };
 
-//|---------------------------|
-//|       icon      text                     |
-//|---------------------------|
-//GUIITEM_SYTLE_DSL_CHECK,
-LOCAL THEMELIST_ITEM_STYLE_T const dsl_check_list =
+//GUIITEM_SYTLE_ZMT_UNIT_LIST_MS,
+LOCAL THEMELIST_ITEM_STYLE_T const zmt_unit_list_item =
 {
     1.5*WORD_CARD_LINE_HIGHT, 1.5*WORD_CARD_LINE_HIGHT,
     {
@@ -5894,7 +5919,7 @@ LOCAL THEMELIST_ITEM_STYLE_T const dsl_check_list =
             SONG_FONT_16, SONG_FONT_16,
             0, 100
         },
-     {
+        {
             0,
             { MMI_MAINSCREEN_WIDTH-WORD_CARD_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH, 1.5*WORD_CARD_LINE_HIGHT},     /* 2 */
             { MMI_MAINSCREEN_WIDTH-WORD_CARD_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH, 1.5*WORD_CARD_LINE_HIGHT},     /* 2 */
@@ -5910,7 +5935,8 @@ LOCAL THEMELIST_ITEM_STYLE_T const dsl_check_list =
 #endif
 
 #ifdef HANZI_CARD_SUPPORT
-LOCAL THEMELIST_ITEM_STYLE_T const dsl_hanzi_book_list =
+//GUIITEM_SYTLE_ZMT_HANZI_TEXT_MS
+LOCAL THEMELIST_ITEM_STYLE_T const zmt_hanzi_text_list =
 {
     1.5*HANZI_CARD_LINE_HIGHT, 1.5*HANZI_CARD_LINE_HIGHT,
     {
@@ -5930,9 +5956,6 @@ LOCAL THEMELIST_ITEM_STYLE_T const dsl_hanzi_book_list =
 };
 #endif
 #ifdef ZMT_GPT_SUPPORT
-//|---------------------------|
-//|       icon      text                     |
-//|---------------------------|
 //GUIITEM_STYLE_GPT_ONE_ICON_AND_ONE_TEXT_MS,
 LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_gpt_1_icon_and_1_text_ms =
 {
@@ -6370,11 +6393,12 @@ LOCAL THEMELIST_STYLE_TABLE_T const s_style_table[] =
     {GUIITEM_STYLE_ONE_ICON_AND_ONE_TEXT_MS, &s_item_style_1_icon_and_1_text_ms},
 #endif    
 #ifdef WORD_CARD_SUPPORT   
-    {GUIITEM_SYTLE_DSL_ENGLISH_BOOK, &dsl_english_book_item},
-    {GUIITEM_SYTLE_DSL_CHECK, &dsl_check_list},
+    {GUIITEM_SYTLE_ZMT_PUBLISH_LIST_MS, &zmt_publish_list_item},
+    {GUIITEM_SYTLE_ZMT_BOOK_LIST_MS, &zmt_book_list_item},
+    {GUIITEM_SYTLE_ZMT_UNIT_LIST_MS, &zmt_unit_list_item},
 #endif
 #ifdef HANZI_CARD_SUPPORT
-    {GUIITEM_DSL_HANZI_BOOK, &dsl_hanzi_book_list},
+    {GUIITEM_SYTLE_ZMT_HANZI_TEXT_MS, &zmt_hanzi_text_list},
 #endif
 #ifdef ZMT_GPT_SUPPORT
     {GUIITEM_STYLE_GPT_ONE_ICON_AND_ONE_TEXT_MS, &s_item_style_gpt_1_icon_and_1_text_ms},

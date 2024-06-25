@@ -21,7 +21,6 @@ BOOLEAN word_is_load_local = FALSE;
 
 extern WORD_BOOK_INFO_T word_book_info;
 extern int8 word_publish_count;
-extern int8 word_book_count;
 extern int8 word_chapter_count;
 extern int16 word_detail_count;
 extern WORD_BOOK_PUBLISH_INFO_T * word_publish_info[WORD_PUBLISH_MAX];
@@ -272,7 +271,6 @@ PUBLIC void Word_ParseBookInfo(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 
                 SCI_MEMCPY(word_publish_info[i]->publish_name, publishName->valuestring, size);
 
                 word_publish_info[i]->item_count = cJSON_GetArraySize(book);
-                word_book_count = cJSON_GetArraySize(book);
                 for(m = 0;m < cJSON_GetArraySize(book) && m < WORD_PUBLISH_BOOK_MAX;m++)
                 {
                     cJSON *book_item =  cJSON_GetArrayItem(book, m);
