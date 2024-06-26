@@ -17,7 +17,7 @@ extern HANZI_LEARN_INFO_T * hanzi_learn_info;
 extern HANZI_BOOK_INFO_T hanzi_book_info;
 extern BOOLEAN is_open_auto_play;
 extern int cur_chapter_unmaster_idx[HANZI_CHAPTER_WORD_MAX];
-extern uint8 cur_new_word_page_idx;
+extern uint8 cur_new_hanzi_page_idx;
 
 int8 hanzi_book_count = 0;
 HANZI_PUBLISH_BOOK_INFO * hanzi_publish_info[HANZI_PUBLISH_BOOK_MAX];
@@ -107,6 +107,10 @@ PUBLIC BOOLEAN Hanzi_LoadLearnInfo(void)
     char file_path[50] = {0};
     char * data_buf = PNULL;
     uint32 data_size = 0;
+
+    if(hanzi_learn_info != NULL){
+        return load_result;
+    }
 
     strcpy(file_path, HANZI_CARD_LEARN_INFO_PATH);
     if(zmt_file_exist(file_path))
@@ -440,9 +444,6 @@ PUBLIC void Hanzi_ParseBookInfo(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32
     hanzi_is_load_local = FALSE;
     if(MMK_IsFocusWin(MMI_HANZI_MAIN_WIN_ID)){
         MMK_SendMsg(MMI_HANZI_MAIN_WIN_ID, MSG_FULL_PAINT, PNULL);
-        if(hanzi_book_count > 0 && Hanzi_LoadLearnInfo()){
-            MMI_CreateHanziTipsWin();
-        }
     }
 }
 
@@ -937,8 +938,8 @@ PUBLIC void Hanzi_ParseUnmasterDetailInfo(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_
         {
             hanzis = cJSON_GetObjectItem(root, "hanzis");
             hanzi_detail_count = cJSON_GetArraySize(hanzis);
-            read_idx = cur_new_word_page_idx * HANZI_CHAPTER_WORD_MAX;
-            read_count = (cur_new_word_page_idx + 1) * HANZI_CHAPTER_WORD_MAX;
+            read_idx = cur_new_hanzi_page_idx * HANZI_CHAPTER_WORD_MAX;
+            read_count = (cur_new_hanzi_page_idx + 1) * HANZI_CHAPTER_WORD_MAX;
             for(i = read_idx; i < cJSON_GetArraySize(hanzis) && i < read_count;i++)
             {
                 hanzis_item = cJSON_GetArrayItem(hanzis, i);
@@ -1107,17 +1108,17 @@ PUBLIC void Hanzi_DeleteNewWordItem(uint16 cur_idx)
         cJSON_Delete(root);
         cJSON_Delete(roots);
 
-        //SCI_TRACE_LOW("%s: before, hanzi_detail_cur_idx = %d, cur_new_word_page_idx = %d", __FUNCTION__, hanzi_detail_cur_idx, cur_new_word_page_idx);
-        if(hanzi_detail_cur_idx == 0 && cur_new_word_page_idx > 0){
+        //SCI_TRACE_LOW("%s: before, hanzi_detail_cur_idx = %d, cur_new_hanzi_page_idx = %d", __FUNCTION__, hanzi_detail_cur_idx, cur_new_hanzi_page_idx);
+        if(hanzi_detail_cur_idx == 0 && cur_new_hanzi_page_idx > 0){
             hanzi_detail_cur_idx = HANZI_CHAPTER_WORD_MAX - 1;
-            cur_new_word_page_idx--;
-        }else if(hanzi_detail_cur_idx == 0 && cur_new_word_page_idx == 0)
+            cur_new_hanzi_page_idx--;
+        }else if(hanzi_detail_cur_idx == 0 && cur_new_hanzi_page_idx == 0)
         {
             //not to do
         }else if(hanzi_detail_cur_idx > 0 && hanzi_detail_cur_idx < HANZI_CHAPTER_WORD_MAX){
             hanzi_detail_cur_idx--;
         }
-        //SCI_TRACE_LOW("%s: after, hanzi_detail_cur_idx = %d, cur_new_word_page_idx = %d", __FUNCTION__, hanzi_detail_cur_idx, cur_new_word_page_idx);
+        //SCI_TRACE_LOW("%s: after, hanzi_detail_cur_idx = %d, cur_new_hanzi_page_idx = %d", __FUNCTION__, hanzi_detail_cur_idx, cur_new_hanzi_page_idx);
         Hanzi_ReleaseDetailInfo();
         data_buf = zmt_file_data_read(file_path, &file_len);
         if(data_buf != PNULL && file_len > 0)
@@ -1162,7 +1163,7 @@ PUBLIC void Hanzi_ParseMp3Response(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uin
     }
     else
     {
-		if(hanzi_detail_info[hanzi_detail_cur_idx] == NULL){
+        if(hanzi_detail_info[hanzi_detail_cur_idx] == NULL){
             SCI_TRACE_LOW("%s: hanzi_detail_info empty", __FUNCTION__);
             return;
         }

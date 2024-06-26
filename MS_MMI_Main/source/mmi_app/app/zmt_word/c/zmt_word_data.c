@@ -1,6 +1,3 @@
-/*************************************************************************
- ** File Name:      mmiacc_id.c                                          *
- ** Author:         haiyang.hu                                           *
 
 /**--------------------------------------------------------------------------*
  **                         Include Files                                    *
@@ -114,6 +111,10 @@ PUBLIC BOOLEAN Word_LoadLearnInfo(void)
     char file_path[50] = {0};
     char * data_buf = PNULL;
     uint32 data_size = 0;
+
+    if(word_learn_info != NULL){
+        return load_result;
+    }
 
     strcpy(file_path, WORD_LEARN_INFO_PATH);
     if(zmt_file_exist(file_path))
@@ -464,9 +465,6 @@ PUBLIC void Word_ParseBookInfo(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 
     word_is_load_local = FALSE;
     if(MMK_IsFocusWin(MMI_WORD_MAIN_WIN_ID)){
         MMK_SendMsg(MMI_WORD_MAIN_WIN_ID, MSG_FULL_PAINT, PNULL);
-        if(word_publish_count > 0 && Word_LoadLearnInfo()){
-            MMI_CreateWordTipsWin();
-        }
     }
 }
 
@@ -625,7 +623,7 @@ LOCAL BOOLEAN Word_DetailMakeAudioUrl(WORD_BOOK_DETAIL_T * detail, char * text, 
     detail->audio_uri = (char *)SCI_ALLOC_APP(strlen(url) + 1);
     memset(detail->audio_uri, 0, strlen(url) + 1);
     SCI_MEMCPY(detail->audio_uri, url, strlen(url));
-    SCI_TRACE_LOW("%s: detail->audio_uri = %s", __FUNCTION__, detail->audio_uri);
+    //SCI_TRACE_LOW("%s: detail->audio_uri = %s", __FUNCTION__, detail->audio_uri);
     return TRUE;
 }
 

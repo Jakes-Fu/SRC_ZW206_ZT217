@@ -13,6 +13,7 @@ extern "C"
 /******************************************************************/
 #define WORD_CARD_LINE_WIDTH MMI_MAINSCREEN_WIDTH/6
 #define WORD_CARD_LINE_HIGHT MMI_MAINSCREEN_HEIGHT/10
+#define ENGLISE_BOOK_BLANK_START MMI_MAINSCREEN_WIDTH/7.5
 #define ENGLISE_BOOK_ITEM_PANDDING 10
 
 #define WORD_BOOK_UPDATE_INTERVAL_TIMES 7*24*3600 //7Ìì
@@ -38,6 +39,14 @@ extern "C"
 #define WORD_PUBLISH_BOOK_TOTAL_MAX 120
 #define WORD_CHAPTER_NUM_MAX 30
 #define WORD_CHAPTER_WORD_MAX 50
+
+#define WORD_LISTEN_SET_SYMBOL_NUM 3
+#define WORD_LISTEN_SET_INTERVAL_1 1000
+#define WORD_LISTEN_SET_INTERVAL_3 3000
+#define WORD_LISTEN_SET_INTERVAL_5 5000
+#define WORD_LISTEN_SET_REPEAT_1 1
+#define WORD_LISTEN_SET_REPEAT_3 3
+#define WORD_LISTEN_SET_REPEAT_5 5
 
 typedef struct
 {
@@ -89,10 +98,29 @@ typedef struct
     WORD_BOOK_DETAIL_T * detail[WORD_CHAPTER_WORD_MAX];
 }WORD_BOOK_CHAPTER_T;
 
+typedef enum
+{
+    WORD_LISTEN_NONE = 0,
+    WORD_LISTEN_NOW,
+    WORD_LISTEN_PAUSE,
+    WORD_LISTEN_INFO,
+}WORD_LISTEN_STAUS_TYPE_E;
+
+typedef struct
+{
+    WORD_LISTEN_STAUS_TYPE_E status;
+    uint8 style;
+    uint8 repeat;
+    uint16 interval;
+    uint8 listen_idx;
+}WORD_LISTEN_INFO_T;
+
 PUBLIC void MMI_CreateWordTipsWin(void);
 PUBLIC void MMI_CreateWordWin(void);
 PUBLIC void MMI_CreateWordChapterWin(void);
 PUBLIC void MMI_CreateWordDetailWin(void);
+PUBLIC void MMI_CreateWordListenWin(void);
+PUBLIC void MMI_CreateWordListenSetWin(void);
 
 PUBLIC void Word_ParseMp3Response(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id);
 PUBLIC void WordDetail_PlayPinyinAudio(void);

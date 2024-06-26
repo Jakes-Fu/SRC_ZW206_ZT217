@@ -1,10 +1,4 @@
 /*****************************************************************************
-** File Name:      mmiacc_id.h                                               *
-** Author:         xiaoqing.lu                                               *
-** Date:           2009/04/03                                                *
-** Copyright:      2006 Spreadtrum, Incoporated. All Rights Reserved.        *
-** Description:    This file is used to describe ACC win and control id      *
-******************************************************************************
 **                         Important Edit History                            *
 ** --------------------------------------------------------------------------*
 ** DATE           NAME             DESCRIPTION                               *
@@ -49,6 +43,10 @@ typedef enum {
     MMI_WORD_BOOK_MAIN_WIN_ID,
     MMI_WORD_CHAPTER_WIN_ID,
     MMI_WORD_DETAIL_WIN_ID,
+
+    MMI_WORD_LISTEN_WIN_ID,
+    MMI_WORD_LISTEN_INFO_WIN_ID,
+    MMI_WORD_LISTEN_SET_WIN_ID,
   
     MMIZMT_WORD_MAX_WIN_ID
 
@@ -83,7 +81,32 @@ typedef enum {
     MMI_ZMT_WORD_DETAIL_RIGHT_CTRL_ID,
     MMI_ZMT_WORD_DETAIL_DELETE_CTRL_ID,
 
-    MMI_ZMT_WORD_POPUP,
+    MMI_ZMT_WORD_LISTEN_BUTTON_SET_CTRL_ID,
+    MMI_ZMT_WORD_LISTEN_LABEL_NUM_CTRL_ID,
+    MMI_ZMT_WORD_LISTEN_BUTTON_IMG_CTRL_ID,
+    MMI_ZMT_WORD_LISTEN_LABEL_TIPS_CTRL_ID,
+    MMI_ZMT_WORD_LISTEN_BUTTON_STATUS_CTRL_ID,
+    MMI_ZMT_WORD_LISTEN_LEFT_CTRL_ID,
+    MMI_ZMT_WORD_LISTEN_RIGHT_CTRL_ID,
+
+    MMI_ZMT_WORD_LISTEN_INFO_LABEL_BACK_CTRL_ID,
+    MMI_ZMT_WORD_LISTEN_INFO_LABEL_NUM_CTRL_ID,
+    MMI_ZMT_WORD_LISTEN_INFO_LABEL_WORD_CTRL_ID,
+    MMI_ZMT_WORD_LISTEN_INFO_LABEL_PINYIN_CTRL_ID,
+    MMI_ZMT_WORD_LISTEN_INFO_BUTTON_AUDIO_CTRL_ID,
+    MMI_ZMT_WORD_LISTEN_INFO_TEXT_INFO_CTRL_ID,
+    MMI_ZMT_WORD_LISTEN_INFO_BUTTON_STATUS_CTRL_ID,
+
+    MMI_ZMT_WORD_LISTEN_FORM_CTRL_ID,
+    MMI_ZMT_WORD_LISTEN_FORM_CHILD_1_CTRL_ID,
+    MMI_ZMT_WORD_LISTEN_FORM_CHILD_2_CTRL_ID,
+    MMI_ZMT_WORD_LISTEN_FORM_CHILD_3_CTRL_ID,
+    MMI_ZMT_WORD_LISTEN_FORM_CHILD_1_LABEL_CTRL_ID,
+    MMI_ZMT_WORD_LISTEN_FORM_CHILD_2_LABEL_CTRL_ID,
+    MMI_ZMT_WORD_LISTEN_FORM_CHILD_3_LABEL_CTRL_ID,
+    MMI_ZMT_WORD_LISTEN_FORM_CHILD_1_LIST_CTRL_ID,
+    MMI_ZMT_WORD_LISTEN_FORM_CHILD_2_LIST_CTRL_ID,
+    MMI_ZMT_WORD_LISTEN_FORM_CHILD_3_LIST_CTRL_ID,
   
     MMIZMT_WORD_MAX_WIN_CTRL_ID
 } MMIZMT_WORD_CONTROL_ID_E;

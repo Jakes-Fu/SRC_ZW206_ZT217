@@ -42,6 +42,14 @@ extern "C"
 #define HANZI_CONTENT_CHAPTER_MAX 20
 #define HANZI_CHAPTER_WORD_MAX 50
 
+#define HANZI_LISTEN_SET_SYMBOL_NUM 3
+#define HANZI_LISTEN_SET_INTERVAL_1 1000
+#define HANZI_LISTEN_SET_INTERVAL_3 3000
+#define HANZI_LISTEN_SET_INTERVAL_5 5000
+#define HANZI_LISTEN_SET_REPEAT_1 1
+#define HANZI_LISTEN_SET_REPEAT_3 3
+#define HANZI_LISTEN_SET_REPEAT_5 5
+
 typedef struct
 {
     uint32 update_times;
@@ -89,10 +97,28 @@ typedef struct
     char * remark;//ÐÎ½ü×Ö+×¢ÊÍ
 }HANZI_BOOK_HANZI_INFO;
 
+typedef enum
+{
+    HANZI_LISTEN_NONE = 0,
+    HANZI_LISTEN_NOW,
+    HANZI_LISTEN_PAUSE,
+    HANZI_LISTEN_INFO,
+}HANZI_LISTEN_STAUS_TYPE_E;
+
+typedef struct
+{
+    HANZI_LISTEN_STAUS_TYPE_E status;
+    uint8 style;
+    uint8 repeat;
+    uint16 interval;
+    uint8 listen_idx;
+}HANZI_LISTEN_INFO_T;
+
 PUBLIC void MMI_CreateHanziTipsWin(void);
 PUBLIC void MMI_CreateHanziWin(void);
 PUBLIC void MMI_CreateHanziChapterWin(void);
 PUBLIC void MMI_CreateHanziDetailWin(void);
+PUBLIC void MMI_CreateHanziListenWin(void);
 PUBLIC MMI_RESULT_E MMI_CloseHanziDetailWin(void);
 
 PUBLIC void Hanzi_ReleaseBookInfo(void);
