@@ -3237,6 +3237,12 @@ BOOLEAN  ZDT_WIFI_RF_AM_IS_OK(void)
     {
         return TRUE;
     }
+#else
+    SCI_TRACE_LOW("ZDT_WIFI_RF_AM_IS_OK rm_status=%d",ual_rf_am_get_current_status());
+    if((RF_AM_STATE_IDLE == ual_rf_am_get_current_status() || RF_AM_STATE_WIFISCAN_WORK == ual_rf_am_get_current_status()))
+    {
+        return TRUE;
+    }
 #endif
 
 #endif
