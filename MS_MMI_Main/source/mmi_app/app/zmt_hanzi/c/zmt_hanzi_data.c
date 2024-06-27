@@ -407,20 +407,20 @@ PUBLIC void Hanzi_ParseBookInfo(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32
                 memset(hanzi_publish_info[i]->publish_name, 0, size + 1);
                 SCI_MEMCPY(hanzi_publish_info[i]->publish_name, publishName->valuestring, size);
 
-                if(zmt_tfcard_exist() && zmt_tfcard_get_free_kb() > 100 * 1024)
+            }
+            if(zmt_tfcard_exist() && zmt_tfcard_get_free_kb() > 100 * 1024)
+            {
+                if(!hanzi_is_load_local)
                 {
-                    if(!hanzi_is_load_local)
-                    {
-                        char * out = NULL;
-                        char file_path[30] = {0};
-                        strcpy(file_path, HANZI_CARD_BOOK_INFO_PATH);
-                        if(zmt_file_exist(file_path)){
-                            zmt_file_delete(file_path);
-                        }
-                        out = cJSON_PrintUnformatted(root);
-                        zmt_file_data_write(out, strlen(out), file_path);
-                        SCI_FREE(out);
+                    char * out = NULL;
+                    char file_path[30] = {0};
+                    strcpy(file_path, HANZI_CARD_BOOK_INFO_PATH);
+                    if(zmt_file_exist(file_path)){
+                        zmt_file_delete(file_path);
                     }
+                    out = cJSON_PrintUnformatted(root);
+                    zmt_file_data_write(out, strlen(out), file_path);
+                    SCI_FREE(out);
                 }
             }
             cJSON_Delete(root);
@@ -580,12 +580,12 @@ PUBLIC void Hanzi_ParseChapterInfo(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uin
                     SCI_FREE(out);
                 }
             }
+            cJSON_Delete(root);
         }
         else
         {
             hanzi_chapter_count = -2;
         }
-        cJSON_Delete(root);
     }
     else
     {

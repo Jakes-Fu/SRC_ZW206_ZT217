@@ -633,11 +633,7 @@ LOCAL void WordMainWin_FULL_PAINT(MMI_WIN_ID_T win_id)
     MMIRES_GetText(WORD_TITLE, win_id, &text_string);
     Word_DrawWinTitle(win_id, 0, text_string);
 
-    if(word_publish_count > 0)
-    {
-        Word_DisplayPublishList(win_id, MMI_ZMT_WORD_MAIN_LIST_CTRL_ID);
-    }
-    else if (word_publish_count == 0)
+    if (word_publish_count == 0)
     {
         Word_DrawWinTips(win_id, 0, WORD_LOADING);
     }
@@ -648,6 +644,10 @@ LOCAL void WordMainWin_FULL_PAINT(MMI_WIN_ID_T win_id)
     else if(word_publish_count == -2)
     {
         Word_DrawWinTips(win_id, 0, WORD_NO_DATA);
+    }
+    else
+    {
+        Word_DisplayPublishList(win_id, MMI_ZMT_WORD_MAIN_LIST_CTRL_ID);
     }
 }
 

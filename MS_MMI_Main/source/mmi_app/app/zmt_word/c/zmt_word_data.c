@@ -444,12 +444,12 @@ PUBLIC void Word_ParseBookInfo(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 
                     SCI_FREE(out);
                 }
             }
+            cJSON_Delete(root);
         }
         else
         {
             word_publish_count = -2;
         }
-        cJSON_Delete(root);
     }
     else
     {
@@ -764,12 +764,12 @@ PUBLIC void Word_ParseChapterInfo(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint
                     SCI_FREE(out);
                 }
             }
+            cJSON_Delete(root);
         }
         else
         {
             word_chapter_count = -2;
         }
-        cJSON_Delete(root);
     }
     else
     {
