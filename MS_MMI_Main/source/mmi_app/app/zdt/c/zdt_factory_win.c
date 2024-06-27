@@ -53,6 +53,12 @@ typedef struct
 #ifdef MAINLCD_DEV_SIZE_240X284
 #define UI_DEVICE_WIDTH  240
 #define UI_DEVICE_HEIGHT  284
+#elif  defined(ZT217_LISENNING_PAD)
+#define UI_DEVICE_WIDTH  240
+#define UI_DEVICE_HEIGHT  320
+#ifdef  CAMERA_SUPPORT
+#define CAMERA_SUB_SUPPORT 1
+#endif
 #else
 #define UI_DEVICE_WIDTH  240
 #define UI_DEVICE_HEIGHT  240
@@ -1849,7 +1855,7 @@ extern void ZdtWatch_Factory_Speaker_Stop(void)
 extern void ZdtWatch_Factory_Speaker_Start(void)
 {
     uint8  ring_id = 1;
-    MMIAPISET_PlayCallRingByVol(6, ring_id,AUD_PLAY_FOREVER, MMISET_RING_TYPE_CALL, PNULL);
+    MMIAPISET_PlayCallRingByVol(2, ring_id,AUD_PLAY_FOREVER, MMISET_RING_TYPE_CALL, PNULL);
     return;     
 }
 
@@ -2207,9 +2213,14 @@ void ZdtWatch_Factory_Camera_AGING_TEST_Entry(void)
 
 #if FACTORY_TP_TEST_SUPPORT
 #define EM_TP_LINE_TEST 0 // 1
+#if  defined(ZT217_LISENNING_PAD)
+#define TP_TEST_COLUMN		4
+#define TP_TEST_ROW		5
+#else
 #define TP_TEST_COLUMN		4
 #define TP_TEST_ROW		4
-uint8 g_tp_test_status[TP_TEST_ROW][TP_TEST_ROW] = {0};
+#endif
+uint8 g_tp_test_status[TP_TEST_COLUMN][TP_TEST_ROW] = {0};
 uint8 g_tp_test_sum = 0;
 mmi_pen_point_struct g_tp_disp_old_pt = {0};
 
@@ -5260,8 +5271,14 @@ extern void ZdtWatch_Factory_Camera_Start(void)
             MMITHEME_UpdateRect();
             return;
         }
-
+#ifdef ZT217_LISENNING_PAD
+         if(Sensor_Main_Sub_Switch_Get())
         ZDT_DC_Preview(SENSOR_MAIN);
+        else
+        ZDT_DC_Preview(SENSOR_SUB);
+#else
+        ZDT_DC_Preview(SENSOR_MAIN);
+#endif
         MMI_Factory_ShowSoftkey();// wuxx add 20231020 from ZW95
     return;     
 }
@@ -6882,9 +6899,9 @@ LOCAL void Watch_FactoryListInit()
         TXT_TEST_SWVER,
         TXT_TEST_CALL,
 #ifdef  CAMERA_SUPPORT
-        TXT_TEST_CAMERA_MAIN,
-#if CAMERA_SUB_SUPPORT
         TXT_TEST_CAMERA_SUB,
+#if CAMERA_SUB_SUPPORT
+        TXT_TEST_CAMERA_MAIN,
 #endif
 #endif
         TXT_TEST_LOOPBACK,

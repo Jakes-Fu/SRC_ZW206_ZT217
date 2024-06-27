@@ -3054,6 +3054,26 @@ PUBLIC int32 Sensor_I2cInit()
 
 }
 
+#ifdef ZDT_PCBA_ZW201_SUPPORT
+
+static BOOLEAN s_cur_select_main_camera = TRUE;
+
+uint8 Sensor_Main_Sub_Switch(BOOLEAN is_main)
+{
+    if(s_cur_select_main_camera == is_main)
+    {
+        return 0;
+    }
+    s_cur_select_main_camera = is_main;
+    return 1;
+}
+
+BOOLEAN Sensor_Main_Sub_Switch_Get(void)
+{
+    return s_cur_select_main_camera;
+}
+#endif
+
 /**---------------------------------------------------------------------------*
  **                         Compiler Flag                                     *
  **---------------------------------------------------------------------------*/
