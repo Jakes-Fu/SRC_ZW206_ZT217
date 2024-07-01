@@ -3505,11 +3505,11 @@ LOCAL void DisplayWeather(MMI_WIN_ID_T win_id)
             weather_string_id=TXT_WEATHER_SUNNY;
             break;
         case 2:
-            weather_img_id = IMAGE_BIG_WEATHER_CLOUD;
+            weather_img_id = IMAGE_BIG_WEATHER_RAIN;
             weather_string_id=TXT_WEATHER_RAIN;            
             break;
         case 3:
-            weather_img_id = IMAGE_BIG_WEATHER_RAIN;
+            weather_img_id = IMAGE_BIG_WEATHER_CLOUD;
             weather_string_id=TXT_WEATHER_CLOUD;                    
             break;
         case 4:

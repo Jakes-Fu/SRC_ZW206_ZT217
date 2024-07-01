@@ -236,6 +236,11 @@ const APP_LIST_ITEM_T  g_app_list_info[] =
 #ifdef ZMT_GPT_SUPPORT
     MENU_AI,
 #endif
+
+#if defined(ZDT_TOOLS_MENU_SUPPORT)
+   MENU_TOOLS,
+#endif
+
 };
 
 LOCAL uint8 APP_MENU_SIZE = sizeof(g_app_list_info)/sizeof(APP_LIST_ITEM_T);
@@ -1202,7 +1207,7 @@ LOCAL void Launcher_Enter_page()
     MMI_HANDLE_T handle;
     uint8 i = 0;
     //(APP_MENU_SIZE+1) 第一页只有LAUNCHER_MENUS_IN_PAGE-1项
-    uint8 page_size = (APP_MENU_SIZE+1)%LAUNCHER_MENUS_IN_PAGE == 0?APP_MENU_SIZE/LAUNCHER_MENUS_IN_PAGE:(APP_MENU_SIZE/LAUNCHER_MENUS_IN_PAGE+1);
+    uint8 page_size = (APP_MENU_SIZE+1)%LAUNCHER_MENUS_IN_PAGE == 0?(APP_MENU_SIZE+1)/LAUNCHER_MENUS_IN_PAGE:((APP_MENU_SIZE+1)/LAUNCHER_MENUS_IN_PAGE+1);
     if(s_handle != NULL)
     {
         WatchSLIDEPAGE_DestoryHandle(s_handle);

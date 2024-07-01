@@ -41,7 +41,7 @@ RES_ADD_IMG(migu_music_text,"\\MMI_RES_##\\IMAG\\migu_music_text.png",IMG_CMP_PN
 #endif
 #if defined(XYSDK_SUPPORT)|| defined(XYSDK_SRC_SUPPORT)
 RES_ADD_IMG(res_app_ic_ximalaya,"\\MMI_RES_##\\IMAG\\res_app_ic_ximalaya.png",IMG_CMP_PNG_ARGB_RLE,0)
-RES_ADD_IMG(xmla_text,"\\MMI_RES_##\\IMAG\\xmla_text.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(xmla_text,"\\MMI_RES_##\\IMAG\\xmly_text.png",IMG_CMP_PNG_ARGB_RLE,0)
 #endif	
 #ifdef BAIDU_AI_SUPPORT
 RES_ADD_IMG(res_app_ic_xiaodu,"\\MMI_RES_##\\IMAG\\res_app_ic_xiaodu.png",IMG_CMP_PNG_ARGB_RLE,0)
@@ -82,6 +82,11 @@ RES_ADD_IMG(hanzi_text,"\\MMI_RES_##\\IMAG\\hanzi_text.png",IMG_CMP_PNG_ARGB_RLE
 #ifdef ZMT_GPT_SUPPORT
 RES_ADD_IMG(res_app_ic_ai,"\\MMI_RES_##\\IMAG\\res_app_ic_ai.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(ai_text,"\\MMI_RES_##\\IMAG\\ai_text.png",IMG_CMP_PNG_ARGB_RLE,0)
+#endif
+
+#ifdef ZDT_TOOLS_MENU_SUPPORT
+RES_ADD_IMG(res_app_ic_tools,"\\MMI_RES_##\\IMAG\\res_app_ic_settings.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(tools_text,"\\MMI_RES_##\\IMAG\\tools_text.png",IMG_CMP_PNG_ARGB_RLE,0)
 #endif
 
 RES_ADD_STRING(TXT_CONTACT,"Contact")
