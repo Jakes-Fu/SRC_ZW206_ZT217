@@ -21,7 +21,9 @@
 #if defined(ZDT_GSENSOR_SUPPORT) &&  defined(ZTE_PEDOMETER_SUPPORT)
 #include "pedometer_export.h"
 #endif
+#ifdef ZTE_WEATHER_SUPPORT
 #include "zteweather_main.h"
+#endif
 #include "zte_stopwatch_win.h"
 #endif
 
@@ -260,7 +262,8 @@ extern PUBLIC uint8 Video_Call_Incoming_Test();
 
 #define MENU_SETTINGS {8, 0, settings_text, res_app_ic_settings, light_gray_bg, WatchSET_MainWin_Enter}
 #define MENU_VIDEO_CALL {9, 1, video_call_text, res_app_ic_video_call, dark_red_bg, MMIVideo_Call_MainWin} //视频通话
-#define MENU_WEATHER  {10, 1, weather_text, res_app_ic_weather,dark_red_bg, ZTEWEATHER_CreateMainWin} //天气
+//#define MENU_WEATHER  {10, 1, weather_text, res_app_ic_weather,dark_red_bg, ZTEWEATHER_CreateMainWin} //天气
+#define MENU_WEATHER  {10, 1, weather_text, res_app_ic_weather,dark_red_bg, MMIZDT_OpenWeatherWin}
 #define MENU_CALLLOG {11, 0, calllog_text, res_app_ic_calllog, light_pink_bg, WatchCL_ListWin_Enter} //通话记录 
 #define MENU_FIND_FRIEND  {5, 1, find_friend_text, res_app_ic_find_friend, bright_green_bg, MMIZDT_OpenFriendPPWin} //加好友
 #define MENU_DIAL   {2, 0, dialer_text, res_app_ic_dailer, dark_blue_bg, MMIZDT_OpenDialWin}//拨号盘
@@ -274,10 +277,10 @@ extern PUBLIC uint8 Video_Call_Incoming_Test();
 #define MENU_XIAODU   {17, 1, xiaodu_text, res_app_ic_xiaodu, bright_yellow_bg, MMIAPIMENU_EnterAiChat}//小度
 #endif
 #if defined(XYSDK_SUPPORT)|| defined(XYSDK_SRC_SUPPORT)
-#define MENU_XMLY {14, 1,xmla_text, res_xmla_icon, dark_orange_bg, LIBXMLYAPI_CreateXysdkMainWin}//喜马拉雅
+#define MENU_XMLY {14, 1,xmla_text, res_app_ic_ximalaya, dark_orange_bg, LIBXMLYAPI_CreateXysdkMainWin}//喜马拉雅
 #endif
 #ifdef LEBAO_MUSIC_SUPPORT
-#define MENU_MUSIC {0, 1,migu_music_text,res_music_icon, dark_red_bg, MMIAPIMENU_EnterLebao}//咪咕音乐
+#define MENU_MUSIC {0, 1,migu_music_text,res_app_ic_music, dark_red_bg, MMIAPIMENU_EnterLebao}//咪咕音乐
 #endif
 #ifdef WIN32
 extern PUBLIC uint8 Video_Call_Incoming_Test();
@@ -307,6 +310,11 @@ extern PUBLIC uint8 Video_Call_Incoming_Test();
 #ifdef ZMT_GPT_SUPPORT
 #define MENU_AI {24, 0, ai_text, res_app_ic_ai, light_pink_bg, MMIZMT_CreateZmtGptWin} 
 #endif
+
+#if defined(ZDT_TOOLS_MENU_SUPPORT)// wuxx add.
+#define MENU_TOOLS {25, 0, tools_text, res_app_ic_tools, light_cyan_bg, WatchTools_MainWin_Enter} 
+#endif
+
 //*******菜单***************//
 
 #ifdef __cplusplus

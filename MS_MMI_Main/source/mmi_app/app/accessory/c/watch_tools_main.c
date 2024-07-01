@@ -89,6 +89,10 @@ extern PUBLIC void WatchCL_ListWin_Enter(void);
 
 extern PUBLIC void MMIZDT_OpenManualWin(void);
 
+#ifdef ZTE_STOPWATCH_SUPPORT
+extern PUBLIC void ZTE_STOPWATCH_OpenMainWin( void );
+#endif
+
 
 #if defined(HERO_ENGINE_SUPPORT)
 #if defined(HERO_APP_WSTORE_OPEN)
@@ -121,6 +125,18 @@ LOCAL WATCHCOM_LIST_ITEM__ST s_watch_tools_main_text_list_data[] =
 
 // ADD TOOLS MENU HERE. 
 
+#ifdef ZT217_LISENNING_PAD
+//计算器
+LOCAL WATCHCOM_LIST_ITEM_STYLE_1ICON_1STR_ST   list_item_calculator    = { IMAGE_CALCULATOR_ICON,     TXT_TOOLS_CALCULATOR };
+//闹钟
+LOCAL WATCHCOM_LIST_ITEM_STYLE_1ICON_1STR_ST   list_item_alarm_clock    = { IMAGE_ALARM_ICON,     TXT_ALARM_CLOCK };
+//秒表
+LOCAL WATCHCOM_LIST_ITEM_STYLE_1ICON_1STR_ST   list_item_stopwatch    = { IMAGE_STOPWATCH_SEC_MENU_ICON,     TXT_ACC_STOPWATCH };
+//课程表
+LOCAL WATCHCOM_LIST_ITEM_STYLE_1ICON_1STR_ST   list_item_schedule    = { IMAGE_SCHEDULE_SEC_MENU_ICON,     STXT_TOOLS_SCHEDULE };
+//说明书
+LOCAL WATCHCOM_LIST_ITEM_STYLE_1ICON_1STR_ST   list_item_manual_readme   = { IMAGE_MANUAL_README_SEC_MENU_ICON,     STXT_TOOLS_MANUAL_README };
+#else
 #ifndef ZTE_WATCH
 //计算器
 LOCAL WATCHCOM_LIST_ITEM_STYLE_1ICON_1STR_ST   list_item_calculator    = { IMAGE_CALCULATOR_ICON,     TXT_TOOLS_CALCULATOR };
@@ -140,6 +156,7 @@ LOCAL WATCHCOM_LIST_ITEM_STYLE_1ICON_1STR_ST   list_item_schedule    = { IMAGE_S
 LOCAL WATCHCOM_LIST_ITEM_STYLE_1ICON_1STR_ST   list_item_call_log   = { IMAGE_CALL_LOG_SEC_MENU_ICON,     STXT_MAIN_CL };
 //说明书
 LOCAL WATCHCOM_LIST_ITEM_STYLE_1ICON_1STR_ST   list_item_manual_readme   = { IMAGE_MANUAL_README_SEC_MENU_ICON,     STXT_TOOLS_MANUAL_README };
+#endif
 
 
 
@@ -152,6 +169,20 @@ LOCAL WATCHCOM_LIST_ITEM_STYLE_1ICON_1STR_ST   list_item_app_center    = { IMAGE
 
 LOCAL WATCHCOM_LIST_ITEM__ST s_watch_tools_main_text_list_data[] =
 {
+
+#ifdef ZT217_LISENNING_PAD
+       { WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR, &list_item_calculator, MMIAPICALC_OpenMainWin},
+
+	{ WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR, &list_item_alarm_clock, WatchAlarm_MainWin_Enter},		
+       #ifdef ZTE_STOPWATCH_SUPPORT
+       { WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR, &list_item_stopwatch, ZTE_STOPWATCH_OpenMainWin}, //秒表
+        #else
+        { WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR, &list_item_stopwatch, WatchStopWatch_MainWin_Enter}, //秒表
+        #endif
+	
+	{ WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR, &list_item_schedule, MMIZDT_OpenScheduleWin},
+	{ WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR, &list_item_manual_readme, MMIZDT_OpenManualWin},
+#else
    #ifndef ZTE_WATCH
 	{ WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR, &list_item_calculator, MMIAPICALC_OpenMainWin},
 
@@ -170,6 +201,7 @@ LOCAL WATCHCOM_LIST_ITEM__ST s_watch_tools_main_text_list_data[] =
 	{ WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR, &list_item_call_log, WatchCL_ListWin_Enter},
 
 	{ WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR, &list_item_manual_readme, MMIZDT_OpenManualWin},
+#endif
 
     
     #if defined(HERO_ENGINE_SUPPORT)
@@ -178,6 +210,7 @@ LOCAL WATCHCOM_LIST_ITEM__ST s_watch_tools_main_text_list_data[] =
         { WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR, &list_item_app_center, launcher_hero_appstore_manager},
     #endif
     #endif
+
 
 
 };
