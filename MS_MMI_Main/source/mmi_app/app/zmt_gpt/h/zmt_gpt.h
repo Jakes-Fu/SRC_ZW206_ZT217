@@ -43,7 +43,8 @@
 #define GPT_MAX_RECORD_DURATION 10
 #define GPT_MAX_RECORD_SIZE GPT_MAX_RECORD_DURATION * 16000 + GPT_PCM_HEAD_SIZE
 
-#define GPT_HTTP_SELF_API_BASE_PATH "http://117.50.185.119:8080"
+#define GPT_HTTP_SELF_API_BASE_PATH "http://106.13.7.202:8080"
+#define GPT_HTTP_SELF_API_KOUYU_TOPIC "/front/chattopic/list"
 #define GPT_HTTP_SELF_API_KOUYU_PATH "/front/aichat/enchat"
 #define GPT_HTTP_SELF_API_ZUOWEN_PATH "/front/aichat/artchat"
 #define GPT_HTTP_SELF_API_TXT2VOICE_PATH "/front/voice/tts"

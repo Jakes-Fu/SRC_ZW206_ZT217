@@ -1233,13 +1233,17 @@ LOCAL void ZmtGptKouYuTalk_FULL_PAINT(MMI_WIN_ID_T win_id)
     GUISTR_STATE_T text_state = GUISTR_STATE_ALIGN | GUISTR_STATE_ELLIPSIS_EX;
     GUISTR_STYLE_T text_style = {0};
     MMI_STRING_T text_string = {0};
+    wchar text_str[GPT_KOUYU_TALK_STR_MAX_LEN] = {0};
 
     GUI_FillRect(&lcd_dev_info, zmt_gpt_win_rect, MMI_BLACK_COLOR);
 
     text_style.align = ALIGN_HVMIDDLE;
     text_style.font = DP_FONT_20;
     text_style.font_color = MMI_WHITE_COLOR;
-    MMIRES_GetText(ZMT_CHAT_GPT_KOUYU, win_id, &text_string);
+    //MMIRES_GetText(ZMT_CHAT_GPT_KOUYU, win_id, &text_string);
+    GUI_UTF8ToWstr(&text_str, GPT_KOUYU_TALK_STR_MAX_LEN, &gpt_kouyu_info.talk_list[gpt_kouyu_topic_index].talk_chn, strlen(gpt_kouyu_info.talk_list[gpt_kouyu_topic_index].talk_chn));
+    text_string.wstr_ptr = text_str;
+    text_string.wstr_len = MMIAPICOM_Wstrlen(text_str);
     GUISTR_DrawTextToLCDInRect(
         (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
         &zmt_gpt_title_rect,
@@ -1330,9 +1334,13 @@ LOCAL void ZmtGptKouYuTalk_CTL_PENOK(MMI_WIN_ID_T win_id, DPARAM param)
 LOCAL void ZmtGptKouYuTalk_OPEN_WINDOW(MMI_WIN_ID_T win_id)
 {
     gpt_kouyu_record_type = GPT_RECORD_TYPE_NONE;
+#if ZMT_GPT_USE_SELF_API != 0
+    zmt_gpt_talk_status = 3;
+#else
     ZmtGpt_SendTxt(89, "Hi", gpt_kouyu_info.talk_list[gpt_kouyu_topic_index].talk, gpt_kouyu_info.field, 0);
+#endif
     if (UILAYER_IsMultiLayerEnable())
-    {              
+    {
         UILAYER_CREATE_T create_info = {0};
         create_info.lcd_id = MAIN_LCD_ID;
         create_info.owner_handle = win_id;
@@ -1487,6 +1495,52 @@ PUBLIC void MMIZMT_CreateZmtGptKouYuWin(void)
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
+LOCAL void ZmtGptTopic_SelfListResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id)
+{
+    SCI_TRACE_LOW("%s: is_ok = %d, Rcv_len  = %d", __FUNCTION__, is_ok, Rcv_len);
+    if (is_ok && pRcv != PNULL && Rcv_len> 2)
+    {
+        uint8 i = 0;
+        cJSON * root = cJSON_Parse(pRcv);
+        cJSON * code = cJSON_GetObjectItem(root, "code");
+        cJSON * data = cJSON_GetObjectItem(root, "data");
+        if(code != NULL && code->type != cJSON_NULL && code->valueint == 200)
+        {
+            gpt_kouyu_info.size = cJSON_GetArraySize(data);
+            memset(&gpt_kouyu_info.field, 0, GPT_KOUYU_TOPIC_MAX_SIZE);
+            strcpy(gpt_kouyu_info.field, "english");
+            for(i = 0;i < cJSON_GetArraySize(data);i++)
+            {
+                cJSON * data_item = cJSON_GetArrayItem(data, i);
+                cJSON * topic = cJSON_GetObjectItem(data_item, "topic");
+                memset(gpt_kouyu_info.talk_list[i].talk, 0, GPT_KOUYU_TALK_STR_MAX_LEN);
+                strcpy(gpt_kouyu_info.talk_list[i].talk, topic->valuestring);
+                strcpy(gpt_kouyu_info.talk_list[i].talk_chn, topic->valuestring);
+            }
+            zmt_gpt_topic_status = 3;
+        }
+        else
+        {
+            SCI_TRACE_LOW("%s: code->valueint = %d", __FUNCTION__, code->valueint);
+            zmt_gpt_topic_status = 1;
+        }
+        cJSON_Delete(root);
+    }
+    else
+    {
+        zmt_gpt_topic_status = 2;
+    }
+    if(MMK_IsFocusWin(ZMT_GPT_KOUYU_TOPIC_WIN_ID))
+    {
+        MMK_SendMsg(ZMT_GPT_KOUYU_TOPIC_WIN_ID, MSG_FULL_PAINT, PNULL);
+    }
+#if ZMT_GPT_USE_FOR_TEST != 0
+    if(pRcv != NULL){
+        SCI_FREE(pRcv);
+    }
+#endif
+}
+
 LOCAL void ZmtGptTopic_ListResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id)
 {
 #if ZMT_GPT_USE_FOR_TEST != 0
@@ -1578,17 +1632,29 @@ LOCAL void ZmtGptTopic_ListResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,ui
 LOCAL void ZmtGptTopic_RequsetTopicList(void)
 {
     char url[1024] = {0};
+    uint8 * buf = NULL;
+    uint32 len = 0;
     memset(&gpt_kouyu_info, 0, sizeof(gpt_kouyu_info_t));
-    ZMT_makeGptTokenUrl(0, &url, 1, 10);
-#if ZMT_GPT_USE_FOR_TEST != 0
-    {
-        uint8 * buf = PNULL;
-        uint32 len = 0;
-        ZmtGptTopic_ListResultCb(0, buf, len, 0); 
+#ifdef WIN32
+    if(zmt_file_exist(ZMT_GPT_TOPIC_LIST_PATH)){
+        buf = zmt_file_data_read(ZMT_GPT_TOPIC_LIST_PATH, &len);
     }
- #else
+#endif
+#if ZMT_GPT_USE_SELF_API != 0
+    #ifdef WIN32
+    ZmtGptTopic_SelfListResultCb(1, buf, len, 0);
+    #else
+    sprintf(url, "%s%s?type=english", GPT_HTTP_SELF_API_BASE_PATH, GPT_HTTP_SELF_API_KOUYU_TOPIC);
+    MMIZDT_HTTP_AppSend(TRUE, url, PNULL, 0, 1000, 0, 0, 3000, 0, 0, ZmtGptTopic_SelfListResultCb);
+    #endif
+#else
+    #ifdef WIN32
+    ZmtGptTopic_ListResultCb(1, buf, len, 0);
+    #else
+    ZMT_makeGptTokenUrl(0, &url, 1, 10);
     MMIZDT_HTTP_AppSend(TRUE, url, PNULL, 0, 1000, 0, 0, 3000, 0, 0, ZmtGptTopic_ListResultCb);
- #endif
+    #endif
+#endif
 }
 
 LOCAL void ZmtGptKouYuTopic_DisplayList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)

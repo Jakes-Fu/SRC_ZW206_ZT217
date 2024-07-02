@@ -5,7 +5,7 @@
 #include "mmidc_gui.h"
 #include "sci_types.h"
 
-#define ZMT_UPLOAD_HOST "117.50.185.119"
+#define ZMT_UPLOAD_HOST "106.13.7.202"
 #define ZMT_UPLOAD_HOST_PORT 8080
 
 #define ZMT_UPLOAD_AUDIO_URL "/front/voice/asr"
