@@ -415,11 +415,7 @@ LOCAL void Hanzi_DisplayBookList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
 
     for(index = 0;index < hanzi_book_count && index < HANZI_PUBLISH_BOOK_MAX; index++)
     {
-    #ifdef HANZI_CARD_SUPPORT
         item_t.item_style = GUIITEM_SYTLE_ZMT_BOOK_LIST_MS;
-    #else
-        item_t.item_style = GUIITEM_SYTLE_ZMT_HANZI_TEXT_MS;
-    #endif
         item_t.item_data_ptr = &item_data;
         item_t.item_state = GUIITEM_STATE_SELFADAPT_RECT|GUIITEM_STATE_CONTENT_CHECK;
 		
@@ -427,7 +423,6 @@ LOCAL void Hanzi_DisplayBookList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
         memset(name_str, 0, 50);
         length = strlen(hanzi_publish_info[index]->book_name);
         
-    #ifdef HANZI_CARD_SUPPORT
         item_data.item_content[0].item_data_type = GUIITEM_DATA_IMAGE_ID;
         item_data.item_content[0].item_data.image_id = IMG_ZMT_CONTACT_ICON;
 
@@ -452,13 +447,7 @@ LOCAL void Hanzi_DisplayBookList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
         text_str.wstr_ptr = name_str;
         item_data.item_content[3].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
         item_data.item_content[3].item_data.text_buffer = text_str;
-    #else
-        GUI_GBToWstr(name_wchar, hanzi_publish_info[index]->book_name, length);
-        text_str.wstr_ptr = name_wchar;
-        text_str.wstr_len = MMIAPICOM_Wstrlen(text_str.wstr_ptr);
-        item_data.item_content[0].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
-        item_data.item_content[0].item_data.text_buffer = text_str;
-    #endif
+
         GUILIST_AppendItem(ctrl_id, &item_t);
     }
      GUILIST_SetCurItemIndex(ctrl_id, hanzi_book_info.cur_book_idx);
@@ -748,10 +737,6 @@ LOCAL void HanziChapterWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
     Hanzi_InitButton(MMI_ZMT_HANZI_CHAPTER_RIGHT_CTRL_ID, right_rect, HANZI_NEW_WORD, ALIGN_HVMIDDLE, FALSE, Hanzi_OpenNewHanzi);
     Hanzi_InitButtonBg(MMI_ZMT_HANZI_CHAPTER_RIGHT_CTRL_ID);
 
-    GUILABEL_SetRect(MMI_ZMT_HANZI_CHAPTER_LABEL_NUM_CTRL_ID, &dir_rect, FALSE);
-    GUILABEL_SetFont(MMI_ZMT_HANZI_CHAPTER_LABEL_NUM_CTRL_ID, DP_FONT_16,MMI_BLACK_COLOR);
-    GUILABEL_SetAlign(MMI_ZMT_HANZI_CHAPTER_LABEL_NUM_CTRL_ID, GUILABEL_ALIGN_RIGHT);
-
     if (UILAYER_IsMultiLayerEnable())
     {
         UILAYER_CREATE_T create_info = {0};
@@ -890,8 +875,11 @@ LOCAL MMI_RESULT_E HandleHanziChapterWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
                 MMK_CloseWin(win_id);
             }
             break;
-        case MSG_CTL_OK:
         case MSG_CTL_PENOK:
+        case MSG_CTL_OK:
+        case MSG_APP_OK:
+        case MSG_APP_WEB:
+        case MSG_CTL_MIDSK:
             { 
                 HanziChapterWin_CTL_PENOK(win_id);
             }
@@ -906,14 +894,13 @@ LOCAL MMI_RESULT_E HandleHanziChapterWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
             recode = MMI_RESULT_FALSE;
             break;
     }
-      return recode;
+    return recode;
 }
 
 WINDOW_TABLE(MMI_HANZI_CHAPTER_WIN_TAB) = {
     WIN_ID(MMI_HANZI_CHAPTER_WIN_ID),
     WIN_FUNC((uint32)HandleHanziChapterWinMsg),
     CREATE_BUTTON_CTRL(PNULL, MMI_ZMT_HANZI_CHAPTER_LABEL_BACK_CTRL_ID),
-    CREATE_LABEL_CTRL(GUILABEL_ALIGN_RIGHT, MMI_ZMT_HANZI_CHAPTER_LABEL_NUM_CTRL_ID),
     CREATE_BUTTON_CTRL(PNULL, MMI_ZMT_HANZI_CHAPTER_AUTO_PLAY_CTRL_ID),
     CREATE_BUTTON_CTRL(PNULL, MMI_ZMT_HANZI_CHAPTER_LEFT_CTRL_ID),
     CREATE_BUTTON_CTRL(PNULL, MMI_ZMT_HANZI_CHAPTER_RIGHT_CTRL_ID),
@@ -1408,10 +1395,13 @@ LOCAL void HanziDetailWin_NewHanziFullPaint(MMI_WIN_ID_T win_id, BOOLEAN is_end)
     else
     {
         GUI_RECT_T hanzi_rect = hanzi_hanzi_rect;
+        GUI_RECT_T left_rect = hanzi_left_rect;
         GUI_RECT_T right_rect = hanzi_right_rect;
         GUIBUTTON_SetVisible(MMI_ZMT_HANZI_DETAIL_DELETE_CTRL_ID,FALSE,FALSE);
         GUIBUTTON_SetVisible(MMI_ZMT_HANZI_MSG_TIPS_CTRL_ID, TRUE, TRUE);
         GUIBUTTON_SetTextId(MMI_ZMT_HANZI_MSG_TIPS_CTRL_ID, NEW_WORD_BOOK_FINISH);
+        GUIBUTTON_SetRect(MMI_ZMT_HANZI_DETAIL_LEFT_CTRL_ID, &left_rect);
+        Hanzi_InitButtonBg(MMI_ZMT_HANZI_DETAIL_LEFT_CTRL_ID);
         GUIBUTTON_SetTextId(MMI_ZMT_HANZI_DETAIL_LEFT_CTRL_ID, WORD_TO_LISTENING);
         GUIBUTTON_SetCallBackFunc(MMI_ZMT_HANZI_DETAIL_LEFT_CTRL_ID, HanziDetail_GoToListenWord);
         GUIBUTTON_SetRect(MMI_ZMT_HANZI_DETAIL_RIGHT_CTRL_ID, &right_rect);
@@ -1822,8 +1812,8 @@ LOCAL void HanziListenSetWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
 
     memset(hanzi_listen_set, 0, sizeof(hanzi_listen_set));
     hanzi_listen_set[0] = hanzi_listen_info.style;
-    hanzi_listen_set[1] = hanzi_listen_info.interval = 1000;
-    hanzi_listen_set[2] = hanzi_listen_info.repeat = 1;
+    hanzi_listen_set[1] = hanzi_listen_info.interval = HANZI_LISTEN_SET_INTERVAL_3;
+    hanzi_listen_set[2] = hanzi_listen_info.repeat = HANZI_LISTEN_SET_REPEAT_1;
 
     text_style.align = ALIGN_HVMIDDLE;
     text_style.font = DP_FONT_22;
@@ -1835,6 +1825,7 @@ LOCAL void HanziListenSetWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
     GUIFORM_PermitChildBg(MMI_ZMT_HANZI_LISTEN_FORM_CTRL_ID,FALSE);
     GUIFORM_PermitChildFont(MMI_ZMT_HANZI_LISTEN_FORM_CTRL_ID,FALSE);
     GUIFORM_PermitChildBorder(MMI_ZMT_HANZI_LISTEN_FORM_CTRL_ID, FALSE);
+    GUIFORM_SetDisplayScrollBar(MMI_ZMT_HANZI_LISTEN_FORM_CTRL_ID, FALSE);
     for(i = 0;i < HANZI_LISTEN_SET_SYMBOL_NUM;i++)
     {
         form_ctrl_id = MMI_ZMT_HANZI_LISTEN_FORM_CHILD_1_CTRL_ID + i;
@@ -1851,7 +1842,6 @@ LOCAL void HanziListenSetWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
             list_ctrl_width.type = GUIFORM_CHILD_WIDTH_FIXED;
             list_ctrl_width.add_data = form_rect.right - form_rect.left;
             GUIFORM_SetChildWidth(form_ctrl_id, label_ctrl_id, &list_ctrl_width);
-            MMK_SetAtvCtrl(win_id, label_ctrl_id);
             
             list_ctrl_id = MMI_ZMT_HANZI_LISTEN_FORM_CHILD_1_LIST_CTRL_ID + j;
             GUILIST_SetListState(list_ctrl_id, GUILIST_STATE_SPLIT_LINE, FALSE);
@@ -1875,9 +1865,9 @@ LOCAL void HanziListenSetWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
             list_ctrl_width.type = GUIFORM_CHILD_WIDTH_FIXED;
             list_ctrl_width.add_data = form_rect.right - form_rect.left;
             GUIFORM_SetChildWidth(form_ctrl_id, list_ctrl_id, &list_ctrl_width);
-            MMK_SetAtvCtrl(win_id, list_ctrl_id);
         }
     }
+    GUIFORM_SetActiveChild(MMI_ZMT_HANZI_LISTEN_FORM_CTRL_ID, MMI_ZMT_HANZI_LISTEN_FORM_CHILD_1_CTRL_ID);
 }
 
 LOCAL void HanziListenSetWin_DisplayOption( MMI_WIN_ID_T win_id)
@@ -1894,12 +1884,12 @@ LOCAL void HanziListenSetWin_DisplayOption( MMI_WIN_ID_T win_id)
     uint8 j = 0;
     MMI_TEXT_ID_T item_text[HANZI_LISTEN_SET_SYMBOL_NUM][HANZI_LISTEN_SET_SYMBOL_NUM] = {
         {WORD_LISTENING_NORMAL, WORD_LISTENING_RANDOM, WORD_LISTENING_RANDOM},
-        {WORD_LISTENING_1S, WORD_LISTENING_3S, WORD_LISTENING_5S},
+        {WORD_LISTENING_3S, WORD_LISTENING_5S, WORD_LISTENING_10S},
         {WORD_LISTENING_REPEAT_1, WORD_LISTENING_REPEAT_3, WORD_LISTENING_REPEAT_5},
     };
     uint16 item_num[HANZI_LISTEN_SET_SYMBOL_NUM][HANZI_LISTEN_SET_SYMBOL_NUM] = {
         {0, 1, 2},
-        {HANZI_LISTEN_SET_INTERVAL_1, HANZI_LISTEN_SET_INTERVAL_3, HANZI_LISTEN_SET_INTERVAL_5}, 
+        {HANZI_LISTEN_SET_INTERVAL_3, HANZI_LISTEN_SET_INTERVAL_5, HANZI_LISTEN_SET_INTERVAL_10}, 
         {HANZI_LISTEN_SET_REPEAT_1, HANZI_LISTEN_SET_REPEAT_3, HANZI_LISTEN_SET_REPEAT_5}
     };
     
@@ -1987,7 +1977,7 @@ LOCAL void HanziListenSetWin_CTL_PENOK(MMI_WIN_ID_T win_id, DPARAM param)
     uint16 cur_idx = 0;
     uint8 cur_ctrl_id_idx = 0;
     MMI_CTRL_ID_T ctrl_id = ((MMI_NOTIFY_T *)param)->src_id;
-    uint16 interval[HANZI_LISTEN_SET_SYMBOL_NUM] = {HANZI_LISTEN_SET_INTERVAL_1, HANZI_LISTEN_SET_INTERVAL_3, HANZI_LISTEN_SET_INTERVAL_5};
+    uint16 interval[HANZI_LISTEN_SET_SYMBOL_NUM] = {HANZI_LISTEN_SET_INTERVAL_3, HANZI_LISTEN_SET_INTERVAL_5, HANZI_LISTEN_SET_INTERVAL_10};
     uint8 repeat[HANZI_LISTEN_SET_SYMBOL_NUM] = {HANZI_LISTEN_SET_REPEAT_1, HANZI_LISTEN_SET_REPEAT_3, HANZI_LISTEN_SET_REPEAT_5};
 
     cur_idx = GUILIST_GetCurItemIndex(ctrl_id);
@@ -2315,8 +2305,8 @@ LOCAL void HanziListenWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
     Hanzi_InitButtonBg(MMI_ZMT_HANZI_LISTEN_RIGHT_CTRL_ID);
     
     memset(&hanzi_listen_info, 0, sizeof(HANZI_LISTEN_INFO_T));
-    hanzi_listen_info.interval = 1000;//ms
-    hanzi_listen_info.repeat = hanzi_listen_repeat_count = 1;
+    hanzi_listen_info.interval = HANZI_LISTEN_SET_INTERVAL_3;
+    hanzi_listen_info.repeat = hanzi_listen_repeat_count = HANZI_LISTEN_SET_REPEAT_1;
     hanzi_listen_info.style = 0;
     hanzi_listen_info.listen_idx = 0;
 }

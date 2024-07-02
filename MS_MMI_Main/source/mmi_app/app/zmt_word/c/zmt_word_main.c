@@ -597,9 +597,6 @@ LOCAL void Word_DisplayPublishList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
         item_t.item_style = GUIITEM_SYTLE_ZMT_PUBLISH_LIST_MS;
         item_t.item_data_ptr = &item_data;
         item_t.item_state = GUIITEM_STATE_SELFADAPT_RECT|GUIITEM_STATE_CONTENT_CHECK;
-        		
-        memset(name_wchar, 0, 50);
-        memset(name_str, 0, 50);
 
         item_data.item_content[0].item_data_type = GUIITEM_DATA_IMAGE_ID;
         item_data.item_content[0].item_data.image_id = IMG_ZMT_CONTACT_ICON;
@@ -613,6 +610,7 @@ LOCAL void Word_DisplayPublishList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
         item_data.item_content[1].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
         item_data.item_content[1].item_data.text_buffer = text_str;
 
+        memset(name_str, 0, 50);
         length = strlen(word_publish_info[i]->publish_name);
         GUI_UTF8ToWstr(name_str, 50, word_publish_info[i]->publish_name, length);
         text_str2.wstr_len = MMIAPICOM_Wstrlen(name_str);
@@ -689,6 +687,7 @@ LOCAL MMI_RESULT_E HandleWordMainWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg
                 memset(&word_book_info, 0, sizeof(WORD_BOOK_INFO_T));
                 Word_ReleaseBookInfo();
                 Word_ReleaseLearnInfo();
+                word_publish_count = 0;
             }
             break;
          default:
@@ -874,7 +873,7 @@ LOCAL void WordChapterWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
     GUIBUTTON_SetRect(MMI_ZMT_WORD_CHAPTER_AUTO_PLAY_CTRL_ID, &auto_play_rect);
     GUIBUTTON_SetVisible(MMI_ZMT_WORD_CHAPTER_AUTO_PLAY_CTRL_ID,TRUE,TRUE);
 
-    Word_InitButton(MMI_ZMT_WORD_CHAPTER_LEFT_CTRL_ID, left_rect, WORD_PACTISE, ALIGN_HVMIDDLE, FALSE, MMI_CreateWordDetailWin);
+    Word_InitButton(MMI_ZMT_WORD_CHAPTER_LEFT_CTRL_ID, left_rect, WORD_PACTISE, ALIGN_HVMIDDLE, FALSE, WordChapter_OpenNormalWord);
     Word_InitButtonBg(MMI_ZMT_WORD_CHAPTER_LEFT_CTRL_ID);
 
     Word_InitButton(MMI_ZMT_WORD_CHAPTER_RIGHT_CTRL_ID, right_rect, WORD_EXERCISE, ALIGN_HVMIDDLE, FALSE, WordChapter_OpenNewWord);
@@ -1571,9 +1570,12 @@ LOCAL void WordDetailWin_NewWordFullPaint(MMI_WIN_ID_T win_id)
     else
     {
         GUI_RECT_T right_rect = word_right_rect;
+        GUI_RECT_T left_rect = word_left_rect;
         GUIBUTTON_SetVisible(MMI_ZMT_WORD_DETAIL_DELETE_CTRL_ID,FALSE,FALSE);
         GUIBUTTON_SetVisible(MMI_ZMT_WORD_MSG_TIPS_CTRL_ID, TRUE, TRUE);
         GUIBUTTON_SetTextId(MMI_ZMT_WORD_MSG_TIPS_CTRL_ID, NEW_WORD_BOOK_FINISH);
+        GUIBUTTON_SetRect(MMI_ZMT_WORD_DETAIL_LEFT_CTRL_ID, &left_rect);
+        Word_InitButtonBg(MMI_ZMT_WORD_DETAIL_LEFT_CTRL_ID);
         GUIBUTTON_SetTextId(MMI_ZMT_WORD_DETAIL_LEFT_CTRL_ID, WORD_TO_LISTENING);
         GUIBUTTON_SetCallBackFunc(MMI_ZMT_WORD_DETAIL_LEFT_CTRL_ID, WordDetail_GoToListenWord);
         GUIBUTTON_SetRect(MMI_ZMT_WORD_DETAIL_RIGHT_CTRL_ID, &right_rect);
@@ -1996,8 +1998,8 @@ LOCAL void WordListenSetWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
 
     memset(word_listen_set, 0, sizeof(word_listen_set));
     word_listen_set[0] = word_listen_info.style;
-    word_listen_set[1] = word_listen_info.interval = 1000;
-    word_listen_set[2] = word_listen_info.repeat = 1;
+    word_listen_set[1] = word_listen_info.interval = WORD_LISTEN_SET_INTERVAL_3;
+    word_listen_set[2] = word_listen_info.repeat = WORD_LISTEN_SET_REPEAT_1;
 
     text_style.align = ALIGN_HVMIDDLE;
     text_style.font = DP_FONT_22;
@@ -2009,6 +2011,7 @@ LOCAL void WordListenSetWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
     GUIFORM_PermitChildBg(MMI_ZMT_WORD_LISTEN_FORM_CTRL_ID,FALSE);
     GUIFORM_PermitChildFont(MMI_ZMT_WORD_LISTEN_FORM_CTRL_ID,FALSE);
     GUIFORM_PermitChildBorder(MMI_ZMT_WORD_LISTEN_FORM_CTRL_ID, FALSE);
+    GUIFORM_SetDisplayScrollBar(MMI_ZMT_WORD_LISTEN_FORM_CTRL_ID, FALSE);
     for(i = 0;i < WORD_LISTEN_SET_SYMBOL_NUM;i++)
     {
         form_ctrl_id = MMI_ZMT_WORD_LISTEN_FORM_CHILD_1_CTRL_ID + i;
@@ -2052,6 +2055,7 @@ LOCAL void WordListenSetWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
             MMK_SetAtvCtrl(win_id, list_ctrl_id);
         }
     }
+    GUIFORM_SetActiveChild(MMI_ZMT_WORD_LISTEN_FORM_CTRL_ID, MMI_ZMT_WORD_LISTEN_FORM_CHILD_1_CTRL_ID);
 }
 
 LOCAL void WordListenSetWin_DisplayOption( MMI_WIN_ID_T win_id)
@@ -2068,12 +2072,12 @@ LOCAL void WordListenSetWin_DisplayOption( MMI_WIN_ID_T win_id)
     uint8 j = 0;
     MMI_TEXT_ID_T item_text[WORD_LISTEN_SET_SYMBOL_NUM][WORD_LISTEN_SET_SYMBOL_NUM] = {
         {WORD_LISTENING_NORMAL, WORD_LISTENING_RANDOM, WORD_LISTENING_RANDOM},
-        {WORD_LISTENING_1S, WORD_LISTENING_3S, WORD_LISTENING_5S},
+        {WORD_LISTENING_3S, WORD_LISTENING_5S, WORD_LISTENING_10S},
         {WORD_LISTENING_REPEAT_1, WORD_LISTENING_REPEAT_3, WORD_LISTENING_REPEAT_5},
     };
     uint16 item_num[WORD_LISTEN_SET_SYMBOL_NUM][WORD_LISTEN_SET_SYMBOL_NUM] = {
         {0, 1, 2},
-        {WORD_LISTEN_SET_INTERVAL_1, WORD_LISTEN_SET_INTERVAL_3, WORD_LISTEN_SET_INTERVAL_5}, 
+        {WORD_LISTEN_SET_INTERVAL_3, WORD_LISTEN_SET_INTERVAL_5, WORD_LISTEN_SET_INTERVAL_10}, 
         {WORD_LISTEN_SET_REPEAT_1, WORD_LISTEN_SET_REPEAT_3, WORD_LISTEN_SET_REPEAT_5}
     };
     
@@ -2161,7 +2165,7 @@ LOCAL void WordListenSetWin_CTL_PENOK(MMI_WIN_ID_T win_id, DPARAM param)
     uint16 cur_idx = 0;
     uint8 cur_ctrl_id_idx = 0;
     MMI_CTRL_ID_T ctrl_id = ((MMI_NOTIFY_T *)param)->src_id;
-    uint16 interval[WORD_LISTEN_SET_SYMBOL_NUM] = {WORD_LISTEN_SET_INTERVAL_1, WORD_LISTEN_SET_INTERVAL_3, WORD_LISTEN_SET_INTERVAL_5};
+    uint16 interval[WORD_LISTEN_SET_SYMBOL_NUM] = {WORD_LISTEN_SET_INTERVAL_3, WORD_LISTEN_SET_INTERVAL_5, WORD_LISTEN_SET_INTERVAL_10};
     uint8 repeat[WORD_LISTEN_SET_SYMBOL_NUM] = {WORD_LISTEN_SET_REPEAT_1, WORD_LISTEN_SET_REPEAT_3, WORD_LISTEN_SET_REPEAT_5};
 
     cur_idx = GUILIST_GetCurItemIndex(ctrl_id);
@@ -2491,8 +2495,8 @@ LOCAL void WordListenWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
     Word_InitButtonBg(MMI_ZMT_WORD_LISTEN_RIGHT_CTRL_ID);
     
     memset(&word_listen_info, 0, sizeof(WORD_LISTEN_INFO_T));
-    word_listen_info.interval = 1000;//ms
-    word_listen_info.repeat = word_listen_repeat_count = 1;
+    word_listen_info.interval = WORD_LISTEN_SET_INTERVAL_3;
+    word_listen_info.repeat = word_listen_repeat_count = WORD_LISTEN_SET_REPEAT_1;
     word_listen_info.style = 0;
     word_listen_info.listen_idx = 0;
 }
