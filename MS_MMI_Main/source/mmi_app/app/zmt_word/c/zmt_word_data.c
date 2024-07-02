@@ -651,6 +651,7 @@ LOCAL void Word_AddDetailInfo(WORD_BOOK_DETAIL_T * detail, cJSON* text, cJSON * 
             detail->audio_uri = (char *)SCI_ALLOC_APP(size + 1);
             memset(detail->audio_uri, 0, size + 1);
             SCI_MEMCPY(detail->audio_uri, audio->valuestring, size);
+            detail->audio_len = 0;
         }else{
             detail->audio_uri = NULL;
             detail->audio_len = -1;

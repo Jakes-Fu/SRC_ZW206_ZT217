@@ -33,8 +33,8 @@
 #include "math_count_image.h"
 #include "math_count_text.h"
 #endif
-#ifdef POETRY_LISTEN_SUPPORT
-#include "zmt_poetry_image.h"
+#ifdef ZMT_CLASS_SUPPORT
+#include "zmt_class_image.h"
 #endif
 
 LOCAL GUI_RECT_T formula_win_rect = {0, 0, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT};//´°¿Ú
@@ -439,12 +439,14 @@ LOCAL void FormulaTableWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
     GUIFORM_SetBg(FORMULA_FORM_CTRL_ID, &form_bg);
     GUIFORM_SetRect(FORMULA_FORM_CTRL_ID, &form_rect);
     GUIFORM_PermitChildBg(FORMULA_FORM_CTRL_ID,FALSE);
+    GUIFORM_PermitChildFont(FORMULA_FORM_CTRL_ID,FALSE);
+    GUIFORM_PermitChildBorder(FORMULA_FORM_CTRL_ID, FALSE);
+    GUIFORM_SetDisplayScrollBar(FORMULA_FORM_CTRL_ID, FALSE);
     for(i = 0;i < 4;i++)
     {
         form_ctrl_id = FORMULA_FORM_CHILD_1_CTRL_ID + i;
         GUIFORM_SetBg(form_ctrl_id, &form_bg);
         GUIFORM_SetRect(form_ctrl_id, &form_rect);
-        GUIFORM_PermitChildBg(form_ctrl_id,FALSE);
         for(j = 0;j < 2;j++)
         {
             list_ctrl_id = FORMULA_FORM_CHILD_1_LIST_1_CTRL_ID + m;
@@ -467,6 +469,7 @@ LOCAL void FormulaTableWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
             m++;
         }
     }
+    GUIFORM_SetActiveChild(FORMULA_FORM_CTRL_ID, FORMULA_FORM_CHILD_1_CTRL_ID);
 }
 
 LOCAL void FormulaTableWin_ShowMultiTable(MMI_WIN_ID_T win_id)
@@ -688,16 +691,55 @@ PUBLIC void MMI_CreateFormulaTableWin(void)
     MMK_CreateWin(FORMULA_TABLE_WIN_TAB, NULL);
 }
 
-LOCAL void FormulaMnemonicWin_FULL_PAINT(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_dev_info)
+LOCAL void FormulaMnemonicWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
 {
     MMI_CTRL_ID_T ctrl_id = FORMULA_MNEMONIC_LIST_CTRL_ID;
     GUILIST_ITEM_T item_t = {0};
     GUIITEM_STATE_T item_state = {0};
     GUILIST_ITEM_DATA_T item_data = {0};
+    GUI_RECT_T list_rect = {0};
+    uint8 i = 0;
+    MMI_IMAGE_ID_T img_id[FORMULA_APP_COUNT_MAX] = {FORMULA_MNEMONIC_IMG, FORMULA_ICON_IMG};
+    MMI_TEXT_ID_T text_id[FORMULA_APP_COUNT_MAX] = {MATH_COUNT_TITLE, TXT_FORMULA_TITLE};
+    
+    GUILIST_SetMaxItem(ctrl_id, 2, FALSE);
+    for(i = 0; i < 2;i++)
+    {
+        item_t.item_style = GUIITEM_STYLE_CLASS_MAIN_LIST_MS;
+        item_t.item_data_ptr = &item_data;
+        item_t.item_state = GUIITEM_STATE_SELFADAPT_RECT|GUIITEM_STATE_CONTENT_CHECK;
+
+        item_data.item_content[0].item_data_type = GUIITEM_DATA_IMAGE_ID;
+        item_data.item_content[0].item_data.image_id = IMG_CLASS_MAIN_ITEM_BG;
+
+        item_data.item_content[1].item_data_type = GUIITEM_DATA_IMAGE_ID;
+        item_data.item_content[1].item_data.image_id = img_id[i];
+
+        item_data.item_content[2].item_data_type = GUIITEM_DATA_TEXT_ID;
+        item_data.item_content[2].item_data.text_id = text_id[i];
+
+        GUILIST_AppendItem(ctrl_id, &item_t);
+    }
+
+    list_rect = formula_win_rect;
+    list_rect.top = FORMULA_LINE_HIGHT + 10;
+    GUILIST_SetListState(ctrl_id, GUILIST_STATE_SPLIT_LINE, FALSE);
+    GUILIST_SetListState(ctrl_id, GUILIST_STATE_NEED_HIGHTBAR, FALSE);
+    GUILIST_SetNeedPrgbarBlock(ctrl_id,FALSE);
+    GUILIST_SetBgColor(ctrl_id,GUI_RGB2RGB565(80, 162, 254));
+    GUILIST_SetTextFont(ctrl_id, DP_FONT_24, GUI_RGB2RGB565(80, 162, 254));
+    GUILIST_SetSlideState(ctrl_id, FALSE);
+    GUILIST_SetRect(ctrl_id, &list_rect);
+    
+    MMK_SetAtvCtrl(win_id, ctrl_id);
+}
+
+LOCAL void FormulaMnemonicWin_FULL_PAINT(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_dev_info)
+{
+    
     GUISTR_STATE_T text_state = GUISTR_STATE_ALIGN | GUISTR_STATE_WORDBREAK;
     GUISTR_STYLE_T text_style = {0};
     MMI_STRING_T text_string = {0};
-    GUI_RECT_T list_rect = {0};
                 
     GUI_FillRect(&lcd_dev_info, formula_win_rect, GUI_RGB2RGB565(80, 162, 254));
     GUI_FillRect(&lcd_dev_info, formula_title_rect, GUI_RGB2RGB565(108, 181, 255));
@@ -716,42 +758,6 @@ LOCAL void FormulaMnemonicWin_FULL_PAINT(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO l
         text_state,
         GUISTR_TEXT_DIR_AUTO
     );
-
-    GUILIST_SetMaxItem(ctrl_id, 2, FALSE);
-
-    item_t.item_style = GUIITEM_STYLE_FORMULA_LIST_MS;
-    item_t.item_data_ptr = &item_data;
-    item_t.item_state = GUIITEM_STATE_SELFADAPT_RECT|GUIITEM_STATE_CONTENT_CHECK;
-    item_data.item_content[0].item_data_type = GUIITEM_DATA_IMAGE_ID;
-    item_data.item_content[0].item_data.image_id = IMG_POETRY_ITEM_BG;
-    item_data.item_content[1].item_data_type = GUIITEM_DATA_IMAGE_ID;
-    item_data.item_content[1].item_data.image_id = FORMULA_MNEMONIC_IMG;
-    item_data.item_content[2].item_data_type = GUIITEM_DATA_TEXT_ID;
-    item_data.item_content[2].item_data.text_id = MATH_COUNT_TITLE;
-    GUILIST_AppendItem(ctrl_id, &item_t);
-
-    item_t.item_style = GUIITEM_STYLE_FORMULA_LIST_MS;
-    item_t.item_data_ptr = &item_data;
-    item_t.item_state = GUIITEM_STATE_SELFADAPT_RECT|GUIITEM_STATE_CONTENT_CHECK;
-    item_data.item_content[0].item_data_type = GUIITEM_DATA_IMAGE_ID;
-    item_data.item_content[0].item_data.image_id = IMG_POETRY_ITEM_BG;
-    item_data.item_content[1].item_data_type = GUIITEM_DATA_IMAGE_ID;
-    item_data.item_content[1].item_data.image_id = FORMULA_ICON_IMG;
-    item_data.item_content[2].item_data_type = GUIITEM_DATA_TEXT_ID;
-    item_data.item_content[2].item_data.text_id = TXT_FORMULA_TITLE;
-    GUILIST_AppendItem(ctrl_id, &item_t);
-
-    list_rect = formula_win_rect;
-    list_rect.top = FORMULA_LINE_HIGHT;
-    GUILIST_SetListState(ctrl_id, GUILIST_STATE_SPLIT_LINE, FALSE);
-    GUILIST_SetListState(ctrl_id, GUILIST_STATE_NEED_HIGHTBAR, FALSE);
-    GUILIST_SetNeedPrgbarBlock(ctrl_id,FALSE);
-    GUILIST_SetBgColor(ctrl_id,GUI_RGB2RGB565(80, 162, 254));
-    GUILIST_SetTextFont(ctrl_id, DP_FONT_20, GUI_RGB2RGB565(80, 162, 254));
-    GUILIST_SetSlideState(ctrl_id, FALSE);
-    GUILIST_SetRect(ctrl_id, &list_rect);
-    
-    MMK_SetAtvCtrl(win_id, ctrl_id);
 }
 
 LOCAL void FormulaMnemonicWin_CTL_PENOK(MMI_WIN_ID_T win_id)
@@ -773,7 +779,7 @@ LOCAL MMI_RESULT_E HandleFormulaMnemonicWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_I
     {
         case MSG_OPEN_WINDOW:
             {
-                
+                FormulaMnemonicWin_OPEN_WINDOW(win_id);
             }
             break;
         case MSG_FULL_PAINT:

@@ -908,10 +908,12 @@ PUBLIC void Listening_ParseAlbumResponse(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_l
         SCI_TRACE_LOW("%s: Rcv_len = %d", __FUNCTION__, Rcv_len);
         if(chList != NULL && chList->type != cJSON_NULL)
         {
-            if(module_info == NULL)
+            if(module_info != NULL)
             {
-                module_info = (LISTENING_MODULE_INFO *)SCI_ALLOC_APPZ(sizeof(LISTENING_MODULE_INFO));
+                SCI_FREE(module_info);
+                module_info = NULL;
             }
+            module_info = (LISTENING_MODULE_INFO *)SCI_ALLOC_APPZ(sizeof(LISTENING_MODULE_INFO));
             memset(module_info, 0, sizeof(LISTENING_MODULE_INFO));
             for(i = 0; i < cJSON_GetArraySize(chList) && i < ALBUM_LIST_ITEM_MAX ; i++)
             {
@@ -926,7 +928,9 @@ PUBLIC void Listening_ParseAlbumResponse(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_l
                 strcpy(module_info->item_info[count].album_name, name->valuestring);
                 count++;
             }
-            listening_info->album_total_num = count;
+            if(listening_info != NULL){
+                listening_info->album_total_num = count;
+            }
             SCI_TRACE_LOW("%s: count = %d", __FUNCTION__, count);
         }	
         cJSON_Delete(root);
@@ -955,10 +959,12 @@ PUBLIC void Listening_ParseAudioResponse(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_l
         SCI_TRACE_LOW("%s: Rcv_len = %d", __FUNCTION__, Rcv_len);
         if(chList != NULL && chList->type != cJSON_NULL)
         {
-            if(album_info == NULL)
+            if(album_info != NULL)
             {
-                album_info = (LISTENING_ALBUM_INFO *)SCI_ALLOC_APPZ(sizeof(LISTENING_ALBUM_INFO));
+                SCI_FREE(album_info);
+                album_info = NULL;
             }
+            album_info = (LISTENING_ALBUM_INFO *)SCI_ALLOC_APPZ(sizeof(LISTENING_ALBUM_INFO));
             memset(album_info, 0, sizeof(LISTENING_ALBUM_INFO));
             for(index = 0; index < cJSON_GetArraySize(chList) && index < AUDIO_LIST_ITEM_MAX ; index++)
             {
@@ -993,11 +999,13 @@ PUBLIC void Listening_ParseAudioResponse(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_l
                     */
                 }
             }
-            listening_info->item_total_num = count;
+            if(listening_info != NULL){
+                listening_info->item_total_num = count;
+            }
             SCI_TRACE_LOW("%s: count = %d", __FUNCTION__, count);
         }
         cJSON_Delete(root);
-        if(listening_info->item_total_num > 0){
+        if(count > 0){
             listening_load_win = 1;
         }else{
             listening_load_win = -2;

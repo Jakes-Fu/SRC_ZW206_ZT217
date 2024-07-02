@@ -203,7 +203,9 @@ LOCAL void MathCount_Counting_1S_Timeout(uint8 timer_id, uint32 param)
             MathCount_Judge_correct_or_wrong();
         }
     }else{
-        MMK_SendMsg(MATH_COUNT_COUNTING_WIN_ID, MSG_FULL_PAINT, PNULL);
+        if(MMK_IsFocusWin(MATH_COUNT_COUNTING_WIN_ID)){
+            MMK_SendMsg(MATH_COUNT_COUNTING_WIN_ID, MSG_FULL_PAINT, PNULL);
+        }
     }
 }
 
