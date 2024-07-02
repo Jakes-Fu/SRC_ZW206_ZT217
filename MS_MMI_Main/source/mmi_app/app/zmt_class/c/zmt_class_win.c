@@ -338,7 +338,7 @@ LOCAL void ClassReadSetWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
     label_rect.right = MMI_MAINSCREEN_WIDTH - 5;
     label_rect.top = title_rect.bottom;
     label_rect.bottom = label_rect.top + CLASS_SYN_LINE_HIGHT;
-    for(i = 0;i < CLASS_SYN_READ_SET_REPEAT_MAX;i++)
+    for(i = 0;i < CLASS_SYN_READ_SET_REPEAT_MAX - 1;i++)
     {
         GUILABEL_SetRect(label_ctrl_id[i], &label_rect, TRUE);
         GUILABEL_SetTextById(label_ctrl_id[i], label_text_id[i], TRUE);
@@ -366,10 +366,10 @@ LOCAL void ClassReadSetWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
     GUIBUTTON_SetCallBackFunc(button_ctrl_id[1][0], ClassReadSetWin_FontOneCallback);
     GUIBUTTON_SetCallBackFunc(button_ctrl_id[1][1], ClassReadSetWin_FontTwoCallback);
     GUIBUTTON_SetCallBackFunc(button_ctrl_id[1][2], ClassReadSetWin_FontThreeCallback);
-    ClassReadSetWin_UpdateButton(2, class_cur_info.speed - 1);
+    /*ClassReadSetWin_UpdateButton(2, class_cur_info.speed - 1);
     GUIBUTTON_SetCallBackFunc(button_ctrl_id[2][0], ClassReadSetWin_SpeedOneCallback);
     GUIBUTTON_SetCallBackFunc(button_ctrl_id[2][1], ClassReadSetWin_SpeedTwoCallback);
-    GUIBUTTON_SetCallBackFunc(button_ctrl_id[2][2], ClassReadSetWin_SpeedThreeCallback);
+    GUIBUTTON_SetCallBackFunc(button_ctrl_id[2][2], ClassReadSetWin_SpeedThreeCallback);*/
 }
 
 LOCAL void ClassReadSetWin_FULL_PAINT(MMI_WIN_ID_T win_id)
@@ -397,6 +397,13 @@ LOCAL MMI_RESULT_E HandleClassReadSetWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
         case MSG_FULL_PAINT:
             {
                 ClassReadSetWin_FULL_PAINT(win_id);
+            }
+            break;
+        case MSG_CTL_OK:
+        case MSG_CTL_PENOK:
+        case MSG_CTL_MIDSK:
+            { 
+                
             }
             break;
         case MSG_KEYUP_RED:
@@ -430,10 +437,10 @@ WINDOW_TABLE(MMI_CLASS_READ_SET_WIN_TAB) = {
     CREATE_BUTTON_CTRL(PNULL, ZMT_CLASS_READ_SET_BUTTON_4_CTRL_ID),
     CREATE_BUTTON_CTRL(PNULL, ZMT_CLASS_READ_SET_BUTTON_5_CTRL_ID),
     CREATE_BUTTON_CTRL(PNULL, ZMT_CLASS_READ_SET_BUTTON_6_CTRL_ID),
-    CREATE_LABEL_CTRL(ALIGN_LVMIDDLE, ZMT_CLASS_READ_SET_LABEL_3_CTRL_ID),
+    /*CREATE_LABEL_CTRL(ALIGN_LVMIDDLE, ZMT_CLASS_READ_SET_LABEL_3_CTRL_ID),
     CREATE_BUTTON_CTRL(PNULL, ZMT_CLASS_READ_SET_BUTTON_7_CTRL_ID),
     CREATE_BUTTON_CTRL(PNULL, ZMT_CLASS_READ_SET_BUTTON_8_CTRL_ID),
-    CREATE_BUTTON_CTRL(PNULL, ZMT_CLASS_READ_SET_BUTTON_9_CTRL_ID),
+    CREATE_BUTTON_CTRL(PNULL, ZMT_CLASS_READ_SET_BUTTON_9_CTRL_ID),*/
     WIN_HIDE_STATUS,
     END_WIN
 };
@@ -587,7 +594,6 @@ LOCAL BOOLEAN Class_Play_RequestHandle(MMISRV_HANDLE_T *audio_handle, MMISRVAUD_
     audio_srv.all_support_route = MMISRVAUD_ROUTE_SPEAKER | MMISRVAUD_ROUTE_EARPHONE;
     audio_srv.volume = class_cur_info.volume;
     audio_srv.play_times = class_cur_info.repeat_cnt;
-    audio_srv.speed = 2;
 
     audio_srv.info.record_file.type = audio_data->type;
     audio_srv.info.record_file.fmt  = audio_data->record_file.fmt;
