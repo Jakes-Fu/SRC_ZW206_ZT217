@@ -1064,7 +1064,8 @@ LOCAL void YX_VocFilePathSaveToTxt(char* data_full_name,uint8 * friend_id,uint8 
         if(friend_id != PNULL)
         {
             SCI_MEMSET(pInfo->status_arr[pInfo->file_num].friend_id,0,YX_DB_FRIEND_MAX_ID_SIZE+1);
-            SCI_MEMCPY(pInfo->status_arr[pInfo->file_num].friend_id,friend_id,SCI_STRLEN(friend_id));
+            //SCI_MEMCPY(pInfo->status_arr[pInfo->file_num].friend_id,friend_id,SCI_STRLEN(friend_id));
+            SCI_MEMCPY(pInfo->status_arr[pInfo->file_num].friend_id,pInfo->group_id,SCI_STRLEN(pInfo->group_id));
         }
         pInfo->status_arr[pInfo->file_num].msg_type = msgType;
         pInfo->status_arr[pInfo->file_num].druation = druation;
@@ -1978,11 +1979,12 @@ static int YX_Net_Send_TK_VocFile_CB(void *pUser,uint8 * pRcv,uint32 Rcv_len)
                 ZDT_LOG("YX_Net_Send_TK_VocFile_CB emoji Success");
                 return AEE_SUCCESS;
             }
-            ret_val = YX_Func_GetNextPara(&pContent, &Content_len,val_buf,10);
+           ret_val = YX_Func_GetNextPara(&pContent, &Content_len,val_buf,10);
             if(ret_val > 0)
             {
                 rsp_val = atoi(val_buf);
             }
+            #ifdef ZYB_APP_SUPPORT
             if(rsp_val == -10)
             {
                 uint8 						temp_str[512] = {0};
@@ -1992,6 +1994,10 @@ static int YX_Net_Send_TK_VocFile_CB(void *pUser,uint8 * pRcv,uint32 Rcv_len)
                     ZDT_File_Remove((char *)cur_filedata.pFilename);
                     ZDT_File_Save(cur_filedata.pFilename,temp_str,ret_val,FALSE);
                 }
+            #else
+            if(rsp_val == 1)
+            {
+            #endif
                 ZDT_LOG("YX_Net_Send_TK_VocFile_CB Success");
                 return AEE_SUCCESS;
             }
@@ -2015,6 +2021,7 @@ static int YX_Net_Send_TK_VocFile_CB(void *pUser,uint8 * pRcv,uint32 Rcv_len)
             {
                 rsp_val = atoi(val_buf);
             }
+            #ifdef ZYB_APP_SUPPORT
             if(rsp_val == -10)
             {
                 uint8 						temp_str[512] = {0};
@@ -2024,6 +2031,10 @@ static int YX_Net_Send_TK_VocFile_CB(void *pUser,uint8 * pRcv,uint32 Rcv_len)
                     ZDT_File_Remove((char *)cur_filedata.pFilename);
                     ZDT_File_Save(cur_filedata.pFilename,temp_str,ret_val,FALSE);
                 }
+            #else
+            if(rsp_val == 1)
+            {
+            #endif
                 ZDT_LOG("YX_Net_Send_TK2_VocFile_CB Success");
                 return AEE_SUCCESS;
             }
@@ -2033,7 +2044,7 @@ static int YX_Net_Send_TK_VocFile_CB(void *pUser,uint8 * pRcv,uint32 Rcv_len)
                 return AEE_EFAILED;
             }
         }
-        else if(ret == 3 &&  strncmp( (char *)buf, "STK", ret ) == 0)
+        else if(ret == 4 &&  strncmp( (char *)buf, "STKR", ret ) == 0)
         {
             if(Content_len == 0) //表情回复 --感觉回复数据定义不合理
             {
@@ -2048,6 +2059,7 @@ static int YX_Net_Send_TK_VocFile_CB(void *pUser,uint8 * pRcv,uint32 Rcv_len)
             {
                 rsp_val = atoi(val_buf);
             }
+            #ifdef ZYB_APP_SUPPORT
             if(rsp_val == -10)
             {
                 uint8 						temp_str[512] = {0};
@@ -2057,6 +2069,10 @@ static int YX_Net_Send_TK_VocFile_CB(void *pUser,uint8 * pRcv,uint32 Rcv_len)
                     ZDT_File_Remove((char *)cur_filedata.pFilename);
                     ZDT_File_Save(cur_filedata.pFilename,temp_str,ret_val,FALSE);
                 }
+            #else
+            if(rsp_val == 1)
+            {
+            #endif
                 ZDT_LOG("YX_Net_Send_STK_VocFile_CB Success");
                 return AEE_SUCCESS;
             }

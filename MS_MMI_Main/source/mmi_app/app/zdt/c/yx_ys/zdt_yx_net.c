@@ -1963,6 +1963,7 @@ uint32 YX_Net_Send_WT(YX_APP_T* pMe, uint8 loc_ok)
     send_hande = YX_Net_TCPSend(g_zdt_phone_imei,send_buf,send_len,100,0,0,NULL);
     
     ZDT_LOG("YX_Net_Send_WT Handle=0x%x",send_hande);
+    ZDT_LOG("YX_Net_Send_WT Handle=%s",send_buf);
     return send_hande;
 }
 
@@ -4489,6 +4490,7 @@ int YX_Net_Receive_TK(YX_APP_T *pMe,uint8 * pContent,uint32 ContentLen)
         ZDT_LOG("YX_Net_Receive_TK RSP %d",str[0]);
         return -1;
     }
+	#if 0 
     //»ñÈ¡ID
     ret = YX_Func_GetNextPara(&str, &len,group_id,100);
     if(ret > 0)
@@ -4534,6 +4536,7 @@ int YX_Net_Receive_TK(YX_APP_T *pMe,uint8 * pContent,uint32 ContentLen)
         ZDT_LOG("YX_Net_Receive_TK ERR GROUP %d",s_yx_is_first_get_all_info);
         return -1;
     }
+	#endif
     s_yx_is_first_need_tkq = 0;
     s_yx_is_vchat_tk_err_time = 0;
 #ifdef ZDT_PLAT_YX_SUPPORT_VOICE
@@ -4570,6 +4573,7 @@ int YX_Net_Receive_TK(YX_APP_T *pMe,uint8 * pContent,uint32 ContentLen)
     ZDT_LOG("YX_Net_Receive_TK offset=%d,ret=%d,%s",offset,ret,tmp_str);
     if(YX_Net_Receive_TK_VocFile(pMe,pContent+offset, ContentLen-offset,group_id,msg_type))
     {
+        YX_Net_TCPRespond(g_zdt_phone_imei,"TK,1",4);
         YX_Net_Send_TKQ(pMe);
         success = 1;
     }
@@ -6083,10 +6087,17 @@ int32 YX_Net_Receive_DOWNVCWW(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen)
     ZDT_LOG("ZDT__LOG YX_Net_Receive_DOWNVCWW Content_len=%d",ContentLen);
 
 #ifdef ZDT_PLAT_YX_SUPPORT_VOICE
-    if(YX_API_Record_IsRecording() || ZYB_StreamPlayer_IsPlaying())
+   // if(YX_API_Record_IsRecording() || ZYB_StreamPlayer_IsPlaying())
+    if(YX_API_Record_IsRecording())
     {
         return 0;
     }
+    #ifdef ZYB_APP_SUPPORT
+    if(ZYB_StreamPlayer_IsPlaying())
+    {
+        return 0;
+    }
+    #endif 
 #endif
     if(len > 0)
     {
