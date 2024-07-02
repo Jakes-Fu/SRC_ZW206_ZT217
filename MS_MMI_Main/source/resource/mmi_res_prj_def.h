@@ -1480,3 +1480,7 @@ RES_ADD_MODULE(MMI_MODULE_ZMT_GPT,"\\zmt_gpt\\zmt_gpt_mdu_def.h")
 #ifdef  ZMT_NET_SUPPORT
 RES_ADD_MODULE(MMI_MODULE_ZMT_NET,"\\zmt_net\\zmt_net_mdu_def.h")
 #endif
+
+#ifdef  ZMT_CLASS_SUPPORT
+RES_ADD_MODULE(MMI_MODULE_ZMT_CLASS,"\\zmt_class\\zmt_class_mdu_def.h")
+#endif

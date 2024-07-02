@@ -171,6 +171,10 @@ PUBLIC void MMI_CreateZmtDialStoreWin(void);
 PUBLIC void MMIZMT_CreateZmtGptWin(void);
 #endif
 
+#ifdef ZMT_CLASS_SUPPORT
+PUBLIC void MMI_CreateClassMainWin(void);
+#endif
+
 #ifdef MAINMENU_STYLE_SUPPORT
 PUBLIC void WatchSET_MenuStyle_Enter( void );//²Ëµ¥ÇÐ»»
 #endif
@@ -313,6 +317,10 @@ extern PUBLIC uint8 Video_Call_Incoming_Test();
 
 #if defined(ZDT_TOOLS_MENU_SUPPORT)// wuxx add.
 #define MENU_TOOLS {25, 0, tools_text, res_app_ic_tools, light_cyan_bg, WatchTools_MainWin_Enter} 
+#endif
+
+#ifdef ZMT_CLASS_SUPPORT
+#define MENU_CLASS {26, 0, textbook_text, res_app_ic_contact, textbook_bg, MMI_CreateClassMainWin} 
 #endif
 
 //*******²Ëµ¥***************//

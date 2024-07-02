@@ -311,6 +311,10 @@ LOCAL BOOLEAN SetItemStyle(
     case GUIITEM_STYLE_FORMULA_LIST_MS:
     case GUIITEM_STYLE_FORMULA_ITEM_LIST_MS:
 #endif
+#ifdef ZMT_CLASS_SUPPORT
+    case GUIITEM_STYLE_CLASS_MAIN_LIST_MS:
+    case GUIITEM_STYLE_CLASS_SECTION_LIST_MS:
+#endif
         break;
         
     default:

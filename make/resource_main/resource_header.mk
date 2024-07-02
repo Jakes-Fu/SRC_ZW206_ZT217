@@ -556,6 +556,11 @@ ifeq ($(strip $(ZMT_NET_SUPPORT)), TRUE)
 SOURCES	 += zmt_net_mdu_def.h 
 SRCPATH += $(MMI_DIR)/source/mmi_app/app/zmt_net/h
 endif
+
+ifeq ($(strip $(ZMT_CLASS_SUPPORT)), TRUE)
+SOURCES	 += zmt_class_mdu_def.h 
+SRCPATH += $(MMI_DIR)/source/mmi_app/app/zmt_class/h
+endif
  
 #
 #  make process ,don't modify

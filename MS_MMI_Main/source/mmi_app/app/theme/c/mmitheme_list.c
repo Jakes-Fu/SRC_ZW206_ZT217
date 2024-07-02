@@ -83,6 +83,9 @@
 #ifdef FORMULA_SUPPORT
 #include "formula_export.h"
 #endif
+#ifdef ZMT_CLASS_SUPPORT
+#include "zmt_class_main.h"
+#endif
 /**---------------------------------------------------------------------------*
  **                         Macro Declaration                                 *
  **---------------------------------------------------------------------------*/
@@ -6101,6 +6104,76 @@ LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_formula_item_list_ms =
     0, MMILIST_INVALID_ITEM_INDEX
 };
 #endif
+#ifdef ZMT_CLASS_SUPPORT
+//GUIITEM_STYLE_CLASS_MAIN_LIST_MS
+LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_class_main_list_ms =
+{
+    2.5*CLASS_SYN_LINE_HIGHT, 2.5*CLASS_SYN_LINE_HIGHT,
+    {
+        //bg
+        {
+            0,
+            {0, 0, MMI_MAINSCREEN_WIDTH, 2.5*CLASS_SYN_LINE_HIGHT},
+            {0, 0, MMI_MAINSCREEN_WIDTH, 2.5*CLASS_SYN_LINE_HIGHT},
+            0, 0,
+            0, 0
+        }, 
+        //icon
+        {
+            0,
+            {0.3*CLASS_SYN_LINE_WIDTH, 0, 2*CLASS_SYN_LINE_WIDTH, 2.5*CLASS_SYN_LINE_HIGHT},
+            {0.3*CLASS_SYN_LINE_WIDTH, 0, 2*CLASS_SYN_LINE_WIDTH, 2.5*CLASS_SYN_LINE_HIGHT},
+            0, 0,
+            0, 0
+        }, 
+        //text
+        {
+            GUIITEM_CONTENT_STATE_MULTILINE,
+            {2*CLASS_SYN_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH-10, 2.5*CLASS_SYN_LINE_HIGHT},
+            {2*CLASS_SYN_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH-10, 2.5*CLASS_SYN_LINE_HIGHT},
+            SONG_FONT_18, SONG_FONT_18,
+            0, 0
+        },   
+        {0},
+        {0},
+        {0},
+        {0},
+    },
+    //这里的2,2是为了让索引为2的content text显示多行，且要配合GUIITEM_CONTENT_STATE_MULTILINE使用
+    2, 2
+};
+
+//GUIITEM_STYLE_CLASS_SECTION_LIST_MS
+LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_class_section_list_ms =
+{
+    1.5*CLASS_SYN_LINE_HIGHT, 1.5*CLASS_SYN_LINE_HIGHT,
+    {
+        //text
+        {
+            GUIITEM_CONTENT_STATE_MULTILINE,
+            {0.3*CLASS_SYN_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH-1.2*CLASS_SYN_LINE_WIDTH, 1.5*CLASS_SYN_LINE_HIGHT},
+            {0.3*CLASS_SYN_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH-1.2*CLASS_SYN_LINE_WIDTH, 1.5*CLASS_SYN_LINE_HIGHT},
+            SONG_FONT_18, SONG_FONT_18,
+            0, 0
+        },
+        //icon
+        {
+            0,
+            {MMI_MAINSCREEN_WIDTH-1.2*CLASS_SYN_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH-5, 1.5*CLASS_SYN_LINE_HIGHT},
+            {MMI_MAINSCREEN_WIDTH-1.2*CLASS_SYN_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH-5, 1.5*CLASS_SYN_LINE_HIGHT},
+            0, 0,
+            0, 0
+        }, 
+        {0},
+        {0},
+        {0},
+        {0},
+        {0},
+    },
+    //这里的0,2是为了让索引为0的content text显示多行，且要配合GUIITEM_CONTENT_STATE_MULTILINE使用
+    0, 2
+};
+#endif
 //============================================================================//
 //                                  End For engineer mode                     //
 //============================================================================//
@@ -6410,6 +6483,10 @@ LOCAL THEMELIST_STYLE_TABLE_T const s_style_table[] =
 #ifdef FORMULA_SUPPORT
     {GUIITEM_STYLE_FORMULA_LIST_MS, &s_item_style_formula_list_ms},
     {GUIITEM_STYLE_FORMULA_ITEM_LIST_MS, &s_item_style_formula_item_list_ms},
+#endif
+#ifdef ZMT_CLASS_SUPPORT
+    {GUIITEM_STYLE_CLASS_MAIN_LIST_MS, &s_item_style_class_main_list_ms},
+    {GUIITEM_STYLE_CLASS_SECTION_LIST_MS, &s_item_style_class_section_list_ms},
 #endif
 //============================================================================//
 //                                   For watch                                //

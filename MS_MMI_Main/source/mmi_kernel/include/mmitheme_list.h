@@ -1089,6 +1089,10 @@ ADULTWATCH
     GUIITEM_STYLE_FORMULA_LIST_MS,
     GUIITEM_STYLE_FORMULA_ITEM_LIST_MS,
 #endif
+#ifdef ZMT_CLASS_SUPPORT
+    GUIITEM_STYLE_CLASS_MAIN_LIST_MS,
+    GUIITEM_STYLE_CLASS_SECTION_LIST_MS,
+#endif
 //============================================================================//
 //                                   For watch                                //
 //============================================================================//

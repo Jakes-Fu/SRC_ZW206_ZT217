@@ -175,7 +175,7 @@ typedef struct
 
 const APP_LIST_ITEM_T  g_app_list_info[] = 
 {
-    MENU_TEXTBOOK,
+    MENU_CLASS,
     MENU_PHONEBOOK,//通讯录
     MENU_DIAL,//拨号
 #if defined(ZDT_VIDEOCHAT_SUPPORT) && defined(VIDEO_CALL_AGORA_SUPPORT) //声网视频通话

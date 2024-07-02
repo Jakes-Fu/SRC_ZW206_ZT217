@@ -2627,3 +2627,9 @@ MINCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_net/h
 MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_net/c
 SOURCES			+=  zmt_net_main.c zmt_http.c zmt_net.c zmt_tcp.c
 endif
+
+ifeq ($(strip $(ZMT_CLASS_SUPPORT)), TRUE)
+MINCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_class/h
+MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_class/c
+SOURCES			+=  zmt_class_win.c zmt_class_data.c
+endif
