@@ -101,6 +101,9 @@ extern PUBLIC void launcher_hero_appstore_manager(void);
 #endif
 #endif
 
+//绑定流程
+extern PUBLIC void MMIZDT_Open2VMSelectWin(void);
+
 
 
 /**--------------------------------------------------------------------------*
@@ -181,7 +184,7 @@ LOCAL WATCHCOM_LIST_ITEM__ST s_watch_tools_main_text_list_data[] =
         #endif
 	
 	{ WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR, &list_item_schedule, MMIZDT_OpenScheduleWin},
-	{ WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR, &list_item_manual_readme, MMIZDT_OpenManualWin},
+	{ WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR, &list_item_manual_readme, MMIZDT_Open2VMSelectWin},//绑定流程
 #else
    #ifndef ZTE_WATCH
 	{ WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR, &list_item_calculator, MMIAPICALC_OpenMainWin},
