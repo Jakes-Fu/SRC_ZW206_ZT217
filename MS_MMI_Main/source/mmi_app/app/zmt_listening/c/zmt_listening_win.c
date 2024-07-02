@@ -357,7 +357,6 @@ LOCAL MMI_RESULT_E HandleListeningAudioWinMsg(
 			{
 				listening_info->item_cur_page = 0;
 				listening_download_audio = FALSE;
-				//MMIZDT_HTTP_Close();
 				if(listening_downloading_audio_path != NULL){
 				    SCI_FREE(listening_downloading_audio_path);
 				    listening_downloading_audio_path = NULL;
@@ -589,7 +588,6 @@ PUBLIC MMI_RESULT_E ButtonPriClass_CallbackFunc(void)
 		{
 			MMI_CreateListeningWin();
 		}
-		Listening_RequestAlbumListInfo(listening_info->select_cur_class);
 	}
 	return TRUE;	
 }
@@ -615,7 +613,6 @@ PUBLIC MMI_RESULT_E ButtonJurClass_CallbackFunc(void)
 		{
 			MMI_CreateListeningWin();
 		}
-		Listening_RequestAlbumListInfo(listening_info->select_cur_class);
 	}
 	return TRUE;	
 }
@@ -635,12 +632,8 @@ LOCAL MMI_RESULT_E HandleListeningWinMsg(
 	{
 		case MSG_OPEN_WINDOW:
 			{
-				if(listening_info == NULL)
-				{
-					listening_info = (LISTENING_LIST_INFO *)SCI_ALLOC_APPZ(sizeof(LISTENING_LIST_INFO));
-					SCI_MEMSET(listening_info, 0, sizeof(LISTENING_LIST_INFO));
-				}
 				listening_load_win = 0;
+				Listening_RequestAlbumListInfo(listening_info->select_cur_class);
 
 				GUIBUTTON_SetCallBackFunc(LISTENING_BUTTON_PRE_CTRL_ID, ButtonPreClass_CallbackFunc);
 				GUIBUTTON_SetCallBackFunc(LISTENING_BUTTON_PRI_CTRL_ID, ButtonPriClass_CallbackFunc);
@@ -739,7 +732,6 @@ LOCAL MMI_RESULT_E HandleListeningWinMsg(
 			break;
 		case MSG_CLOSE_WINDOW:
 			{
-				uint8 i = 0;
 				if(module_info)
 				{
 					SCI_FREE(module_info);
@@ -752,7 +744,6 @@ LOCAL MMI_RESULT_E HandleListeningWinMsg(
 				{
 					MMK_CloseWin(LISTENING_LOCAL_ALBUM_WIN_ID);
 				}
-				//MMIZDT_HTTP_Close();
 			}
 			break;
 		default:

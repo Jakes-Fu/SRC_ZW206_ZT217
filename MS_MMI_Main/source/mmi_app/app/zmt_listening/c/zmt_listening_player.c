@@ -1260,6 +1260,7 @@ LOCAL MMI_RESULT_E HandleListeningPlayerWinMsg(
                     recode = MMI_RESULT_FALSE;
 			break;
 		}
+    return recode;
 }
 
 WINDOW_TABLE(MMI_LIST_PLAYER_WIN_TAB) = 

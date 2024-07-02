@@ -163,8 +163,161 @@ LOCAL void ListeningLocal_DownloadDataInit(void)
 	//Listening_FreeLocalDataInfo();
 }
 
+LOCAL void Listening_InitButton(MMI_CTRL_ID_T ctrl_id, GUI_RECT_T rect, MMI_TEXT_ID_T text_id, GUI_ALIGN_E text_align, BOOLEAN visable, GUIBUTTON_CALLBACK_FUNC func)
+{
+    GUIBUTTON_SetRect(ctrl_id, &rect);
+    GUIBUTTON_SetTextAlign(ctrl_id, text_align);
+    GUIBUTTON_SetVisible(ctrl_id, visable, visable);
+    if(func != NULL){
+        GUIBUTTON_SetCallBackFunc(ctrl_id, func);
+    }
+    if(text_id != NULL){
+        GUIBUTTON_SetTextId(ctrl_id, text_id);
+    }
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////////////
+LOCAL void ListeningLocalAudioWin_ButtonDeleteCallback(void)
+{
+    if(!delete_info.is_select_delete)
+    {
+        delete_info.is_select_delete = TRUE;
+        MMK_SendMsg(LISTENING_LOCAL_AUDIO_WIN_ID, MSG_FULL_PAINT, PNULL);
+    }
+    else
+    {
+        uint8 i = 0;
+        BOOLEAN delete_module = FALSE;
+        uint8 delete_count = 0;
+        int audio_id[100] = {0};
+        LISTEING_LOCAL_INFO * local_info = NULL;
+        uint8 id_index = 0;
+        local_info = Listening_GetLocalDataInfo();
+        id_index = (uint8) MMK_GetWinAddDataPtr(LISTENING_LOCAL_AUDIO_WIN_ID);
+        for(i = 0;i < local_info->module_info[id_index].album_info[0].audio_count;i++)
+        {
+            if(delete_info.select_info[i].is_select)
+            {
+                audio_id[delete_count] = local_info->module_info[id_index].album_info[0].audio_info[i].audio_id;
+                delete_count++;
+            }
+        }
+        SCI_TRACE_LOW("%s: delete_count = %d", __FUNCTION__, delete_count);
+        if(delete_count == 0){
+            return;
+        }
+        if(local_info->module_info[id_index].album_info[0].audio_count == delete_count)
+        {
+            delete_module = TRUE;
+        }
+        for(i = 0;i < delete_count;i++)
+        {
+            Listening_DeleteOneAudio(delete_module, local_info->module_info[id_index].module_id, audio_id[i]);
+            if(delete_module) break;
+        }
+        memset(&delete_info, 0, sizeof(LISTEING_LOCAL_DELETE_INFO));
+        if(delete_module)
+        {
+            MMK_CloseWin(LISTENING_LOCAL_AUDIO_WIN_ID);
+        }
+        else
+        {
+            MMK_SendMsg(LISTENING_LOCAL_AUDIO_WIN_ID, MSG_FULL_PAINT, PNULL);
+        }
+    }
+}
+
+LOCAL void ListeningLocalAudioWin_ButtonAllCallback(void)
+{
+    uint8 index = 0;
+    if(!delete_info.is_select_delete){
+        return;
+    }
+    for(index = 0;index < listening_info->local_audio_total;index++)
+    {
+        if(!delete_info.select_info[index].is_select)
+        {
+            delete_info.is_select_all = FALSE;
+            break;
+        }
+        else
+        {
+            delete_info.is_select_all = TRUE;
+        }
+    }
+    if(delete_info.is_select_all)
+    {
+        delete_info.is_select_all = FALSE;
+        for(index = 0;index < listening_info->local_audio_total;index++)
+        {
+            delete_info.select_info[index].is_select = FALSE;
+        }
+    }
+    else
+    {
+        delete_info.is_select_all = TRUE;
+        for(index = 0;index < listening_info->local_audio_total;index++)
+        {
+            delete_info.select_info[index].is_select = TRUE;
+        }
+    }
+    MMK_SendMsg(LISTENING_LOCAL_AUDIO_WIN_ID, MSG_FULL_PAINT, PNULL);
+}
+
+LOCAL void ListeningLocalAudioWin_ButtonBackCallback(void)
+{
+    uint8 index = 0;
+    if(!delete_info.is_select_delete){
+        return;
+    }
+    delete_info.is_select_delete = FALSE;
+    for(index = 0;index < listening_info->local_audio_total;index++)
+    {
+        delete_info.select_info[index].is_select = FALSE;
+    }
+    MMK_SendMsg(LISTENING_LOCAL_AUDIO_WIN_ID, MSG_FULL_PAINT, PNULL);
+}
+
+LOCAL void ListeningLocalAudioWin_InitBottom(MMI_WIN_ID_T win_id)
+{
+    GUI_RECT_T button_rect = listen_list_rect;
+    GUI_BG_T bg = {0};
+    bg.bg_type = GUI_BG_IMG;
+
+    button_rect.top = button_rect.bottom;
+    button_rect.bottom = MMI_MAINSCREEN_HEIGHT;
+    button_rect.left = 0;
+    button_rect.right = 2*LISTEN_LINE_WIDTH;
+    Listening_InitButton(LISTENING_LOCAL_AUDIO_BUTTON_DELETE_CTRL_ID, button_rect, NULL, ALIGN_HVMIDDLE, TRUE, ListeningLocalAudioWin_ButtonDeleteCallback);
+    bg.img_id = ZMT_LISTEN_DELECT;
+    GUIBUTTON_SetBg(LISTENING_LOCAL_AUDIO_BUTTON_DELETE_CTRL_ID, &bg);
+    button_rect.left = button_rect.right;
+    button_rect.right += 2*LISTEN_LINE_WIDTH;
+    Listening_InitButton(LISTENING_LOCAL_AUDIO_BUTTON_ALL_CTRL_ID, button_rect, NULL, ALIGN_HVMIDDLE, FALSE, ListeningLocalAudioWin_ButtonAllCallback);
+    bg.img_id = ZMT_LISTEN_SECLET_ALL;
+    GUIBUTTON_SetBg(LISTENING_LOCAL_AUDIO_BUTTON_ALL_CTRL_ID, &bg);
+    button_rect.left = button_rect.right;
+    button_rect.right += 2*LISTEN_LINE_WIDTH;
+    Listening_InitButton(LISTENING_LOCAL_AUDIO_BUTTON_BACK_CTRL_ID, button_rect, NULL, ALIGN_HVMIDDLE, FALSE, ListeningLocalAudioWin_ButtonBackCallback);
+    bg.img_id = ZMT_LISTEN_BACK;
+    GUIBUTTON_SetBg(LISTENING_LOCAL_AUDIO_BUTTON_BACK_CTRL_ID, &bg);
+}
+
+LOCAL void ListeningLocalAudioWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
+{
+    LISTEING_LOCAL_INFO * local_info = NULL;
+    uint8 id_index = 0;
+    
+    memset(&delete_info, 0, sizeof(LISTEING_LOCAL_DELETE_INFO));
+    local_info = Listening_GetLocalDataInfo();
+    id_index = (uint8) MMK_GetWinAddDataPtr(win_id);
+    listening_info->local_audio_total = local_info->module_info[id_index].album_info[0].audio_count;
+    SCI_TRACE_LOW("%s: local_audio_total = %d", __FUNCTION__, listening_info->local_audio_total);
+
+    ListeningLocalAudioWin_InitBottom(win_id);
+}
+
 LOCAL void ListeningLocalAudioWin_DisplayLocalAudioList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id, uint8 id_index)
 {
 	uint16 index = 0;
@@ -303,13 +456,15 @@ LOCAL void ListeningLocalAudioWin_DisplayListAndDir(MMI_WIN_ID_T win_id, int id_
 	SCI_TRACE_LOW("%s: is_select_delete = %d", __FUNCTION__, delete_info.is_select_delete);
 	if(delete_info.is_select_delete)
 	{
-		GUIRES_DisplayImg(PNULL, &listen_del_all_rect, PNULL, win_id, ZMT_LISTEN_SECLET_ALL, &lcd_dev_info);
-		GUIRES_DisplayImg(PNULL, &listen_del_rect, PNULL, win_id, ZMT_LISTEN_DELECT, &lcd_dev_info);
-		GUIRES_DisplayImg(PNULL, &listen_del_back_rect, PNULL, win_id, ZMT_LISTEN_BACK, &lcd_dev_info);
+		GUIBUTTON_SetVisible(LISTENING_LOCAL_AUDIO_BUTTON_DELETE_CTRL_ID, TRUE, TRUE);
+		GUIBUTTON_SetVisible(LISTENING_LOCAL_AUDIO_BUTTON_ALL_CTRL_ID, TRUE, TRUE);
+		GUIBUTTON_SetVisible(LISTENING_LOCAL_AUDIO_BUTTON_BACK_CTRL_ID, TRUE, TRUE);
 	}
 	else
 	{
-		GUIRES_DisplayImg(PNULL, &listen_del_all_rect, PNULL, win_id, ZMT_LISTEN_DELECT, &lcd_dev_info);
+		GUIBUTTON_SetVisible(LISTENING_LOCAL_AUDIO_BUTTON_DELETE_CTRL_ID, TRUE, TRUE);
+		GUIBUTTON_SetVisible(LISTENING_LOCAL_AUDIO_BUTTON_ALL_CTRL_ID, FALSE, FALSE);
+		GUIBUTTON_SetVisible(LISTENING_LOCAL_AUDIO_BUTTON_BACK_CTRL_ID, FALSE, FALSE);
 	}
 }
 
@@ -330,11 +485,7 @@ LOCAL MMI_RESULT_E HandleListeningLocalAudioWinMsg(
 	{
 		case MSG_OPEN_WINDOW:
 			{
-				memset(&delete_info, 0, sizeof(LISTEING_LOCAL_DELETE_INFO));
-				local_info = Listening_GetLocalDataInfo();
-				id_index = (uint8) MMK_GetWinAddDataPtr(win_id);
-				listening_info->local_audio_total = local_info->module_info[id_index].album_info[0].audio_count;
-				SCI_TRACE_LOW("%s: local_audio_total = %d", __FUNCTION__, listening_info->local_audio_total);
+				ListeningLocalAudioWin_OPEN_WINDOW(win_id);
 			}
 			break;
 		case MSG_FULL_PAINT:
@@ -436,89 +587,6 @@ LOCAL MMI_RESULT_E HandleListeningLocalAudioWinMsg(
 				GUI_POINT_T point = {0};
 				point.x = MMK_GET_TP_X(param);
 				point.y = MMK_GET_TP_Y(param);
-				if(GUI_PointIsInRect(point, listen_del_all_rect) && !delete_info.is_select_delete)
-				{
-					delete_info.is_select_delete = TRUE;
-					MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
-				}
-				else if(GUI_PointIsInRect(point, listen_del_all_rect) && delete_info.is_select_delete)
-				{
-					uint8 index = 0;
-					for(index = 0;index < listening_info->local_audio_total;index++)
-					{
-						if(!delete_info.select_info[index].is_select)
-						{
-							delete_info.is_select_all = FALSE;
-							break;
-						}else
-						{
-							delete_info.is_select_all = TRUE;
-						}
-					}
-					if(delete_info.is_select_all)
-					{
-						delete_info.is_select_all = FALSE;
-						for(index = 0;index < listening_info->local_audio_total;index++)
-						{
-							delete_info.select_info[index].is_select = FALSE;
-						}
-					}else
-					{
-						delete_info.is_select_all = TRUE;
-						for(index = 0;index < listening_info->local_audio_total;index++)
-						{
-							delete_info.select_info[index].is_select = TRUE;
-						}
-					}
-					MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
-				}
-				else if(GUI_PointIsInRect(point, listen_del_rect) && delete_info.is_select_delete)
-				{
-					uint8 i = 0;
-					BOOLEAN delete_module = FALSE;
-					uint8 delete_count = 0;
-					int audio_id[100] = {0};
-					local_info = Listening_GetLocalDataInfo();
-					id_index = (uint8) MMK_GetWinAddDataPtr(win_id);
-					for(i = 0;i < local_info->module_info[id_index].album_info[0].audio_count;i++)
-					{
-						if(delete_info.select_info[i].is_select)
-						{
-							audio_id[delete_count] = local_info->module_info[id_index].album_info[0].audio_info[i].audio_id;
-							delete_count++;
-						}
-					}
-					SCI_TRACE_LOW("%s: delete_count = %d", __FUNCTION__, delete_count);
-					if(delete_count == 0) break;
-					if(local_info->module_info[id_index].album_info[0].audio_count == delete_count)
-					{
-						delete_module = TRUE;
-					}
-					for(i = 0;i < delete_count;i++)
-					{
-						Listening_DeleteOneAudio(delete_module, local_info->module_info[id_index].module_id, audio_id[i]);
-						if(delete_module) break;
-					}
-					memset(&delete_info, 0, sizeof(LISTEING_LOCAL_DELETE_INFO));
-					if(delete_module)
-					{
-						MMK_CloseWin(win_id);
-					}
-					else
-					{
-						MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
-					}
-				}
-				else if(GUI_PointIsInRect(point, listen_del_back_rect) && delete_info.is_select_delete)
-				{
-					uint8 index = 0;
-					delete_info.is_select_delete = FALSE;
-					for(index = 0;index < listening_info->local_audio_total;index++)
-					{
-						delete_info.select_info[index].is_select = FALSE;
-					}
-					MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
-				}
 			}
 			break;
 		case MSG_KEYUP_CANCEL:
@@ -542,6 +610,9 @@ WINDOW_TABLE(MMI_LOCAL_AUDIO_WIN_TAB) =
 {
 	WIN_ID(LISTENING_LOCAL_AUDIO_WIN_ID),
 	WIN_FUNC((uint32)HandleListeningLocalAudioWinMsg),
+	CREATE_BUTTON_CTRL(PNULL, LISTENING_LOCAL_AUDIO_BUTTON_DELETE_CTRL_ID),
+	CREATE_BUTTON_CTRL(PNULL, LISTENING_LOCAL_AUDIO_BUTTON_ALL_CTRL_ID),
+	CREATE_BUTTON_CTRL(PNULL, LISTENING_LOCAL_AUDIO_BUTTON_BACK_CTRL_ID),
 	WIN_HIDE_STATUS,
 	END_WIN
 };
@@ -562,6 +633,140 @@ PUBLIC void MMI_CreateListeningLocalAudioWin(uint8 index)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+LOCAL void ListeningLocalWin_ButtonDeleteCallback(void)
+{
+    uint8 i = 0;
+    uint8 delete_count = 0;
+    int module_id[50] = {0};
+    LISTEING_LOCAL_INFO * local_info = NULL;
+    if(!delete_info.is_select_delete)
+    {
+        delete_info.is_select_delete = TRUE;
+    }
+    else
+    {
+        local_info = Listening_GetLocalDataInfo();
+        for(i = 0;i < listening_info->local_album_total;i++)
+        {
+            if(delete_info.select_info[i].is_select)
+            {
+                module_id[delete_count] = local_info->module_info[i].module_id;
+                delete_count++;
+            }
+        }
+        SCI_TRACE_LOW("%s: delete_count = %d", __FUNCTION__, delete_count);
+        if(delete_count == 0) {
+            return;
+        }
+        for(i = 0;i < delete_count;i++)
+        {
+            Listening_DeleteOneAlbum(module_id[i]);
+        }
+        memset(&delete_info, 0, sizeof(LISTEING_LOCAL_DELETE_INFO));
+    }
+    MMK_SendMsg(LISTENING_LOCAL_ALBUM_WIN_ID, MSG_FULL_PAINT, PNULL);
+}
+
+LOCAL void ListeningLocalWin_ButtonAllCallback(void)
+{
+    uint8 index = 0;
+    if(!delete_info.is_select_delete){
+        return;
+    }
+    if(listening_info == NULL){
+        return;
+    }
+    for(index = 0;index < listening_info->local_album_total;index++)
+    {
+        if(!delete_info.select_info[index].is_select)
+        {
+            delete_info.is_select_all = FALSE;
+            break;
+        }
+        else
+        {
+            delete_info.is_select_all = TRUE;
+        }
+    }
+    if(delete_info.is_select_all)
+    {
+        delete_info.is_select_all = FALSE;
+        for(index = 0;index < listening_info->local_album_total;index++)
+        {
+            delete_info.select_info[index].is_select = FALSE;
+        }
+    }
+    else
+    {
+        delete_info.is_select_all = TRUE;
+        for(index = 0;index < listening_info->local_album_total;index++)
+        {
+            delete_info.select_info[index].is_select = TRUE;
+        }
+    }
+    MMK_SendMsg(LISTENING_LOCAL_ALBUM_WIN_ID, MSG_FULL_PAINT, PNULL);
+}
+
+LOCAL void ListeningLocalWin_ButtonBackCallback(void)
+{
+    uint8 index = 0;
+    if(!delete_info.is_select_delete){
+        return;
+    }
+    delete_info.is_select_delete = FALSE;
+    for(index = 0;index < listening_info->local_album_total;index++)
+    {
+        delete_info.select_info[index].is_select = FALSE;
+    }
+    MMK_SendMsg(LISTENING_LOCAL_ALBUM_WIN_ID, MSG_FULL_PAINT, PNULL);
+}
+
+LOCAL void ListeningLocalWin_InitBottom(MMI_WIN_ID_T win_id)
+{
+    GUI_RECT_T button_rect = listen_list_rect;
+    GUI_BG_T bg = {0};
+    bg.bg_type = GUI_BG_IMG;
+
+    button_rect.top = button_rect.bottom;
+    button_rect.bottom = MMI_MAINSCREEN_HEIGHT;
+    button_rect.left = 0;
+    button_rect.right = 2*LISTEN_LINE_WIDTH;
+    Listening_InitButton(LISTENING_LOCAL_BUTTON_DELETE_CTRL_ID, button_rect, NULL, ALIGN_HVMIDDLE, TRUE, ListeningLocalWin_ButtonDeleteCallback);
+    bg.img_id = ZMT_LISTEN_DELECT;
+    GUIBUTTON_SetBg(LISTENING_LOCAL_BUTTON_DELETE_CTRL_ID, &bg);
+    button_rect.left = button_rect.right;
+    button_rect.right += 2*LISTEN_LINE_WIDTH;
+    Listening_InitButton(LISTENING_LOCAL_BUTTON_ALL_CTRL_ID, button_rect, NULL, ALIGN_HVMIDDLE, FALSE, ListeningLocalWin_ButtonAllCallback);
+    bg.img_id = ZMT_LISTEN_SECLET_ALL;
+    GUIBUTTON_SetBg(LISTENING_LOCAL_BUTTON_ALL_CTRL_ID, &bg);
+    button_rect.left = button_rect.right;
+    button_rect.right += 2*LISTEN_LINE_WIDTH;
+    Listening_InitButton(LISTENING_LOCAL_BUTTON_BACK_CTRL_ID, button_rect, NULL, ALIGN_HVMIDDLE, FALSE, ListeningLocalWin_ButtonBackCallback);
+    bg.img_id = ZMT_LISTEN_BACK;
+    GUIBUTTON_SetBg(LISTENING_LOCAL_BUTTON_BACK_CTRL_ID, &bg);
+}
+
+LOCAL void ListeningLocalWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
+{
+    LISTEING_LOCAL_INFO * local_info = NULL;
+    if(listening_info != NULL)
+    {
+        SCI_FREE(listening_info);
+        listening_info = NULL;
+    }
+    listening_info = (LISTENING_LIST_INFO *)SCI_ALLOC_APPZ(sizeof(LISTENING_LIST_INFO));
+    SCI_MEMSET(listening_info, 0, sizeof(LISTENING_LIST_INFO));
+    local_info = Listening_GetLocalDataInfo();
+    listening_info->local_album_total = local_info->module_count;
+    listening_info->select_cur_class = SELECT_MODULE_LOCAL;
+    SCI_TRACE_LOW("%s: local_album_total = %d", __FUNCTION__, listening_info->local_album_total);
+				
+    GUIBUTTON_SetCallBackFunc(LISTENING_BUTTON_PRE_CTRL_ID, ButtonPreClass_CallbackFunc);
+    GUIBUTTON_SetCallBackFunc(LISTENING_BUTTON_PRI_CTRL_ID, ButtonPriClass_CallbackFunc);
+    GUIBUTTON_SetCallBackFunc(LISTENING_BUTTON_JUR_CTRL_ID, ButtonJurClass_CallbackFunc);
+
+    ListeningLocalWin_InitBottom(win_id);
+}
 
 PUBLIC void ListeningLocalWin_DisplayLocalAlbumList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
 {
@@ -711,13 +916,15 @@ PUBLIC void ListeningLocalWin_DisplayListAndDir(MMI_WIN_ID_T win_id)
 		SCI_TRACE_LOW("%s: is_select_delete = %d", __FUNCTION__, delete_info.is_select_delete);
 		if(delete_info.is_select_delete)
 		{
-			GUIRES_DisplayImg(PNULL, &listen_del_all_rect, PNULL, win_id, ZMT_LISTEN_SECLET_ALL, &lcd_dev_info);
-			GUIRES_DisplayImg(PNULL, &listen_del_rect, PNULL, win_id, ZMT_LISTEN_DELECT, &lcd_dev_info);
-			GUIRES_DisplayImg(PNULL, &listen_del_back_rect, PNULL, win_id, ZMT_LISTEN_BACK, &lcd_dev_info);
+			GUIBUTTON_SetVisible(LISTENING_LOCAL_BUTTON_DELETE_CTRL_ID, TRUE, TRUE);
+			GUIBUTTON_SetVisible(LISTENING_LOCAL_BUTTON_ALL_CTRL_ID, TRUE, TRUE);
+			GUIBUTTON_SetVisible(LISTENING_LOCAL_BUTTON_BACK_CTRL_ID, TRUE, TRUE);
 		}
 		else
 		{
-			GUIRES_DisplayImg(PNULL, &listen_del_all_rect, PNULL, win_id, ZMT_LISTEN_DELECT, &lcd_dev_info);
+			GUIBUTTON_SetVisible(LISTENING_LOCAL_BUTTON_DELETE_CTRL_ID, TRUE, TRUE);
+			GUIBUTTON_SetVisible(LISTENING_LOCAL_BUTTON_ALL_CTRL_ID, FALSE, FALSE);
+			GUIBUTTON_SetVisible(LISTENING_LOCAL_BUTTON_BACK_CTRL_ID, FALSE, FALSE);
 		}
 	}
 }
@@ -739,20 +946,7 @@ LOCAL MMI_RESULT_E HandleListeningLocalWinMsg(
 	{
 		case MSG_OPEN_WINDOW:
 			{
-				uint8 i = 0;				
-				if(listening_info == NULL)
-				{
-					listening_info = (LISTENING_LIST_INFO *)SCI_ALLOC_APPZ(sizeof(LISTENING_LIST_INFO));
-				}
-				SCI_MEMSET(listening_info, 0, sizeof(LISTENING_LIST_INFO));
-				local_info = Listening_GetLocalDataInfo();
-				listening_info->local_album_total = local_info->module_count;
-				listening_info->select_cur_class = SELECT_MODULE_LOCAL;
-				SCI_TRACE_LOW("%s: local_album_total = %d", __FUNCTION__, listening_info->local_album_total);
-				
-				GUIBUTTON_SetCallBackFunc(LISTENING_BUTTON_PRE_CTRL_ID, ButtonPreClass_CallbackFunc);
-				GUIBUTTON_SetCallBackFunc(LISTENING_BUTTON_PRI_CTRL_ID, ButtonPriClass_CallbackFunc);
-				GUIBUTTON_SetCallBackFunc(LISTENING_BUTTON_JUR_CTRL_ID, ButtonJurClass_CallbackFunc);
+              		ListeningLocalWin_OPEN_WINDOW(win_id);
 			}
 			break;
 		case MSG_FULL_PAINT:
@@ -818,75 +1012,6 @@ LOCAL MMI_RESULT_E HandleListeningLocalWinMsg(
 				GUI_POINT_T point = {0};
 				point.x = MMK_GET_TP_X(param);
 				point.y = MMK_GET_TP_Y(param);
-				if(GUI_PointIsInRect(point, listen_del_all_rect) && !delete_info.is_select_delete)
-				{
-					delete_info.is_select_delete = TRUE;
-					MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
-				}
-				else if(GUI_PointIsInRect(point, listen_del_all_rect) && delete_info.is_select_delete)
-				{
-					uint8 index = 0;
-					for(index = 0;index < listening_info->local_album_total;index++)
-					{
-						if(!delete_info.select_info[index].is_select)
-						{
-							delete_info.is_select_all = FALSE;
-							break;
-						}else
-						{
-							delete_info.is_select_all = TRUE;
-						}
-					}
-					if(delete_info.is_select_all)
-					{
-						delete_info.is_select_all = FALSE;
-						for(index = 0;index < listening_info->local_album_total;index++)
-						{
-							delete_info.select_info[index].is_select = FALSE;
-						}
-					}else
-					{
-						delete_info.is_select_all = TRUE;
-						for(index = 0;index < listening_info->local_album_total;index++)
-						{
-							delete_info.select_info[index].is_select = TRUE;
-						}
-					}		
-					MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
-				}
-				else if(GUI_PointIsInRect(point, listen_del_rect) && delete_info.is_select_delete)
-				{
-					uint8 i = 0;
-					uint8 delete_count = 0;
-					int module_id[50] = {0};
-					local_info = Listening_GetLocalDataInfo();
-					for(i = 0;i < listening_info->local_album_total;i++)
-					{
-						if(delete_info.select_info[i].is_select)
-						{
-							module_id[delete_count] = local_info->module_info[i].module_id;
-							delete_count++;
-						}
-					}
-					SCI_TRACE_LOW("%s: delete_count = %d", __FUNCTION__, delete_count);
-					if(delete_count == 0) break;
-					for(i = 0;i < delete_count;i++)
-					{
-						Listening_DeleteOneAlbum(module_id[i]);
-					}
-					memset(&delete_info, 0, sizeof(LISTEING_LOCAL_DELETE_INFO));
-					MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
-				}
-				else if(GUI_PointIsInRect(point, listen_del_back_rect) && delete_info.is_select_delete)
-				{
-					uint8 index = 0;
-					delete_info.is_select_delete = FALSE;
-					for(index = 0;index < listening_info->local_album_total;index++)
-					{
-						delete_info.select_info[index].is_select = FALSE;
-					}
-					MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
-				}
 			}
 			break;
 		case MSG_KEYUP_CANCEL:
@@ -896,7 +1021,7 @@ LOCAL MMI_RESULT_E HandleListeningLocalWinMsg(
 			break;
 		case MSG_CLOSE_WINDOW:
 			{
-				if(listening_info)
+				if(listening_info != NULL)
 				{
 					SCI_FREE(listening_info);
 					listening_info = NULL;
@@ -910,6 +1035,7 @@ LOCAL MMI_RESULT_E HandleListeningLocalWinMsg(
                     recode = MMI_RESULT_FALSE;
 			break;
 		}
+    return recode;
 }
 
 WINDOW_TABLE(MMI_LIST_LOCAL_WIN_TAB) = 
@@ -919,6 +1045,9 @@ WINDOW_TABLE(MMI_LIST_LOCAL_WIN_TAB) =
 	CREATE_BUTTON_CTRL(PNULL, LISTENING_BUTTON_PRE_CTRL_ID),
 	CREATE_BUTTON_CTRL(PNULL, LISTENING_BUTTON_PRI_CTRL_ID),
 	CREATE_BUTTON_CTRL(PNULL, LISTENING_BUTTON_JUR_CTRL_ID),
+	CREATE_BUTTON_CTRL(PNULL, LISTENING_LOCAL_BUTTON_DELETE_CTRL_ID),
+	CREATE_BUTTON_CTRL(PNULL, LISTENING_LOCAL_BUTTON_ALL_CTRL_ID),
+	CREATE_BUTTON_CTRL(PNULL, LISTENING_LOCAL_BUTTON_BACK_CTRL_ID),
 	WIN_HIDE_STATUS,
 	END_WIN
 };
