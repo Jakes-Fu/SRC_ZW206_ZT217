@@ -5074,3 +5074,31 @@ LOCAL void DumpChildInfo(
     }
 }
 #endif
+
+/*****************************************************************************/
+//  Description : set form no display scrollbar
+//  Global resource dependence : 
+//  Author: fys
+//  Note:2024.06.29
+/*****************************************************************************/
+PUBLIC BOOLEAN CTRLFORM_SetDisplayScrollBar(
+                                MMI_HANDLE_T form_handle, 
+                                BOOLEAN is_display
+                                )
+{
+    BOOLEAN result = FALSE;
+    CTRLFORM_OBJ_T *form_ctrl_ptr = PNULL;
+    
+    //get form pointer by control id
+    form_ctrl_ptr = CTRLFORM_GetPtr(form_handle);
+    
+    //get child pointer by handle
+    if (PNULL != form_ctrl_ptr)
+    {
+        //set is display progress
+        form_ctrl_ptr->is_display_prg = is_display;
+        result = TRUE;
+    }
+
+    return result;
+}

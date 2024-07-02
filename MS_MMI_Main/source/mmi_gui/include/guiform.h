@@ -79,6 +79,7 @@
 #define GUIFORM_SetChildDock                CTRLFORM_SetChildDock
 #define GUIFORM_SetSizeRange                CTRLFORM_SetSizeRange
 #define GUIFORM_ForceLayout                 CTRLFORM_ForceLayout
+#define GUIFORM_SetDisplayScrollBar         CTRLFORM_SetDisplayScrollBar
 
 #ifdef GUI_DUMP_CTRL_TREE
 #define GUIFORM_DumpTree                    CTRLFORM_DumpTree

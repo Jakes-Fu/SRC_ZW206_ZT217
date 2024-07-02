@@ -980,6 +980,16 @@ PUBLIC void CTRLFORM_RemoveChildFromList(
                                          CTRLFORM_CHILD_T   *child_ptr      //in:
                                          );
 
+/*****************************************************************************/
+//  Description : set form no display scrollbar
+//  Global resource dependence : 
+//  Author: fys
+//  Note:2024.06.29
+/*****************************************************************************/
+PUBLIC BOOLEAN CTRLFORM_SetDisplayScrollBar(
+                                MMI_HANDLE_T form_handle, 
+                                BOOLEAN is_display
+                                );
 /**--------------------------------------------------------------------------*
 **                         Compiler Flag                                     *
 **---------------------------------------------------------------------------*/
