@@ -3,6 +3,9 @@
 ** Author:         fys                                               *
 ** Date:           2024/06/27                                                *
 ******************************************************************************/
+#ifndef ZMT_CLASS_MAIN_H
+#define ZMT_CLASS_MAIN_H
+
 #include "sci_types.h"
 #include "mmk_type.h"
 #include "guistring.h"
@@ -33,7 +36,7 @@
 #define CLASS_SYN_BOOK_FILE_PATH "E:/class/class_book.json"
 #define CLASS_SYN_COURSE_FILE_PATH "E:/class/class_course.json"
 #define CLASS_SYN_SECTION_FILE_PATH "E:/class/class_section_%d.json"
-#define CLASS_SYN_SENTECT_AUDIO_PATH "E:/class/audio_%d.mp3"
+#define CLASS_SYN_SENTECT_AUDIO_PATH "E:/class/%d/%d/audio_%d.mp3"//"E:/class/book_id/section_id/audio_index.mp3
 
 #define CLASS_SYN_SUBJECT_NUM_MAX 2
 #define CLASS_SYN_GRADE_NUM_MAX 9
@@ -107,6 +110,7 @@ PUBLIC void MMI_CreateClassBookWin(void);
 PUBLIC void MMI_CreateClassSectionWin(void);
 PUBLIC void MMI_CreateClassReadWin(void);
 PUBLIC void MMI_CreateClassReadSetWin(void);
+PUBLIC void MMIZMT_CloseClassPlayer(void);
 
 PUBLIC void Class_ReleaseBookInfo(void);
 PUBLIC void Class_ReuestBookInfo(uint8 subject_id, uint8 grade_id, uint8 page);
@@ -115,4 +119,6 @@ PUBLIC void Class_ReuestSectionInfo(char * course_id);
 PUBLIC void Class_RealeaseReadInfo(void);
 PUBLIC void Class_ReuestReadInfo(char * section_id);
 PUBLIC void Class_DeleteReadAudioFile(void);
-PUBLIC void Class_RequestMp3Data(char * url, uint8 idx, BOOLEAN is_download_file);
+PUBLIC void Class_RequestMp3Data(char * url, uint16 course_id, uint16 section_id, uint8 idx, BOOLEAN is_download_file);
+
+#endif

@@ -7,16 +7,12 @@
 #include <stdlib.h>
 #include "cjson.h"
 #include "dal_time.h"
-#include "gps_drv.h"
-#include "gps_interface.h"
 #include "guibutton.h"
 #include "guifont.h"
 #include "guilcd.h"
 #include "guitext.h"
 #include "guiiconlist.h"
 #include "mmi_textfun.h"
-#include "mmiacc_text.h"
-#include "mmicc_export.h"
 #include "mmidisplay_data.h"
 #include "mmipub.h"
 #include "window_parse.h"
@@ -29,6 +25,7 @@
 #ifdef LISTENING_PRATICE_SUPPORT
 #include "zmt_main_file.h"
 #include "zmt_listening_image.h"
+#include "zmt_listening_export.h"
 #endif
 #ifdef WORD_CARD_SUPPORT
 #include "zmt_word_image.h"
@@ -411,7 +408,7 @@ LOCAL MMI_RESULT_E HandleClassReadSetWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
-                //MMK_CloseWin(win_id);
+                MMK_CloseWin(win_id);
             }
             break;
         case MSG_CLOSE_WINDOW:
@@ -671,14 +668,16 @@ PUBLIC BOOLEAN Class_PlayAudioMp3(void)
     }
     if(class_read_info[class_cur_info.cur_idx]->audio_len == 0)
     {
-        char file_name[30] = {0};
-        sprintf(file_name, CLASS_SYN_SENTECT_AUDIO_PATH, class_cur_info.cur_idx);
+        char file_name[50] = {0};
+        uint16 book_id = class_book_info[class_sync_info.book_idx]->course_id;
+        uint16 section_id = class_section_info[class_sync_info.section_idx]->type_id;
+        Class_GetClassReadAudioName(file_name, book_id, section_id, class_cur_info.cur_idx);
         if(zmt_file_exist(file_name)){
             class_read_info[class_cur_info.cur_idx]->audio_len = 2;
             Class_PlayAudioMp3();
             result = TRUE;
         }else{
-            Class_RequestMp3Data(class_read_info[class_cur_info.cur_idx]->audio_url, class_cur_info.cur_idx, TRUE);
+            Class_RequestMp3Data(class_read_info[class_cur_info.cur_idx]->audio_url, book_id, section_id, class_cur_info.cur_idx, TRUE);
         }
     }
     else if(class_read_info[class_cur_info.cur_idx]->audio_len == -1)
@@ -691,8 +690,10 @@ PUBLIC BOOLEAN Class_PlayAudioMp3(void)
     }
     else if(class_read_info[class_cur_info.cur_idx]->audio_len > 0)
     {
-        char file_name[30] = {0};
-        sprintf(file_name, CLASS_SYN_SENTECT_AUDIO_PATH, class_cur_info.cur_idx);
+        char file_name[50] = {0};
+        uint16 book_id = class_book_info[class_sync_info.book_idx]->course_id;
+        uint16 section_id = class_section_info[class_sync_info.section_idx]->type_id;
+        Class_GetClassReadAudioName(file_name, book_id, section_id, class_cur_info.cur_idx);
         result = Class_PlayMp3Data(TRUE, file_name, class_read_info[class_cur_info.cur_idx]->audio_data, class_read_info[class_cur_info.cur_idx]->audio_len);
     }
     else
@@ -1158,6 +1159,12 @@ LOCAL MMI_RESULT_E HandleClassReadWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E ms
                 ClassReadWin_CTL_PENOK(win_id, param);
             }
             break;
+        case MSG_KEYDOWN_BACKWARD:
+        case MSG_KEYDOWN_FORWARD:
+            {
+                ClassReadWin_ButtonSingleCallback();
+            }
+            break; 
         case MSG_KEYDOWN_UPSIDE:
         case MSG_KEYDOWN_VOL_UP:
             {
@@ -1770,7 +1777,16 @@ LOCAL MMI_RESULT_E MMI_CloseClassMainWin(void)
 
 PUBLIC void MMI_CreateClassMainWin(void)
 {
-    MMI_CloseClassMainWin();
-    MMK_CreateWin((uint32 *)MMI_CLASS_MAIN_WIN_TAB, PNULL);
+    if(!zmt_tfcard_exist()){
+        MMI_CreateListeningTipWin(PALYER_PLAY_NO_TFCARD_TIP);
+    }else{
+        MMI_CloseClassMainWin();
+        MMK_CreateWin((uint32 *)MMI_CLASS_MAIN_WIN_TAB, PNULL);
+    }
+}
+
+PUBLIC void MMIZMT_CloseClassPlayer(void)
+{
+    Class_StopPlayMp3Data();
 }
 

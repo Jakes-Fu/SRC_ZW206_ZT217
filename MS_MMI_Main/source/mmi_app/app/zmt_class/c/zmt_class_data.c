@@ -10,8 +10,6 @@
 #include "dal_time.h"
 #include "zmt_class_main.h"
 #include "zmt_class_id.h"
-#include "zmt_class_text.h"
-#include "zmt_class_image.h"
 #include "mbedtls/md5.h"
 
 extern CLASS_SYNC_INFO_T class_sync_info;
@@ -28,6 +26,12 @@ BOOLEAN have_new_quest = FALSE;
 
 LOCAL void Class_ParseMp3Response(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id);
 LOCAL void Class_ParseMp3FileDownload(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id);
+
+PUBLIC void Class_GetClassReadAudioName(char * file_name, uint16 book_id, uint16 section_id, uint8 idx)
+{
+    sprintf(file_name, CLASS_SYN_SENTECT_AUDIO_PATH, book_id, section_id, idx);
+    SCI_TRACE_LOW("%s: file_name = %s", __FUNCTION__, file_name);
+}
 
 LOCAL uint8 * Class_MakeMd5Str(char * sign)
 {
@@ -520,7 +524,7 @@ PUBLIC void Class_ReuestReadInfo(char * section_id)
     char api_param[60] = {0};
     uint8 * token = NULL;
 #ifdef WIN32
-    char file_path[30] = {0};
+    char file_path[40] = {0};
     uint32 data_size;
     char * data_buf = NULL;
     sprintf(file_path, CLASS_SYN_SECTION_FILE_PATH, class_sync_info.subject_type);
@@ -567,9 +571,15 @@ LOCAL void Class_DownloadNextMp3(BOOLEAN is_download_file)
     SCI_TRACE_LOW("%s: download action, cur_idx = %d", __FUNCTION__, class_cur_down_idx);
     class_download_next_now = TRUE;
     if(is_download_file){
-        char file_path[30] = {0};
-        sprintf(file_path, CLASS_SYN_SENTECT_AUDIO_PATH, class_cur_down_idx);
-        MMIZDT_HTTP_AppSend(TRUE,class_read_info[class_cur_down_idx]->audio_url,PNULL,0,101,0,1,20000,file_path,strlen(file_path),Class_ParseMp3FileDownload);
+        char file_path[50] = {0};
+        uint16 book_id = class_book_info[class_sync_info.book_idx]->course_id;
+        uint16 section_id = class_section_info[class_sync_info.section_idx]->type_id;
+        Class_GetClassReadAudioName(file_path, book_id, section_id, class_cur_down_idx);
+        if(zmt_file_exist(file_path)){
+            Class_DownloadNextMp3(is_download_file);
+        }else{
+            MMIZDT_HTTP_AppSend(TRUE,class_read_info[class_cur_down_idx]->audio_url,PNULL,0,101,0,1,20000,file_path,strlen(file_path),Class_ParseMp3FileDownload);
+        }
     }else{
         MMIZDT_HTTP_AppSend(TRUE, class_read_info[class_cur_down_idx]->audio_url, PNULL, 0, 1000, 0, 0, 20000, 0, 0, Class_ParseMp3Response);
     }
@@ -634,11 +644,6 @@ LOCAL void Class_ParseMp3FileDownload(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,
     {
         if(!MMK_IsOpenWin(ZMT_CLASS_READ_WIN_ID))
         {
-            char file_path[30] = {0};
-            sprintf(file_path, CLASS_SYN_SENTECT_AUDIO_PATH, class_cur_down_idx);
-            if(zmt_file_exist(file_path)){
-                zmt_file_delete(file_path);
-            }
             SCI_TRACE_LOW("%s: CLASS_READ_WIN is not exist!!", __FUNCTION__);
             return;
         }
@@ -651,8 +656,10 @@ LOCAL void Class_ParseMp3FileDownload(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,
     }
     else
     {
-        char file_path[30] = {0};
-        sprintf(file_path, CLASS_SYN_SENTECT_AUDIO_PATH, class_cur_down_idx);
+        char file_path[50] = {0};
+        uint16 book_id = class_book_info[class_sync_info.book_idx]->course_id;
+        uint16 section_id = class_section_info[class_sync_info.section_idx]->type_id;
+        Class_GetClassReadAudioName(file_path, book_id, section_id, class_cur_down_idx);
         if(zmt_file_exist(file_path)){
             zmt_file_delete(file_path);
         }
@@ -662,7 +669,7 @@ LOCAL void Class_ParseMp3FileDownload(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,
     Class_DownloadNextMp3(TRUE);
 }
 
-PUBLIC void Class_RequestMp3Data(char * url, uint8 idx, BOOLEAN is_download_file)
+PUBLIC void Class_RequestMp3Data(char * url, uint16 course_id, uint16 section_id, uint8 idx, BOOLEAN is_download_file)
 {
     if(url != NULL)
     {
@@ -672,8 +679,20 @@ PUBLIC void Class_RequestMp3Data(char * url, uint8 idx, BOOLEAN is_download_file
         }
         class_cur_down_idx = idx;
         if(is_download_file){
-            char file_path[30] = {0};
-            sprintf(file_path, CLASS_SYN_SENTECT_AUDIO_PATH, class_cur_down_idx);
+            char file_path[50] = {0};
+            Class_GetClassReadAudioName(file_path, course_id, section_id, idx);
+            /*if(!zmt_tfcard_exist()){
+                MMI_CreateListeningTipWin(PALYER_PLAY_NO_TFCARD_TIP);
+            }else{
+                char file_path[50] = {0};
+                Class_GetClassReadAudioName(file_path, course_id, section_id, idx);
+                if(zmt_tfcard_get_free_kb() > 100*1024){
+                    MMIZDT_HTTP_AppSend(TRUE,url,PNULL,0,101,0,1,20000,file_path,strlen(file_path),Class_ParseMp3FileDownload);
+                }else{
+                    MMI_CreateListeningTipWin(PALYER_PLAY_NO_SPACE_TIP);
+                }
+                MMIZDT_HTTP_AppSend(TRUE,url,PNULL,0,101,0,1,20000,file_path,strlen(file_path),Class_ParseMp3FileDownload);
+            }*/
             MMIZDT_HTTP_AppSend(TRUE,url,PNULL,0,101,0,1,20000,file_path,strlen(file_path),Class_ParseMp3FileDownload);
         }else{
             MMIZDT_HTTP_AppSend(TRUE, url, PNULL, 0, 1000, 0, 0, 20000, 0, 0, Class_ParseMp3Response);

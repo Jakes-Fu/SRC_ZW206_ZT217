@@ -3,6 +3,8 @@
 ** Author:         fys                                               *
 ** Date:           2024/06/27                                                *
 ******************************************************************************/
+#ifndef ZMT_CLASS_TEXT_H
+#define ZMT_CLASS_TEXT_H
 
 #include "sci_types.h"
 #include "mmi_module.h"
@@ -37,3 +39,4 @@ typedef enum ZMT_CLASS_MMI_TEXT_ID_E
 }
 #endif
 
+#endif
