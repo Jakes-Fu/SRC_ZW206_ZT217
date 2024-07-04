@@ -1203,8 +1203,10 @@ LOCAL MMI_RESULT_E HandleListeningPlayerWinMsg(
 			break;
 		case MSG_TIMER:
 			{
-				listening_lrc_timers++;
-				ListeningPlayerWin_LrcShowText(FALSE);
+				if(MMK_IsFocusWin(win_id)){
+				    listening_lrc_timers++;
+				    ListeningPlayerWin_LrcShowText(FALSE);
+				}
 			}
 			break;
 #if LISTENING_PLAYER_USE_STYLE_VOLUME != 1
@@ -1225,6 +1227,9 @@ LOCAL MMI_RESULT_E HandleListeningPlayerWinMsg(
 			}
 			break;
 #endif
+		case MSG_KEYDOWN_CANCEL:
+                    break;
+		case MSG_KEYUP_RED:
 		case MSG_KEYUP_CANCEL:
 			{
 				MMK_CloseWin(win_id);	
@@ -1555,11 +1560,13 @@ LOCAL MMI_RESULT_E HandleListeningPlayerLrcWinMsg(
             #ifdef LYRIC_PARSER_SUPPORT
 		case MSG_TIMER:
 			{
-				if(listening_lrc_p != NULL)
-				{
-				    listening_all_lrc_timers++;
-				    ListeningPlayerLrcWin_ShowLrcText(win_id, FALSE);
-				}
+			    if(MMK_IsFocusWin(win_id)){
+			        if(listening_lrc_p != NULL)
+			        {
+			            listening_all_lrc_timers++;
+			            ListeningPlayerLrcWin_ShowLrcText(win_id, FALSE);
+			        }
+			    }
 			}
 			break;
             #endif
@@ -1592,6 +1599,9 @@ LOCAL MMI_RESULT_E HandleListeningPlayerLrcWinMsg(
 			       main_tp_down_y = MMK_GET_TP_Y(param);
 		       }
 		       break;
+		case MSG_KEYDOWN_CANCEL:
+                    break;
+		case MSG_KEYUP_RED:
 		case MSG_KEYUP_CANCEL:
 			{
 				MMK_CloseWin(win_id);
@@ -1636,5 +1646,10 @@ PUBLIC void MMI_CreateListeningPlayerLrcWin(LISTENING_PLAYER_INFO * player_info)
 
 	win_handle = MMK_CreateWin((uint32*)MMI_LIST_PLAYER_LRC_WIN_TAB, (ADD_DATA)player_info);
 	MMK_SetWinRect(win_handle, &rect);
+}
+
+PUBLIC void MMIZMT_CloseListeningPlayer(void)
+{
+    Listening_StopPlayMp3();
 }
 

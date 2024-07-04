@@ -348,6 +348,9 @@ LOCAL MMI_RESULT_E HandleListeningAudioWinMsg(
 				}
 			}
 			break;
+		case MSG_KEYDOWN_CANCEL:
+                    break;
+		case MSG_KEYUP_RED:
 		case MSG_KEYUP_CANCEL:
 			{
 				MMK_CloseWin(win_id);	
@@ -403,8 +406,8 @@ PUBLIC void MMI_TestToOpenPlayerWin(void)
 	LISTENING_PLAYER_INFO * player_info = NULL;
 	player_info = (LISTENING_PLAYER_INFO *)SCI_ALLOC_APPZ(sizeof(LISTENING_PLAYER_INFO));
 	player_info->is_local_play = TRUE;
-	player_info->moudle_index = 1;
-	player_info->audio_index = 1;
+	player_info->moudle_index = 0;
+	player_info->audio_index = 0;
 	MMI_CreateListeningPlayerWin(player_info);
 }
 
@@ -583,6 +586,7 @@ PUBLIC MMI_RESULT_E ButtonPriClass_CallbackFunc(void)
 		if(MMK_IsOpenWin(LISTENING_ALBUM_LIST_WIN_ID))
 		{
 			MMK_SendMsg(LISTENING_ALBUM_LIST_WIN_ID, MSG_FULL_PAINT, PNULL);
+			Listening_RequestAlbumListInfo(listening_info->select_cur_class);
 		}
 		else
 		{
@@ -608,6 +612,7 @@ PUBLIC MMI_RESULT_E ButtonJurClass_CallbackFunc(void)
 		if(MMK_IsOpenWin(LISTENING_ALBUM_LIST_WIN_ID))
 		{
 			MMK_SendMsg(LISTENING_ALBUM_LIST_WIN_ID, MSG_FULL_PAINT, PNULL);
+			Listening_RequestAlbumListInfo(listening_info->select_cur_class);
 		}
 		else
 		{
@@ -686,7 +691,7 @@ LOCAL MMI_RESULT_E HandleListeningWinMsg(
 							text_state,
 							GUISTR_TEXT_DIR_AUTO
 							);
-						break;
+						MMK_DestroyDynaCtrl(ctrl_id);
 					}
 					else if(listening_load_win == -1)
 					{
@@ -700,10 +705,12 @@ LOCAL MMI_RESULT_E HandleListeningWinMsg(
 							text_state,
 							GUISTR_TEXT_DIR_AUTO
 							);
-						break;
+						MMK_DestroyDynaCtrl(ctrl_id);
 					}
-
-					ListeningWin_DisplayAlbumList(win_id, ctrl_id);
+					else
+					{
+					    ListeningWin_DisplayAlbumList(win_id, ctrl_id);
+					}
 				}
 			}
 			break;
@@ -779,7 +786,6 @@ PUBLIC void MMI_CreateListeningWin(void)
 	MMK_SetWinRect(win_handle, &rect);
 }
 
-
 //////////////////////////////////////////////////////////////////////////////////////////
 
 LOCAL MMI_RESULT_E HandleListeningTipWinMsg(
@@ -840,6 +846,10 @@ LOCAL MMI_RESULT_E HandleListeningTipWinMsg(
 				else if(type == PALYER_PLAY_DOWNLOAD_FAIL_TIP)
 				{
 					MMIRES_GetText(ZMT_TXT_DOWNLOAD_FAIL, win_id, &text_string);
+				}
+				else if(type == PALYER_PLAY_NO_TFCARD_TIP)
+				{
+					MMIRES_GetText(ZMT_TXT_TF_NO_EXIST, win_id, &text_string);
 				}
 				GUISTR_DrawTextToLCDInRect(
 					(const GUI_LCD_DEV_INFO *)&lcd_dev_info,
