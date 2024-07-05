@@ -593,6 +593,8 @@ PUBLIC MMI_RESULT_E WatchLAUNCHER_HandleCommonWinMsg(
             break;
         case MSG_KEYDOWN_8:
             // TODO:
+        case MSG_KEYDOWN_RED:
+            break;
         case MSG_KEYUP_RED:
             SCI_TRACE_LOW("WatchLAUNCHER_HandleCommonWinMsg() msg_id = %d.", msg_id);
             //主页按power键 如果是亮屏那就灭屏
@@ -607,6 +609,10 @@ PUBLIC MMI_RESULT_E WatchLAUNCHER_HandleCommonWinMsg(
                 {
                     MMIDEFAULT_TurnOnBackLight();
                 }
+            }
+            else
+            {
+                WatchSLIDEAGE_SetCurrentPageIndex(0);
             }
             break;
         case MSG_KEYDOWN_UPSIDE:
