@@ -1065,6 +1065,11 @@ PUBLIC void MMI_CreateListeningLocalWin(void)
     
 #ifdef WIN32
 	ListeningLocal_DownloadDataInit();
+#else
+	if(!zmt_tfcard_exist()){
+            MMI_CreateListeningTipWin(PALYER_PLAY_NO_TFCARD_TIP);
+            return;
+	}
 #endif
 	Listening_InitLocalDataInfo();
 
