@@ -182,7 +182,9 @@ LOCAL void MathCount_Judge_correct_or_wrong(void)
     }
     counting_timer_id = MMK_CreateTimerCallback(1000, MathCount_Show_1S_Correct_Or_Wrong, PNULL, TRUE);
     MMK_StartTimerCallback(counting_timer_id,1000, MathCount_Show_1S_Correct_Or_Wrong,PNULL,FALSE);
-    MMK_SendMsg(MATH_COUNT_COUNTING_WIN_ID, MSG_FULL_PAINT, PNULL);
+    if(MMK_IsFocusWin(MATH_COUNT_COUNTING_WIN_ID)){
+        MMK_SendMsg(MATH_COUNT_COUNTING_WIN_ID, MSG_FULL_PAINT, PNULL);
+    }
     MathCount_Question_generate();
 }
 
@@ -223,7 +225,9 @@ LOCAL void MathCount_Show_1S_Correct_Or_Wrong(uint8 timer_id, uint32 param)
     counting_used_time = 0;
     counting_timer_id = MMK_CreateTimerCallback(1000, MathCount_Counting_1S_Timeout, PNULL, TRUE);
     MMK_StartTimerCallback(counting_timer_id, 1000,MathCount_Counting_1S_Timeout,PNULL,TRUE);
-    MMK_SendMsg(MATH_COUNT_COUNTING_WIN_ID, MSG_FULL_PAINT, PNULL);
+    if(MMK_IsFocusWin(MATH_COUNT_COUNTING_WIN_ID)){
+        MMK_SendMsg(MATH_COUNT_COUNTING_WIN_ID, MSG_FULL_PAINT, PNULL);
+    }
 }
 
 LOCAL int MathCount_target_number_prime(int min, int max, int target)
