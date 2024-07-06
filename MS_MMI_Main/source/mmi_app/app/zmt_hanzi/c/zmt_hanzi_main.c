@@ -47,7 +47,7 @@
 #define hanzi_hanzi_rect {5, HANZI_CARD_LINE_HIGHT, MMI_MAINSCREEN_WIDTH, 2*HANZI_CARD_LINE_HIGHT}//汉字
 #define hanzi_pinyin_audio_rect {5*HANZI_CARD_LINE_WIDTH, HANZI_CARD_LINE_HIGHT, MMI_MAINSCREEN_WIDTH, 2*HANZI_CARD_LINE_HIGHT}//音标icon
 #define hanzi_text_rect {5,2.2*HANZI_CARD_LINE_HIGHT+1,MMI_MAINSCREEN_WIDTH-5,MMI_MAINSCREEN_HEIGHT-1.5*HANZI_CARD_LINE_HIGHT-5}//释义
-#define hanzi_msg_rect {HANZI_CARD_LINE_WIDTH, 3*HANZI_CARD_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-HANZI_CARD_LINE_WIDTH, 5*HANZI_CARD_LINE_HIGHT}//界面的信息提示
+#define hanzi_msg_rect {0.8*HANZI_CARD_LINE_WIDTH, 3*HANZI_CARD_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-0.8*HANZI_CARD_LINE_WIDTH, 5*HANZI_CARD_LINE_HIGHT}//界面的信息提示
 #define hanzi_left_rect {10, MMI_MAINSCREEN_HEIGHT-1.5*HANZI_CARD_LINE_HIGHT, 3*HANZI_CARD_LINE_WIDTH-10, MMI_MAINSCREEN_HEIGHT-5}//汉字学习/掌握
 #define hanzi_right_rect {3*HANZI_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-1.5*HANZI_CARD_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-10, MMI_MAINSCREEN_HEIGHT-5}//生词本/未掌握
 #define hanzi_pre_rect {0.5*HANZI_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-HANZI_CARD_LINE_HIGHT, 1.5*HANZI_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-2}//生词本-上一个
@@ -708,7 +708,7 @@ LOCAL void Hanzi_DisplayChapterList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
             GUILIST_AppendItem(ctrl_id, &item_t);
         }
     }
-    GUILIST_SetTextFont(ctrl_id, DP_FONT_16, MMI_WHITE_COLOR);
+    GUILIST_SetTextFont(ctrl_id, DP_FONT_22, MMI_WHITE_COLOR);
     GUILIST_SetCurItemIndex(ctrl_id, hanzi_book_info.cur_chapter_idx);
 }
 
@@ -1599,6 +1599,7 @@ LOCAL MMI_RESULT_E HandleHanziDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
             recode = MMI_RESULT_FALSE;
             break;
     }
+    return recode;
 }
 
 WINDOW_TABLE(MMI_HANZI_DETAIL_WIN_TAB) = {
@@ -1758,6 +1759,7 @@ LOCAL MMI_RESULT_E HandleHanziListenInfoWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_I
             recode = MMI_RESULT_FALSE;
             break;
     }
+    return recode;
 }
 
 WINDOW_TABLE(MMI_HANZI_LISTEN_INFO_WIN_TAB) = {
@@ -2059,14 +2061,13 @@ LOCAL MMI_RESULT_E HandleHanziListenSetWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID
         case MSG_CLOSE_WINDOW:
             {
                 memset(hanzi_listen_set, 0, sizeof(hanzi_listen_set));
-                hanzi_listen_cur_idx = 0;
-                hanzi_listen_info.listen_idx = 0;
             }
             break;
         default:
             recode = MMI_RESULT_FALSE;
             break;
     }
+    return recode;
 }
 
 WINDOW_TABLE(MMI_HANZI_LISTEN_SET_WIN_TAB) = {
@@ -2171,7 +2172,9 @@ LOCAL void HanziListenWin_IntervalTimerCallback(uint8 timer_id, uint32 param)
                 hanzi_listen_cur_idx = hanzi_listen_idx[hanzi_listen_info.listen_idx];
             }
             hanzi_detail_cur_idx = hanzi_listen_cur_idx;
-            MMK_SendMsg(MMI_HANZI_LISTEN_WIN_ID, MSG_FULL_PAINT, PNULL);
+            if(MMK_IsFocusWin(MMI_HANZI_LISTEN_WIN_ID)){
+                MMK_SendMsg(MMI_HANZI_LISTEN_WIN_ID, MSG_FULL_PAINT, PNULL);
+            }
             SCI_TRACE_LOW("%s: hanzi_listen_cur_idx = %d", __FUNCTION__, hanzi_listen_cur_idx);
         }else{
             hanzi_listen_repeat_count++;
@@ -2214,7 +2217,9 @@ LOCAL void HanziListenWin_ImgClickFunc(void)
         HanziListenWin_StopIntervalTimer();
         Hanzi_StopPlayMp3Data();
         hanzi_detail_cur_idx = hanzi_listen_cur_idx;
-        MMI_CreateHanziListenInfoWin();
+        if(hanzi_detail_cur_idx < hanzi_detail_count){
+            MMI_CreateHanziListenInfoWin();
+        }
     }
 }
 
@@ -2428,6 +2433,15 @@ LOCAL MMI_RESULT_E HandleHanziListenWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
                 HanziListenWin_FULL_PAINT(win_id);
             }
             break;
+        case MSG_APP_OK:
+        case MSG_APP_WEB:
+        case MSG_CTL_MIDSK:
+        case MSG_CTL_OK:
+        case MSG_CTL_PENOK:
+            {
+                HanziListenWin_BottomActionFunc();
+            }
+            break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
@@ -2444,6 +2458,7 @@ LOCAL MMI_RESULT_E HandleHanziListenWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
             recode = MMI_RESULT_FALSE;
             break;
     }
+    return recode;
 }
 
 WINDOW_TABLE(MMI_HANZI_LISTEN_WIN_TAB) = {
@@ -2481,6 +2496,11 @@ LOCAL BOOLEAN MMI_IsOpenHanziListenWin(void)
         return TRUE;
     }
     return FALSE;
+}
+
+PUBLIC void MMIZMT_CloseHanziPlayer(void)
+{
+    Hanzi_StopPlayMp3Data();    
 }
 
 

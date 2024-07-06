@@ -1,3 +1,6 @@
+#ifndef ZMT_HANZI_ID_H
+#define ZMT_HANZI_ID_H
+
 /*****************************************************************************
 ** File Name:      mmiacc_id.h                                               *
 ** Author:         xiaoqing.lu                                               *
@@ -124,3 +127,4 @@ typedef enum {
 }
 #endif
 
+#endif

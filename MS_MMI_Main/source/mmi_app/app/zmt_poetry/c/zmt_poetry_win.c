@@ -331,14 +331,19 @@ LOCAL void parsePlayAudio(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_i
         if(poetry_detail_infos->id != NULL){
             strcpy(poem_id, poetry_detail_infos->id);
             sprintf(file_path,"E:/Poetry/Poetry_offline/%s/%s_%d.mp3",poem_id,poem_id,audio_download_progress);
-            if(zmt_tfcard_exist() && zmt_tfcard_get_free_kb() > 100 * 1024)
+            if(!zmt_tfcard_exist())
             {
-                zmt_file_data_write(pRcv, Rcv_len, file_path);
+                MMI_CreateListeningTipWin(PALYER_PLAY_NO_TFCARD_TIP);
+                return;
             }
-            else
+            else if(zmt_tfcard_get_free_kb() < 100 * 1024)
             {
                 MMI_CreateListeningTipWin(PALYER_PLAY_NO_SPACE_TIP);
                 return;
+            }
+            else
+            {
+                zmt_file_data_write(pRcv, Rcv_len, file_path);
             }
             audio_play_progress++;
             audio_download_retry_num = 0;
@@ -407,20 +412,23 @@ LOCAL void parseDownloadAudio(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 e
         if(poetry_detail_infos != NULL && poetry_detail_infos->id != NULL){
             strcpy(poem_id, poetry_detail_infos->id);
             sprintf(file_path,"E:/Poetry/Poetry_offline/%s/%s_%d.mp3",poem_id,poem_id,audio_download_progress);
-            if(zmt_tfcard_exist() && zmt_tfcard_get_free_kb() > 100 * 1024)
+            if(!zmt_tfcard_exist())
+            {
+                MMI_CreateListeningTipWin(PALYER_PLAY_NO_TFCARD_TIP);
+                return;
+            }
+            else if(zmt_tfcard_get_free_kb() < 100 * 1024)
+            {
+                MMI_CreateListeningTipWin(PALYER_PLAY_NO_SPACE_TIP);
+                return;
+            }
+            else
             {
                 zmt_file_data_write(pRcv, Rcv_len, file_path);
                 if(audio_download_progress == 0 || !audio_play_now){
                     SCI_TRACE_LOW("%s: action play", __FUNCTION__);
                     startPlayAudio();
                 }
-            }
-            else
-            {
-            #ifdef LISTENING_PRATICE_SUPPORT
-                MMI_CreateListeningTipWin(PALYER_PLAY_NO_SPACE_TIP);
-            #endif
-                return;
             }
             audio_download_progress++;
             audio_download_retry_num = 0;
@@ -529,7 +537,7 @@ LOCAL void parseGradeList(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_i
                 }else{
                     grade_get_status = 1;
                     total_poetrynum = cJSON_GetArraySize(poetry_arr);
-                    if(zmt_tfcard_exist()&& zmt_tfcard_get_free_kb() > 100 * 1024){
+                    /*if(zmt_tfcard_exist()&& zmt_tfcard_get_free_kb() > 100 * 1024){
                         char file_path[80] = {0};
                         uint32 file_len = 0;
                         char * out = NULL;
@@ -540,7 +548,7 @@ LOCAL void parseGradeList(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_i
                         out = cJSON_PrintUnformatted(root);
                         zmt_file_data_write(out, strlen(out), file_path);
                         SCI_FREE(out);  
-                    }
+                    }*/
                 }
             }
             else
@@ -1063,6 +1071,7 @@ LOCAL void Draw_GradeList(MMI_WIN_ID_T win_id)
             "五年级下册","六年级上册", "六年级下册","七年级上册","七年级下册",
             "八年级上册","八年级下册","九年级上册","九年级下册"
     };
+    GUI_RECT_T list_rect = {0, 32, 240, 320};
 
     list_init.both_rect.v_rect = poetry_list_rect;
     list_init.type = GUILIST_TEXTLIST_E;
@@ -1118,7 +1127,7 @@ LOCAL void PoetryWin_FULL_PAINT(MMI_WIN_ID_T win_id)
     GUI_FillRect(&lcd_dev_info, poetry_title_rect, GUI_RGB2RGB565(108, 181, 255));
 
     text_style.align = ALIGN_LVMIDDLE;
-    text_style.font = DP_FONT_20;
+    text_style.font = DP_FONT_24;
     text_style.font_color = MMI_WHITE_COLOR;
     MMIRES_GetText(ZMT_TXT_POETRY, win_id, &text_string);
     GUISTR_DrawTextToLCDInRect(
@@ -1221,7 +1230,9 @@ LOCAL MMI_RESULT_E HandlePoetryWinMsg(
                     }
                 }
                 break;
-             case MSG_APP_RED:
+		case MSG_KEYDOWN_CANCEL:
+		    break;
+		case MSG_KEYUP_RED:
 		case MSG_KEYUP_CANCEL:
                 {
                     MMK_CloseWin(win_id);
@@ -1332,7 +1343,7 @@ LOCAL void PoetryItemWin_FULL_PAINT(MMI_WIN_ID_T win_id)
     GUI_FillRect(&lcd_dev_info, poetry_title_rect, GUI_RGB2RGB565(108, 181, 255));
 
     text_style.align = ALIGN_LVMIDDLE;
-    text_style.font = DP_FONT_20;
+    text_style.font = DP_FONT_24;
     text_style.font_color = MMI_WHITE_COLOR;
     MMIRES_GetText(ZMT_TXT_POETRY, win_id, &text_string);
     GUISTR_DrawTextToLCDInRect(
@@ -1487,7 +1498,9 @@ LOCAL MMI_RESULT_E HandlePoetryItemWinMsg(
                 }
             }
             break;
-        case MSG_APP_RED:
+        case MSG_KEYDOWN_CANCEL:
+            break;
+        case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
                 if(!is_open_favorite){
@@ -1670,13 +1683,17 @@ LOCAL void PoetryDetailWin_ShowText(MMI_WIN_ID_T win_id)
                     text_string.wstr_ptr = text_comment.wstr_ptr;
                     text_string.wstr_len = text_comment.wstr_len;
                 }else{
-                    text_char = SCI_ALLOC_APPZ(strlen(poetry_detail_infos->comment)+1);
-                    memset(text_char, 0, strlen(poetry_detail_infos->comment)+1);
-                    strcpy(text_char, poetry_detail_infos->comment);
+                    uint32 size = strlen(poetry_detail_infos->comment);
+                    if(size > 1000){
+                        size = 1000;
+                    }
+                    text_char = SCI_ALLOC_APPZ(size+1);
+                    memset(text_char, 0, size+1);
+                    SCI_MEMCPY(text_char, poetry_detail_infos->comment, size);
                 }
 
                 text_style.align = ALIGN_HVMIDDLE;
-                rect = poetry_content_other_rect;
+                rect = poetry_content_other_rect; 
             }
             break;
         case 2:
@@ -1697,6 +1714,7 @@ LOCAL void PoetryDetailWin_ShowText(MMI_WIN_ID_T win_id)
                     text_string.wstr_ptr = text_appre.wstr_ptr;
                     text_string.wstr_len = text_appre.wstr_len;
                 }else{
+                    uint32 size = strlen(poetry_detail_infos->appreciation);
                     text_char = SCI_ALLOC_APPZ(strlen(poetry_detail_infos->appreciation)+1);
                     memset(text_char, 0, strlen(poetry_detail_infos->appreciation)+1);
                     strcpy(text_char, poetry_detail_infos->appreciation);
@@ -1713,7 +1731,6 @@ LOCAL void PoetryDetailWin_ShowText(MMI_WIN_ID_T win_id)
         GUI_UTF8ToWstr(text_str, 3*strlen(text_char), text_char, strlen(text_char));
         text_string.wstr_ptr = text_str;
         text_string.wstr_len = MMIAPICOM_Wstrlen(text_string.wstr_ptr);
-
         GUITEXT_SetRect(MMI_ZMT_POETRY_APPRE_TEXT_ID, &rect);
         GUITEXT_SetAlign(MMI_ZMT_POETRY_APPRE_TEXT_ID, text_style.align);
         GUITEXT_SetString(MMI_ZMT_POETRY_APPRE_TEXT_ID, text_string.wstr_ptr, text_string.wstr_len, TRUE);
@@ -1744,7 +1761,7 @@ LOCAL void PoetryDetailWin_FULL_PAINT(MMI_WIN_ID_T win_id)
     GUI_FillRect(&lcd_dev_info, poetry_title_rect, GUI_RGB2RGB565(108, 181, 255));
 
     text_style.align = ALIGN_LVMIDDLE;
-    text_style.font = DP_FONT_22;
+    text_style.font = DP_FONT_24;
     text_style.font_color = MMI_WHITE_COLOR;
     MMIRES_GetText(ZMT_TXT_POETRY, win_id, &text_string);
     GUISTR_DrawTextToLCDInRect(
@@ -1932,6 +1949,9 @@ LOCAL MMI_RESULT_E HandlePoetryDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
                 main_tp_down_y = MMK_GET_TP_Y(param);
             }
             break;
+	case MSG_KEYDOWN_CANCEL:
+            break;
+	case MSG_KEYUP_RED:
 	case MSG_KEYUP_CANCEL:
             {
                 MMK_CloseWin(win_id);
@@ -2019,5 +2039,10 @@ PUBLIC BOOLEAN MMI_IsPoetryDetailWinOpen(void)
         return TRUE;
     }
     return FALSE;
+}
+
+PUBLIC void MMIZMT_ClosePoetryPlayer(void)
+{
+    Poetry_StopPlayMp3();
 }
 

@@ -1,3 +1,5 @@
+#ifndef ZMT_WORD_IMAGE_H
+#define ZMT_WORD_IMAGE_H
 /*****************************************************************************
 ** File Name:      xxx_mmi_image.h                                           *
 ** Author:                                                                   *
@@ -9,9 +11,6 @@
 ** --------------------------------------------------------------------------*
 ** Create by Spreadtrum Resource Editor tool                                 *
 ******************************************************************************/
-
-#ifndef DSL_WORD_MMI_IMAGE_H_
-#define DSL_WORD_MMI_IMAGE_H_
 
 #include "sci_types.h"
 #include "mmi_imagefun.h"
@@ -47,4 +46,4 @@ typedef enum CAMERA_MMI_IMAGE_ID_E
 }
 #endif
 
-#endif //HELLO_MMI_IMAGE_H_
+#endif 

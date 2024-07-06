@@ -1,3 +1,5 @@
+#ifndef ZMT_HANZI_TEXT_H
+#define ZMT_HANZI_TEXT_H
 /*****************************************************************************
 ** File Name:      xxx_mmi_text.h                                            *
 ** Author:                                                                   *
@@ -43,3 +45,4 @@ typedef enum ZMT_HANZI_MMI_TEXT_ID_E
 }
 #endif
 
+#endif

@@ -53,7 +53,7 @@
 #define word_pinyin_rect {5, 1.8*WORD_CARD_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-5, 2.8*WORD_CARD_LINE_HIGHT}
 #define word_pinyin_audio_rect {5*WORD_CARD_LINE_WIDTH, 1.8*WORD_CARD_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-5, 2.8*WORD_CARD_LINE_HIGHT}
 #define word_text_rect {5,2.8*WORD_CARD_LINE_HIGHT+1,MMI_MAINSCREEN_WIDTH-5,MMI_MAINSCREEN_HEIGHT-1.5*WORD_CARD_LINE_HIGHT-5}
-#define word_msg_rect {WORD_CARD_LINE_WIDTH, 3*WORD_CARD_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-WORD_CARD_LINE_WIDTH, 5*WORD_CARD_LINE_HIGHT}
+#define word_msg_rect {0.8*WORD_CARD_LINE_WIDTH, 3*WORD_CARD_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-0.8*WORD_CARD_LINE_WIDTH, 5*WORD_CARD_LINE_HIGHT}
 #define word_left_rect {10, MMI_MAINSCREEN_HEIGHT-1.5*WORD_CARD_LINE_HIGHT, 3*WORD_CARD_LINE_WIDTH-10, MMI_MAINSCREEN_HEIGHT-5}
 #define word_right_rect {3*WORD_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-1.5*WORD_CARD_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-10, MMI_MAINSCREEN_HEIGHT-5}
 #define word_pre_rect {0.5*WORD_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-WORD_CARD_LINE_HIGHT, 1.5*WORD_CARD_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT-2}
@@ -97,7 +97,6 @@ LOCAL uint16 word_listen_set[WORD_LISTEN_SET_SYMBOL_NUM] = {0};
 LOCAL uint16 word_listen_idx[WORD_CHAPTER_WORD_MAX] = {0};
 
 LOCAL MMI_RESULT_E MMI_CloseWordChapterWin(void);
-LOCAL MMI_RESULT_E MMI_CloseWordDetailWin(void);
 LOCAL MMI_RESULT_E MMI_CloseWordListenWin(void);
 LOCAL MMI_RESULT_E MMI_CloseWordListenInfoWin(void);
 LOCAL BOOLEAN MMI_IsOpenWordListenWin(void);
@@ -117,7 +116,7 @@ LOCAL void Word_DrawWinTitle(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id,MMI_STRI
     GUI_FillRect(&lcd_dev_info, title_rect, WORD_TITLE_BG_COLOR);
 
     text_style.align = ALIGN_HVMIDDLE;
-    text_style.font = DP_FONT_22;
+    text_style.font = DP_FONT_24;
     text_style.font_color = MMI_WHITE_COLOR;
 
     if(ctrl_id != 0)
@@ -148,7 +147,7 @@ LOCAL void Word_DrawWinTips(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id, MMI_TEXT
     GUI_RECT_T title_rect = word_title_rect;
 
     text_style.align = ALIGN_HVMIDDLE;
-    text_style.font = DP_FONT_22;
+    text_style.font = DP_FONT_24;
     text_style.font_color = MMI_WHITE_COLOR;
 
     MMIRES_GetText(text_id, win_id, &text_string);
@@ -200,7 +199,7 @@ LOCAL void Word_InitButtonBg(MMI_CTRL_ID_T ctrl_id)
 	GUI_FONT_ALL_T font = {0};
 	GUI_BG_T bg = {0};
 	GUI_BORDER_T btn_border = {1, MMI_WHITE_COLOR, GUI_BORDER_ROUNDED};
-	font.font = DP_FONT_18;
+	font.font = DP_FONT_20;
 	font.color = WORD_WIN_BG_COLOR;
 	GUIBUTTON_SetBorder(ctrl_id, &btn_border, FALSE);
 	bg.bg_type = GUI_BG_COLOR;
@@ -1005,7 +1004,7 @@ LOCAL MMI_RESULT_E HandleWordChapterWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
             recode = MMI_RESULT_FALSE;
             break;
     }
-      return recode;
+    return recode;
 }
 
 WINDOW_TABLE(MMI_WORD_CHAPTER_WIN_TAB) = {
@@ -1307,8 +1306,8 @@ LOCAL void WordDetail_GoToListenWord(void)
 
 LOCAL void WordDetail_DeleteNewWord(void)
 {
-    Word_DeleteOneNewWord(word_detail_cur_idx, word_detail_count);
     new_word_haved_delete = TRUE;
+    Word_DeleteOneNewWord(word_detail_cur_idx, word_detail_count);
     WordDetail_DisplayTip(4);
 }
 
@@ -1781,6 +1780,7 @@ LOCAL MMI_RESULT_E HandleWordDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E m
             recode = MMI_RESULT_FALSE;
             break;
     }
+    return recode;
 }
 
 WINDOW_TABLE(MMI_WORD_DETAIL_WIN_TAB) = {
@@ -1800,7 +1800,7 @@ WINDOW_TABLE(MMI_WORD_DETAIL_WIN_TAB) = {
     END_WIN
 };
 
-LOCAL MMI_RESULT_E MMI_CloseWordDetailWin(void)
+PUBLIC MMI_RESULT_E MMI_CloseWordDetailWin(void)
 {
     MMI_RESULT_E result = MMI_RESULT_TRUE;
     if(MMK_IsOpenWin(MMI_WORD_DETAIL_WIN_ID)){
@@ -1944,6 +1944,7 @@ LOCAL MMI_RESULT_E HandleWordListenInfoWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID
             recode = MMI_RESULT_FALSE;
             break;
     }
+    return recode;
 }
 
 WINDOW_TABLE(MMI_WORD_LISTEN_INFO_WIN_TAB) = {
@@ -2247,14 +2248,13 @@ LOCAL MMI_RESULT_E HandleWordListenSetWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_
         case MSG_CLOSE_WINDOW:
             {
                 memset(word_listen_set, 0, sizeof(word_listen_set));
-                word_listen_cur_idx = 0;
-                word_listen_info.listen_idx = 0;
             }
             break;
         default:
             recode = MMI_RESULT_FALSE;
             break;
     }
+    return recode;
 }
 
 WINDOW_TABLE(MMI_WORD_LISTEN_SET_WIN_TAB) = {
@@ -2361,7 +2361,9 @@ LOCAL void WordListenWin_IntervalTimerCallback(uint8 timer_id, uint32 param)
                 word_listen_cur_idx = word_listen_idx[word_listen_info.listen_idx];
             }
             word_detail_cur_idx = word_listen_cur_idx;
-            MMK_SendMsg(MMI_WORD_LISTEN_WIN_ID, MSG_FULL_PAINT, PNULL);
+            if(MMK_IsFocusWin(MMI_WORD_LISTEN_WIN_ID)){
+                MMK_SendMsg(MMI_WORD_LISTEN_WIN_ID, MSG_FULL_PAINT, PNULL);
+            }
             SCI_TRACE_LOW("%s: word_listen_cur_idx = %d", __FUNCTION__, word_listen_cur_idx);
         }else{
             word_listen_repeat_count++;
@@ -2404,7 +2406,9 @@ LOCAL void WordListenWin_ImgClickFunc(void)
         WordListenWin_StopIntervalTimer();
         Word_StopPlayMp3Data();
         word_detail_cur_idx = word_listen_cur_idx;
-        MMI_CreateWordListenInfoWin();
+        if(word_detail_cur_idx < word_detail_count){
+            MMI_CreateWordListenInfoWin();
+        }
     }
 }
 
@@ -2571,7 +2575,7 @@ LOCAL void WordListenWin_FULL_PAINT(MMI_WIN_ID_T win_id)
             GUILABEL_SetVisible(MMI_ZMT_WORD_LISTEN_LABEL_NUM_CTRL_ID, FALSE, TRUE);
         }else{
             GUILABEL_SetVisible(MMI_ZMT_WORD_LISTEN_LABEL_NUM_CTRL_ID, TRUE, TRUE);
-            Word_SetDiretionText(MMI_ZMT_WORD_LISTEN_LABEL_NUM_CTRL_ID, word_listen_cur_idx, word_detail_count);
+            //Word_SetDiretionText(MMI_ZMT_WORD_LISTEN_LABEL_NUM_CTRL_ID, word_listen_cur_idx, word_detail_count);
         }
     }
     else
@@ -2614,6 +2618,15 @@ LOCAL MMI_RESULT_E HandleWordListenWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E m
                 WordListenWin_FULL_PAINT(win_id);
             }
             break;
+        case MSG_APP_OK:
+        case MSG_APP_WEB:
+        case MSG_CTL_MIDSK:
+        case MSG_CTL_OK:
+        case MSG_CTL_PENOK:
+            {
+                WordListenWin_BottomActionFunc();
+            }
+            break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
@@ -2630,6 +2643,7 @@ LOCAL MMI_RESULT_E HandleWordListenWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E m
             recode = MMI_RESULT_FALSE;
             break;
     }
+    return recode;
 }
 
 WINDOW_TABLE(MMI_WORD_LISTEN_WIN_TAB) = {
@@ -2667,5 +2681,10 @@ LOCAL BOOLEAN MMI_IsOpenWordListenWin(void)
         return TRUE;
     }
     return FALSE;
+}
+
+PUBLIC void MMIZMT_CloseWordPlayer(void)
+{
+    Word_StopPlayMp3Data();
 }
 

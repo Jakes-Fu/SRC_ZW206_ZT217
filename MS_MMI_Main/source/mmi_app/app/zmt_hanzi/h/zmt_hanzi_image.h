@@ -1,3 +1,5 @@
+#ifndef ZMT_HANZI_IMAGE_H
+#define ZMT_HANZI_IMAGE_H
 /*****************************************************************************
 ** File Name:      xxx_mmi_image.h                                           *
 ** Author:                                                                   *
@@ -43,6 +45,6 @@ typedef enum ZMT_HANZI_MMI_IMAGE_ID_E
 
 #ifdef __cplusplus
 }
+#endif
 
-
-#endif //HELLO_MMI_IMAGE_H_
+#endif

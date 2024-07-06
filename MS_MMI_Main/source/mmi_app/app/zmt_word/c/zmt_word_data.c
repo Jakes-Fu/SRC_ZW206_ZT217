@@ -936,6 +936,13 @@ PUBLIC void Word_DeleteOneNewWord(uint8 idx, uint8 count)
     uint8 j = 0;
     uint16 size = 0;
     WORD_BOOK_DETAIL_T * new_word_detail[WORD_CHAPTER_WORD_MAX];
+
+    SCI_TRACE_LOW("%s: cur_idx = %d, count = %d", __FUNCTION__, idx, count);
+    if(count == 1 && idx == 0){
+        word_detail_count = 0;
+        MMI_CloseWordDetailWin();
+        return;
+    }
     for(i = 0;i < count && i < WORD_CHAPTER_WORD_MAX;i++)
     {
         if(i == idx){
@@ -1200,10 +1207,6 @@ PUBLIC void Word_ParseMp3Response(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint
                 zmt_file_delete(file_path);
             }
             zmt_file_data_write(pRcv, Rcv_len, file_path);
-        }else{
-        #ifdef LISTENING_PRATICE_SUPPORT
-            MMI_CreateListeningTipWin(PALYER_PLAY_NO_SPACE_TIP);
-        #endif
         }
     }
     else

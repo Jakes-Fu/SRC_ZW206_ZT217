@@ -1,3 +1,6 @@
+#ifndef ZMT_WORD_MAIN_H
+#define ZMT_WORD_MAIN_H
+
 #include "sci_types.h"
 #include "mmk_type.h"
 /*----------------------------------------------------------------------------*/
@@ -121,6 +124,8 @@ PUBLIC void MMI_CreateWordChapterWin(void);
 PUBLIC void MMI_CreateWordDetailWin(void);
 PUBLIC void MMI_CreateWordListenWin(void);
 PUBLIC void MMI_CreateWordListenSetWin(void);
+PUBLIC MMI_RESULT_E MMI_CloseWordDetailWin(void);
+PUBLIC void MMIZMT_CloseWordPlayer(void);
 
 PUBLIC void Word_ParseMp3Response(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id);
 PUBLIC void WordDetail_PlayPinyinAudio(void);
@@ -144,4 +149,6 @@ PUBLIC BOOLEAN Word_LoadLearnInfo(void);
 /*----------------------------------------------------------------------------*/
 #ifdef _cplusplus
 }
+#endif
+
 #endif

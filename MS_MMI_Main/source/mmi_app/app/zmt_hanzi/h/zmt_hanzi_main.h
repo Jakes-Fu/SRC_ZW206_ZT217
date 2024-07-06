@@ -1,7 +1,8 @@
+#ifndef ZMT_HANZI_MAIN_H
+#define ZMT_HANZI_MAIN_H
 
 #include "sci_types.h"
 #include "mmk_type.h"
-//#include "dsl_homework_main.h"
 /*----------------------------------------------------------------------------*/
 /* Compiler Flag */
 /*----------------------------------------------------------------------------*/ 
@@ -120,6 +121,7 @@ PUBLIC void MMI_CreateHanziChapterWin(void);
 PUBLIC void MMI_CreateHanziDetailWin(void);
 PUBLIC void MMI_CreateHanziListenWin(void);
 PUBLIC MMI_RESULT_E MMI_CloseHanziDetailWin(void);
+PUBLIC void MMIZMT_CloseHanziPlayer(void);
 
 PUBLIC void Hanzi_ReleaseBookInfo(void);
 PUBLIC void Hanzi_ParseBookInfo(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id);
@@ -141,3 +143,9 @@ PUBLIC void Hanzi_ReleaseLearnInfo(void);
 PUBLIC void Hanzi_WriteLearnInfo(void);
 PUBLIC void Hanzi_UpdateLearnInfo(uint16 book_id, uint16 unit_id);
 PUBLIC BOOLEAN Hanzi_LoadLearnInfo(void);
+
+#ifdef _cplusplus
+}
+#endif
+
+#endif

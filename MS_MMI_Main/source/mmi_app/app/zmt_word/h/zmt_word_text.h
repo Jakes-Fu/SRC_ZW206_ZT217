@@ -1,3 +1,5 @@
+#ifndef ZMT_WORD_TEXT_H
+#define ZMT_WORD_TEXT_H
 /*****************************************************************************
 ** File Name:      xxx_mmi_text.h                                            *
 ** Author:                                                                   *
@@ -9,9 +11,6 @@
 ** --------------------------------------------------------------------------*
 ** Create by Spreadtrum Resource Editor tool                                 *
 ******************************************************************************/
-
-#ifndef DSL_WORD_MMI_TEXT_H_
-#define DSL_WORD_MMI_TEXT_H_
 
 #include "sci_types.h"
 #include "mmi_module.h"
@@ -46,4 +45,4 @@ typedef enum ZMT_WORD_MMI_TEXT_ID_E
 }
 #endif
 
-#endif // HELLO_MMI_TEXT_H_
+#endif
