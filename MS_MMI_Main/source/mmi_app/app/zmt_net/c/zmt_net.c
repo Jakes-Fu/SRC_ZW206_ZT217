@@ -88,8 +88,9 @@ static void ZMT_Net_SendCB(void *pUser,uint8 * pRcv,uint32 Rcv_len)
 
     SCI_TRACE_LOW("[ZMT_NET]  %s: len = %d", __FUNCTION__, strlen(json_str));
     //SCI_TRACE_LOW("[ZMT_NET]  %s: json_str = %s", __FUNCTION__, json_str);
-    
+
     SCI_FREE(result);
+    ZMT_TCP_SuccessSendingStop();
 }
 
 LOCAL void get_rand_str(char s[], int number)
@@ -1059,7 +1060,7 @@ PUBLIC MMI_RESULT_E MMIZMT_Net_Handle_AppMsg(PWND app_ptr, uint16 msg_id, DPARAM
 	if(res == MMI_RESULT_FALSE)
 	{
 		res = MMIZMTTCP_Handle_AppMsg(app_ptr,msg_id,param);
-		SCI_TRACE_LOW("[ZMT_NET] %s: res = %d",__FUNCTION__, res);
+		SCI_TRACE_LOW("[ZMT_NET] %s: error res = %d",__FUNCTION__, res);
 	}
 
 	return res;

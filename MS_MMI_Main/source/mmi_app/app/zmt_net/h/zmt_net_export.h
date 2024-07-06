@@ -42,6 +42,7 @@ typedef struct zmt_data_content
 
 PUBLIC MMI_RESULT_E MMIZMT_Net_Handle_AppMsg(PWND app_ptr, uint16 msg_id, DPARAM param);
 
+PUBLIC void ZMT_TCP_SuccessSendingStop(void);
 PUBLIC void ZMT_Net_TCP_Close(void);
 PUBLIC uint32 ZMT_Net_TCPSendFile(ZMT_DATA_CONTENT_T * chatdata);
 

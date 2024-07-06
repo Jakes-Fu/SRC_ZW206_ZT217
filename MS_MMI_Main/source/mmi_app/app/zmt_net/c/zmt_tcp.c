@@ -7,6 +7,10 @@
 #define ZMT_TCP_INTERFACE_MAX 5
 #define ZMT_TCP_PDP_CLOSE_TIMEOUT 5000
 
+#define ZMT_TCP_TIMER_START_CONNECT_TIMEOUT 50*1000
+#define ZMT_TCP_TIMER_WRITE_TIMEOUT 40*1000
+#define ZMT_TCP_TIMER_READ_TIMEOUT 10*1000
+
 BOOLEAN  m_zmt_tcp_pdpstate = FALSE;
 
 MMI_APPLICATION_T    mmi_zmt_app;
@@ -19,10 +23,21 @@ static int ZMTTCP_Start(ZMT_TCP_INTERFACE_T *pMe);
 static int ZMTTCP_ReStart(ZMT_TCP_INTERFACE_T *pMe);
 static void ZMTTCP_DNSConnect(ZMT_TCP_INTERFACE_T * pMe);
 
+/*
+*防止已经callback了但是sendtimer还没结束，
+*在结果回调时设置sending的状态为false
+*/
+PUBLIC void ZMT_TCP_SuccessSendingStop(void)
+{
+    if(m_zmt_tcp_reg_interface){
+        m_zmt_tcp_reg_interface->m_tcp_is_sending = FALSE;
+    }
+}
+
 LOCAL MMI_RESULT_E ZMT_Handle_AppMsg(PWND app_ptr, uint16 msg_id, DPARAM param)
 {
     MMI_RESULT_E res = MMI_RESULT_TRUE;
-    SCI_TRACE_LOW("[ZMT_TCP] %s: msg_id = %x", __FUNCTION__,msg_id);
+    SCI_TRACE_LOW("[ZMT_TCP] %s: msg_id = %d", __FUNCTION__,msg_id);
     return res;
 }
 
@@ -32,7 +47,7 @@ static MMI_RESULT_E  HandleZMTAppMsg (PWND app_ptr,
                                     DPARAM param)
 {
     MMI_RESULT_E res = MMI_RESULT_FALSE;
-    SCI_TRACE_LOW("[ZMT_TCP] %s: zmtmsg_id %x", __FUNCTION__,msg_id);
+    SCI_TRACE_LOW("[ZMT_TCP] %s: msg_id %d", __FUNCTION__,msg_id);
     
     if(msg_id >= ZMT_APP_SIGNAL_START && msg_id <= ZMT_APP_SIGNAL_END)
     {
@@ -433,7 +448,7 @@ static void ZMT_TCP_StartConnectTimer(ZMT_TCP_INTERFACE_T *pMe)
         pMe->m_tcp_connect_timer_id = 0;
     }
     
-    pMe->m_tcp_connect_timer_id = MMK_CreateTimerCallback(120*1000, 
+    pMe->m_tcp_connect_timer_id = MMK_CreateTimerCallback(ZMT_TCP_TIMER_START_CONNECT_TIMEOUT, 
                                                                         ZMT_TCP_HandleConnectTimer, 
                                                                         (uint32)pMe, 
                                                                         FALSE);
@@ -656,7 +671,7 @@ static void ZMT_TCP_SocWrite(ZMT_TCP_INTERFACE_T *pMe)
         if(pMe->m_tcp_cur_data != NULL && pMe->m_tcp_cur_data->rcv_handle != NULL)
         {
             pMe->m_tcp_need_rcv = TRUE;
-            ZMT_TCP_StartReadTimer(pMe,120*1000);
+            ZMT_TCP_StartReadTimer(pMe,ZMT_TCP_TIMER_READ_TIMEOUT);
         }
         else
         {
@@ -745,8 +760,8 @@ static BOOLEAN  ZMT_TCP_SocConnectStart(ZMT_TCP_INTERFACE_T *pMe,ZMT_TCP_TASK_DA
             int rv = -1;
             TCPIP_IPADDR_T send_addr = 0;
             struct sci_hostent * host = sci_gethostbyname(p_tcp_data->ip_str);
-            rv = sci_parse_host_ext((char*)p_tcp_data->ip_str,&send_addr,1,MMIZMT_Net_GetNetID());
-           rv = sci_parse_host((char*)p_tcp_data->ip_str,&send_addr,1);
+            //rv = sci_parse_host_ext((char*)p_tcp_data->ip_str,&send_addr,1,MMIZMT_Net_GetNetID());
+            //rv = sci_parse_host((char*)p_tcp_data->ip_str,&send_addr,1);
             SCI_TRACE_LOW("[ZMT_TCP] %s:  ip_str = %s", __FUNCTION__, p_tcp_data->ip_str);
             if(host != NULL)
             {
@@ -851,7 +866,7 @@ void ZMT_TCP_TaskEntry(uint32 argc, void *argv)
     while(1)
     {
         sig_ptr = SCI_GetSignal(pMe->m_tcp_task_id);
-		 SCI_TRACE_LOW("[ZMT_TCP] %s: SignalCode=%d", __FUNCTION__, sig_ptr->SignalCode);
+        SCI_TRACE_LOW("[ZMT_TCP] %s: SignalCode=%d", __FUNCTION__, sig_ptr->SignalCode);
         switch(sig_ptr->SignalCode)
         {            
             case SOCKET_FULL_CLOSED_EVENT_IND:
@@ -1377,7 +1392,7 @@ extern int ZMTTCP_ConnWrite(ZMT_TCP_INTERFACE_T *pMe)
         {
             SCI_TRACE_LOW("[ZMT_TCP] %s: CONNECTED ZMTTcp_Write",__FUNCTION__);
             ZMTTcp_Write(pMe,pMe->m_tcp_buf_get,pMe->m_tcp_get_len);
-            ZMT_TCP_StartWriteTimer(pMe,120*1000);
+            ZMT_TCP_StartWriteTimer(pMe,ZMT_TCP_TIMER_WRITE_TIMEOUT);
             return 0;
         }
     }
@@ -1397,7 +1412,7 @@ extern int ZMTTCP_ConnWrite(ZMT_TCP_INTERFACE_T *pMe)
     }
     
     ZMTTCP_DNSConnect(pMe);// will create tcp thread
-    ZMT_TCP_StartWriteTimer(pMe,120*1000);
+    ZMT_TCP_StartWriteTimer(pMe,ZMT_TCP_TIMER_WRITE_TIMEOUT);
     return res;
 }
 
@@ -1613,11 +1628,11 @@ static int ZMTTCP_Start(ZMT_TCP_INTERFACE_T *pMe)
         #ifdef FILE_LOG_SUPPORT
         {
             SCI_TRACE_LOW("[ZMT_TCP] %s: Handle=0x%x,Len=%d", __FUNCTION__,pMe->m_tcp_cur_data,pMe->m_tcp_get_len);
-            Trace_Need_Hex(TRUE);
+            //Trace_Need_Hex(TRUE);
             if(pMe->m_tcp_get_len < 2048)
             {
                 Trace_Log_Buf_Data((char *)pMe->m_tcp_buf_get,pMe->m_tcp_get_len);
-                Trace_Need_Hex(FALSE);
+                //Trace_Need_Hex(FALSE);
                 Trace_Log_Buf_Data("\r\n",2);
             }
             else
@@ -1634,7 +1649,7 @@ static int ZMTTCP_Start(ZMT_TCP_INTERFACE_T *pMe)
     }
 	else 
 	{
-		SCI_TRACE_LOW("[ZMT_TCP] %s: no pMe->m_tcp_is_reg && DSLCHAT_TCP_Link_GetMaxPri(pMe,&pMe->m_tcp_cur_data", __FUNCTION__);
+		SCI_TRACE_LOW("[ZMT_TCP] %s: no pMe->m_tcp_is_reg && DSLCHAT_TCP_Link_GetMaxPri(pMe,&pMe->m_tcp_cur_data)", __FUNCTION__);
 		ZMTTcp_Send_Write_Resp(pMe,TCP_ERROR,TCP_ERR_NOREG);
 	}
 	
@@ -1778,7 +1793,7 @@ static  int ZMTTCP_HandleReg(DPARAM param)
             }
             return ZMT_TCP_RET_ERR;
         }
-        ZMT_TCP_StopPdpCloseTimer(pMe);
+        //ZMT_TCP_StopPdpCloseTimer(pMe);
         if(pMe->m_tcp_is_reg)
         {
             if(pData->callback != NULL)
@@ -1908,7 +1923,7 @@ static  int ZMTTCP_HandleSend(DPARAM param)
     }
     if(pData != NULL)
     {
-         SCI_TRACE_LOW("[ZMT_TCP] %s: 31");
+         SCI_TRACE_LOW("[ZMT_TCP] %s: 31", __FUNCTION__);
         pMe = (ZMT_TCP_INTERFACE_T *)(pData->pMe); //bug ,pMe is null
         SCI_TRACE_LOW("[ZMT_TCP] %s: 32 pMe=0x%x %s:%d",__FUNCTION__,pMe,pMe->m_tcp_ip_url,pMe->m_tcp_conn_port);
         if(ZMT_TCP_Link_AddData(pMe,pData))
@@ -1943,7 +1958,6 @@ static  int ZMTTCP_HandleSendStart(DPARAM param)
     {
         SCI_TRACE_LOW("[ZMT_TCP] %s: pMe=0x%x,is_reg=%d,%s",__FUNCTION__,pMe,pMe->m_tcp_is_reg,pMe->m_tcp_ip_url);
     }
-    
     
     ZMTTCP_Start(pMe);
 
@@ -2072,7 +2086,7 @@ extern int ZMTTCP_HandleDisconnected(DPARAM param)
 PUBLIC MMI_RESULT_E  MMIZMTTCP_Handle_AppMsg (PWND app_ptr, uint16 msg_id,DPARAM param)
 {
     MMI_RESULT_E res = MMI_RESULT_TRUE;
-    SCI_TRACE_LOW("[ZMT_TCP] %s: msg_id = %d",msg_id);
+    SCI_TRACE_LOW("[ZMT_TCP] %s: msg_id = %d",__FUNCTION__, msg_id);
     switch(msg_id)
     {    
         case ZMT_APP_SIGNAL_TCP_CONNECT_SUCCESS:
