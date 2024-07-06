@@ -21,12 +21,12 @@ PUBLIC uint32 zmt_tfcard_get_free_kb(void)
 	if(MMIFILE_GetDeviceStatus(MMIAPIFMM_GetDevicePath (sd_type), MMIAPIFMM_GetDevicePathLen (sd_type)))
 	{
 		MMIFILE_GetDeviceFreeSpace((uint16 *)MMIAPIFMM_GetDevicePath(sd_type) , MMIAPIFMM_GetDevicePathLen(sd_type) ,&space_high2,&space_low2);
-		SCI_TRACE_LOW("dsl %s space_high2 = %u", __FUNCTION__, space_high2);
-		SCI_TRACE_LOW("dsl %s space_low2 = %u", __FUNCTION__, space_low2);
+		SCI_TRACE_LOW("%s space_high2 = %u", __FUNCTION__, space_high2);
+		SCI_TRACE_LOW("%s space_low2 = %u", __FUNCTION__, space_low2);
 		account = ((space_high2<<22) + (space_low2>>10));
 
 	}
-	SCI_TRACE_LOW("dsl %s account = %uM", __FUNCTION__, account/1024);
+	SCI_TRACE_LOW("%s account = %uM", __FUNCTION__, account/1024);
 	return account;
 }
 
@@ -39,12 +39,12 @@ PUBLIC uint32 zmt_tfcard_get_used_kb(void)
 	if(MMIFILE_GetDeviceStatus(MMIAPIFMM_GetDevicePath (sd_type), MMIAPIFMM_GetDevicePathLen (sd_type)))
 	{
 		MMIFILE_GetDeviceUsedSpace((uint16 *)MMIAPIFMM_GetDevicePath(sd_type) , MMIAPIFMM_GetDevicePathLen(sd_type) ,&space_high2,&space_low2);
-		SCI_TRACE_LOW("dsl %s space_high2 = %u", __FUNCTION__, space_high2);
-		SCI_TRACE_LOW("dsl %s space_low2 = %u", __FUNCTION__, space_low2);
+		SCI_TRACE_LOW("%s space_high2 = %u", __FUNCTION__, space_high2);
+		SCI_TRACE_LOW("%s space_low2 = %u", __FUNCTION__, space_low2);
 		account = ((space_high2<<22) + (space_low2>>10));
 
 	}
-	SCI_TRACE_LOW("dsl %s account = %uM", __FUNCTION__, account/1024);
+	SCI_TRACE_LOW("%s account = %uM", __FUNCTION__, account/1024);
 	return account;
 }
 
@@ -233,7 +233,7 @@ PUBLIC BOOLEAN zmt_file_exist(char * file_path)
 	//MMIAPICOM_StrToWstr(file_path, file_str);
 	file_length = MMIAPICOM_Wstrlen(file_str);
 	exist = MMIFILE_IsFileExist(file_str, file_length);
-	SCI_TRACE_LOW("dsl_file %s: exist = %d, file_str = %s, file_length = %d\n", __FUNCTION__, exist, file_path, file_length);
+	SCI_TRACE_LOW("%s: exist = %d, file_str = %s, file_length = %d\n", __FUNCTION__, exist, file_path, file_length);
 	
 	return exist;
 }
@@ -248,7 +248,7 @@ PUBLIC BOOLEAN zmt_file_delete(char * file_path)
     	 {
         	if(MMIFILE_DeleteFile((const uint16 *)full_path,PNULL) == SFS_NO_ERROR)
         	{
-        		SCI_TRACE_LOW("dsl_file %s: delete file %s success", __FUNCTION__, file_path);
+        		SCI_TRACE_LOW("%s: delete file %s success", __FUNCTION__, file_path);
 			return TRUE;
 		}
     	 }
@@ -264,7 +264,7 @@ PUBLIC BOOLEAN zmt_directory_delete(char * file_path)
     	 {
         	if(MMIFILE_DeleteDirectory((const wchar *)full_path) == SFS_NO_ERROR)
         	{
-        		SCI_TRACE_LOW("dsl_file %s: delete directory %s success", __FUNCTION__, file_path);
+        		SCI_TRACE_LOW("%s: delete directory %s success", __FUNCTION__, file_path);
 			return TRUE;
 		}
     	 }
@@ -273,31 +273,31 @@ PUBLIC BOOLEAN zmt_directory_delete(char * file_path)
 
 PUBLIC void zmt_file_data_add(void * data, uint32 size, char * file_path)
 {
-	SCI_TRACE_LOW("dsl_file %s: add file %s\n", __FUNCTION__, file_path);
+	SCI_TRACE_LOW("%s: add file %s\n", __FUNCTION__, file_path);
 
 	zmt_file_save(file_path,data,size,TRUE);
 
-	SCI_TRACE_LOW("dsl_file %s: add file end %s\n", __FUNCTION__, file_path);
+	SCI_TRACE_LOW("%s: add file end %s\n", __FUNCTION__, file_path);
 }
 
 PUBLIC void zmt_file_data_write(void * data, uint32 size, char * file_path)
 {
-	SCI_TRACE_LOW("dsl_file %s: write file %s\n", __FUNCTION__, file_path);
+	SCI_TRACE_LOW("%s: write file %s\n", __FUNCTION__, file_path);
 
 	zmt_file_save(file_path,data,size,FALSE);
 
-	SCI_TRACE_LOW("dsl_file %s: write file end %s\n", __FUNCTION__, file_path);
+	SCI_TRACE_LOW("%s: write file end %s\n", __FUNCTION__, file_path);
 }
 
 PUBLIC void * zmt_file_data_read(char * file_path,uint32 * data_size)
 {
     uint32 file_len = 0;
 	uint8 * tmp_buf = PNULL;
-	SCI_TRACE_LOW("dsl_file %s:read file start %s\n", __FUNCTION__, file_path);
+	SCI_TRACE_LOW("%s:read file start %s\n", __FUNCTION__, file_path);
 
 	file_len = zmt_file_get_size(file_path);
 
-	SCI_TRACE_LOW("dsl_file %s:file_len %d\n", __FUNCTION__, file_len);
+	SCI_TRACE_LOW("%s:file_len %d\n", __FUNCTION__, file_len);
 
 	if(file_len<=0)
 	{
@@ -307,7 +307,7 @@ PUBLIC void * zmt_file_data_read(char * file_path,uint32 * data_size)
 	tmp_buf = (uint8 * )SCI_ALLOC_APPZ(file_len);
 	zmt_file_read(file_path, tmp_buf, file_len,data_size);
 
-	SCI_TRACE_LOW("dsl_file %s:read file end %s\n", __FUNCTION__, file_path);
+	SCI_TRACE_LOW("%s:read file end %s\n", __FUNCTION__, file_path);
 	return tmp_buf;
 }
 
@@ -315,11 +315,11 @@ PUBLIC void * zmt_lrc_file_data_read(char * file_path,uint32 * data_size)
 {
     uint32 file_len = 0;
 	uint8 * tmp_buf = PNULL;
-	SCI_TRACE_LOW("dsl_file %s:read file start %s\n", __FUNCTION__, file_path);
+	SCI_TRACE_LOW("%s:read file start %s\n", __FUNCTION__, file_path);
 
 	file_len = zmt_lrc_file_get_size(file_path);
 
-	SCI_TRACE_LOW("dsl_file %s:file_len %d\n", __FUNCTION__, file_len);
+	SCI_TRACE_LOW("%s:file_len %d\n", __FUNCTION__, file_len);
 
 	if(file_len<=0)
 	{
@@ -329,7 +329,7 @@ PUBLIC void * zmt_lrc_file_data_read(char * file_path,uint32 * data_size)
 	tmp_buf = (uint8 * )SCI_ALLOC_APPZ(file_len);
 	zmt_lrc_file_read(file_path, tmp_buf, file_len,data_size);
 
-	SCI_TRACE_LOW("dsl_file %s:read file end %s\n", __FUNCTION__, file_path);
+	SCI_TRACE_LOW("%s:read file end %s\n", __FUNCTION__, file_path);
 	return tmp_buf;
 }
 
@@ -342,7 +342,7 @@ PUBLIC BOOLEAN zmt_dir_exsit(char * file_path)
 	GUI_GBToWstr( file_str, file_path, strlen(file_path));
 	file_length = MMIAPICOM_Wstrlen(file_str);
 	exist = MMIFILE_IsFolderExist(file_str, file_length);
-	SCI_TRACE_LOW("dsl_file %s: exist = %d, dir_str = %s, dir_length = %d\n", __FUNCTION__, exist, file_path, file_length);
+	SCI_TRACE_LOW("%s: exist = %d, dir_str = %s, dir_length = %d\n", __FUNCTION__, exist, file_path, file_length);
 
     return exist;
 }
@@ -353,6 +353,6 @@ PUBLIC BOOLEAN zmt_dir_creat(char * file_path)
     wchar   file_str[MMIFILE_FULL_PATH_MAX_LEN+1] = {0}; 
 	GUI_GBToWstr( file_str, file_path, strlen(file_path));
 	err = MMIAPIFMM_CreateDirectory(file_str);
-	SCI_TRACE_LOW("dsl_file %s: err = %d, dir_str = %s\n", __FUNCTION__, err, file_path);
+	SCI_TRACE_LOW("%s: err = %d, dir_str = %s\n", __FUNCTION__, err, file_path);
     return !err;
 }

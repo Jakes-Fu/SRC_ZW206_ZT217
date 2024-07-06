@@ -157,6 +157,9 @@ PUBLIC void ZmtGpt_SendSelfRecord(uint8 req_type, char * record_buf, uint32 reco
     cJSON_Delete(root);
     SCI_FREE(out);
 #else
+    #if ZMT_GPT_USE_FOR_TEST != 0
+    
+    #else
     BOOLEAN result = TRUE;
     ZMT_DATA_CONTENT_T * chatdata = NULL;
     char * data_buf = NULL;
@@ -171,6 +174,7 @@ PUBLIC void ZmtGpt_SendSelfRecord(uint8 req_type, char * record_buf, uint32 reco
     result = ZMT_Net_TCPSendFile(chatdata);
     SCI_FREE(chatdata);
     SCI_TRACE_LOW("%s: result = %d", __FUNCTION__, result);
+    #endif
 #endif
 }
 
@@ -363,6 +367,60 @@ PUBLIC void ZmtGpt_SendTxt(uint32 app_type, char * send_txt, char * sys_param, c
     SCI_FREE(out);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+PUBLIC void ZmtGpt_DisplayTitle(MMI_WIN_ID_T win_id, MMI_STRING_T text_string, GUI_RECT_T title_rect, GUI_FONT_T font)
+{
+    GUI_LCD_DEV_INFO lcd_dev_info = {GUI_MAIN_LCD_ID,GUI_BLOCK_MAIN};
+    GUISTR_STATE_T text_state = GUISTR_STATE_ALIGN | GUISTR_STATE_WORDBREAK;
+    GUISTR_STYLE_T text_style = {0};
+    GUI_RECT_T win_rect = zmt_gpt_win_rect;
+    GUI_RECT_T text_rect = title_rect;
+
+    GUI_FillRect(&lcd_dev_info, win_rect, GPT_WIN_BG_COLOR);
+    GUI_FillRect(&lcd_dev_info, title_rect, GPT_TITLE_BG_COLOR);
+
+    text_style.align = ALIGN_HVMIDDLE;
+    text_style.font = font;
+    text_style.font_color = MMI_WHITE_COLOR;
+
+    text_rect.left += 10;
+    text_rect.right -= 10;
+    GUISTR_DrawTextToLCDInRect(
+        (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
+        &text_rect,
+        &text_rect,
+        &text_string,
+        &text_style,
+        text_state,
+        GUISTR_TEXT_DIR_AUTO
+    );
+}
+
+PUBLIC void ZmtGpt_InitListbox(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id, GUI_RECT_T list_rect, uint16 max_item)
+{
+    GUILIST_INIT_DATA_T list_init = {0};
+    GUILIST_ITEM_T item_t = {0};
+    GUIITEM_STATE_T item_state = {0};
+    GUILIST_ITEM_DATA_T item_data = {0};
+
+    if(!MMK_GetCtrlHandleByWin(win_id, ctrl_id)){
+        list_init.both_rect.v_rect = list_rect;
+        list_init.type = GUILIST_TEXTLIST_E;
+        GUILIST_CreateListBox(win_id, 0, ctrl_id, &list_init);
+        MMK_SetAtvCtrl(win_id, ctrl_id);
+        GUILIST_SetMaxItem(ctrl_id, max_item, FALSE);
+
+        GUILIST_SetListState(ctrl_id, GUILIST_STATE_SPLIT_LINE, FALSE);
+        GUILIST_SetListState(ctrl_id, GUILIST_STATE_NEED_HIGHTBAR, FALSE);
+        GUILIST_SetListState(ctrl_id, GUILIST_STATE_AUTO_SCROLL, FALSE);
+        GUILIST_SetListState(ctrl_id, GUILIST_STATE_EFFECT_STR,TRUE);
+        GUILIST_SetNeedPrgbarBlock(ctrl_id,FALSE);
+        GUILIST_SetBgColor(ctrl_id, GPT_WIN_BG_COLOR);
+    }else{
+        GUILIST_RemoveAllItems(ctrl_id);
+    }
+}
+
 LOCAL void ZmtGpt_DisplayList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
 {
     uint8 index = 0;
@@ -373,14 +431,6 @@ LOCAL void ZmtGpt_DisplayList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
     GUILIST_ITEM_DATA_T item_data = {0};
     MMI_IMAGE_ID_T img_id[ZMT_GPT_MAX_ITEM] = {IMG_ZMT_GPT_KOUYU, IMG_ZMT_GPT_ZUOWEN};
     MMI_TEXT_ID_T text_id[ZMT_GPT_MAX_ITEM] = {ZMT_CHAT_GPT_KOUYU, ZMT_CHAT_GPT_ZUOWEN};
-
-    list_init.both_rect.v_rect = zmt_gpt_list_rect;
-    list_init.type = GUILIST_TEXTLIST_E;
-    GUILIST_CreateListBox(win_id, 0, ctrl_id, &list_init);
-
-    MMK_SetAtvCtrl(win_id, ctrl_id);
-    GUILIST_RemoveAllItems(ctrl_id);
-    GUILIST_SetMaxItem(ctrl_id, ZMT_GPT_MAX_ITEM, FALSE);
 
     for(index = 0;index < ZMT_GPT_MAX_ITEM; index++)
     {
@@ -394,18 +444,25 @@ LOCAL void ZmtGpt_DisplayList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
         item_data.item_content[1].item_data_type = GUIITEM_DATA_TEXT_ID;
         item_data.item_content[1].item_data.text_id = text_id[index];
 
-        //不画分割线
-        GUILIST_SetListState( ctrl_id, GUILIST_STATE_SPLIT_LINE, FALSE);
-        //不画高亮条
-        GUILIST_SetListState( ctrl_id, GUILIST_STATE_NEED_HIGHTBAR, FALSE);
-
-        GUILIST_SetNeedPrgbarBlock(ctrl_id,FALSE);
-
-        GUILIST_SetBgColor(ctrl_id,MMI_BLACK_COLOR);
-        GUILIST_SetTextFont(ctrl_id, DP_FONT_20, MMI_WHITE_COLOR);
-
         GUILIST_AppendItem(ctrl_id, &item_t);
     }
+}
+
+LOCAL void ZmtGpt_OPEN_WINDOW(MMI_WIN_ID_T win_id)
+{
+#if ZMT_GPT_USE_SELF_API == 0
+    gpt_get_baidu_access_token();
+#endif
+#if ZMT_GPT_USE_TCP_POST_VOICE != 0
+    MMIZmt_AppInit();
+    MMIZMT_Net_Init();				
+    MMIZMT_Net_Open();
+#endif
+
+    ZmtGpt_InitListbox(win_id, ZMT_GPT_MAIN_LIST_CTRL_ID, zmt_gpt_list_rect, ZMT_GPT_MAX_ITEM);
+    GUILIST_SetSlideState(ZMT_GPT_MAIN_LIST_CTRL_ID, FALSE);
+    GUILIST_SetTextFont(ZMT_GPT_MAIN_LIST_CTRL_ID, DP_FONT_24, MMI_WHITE_COLOR);
+    ZmtGpt_DisplayList(win_id, ZMT_GPT_MAIN_LIST_CTRL_ID);
 }
 
 LOCAL void ZmtGpt_FULL_PAINT(MMI_WIN_ID_T win_id)
@@ -414,24 +471,9 @@ LOCAL void ZmtGpt_FULL_PAINT(MMI_WIN_ID_T win_id)
     GUISTR_STATE_T text_state = GUISTR_STATE_ALIGN | GUISTR_STATE_ELLIPSIS_EX;
     GUISTR_STYLE_T text_style = {0};
     MMI_STRING_T text_string = {0};
-
-    GUI_FillRect(&lcd_dev_info, zmt_gpt_win_rect, MMI_BLACK_COLOR);
-
-    text_style.align = ALIGN_HVMIDDLE;
-    text_style.font = DP_FONT_20;
-    text_style.font_color = MMI_WHITE_COLOR;
-    MMIRES_GetText(ZMT_CHAT_GPT, win_id, &text_string);
-    GUISTR_DrawTextToLCDInRect(
-        (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
-        &zmt_gpt_title_rect,
-        &zmt_gpt_title_rect,
-        &text_string,
-        &text_style,
-        text_state,
-        GUISTR_TEXT_DIR_AUTO
-    );
     
-    ZmtGpt_DisplayList(win_id, ZMT_GPT_MAIN_LIST_CTRL_ID);
+    MMIRES_GetText(ZMT_CHAT_GPT, win_id, &text_string);
+    ZmtGpt_DisplayTitle(win_id, text_string, zmt_gpt_title_rect, DP_FONT_24);
 }
 
 LOCAL void ZmtGpt_CTL_PENOK(MMI_WIN_ID_T win_id)
@@ -451,14 +493,7 @@ LOCAL MMI_RESULT_E HandleZmtGptWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_i
     {
         case MSG_OPEN_WINDOW:
             {
-            #if ZMT_GPT_USE_SELF_API == 0
-                gpt_get_baidu_access_token();
-            #endif
-            #if ZMT_GPT_USE_TCP_POST_VOICE != 0
-                MMIZmt_AppInit();
-                MMIZMT_Net_Init();				
-                MMIZMT_Net_Open();
-            #endif
+                ZmtGpt_OPEN_WINDOW(win_id);
             }
             break;
         case MSG_FULL_PAINT:

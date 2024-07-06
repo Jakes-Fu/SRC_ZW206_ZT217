@@ -76,6 +76,10 @@
 #define GPT_KOUYU_TALK_MAX_SIZE 20
 #define GPT_ZUOWEN_TALK_MAX_SIZE 10
 
+#define GPT_WIN_BG_COLOR GUI_RGB2RGB565(80, 162, 254)
+#define GPT_TITLE_BG_COLOR GUI_RGB2RGB565(108, 181, 255)
+#define GPT_SELF_TEXT_BG_COLOR GUI_RGB2RGB565(0, 255, 0)
+
 extern char * gpt_baidu_access_token;
 
 typedef struct
@@ -103,8 +107,9 @@ typedef enum {
     GPT_RECORD_TYPE_VOICE_LOADING,
     GPT_RECORD_TYPE_TEXT_LOADING,
     GPT_RECORD_TYPE_SUCCESS,
-    GPT_RECORD_TYPE_FAIL,
-    GPT_RECORD_TYPE_ERROR,
+    GPT_RECORD_TYPE_SUCCESS_EMPTY,
+    GPT_RECORD_TYPE_TXT_FAIL,
+    GPT_RECORD_TYPE_TXT_ERROR,
     GPT_RECORD_TYPE_VOICE_ERROR,
 }ZMT_GPT_RECORD_TYPE_E;
 
@@ -127,3 +132,7 @@ PUBLIC void ZmtGptZuoWen_RecAiTextResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv
 PUBLIC void MMIZMT_CreateZmtGptWin(void);
 PUBLIC void MMIZMT_CreateZmtGptKouYuTopicWin(void);
 PUBLIC void MMIZMT_CreateZmtGptZuoWenWin(void);
+
+PUBLIC void ZmtGpt_InitListbox(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id, GUI_RECT_T list_rect, uint16 max_item);
+PUBLIC void ZmtGpt_DisplayTitle(MMI_WIN_ID_T win_id, MMI_STRING_T text_string, GUI_RECT_T title_rect, GUI_FONT_T font);
+
