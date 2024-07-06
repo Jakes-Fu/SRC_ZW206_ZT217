@@ -259,7 +259,14 @@ uint32  ZDT_HTTP_File_Write(MMIFILE_HANDLE file_handle,uint8  * data_ptr, uint32
     uint32 transbyte = 0;
     uint32 all_transbyte = 0;
     BOOLEAN ret = TRUE;
+    MMIFILE_DEVICE_E sd_type             = MMI_DEVICE_SDCARD;
+    
     if(file_handle == SFS_INVALID_HANDLE)
+    {
+        return 0;
+    }
+
+    if(!MMIAPIFMM_GetDeviceStatus (MMIAPIFMM_GetDevicePath (sd_type), MMIAPIFMM_GetDevicePathLen (sd_type)))
     {
         return 0;
     }
