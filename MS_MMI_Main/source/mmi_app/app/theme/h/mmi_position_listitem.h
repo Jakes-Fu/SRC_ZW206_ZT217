@@ -149,6 +149,11 @@
 #define LIST_1ICON_1STR_1LINE_ITEM_UNREAD_NUM_WIDGH    14
 #define LIST_1ICON_1STR_1LINE_ITEM_UNREAD_NUM_TEXT_LEFT LIST_1ICON_1STR_1LINE_ITEM_UNREAD_NUM_LEFT+3
 
+#define ZMT_LIST_LINE_WIDTH MMI_MAINSCREEN_WIDTH/6
+#define ZMT_LIST_LINE_HIGHT MMI_MAINSCREEN_HEIGHT/10
+#define ZMT_LIST_ITEM_HIGHT MMI_MAINSCREEN_HEIGHT/12
+#define ZMT_LIST_ITEM_PANDDING 10
+
 //============================================================================//
 //                                   For watch                                //
 //============================================================================//

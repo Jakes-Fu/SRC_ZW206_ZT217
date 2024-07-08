@@ -65,27 +65,6 @@
 #include "mmisms_image.h"
 #include "mmicc_image.h"
 #include "mmi_position_listitem.h"
-#ifdef LISTENING_PRATICE_SUPPORT
-#include "zmt_listening_export.h"
-#endif
-#ifdef WORD_CARD_SUPPORT
-#include "zmt_word_main.h"
-#endif
-#ifdef HANZI_CARD_SUPPORT
-#include "zmt_hanzi_main.h"
-#endif
-#ifdef ZMT_GPT_SUPPORT
-#include "zmt_gpt.h"
-#endif
-#ifdef POETRY_LISTEN_SUPPORT
-#include "zmt_poetry_main.h"
-#endif
-#ifdef FORMULA_SUPPORT
-#include "formula_export.h"
-#endif
-#ifdef ZMT_CLASS_SUPPORT
-#include "zmt_class_main.h"
-#endif
 /**---------------------------------------------------------------------------*
  **                         Macro Declaration                                 *
  **---------------------------------------------------------------------------*/
@@ -5765,35 +5744,32 @@ LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_1_text_eng =
 };
 
 #ifdef LISTENING_PRATICE_SUPPORT
-//|---------------------------|
-//|       icon      text     icon           |
-//|---------------------------|
 //GUIITEM_STYLE_TWO_ICON_AND_ONE_TEXT_MS,
 LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_2_icon_and_1_text_ms =
 {
-    1.5*LISTEN_LINE_HIGHT, 1.5*LISTEN_LINE_HIGHT,
+    1.5*ZMT_LIST_LINE_HIGHT, 1.5*ZMT_LIST_LINE_HIGHT,
 
     {        
             //icon
             {
             0,
-            {5, 0, LISTEN_LINE_WIDTH, 1.5*LISTEN_LINE_HIGHT},
-            {5, 0, LISTEN_LINE_WIDTH, 1.5*LISTEN_LINE_HIGHT},
+            {5, 0, ZMT_LIST_LINE_WIDTH, 1.5*ZMT_LIST_LINE_HIGHT},
+            {5, 0, ZMT_LIST_LINE_WIDTH, 1.5*ZMT_LIST_LINE_HIGHT},
             0, 0
         },
             //name
             {
                     0,
-                    {LISTEN_LINE_WIDTH,  0,  MMI_MAINSCREEN_WIDTH-LISTEN_LINE_WIDTH, 1.5*LISTEN_LINE_HIGHT},
-                    {LISTEN_LINE_WIDTH,  0,  MMI_MAINSCREEN_WIDTH-LISTEN_LINE_WIDTH, 1.5*LISTEN_LINE_HIGHT},
+                    {ZMT_LIST_LINE_WIDTH,  0,  MMI_MAINSCREEN_WIDTH-ZMT_LIST_LINE_WIDTH, 1.5*ZMT_LIST_LINE_HIGHT},
+                    {ZMT_LIST_LINE_WIDTH,  0,  MMI_MAINSCREEN_WIDTH-ZMT_LIST_LINE_WIDTH, 1.5*ZMT_LIST_LINE_HIGHT},
                     SONG_FONT_16, SONG_FONT_16,
                     0, 0
             },
             //icon
             {
             0,
-            {MMI_MAINSCREEN_WIDTH-LISTEN_LINE_WIDTH, 0,  MMI_MAINSCREEN_WIDTH, 1.5*LISTEN_LINE_HIGHT},
-            {MMI_MAINSCREEN_WIDTH-LISTEN_LINE_WIDTH, 0,  MMI_MAINSCREEN_WIDTH, 1.5*LISTEN_LINE_HIGHT},
+            {MMI_MAINSCREEN_WIDTH-ZMT_LIST_LINE_WIDTH, 0,  MMI_MAINSCREEN_WIDTH, 1.5*ZMT_LIST_LINE_HIGHT},
+            {MMI_MAINSCREEN_WIDTH-ZMT_LIST_LINE_WIDTH, 0,  MMI_MAINSCREEN_WIDTH, 1.5*ZMT_LIST_LINE_HIGHT},
             0, 0
         },
      {0},
@@ -5803,28 +5779,24 @@ LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_2_icon_and_1_text_ms =
 
     0, MMILIST_INVALID_ITEM_INDEX
 };
-
-//|---------------------------|
-//|       icon      text                     |
-//|---------------------------|
 //GUIITEM_STYLE_ONE_ICON_AND_ONE_TEXT_MS,
 LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_1_icon_and_1_text_ms =
 {
-    2*LISTEN_LINE_HIGHT-5, 2*LISTEN_LINE_HIGHT-5,
+    2*ZMT_LIST_LINE_HIGHT-5, 2*ZMT_LIST_LINE_HIGHT-5,
     {        
             //name
             {
                     0,
-                    {10,  0,  MMI_MAINSCREEN_WIDTH-LISTEN_LINE_WIDTH, 2*LISTEN_LINE_HIGHT-5},
-                    {10,  0,  MMI_MAINSCREEN_WIDTH-LISTEN_LINE_WIDTH, 2*LISTEN_LINE_HIGHT-5},
+                    {10,  0,  MMI_MAINSCREEN_WIDTH-ZMT_LIST_LINE_WIDTH, 2*ZMT_LIST_LINE_HIGHT-5},
+                    {10,  0,  MMI_MAINSCREEN_WIDTH-ZMT_LIST_LINE_WIDTH, 2*ZMT_LIST_LINE_HIGHT-5},
                     SONG_FONT_16, SONG_FONT_16,
                     0, 0
             },
             //icon
             {
             0,
-            {MMI_MAINSCREEN_WIDTH-LISTEN_LINE_WIDTH, 0,  MMI_MAINSCREEN_WIDTH, 2*LISTEN_LINE_HIGHT-5},
-            {MMI_MAINSCREEN_WIDTH-LISTEN_LINE_WIDTH, 0,  MMI_MAINSCREEN_WIDTH, 2*LISTEN_LINE_HIGHT-5},
+            {MMI_MAINSCREEN_WIDTH-ZMT_LIST_LINE_WIDTH, 0,  MMI_MAINSCREEN_WIDTH, 2*ZMT_LIST_LINE_HIGHT-5},
+            {MMI_MAINSCREEN_WIDTH-ZMT_LIST_LINE_WIDTH, 0,  MMI_MAINSCREEN_WIDTH, 2*ZMT_LIST_LINE_HIGHT-5},
             0, 0
         },
      {0},
@@ -5837,30 +5809,30 @@ LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_1_icon_and_1_text_ms =
 };
 #endif
 
-#ifdef WORD_CARD_SUPPORT
+#if defined(WORD_CARD_SUPPORT) || defined(HANZI_CARD_SUPPORT)
 //GUIITEM_SYTLE_ZMT_PUBLISH_LIST_MS
 LOCAL THEMELIST_ITEM_STYLE_T const zmt_publish_list_item =
 {
-    2*WORD_CARD_LINE_HIGHT, 2*WORD_CARD_LINE_HIGHT,
+    2*ZMT_LIST_LINE_HIGHT, 2*ZMT_LIST_LINE_HIGHT,
     {
         {
             0,
-            { ENGLISE_BOOK_ITEM_PANDDING, 0, WORD_CARD_LINE_WIDTH+ENGLISE_BOOK_ITEM_PANDDING, 2*WORD_CARD_LINE_HIGHT},
-            { ENGLISE_BOOK_ITEM_PANDDING, 0, WORD_CARD_LINE_WIDTH+ENGLISE_BOOK_ITEM_PANDDING, 2*WORD_CARD_LINE_HIGHT},
+            { ZMT_LIST_ITEM_PANDDING, 0, ZMT_LIST_LINE_WIDTH+ZMT_LIST_ITEM_PANDDING, 2*ZMT_LIST_LINE_HIGHT},
+            { ZMT_LIST_ITEM_PANDDING, 0, ZMT_LIST_LINE_WIDTH+ZMT_LIST_ITEM_PANDDING, 2*ZMT_LIST_LINE_HIGHT},
             0, 0,
             0, 0
         },
         {
             GUIITEM_CONTENT_STATE_TEXT_M_ALIGN,
-            {ENGLISE_BOOK_ITEM_PANDDING+4,  0,  WORD_CARD_LINE_WIDTH+ENGLISE_BOOK_ITEM_PANDDING, 2*WORD_CARD_LINE_HIGHT},
-            {ENGLISE_BOOK_ITEM_PANDDING+4,  0,  WORD_CARD_LINE_WIDTH+ENGLISE_BOOK_ITEM_PANDDING, 2*WORD_CARD_LINE_HIGHT},
+            {ZMT_LIST_ITEM_PANDDING+4,  0,  ZMT_LIST_LINE_WIDTH+ZMT_LIST_ITEM_PANDDING, 2*ZMT_LIST_LINE_HIGHT},
+            {ZMT_LIST_ITEM_PANDDING+4,  0,  ZMT_LIST_LINE_WIDTH+ZMT_LIST_ITEM_PANDDING, 2*ZMT_LIST_LINE_HIGHT},
             SONG_FONT_20, SONG_FONT_20,
             0, 0
         },
         {
             0,
-            {WORD_CARD_LINE_WIDTH+2*ENGLISE_BOOK_ITEM_PANDDING, 0,  MMI_MAINSCREEN_WIDTH, 2*WORD_CARD_LINE_HIGHT},
-            {WORD_CARD_LINE_WIDTH+2*ENGLISE_BOOK_ITEM_PANDDING, 0,  MMI_MAINSCREEN_WIDTH, 2*WORD_CARD_LINE_HIGHT},
+            {ZMT_LIST_LINE_WIDTH+2*ZMT_LIST_ITEM_PANDDING, 0,  MMI_MAINSCREEN_WIDTH, 2*ZMT_LIST_LINE_HIGHT},
+            {ZMT_LIST_LINE_WIDTH+2*ZMT_LIST_ITEM_PANDDING, 0,  MMI_MAINSCREEN_WIDTH, 2*ZMT_LIST_LINE_HIGHT},
             SONG_FONT_22, SONG_FONT_22,
             0, 0
         },
@@ -5874,33 +5846,33 @@ LOCAL THEMELIST_ITEM_STYLE_T const zmt_publish_list_item =
 //GUIITEM_SYTLE_ZMT_BOOK_LIST_MS,
 LOCAL THEMELIST_ITEM_STYLE_T const zmt_book_list_item =
 {
-    2.5*WORD_CARD_LINE_HIGHT, 2.5*WORD_CARD_LINE_HIGHT,
+    2.5*ZMT_LIST_LINE_HIGHT, 2.5*ZMT_LIST_LINE_HIGHT,
     {
         {
             0,
-            { ENGLISE_BOOK_ITEM_PANDDING, 0.6*WORD_CARD_LINE_HIGHT, WORD_CARD_LINE_WIDTH+ENGLISE_BOOK_ITEM_PANDDING, 2*WORD_CARD_LINE_HIGHT},
-            { ENGLISE_BOOK_ITEM_PANDDING, 0.6*WORD_CARD_LINE_HIGHT, WORD_CARD_LINE_WIDTH+ENGLISE_BOOK_ITEM_PANDDING, 2*WORD_CARD_LINE_HIGHT},
+            { ZMT_LIST_ITEM_PANDDING, 0.6*ZMT_LIST_LINE_HIGHT, ZMT_LIST_LINE_WIDTH+ZMT_LIST_ITEM_PANDDING, 2*ZMT_LIST_LINE_HIGHT},
+            { ZMT_LIST_ITEM_PANDDING, 0.6*ZMT_LIST_LINE_HIGHT, ZMT_LIST_LINE_WIDTH+ZMT_LIST_ITEM_PANDDING, 2*ZMT_LIST_LINE_HIGHT},
             0, 0,
             0, 0
         },
         {
             GUIITEM_CONTENT_STATE_TEXT_M_ALIGN,
-            {ENGLISE_BOOK_ITEM_PANDDING+4,  0.6*WORD_CARD_LINE_HIGHT,  WORD_CARD_LINE_WIDTH+ENGLISE_BOOK_ITEM_PANDDING, 2*WORD_CARD_LINE_HIGHT},
-            {ENGLISE_BOOK_ITEM_PANDDING+4,  0.6*WORD_CARD_LINE_HIGHT,  WORD_CARD_LINE_WIDTH+ENGLISE_BOOK_ITEM_PANDDING, 2*WORD_CARD_LINE_HIGHT},
+            {ZMT_LIST_ITEM_PANDDING+4,  0.6*ZMT_LIST_LINE_HIGHT,  ZMT_LIST_LINE_WIDTH+ZMT_LIST_ITEM_PANDDING, 2*ZMT_LIST_LINE_HIGHT},
+            {ZMT_LIST_ITEM_PANDDING+4,  0.6*ZMT_LIST_LINE_HIGHT,  ZMT_LIST_LINE_WIDTH+ZMT_LIST_ITEM_PANDDING, 2*ZMT_LIST_LINE_HIGHT},
             SONG_FONT_18, SONG_FONT_18,
             0, 0
         },
         {
             0,
-            {WORD_CARD_LINE_WIDTH+2*ENGLISE_BOOK_ITEM_PANDDING, 10,  MMI_MAINSCREEN_WIDTH, WORD_CARD_LINE_HIGHT+10},
-            {WORD_CARD_LINE_WIDTH+2*ENGLISE_BOOK_ITEM_PANDDING, 10,  MMI_MAINSCREEN_WIDTH, WORD_CARD_LINE_HIGHT+10},
+            {ZMT_LIST_LINE_WIDTH+2*ZMT_LIST_ITEM_PANDDING, 10,  MMI_MAINSCREEN_WIDTH, ZMT_LIST_LINE_HIGHT+10},
+            {ZMT_LIST_LINE_WIDTH+2*ZMT_LIST_ITEM_PANDDING, 10,  MMI_MAINSCREEN_WIDTH, ZMT_LIST_LINE_HIGHT+10},
             SONG_FONT_22, SONG_FONT_22,
             0, 0
         },
         {
             0,
-            {WORD_CARD_LINE_WIDTH+2*ENGLISE_BOOK_ITEM_PANDDING, WORD_CARD_LINE_HIGHT+11, MMI_MAINSCREEN_WIDTH, 2.3*WORD_CARD_LINE_HIGHT},
-            {WORD_CARD_LINE_WIDTH+2*ENGLISE_BOOK_ITEM_PANDDING, WORD_CARD_LINE_HIGHT+11, MMI_MAINSCREEN_WIDTH, 2.3*WORD_CARD_LINE_HIGHT},
+            {ZMT_LIST_LINE_WIDTH+2*ZMT_LIST_ITEM_PANDDING, ZMT_LIST_LINE_HIGHT+11, MMI_MAINSCREEN_WIDTH, 2.3*ZMT_LIST_LINE_HIGHT},
+            {ZMT_LIST_LINE_WIDTH+2*ZMT_LIST_ITEM_PANDDING, ZMT_LIST_LINE_HIGHT+11, MMI_MAINSCREEN_WIDTH, 2.3*ZMT_LIST_LINE_HIGHT},
             SONG_FONT_22, SONG_FONT_22,
             0, 0
         },     
@@ -5913,19 +5885,19 @@ LOCAL THEMELIST_ITEM_STYLE_T const zmt_book_list_item =
 //GUIITEM_SYTLE_ZMT_UNIT_LIST_MS,
 LOCAL THEMELIST_ITEM_STYLE_T const zmt_unit_list_item =
 {
-    1.5*WORD_CARD_LINE_HIGHT, 1.5*WORD_CARD_LINE_HIGHT,
+    1.5*ZMT_LIST_LINE_HIGHT, 1.5*ZMT_LIST_LINE_HIGHT,
     {
         {
             0,
-            { 5, 0,  MMI_MAINSCREEN_WIDTH-WORD_CARD_LINE_WIDTH, 1.5*WORD_CARD_LINE_HIGHT },       /* 2 */
-            { 5, 0,  MMI_MAINSCREEN_WIDTH-WORD_CARD_LINE_WIDTH, 1.5*WORD_CARD_LINE_HIGHT },       /* 2 */
-            SONG_FONT_16, SONG_FONT_16,
+            { 5, 0,  MMI_MAINSCREEN_WIDTH-ZMT_LIST_LINE_WIDTH, 1.5*ZMT_LIST_LINE_HIGHT },       /* 2 */
+            { 5, 0,  MMI_MAINSCREEN_WIDTH-ZMT_LIST_LINE_WIDTH, 1.5*ZMT_LIST_LINE_HIGHT },       /* 2 */
+            SONG_FONT_20, SONG_FONT_20,
             0, 100
         },
         {
             0,
-            { MMI_MAINSCREEN_WIDTH-WORD_CARD_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH, 1.5*WORD_CARD_LINE_HIGHT},     /* 2 */
-            { MMI_MAINSCREEN_WIDTH-WORD_CARD_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH, 1.5*WORD_CARD_LINE_HIGHT},     /* 2 */
+            { MMI_MAINSCREEN_WIDTH-ZMT_LIST_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH, 1.5*ZMT_LIST_LINE_HIGHT},     /* 2 */
+            { MMI_MAINSCREEN_WIDTH-ZMT_LIST_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH, 1.5*ZMT_LIST_LINE_HIGHT},     /* 2 */
             0, 0,
             0, 100
         },
@@ -5937,16 +5909,16 @@ LOCAL THEMELIST_ITEM_STYLE_T const zmt_unit_list_item =
 };
 #endif
 
-#ifdef HANZI_CARD_SUPPORT
+#if defined(ZMT_GPT_SUPPORT) || defined(ZMT_DIAL_STORE_SUPPORT)
 //GUIITEM_SYTLE_ZMT_HANZI_TEXT_MS
 LOCAL THEMELIST_ITEM_STYLE_T const zmt_hanzi_text_list =
 {
-    1.5*HANZI_CARD_LINE_HIGHT, 1.5*HANZI_CARD_LINE_HIGHT,
+    1.5*ZMT_LIST_LINE_HIGHT, 1.5*ZMT_LIST_LINE_HIGHT,
     {
         {
             0,
-            { 10, 0,  MMI_MAINSCREEN_WIDTH-10, 1.5*HANZI_CARD_LINE_HIGHT },
-            { 10, 0,  MMI_MAINSCREEN_WIDTH-10, 1.5*HANZI_CARD_LINE_HIGHT },
+            { 10, 0,  MMI_MAINSCREEN_WIDTH-10, 1.5*ZMT_LIST_LINE_HIGHT },
+            { 10, 0,  MMI_MAINSCREEN_WIDTH-10, 1.5*ZMT_LIST_LINE_HIGHT },
             SONG_FONT_16, SONG_FONT_16,
             0, 100
         },
@@ -5957,26 +5929,24 @@ LOCAL THEMELIST_ITEM_STYLE_T const zmt_hanzi_text_list =
         {0},
     },
 };
-#endif
-#ifdef ZMT_GPT_SUPPORT
 //GUIITEM_STYLE_GPT_ONE_ICON_AND_ONE_TEXT_MS,
 LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_gpt_1_icon_and_1_text_ms =
 {
-    3*ZMT_GPT_LINE_HIGHT, 3*ZMT_GPT_LINE_HIGHT,
+    3*ZMT_LIST_LINE_HIGHT, 3*ZMT_LIST_LINE_HIGHT,
 
     {        
         //icon
         {
             0,
-            {5, 0, 1.5*ZMT_GPT_LINE_WIDTH, 3*ZMT_GPT_LINE_HIGHT},
-            {5, 0, 1.5*ZMT_GPT_LINE_WIDTH, 3*ZMT_GPT_LINE_HIGHT},
+            {5, 0, 1.5*ZMT_LIST_LINE_WIDTH, 3*ZMT_LIST_LINE_HIGHT},
+            {5, 0, 1.5*ZMT_LIST_LINE_WIDTH, 3*ZMT_LIST_LINE_HIGHT},
             0, 0
         },
         //name
         {
             0,
-            {1.8*ZMT_GPT_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH-ZMT_GPT_LINE_WIDTH, 3*ZMT_GPT_LINE_HIGHT},
-            {1.8*ZMT_GPT_LINE_WIDTH, 0,  MMI_MAINSCREEN_WIDTH-ZMT_GPT_LINE_WIDTH, 3*ZMT_GPT_LINE_HIGHT},
+            {1.8*ZMT_LIST_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH-ZMT_LIST_LINE_WIDTH, 3*ZMT_LIST_LINE_HIGHT},
+            {1.8*ZMT_LIST_LINE_WIDTH, 0,  MMI_MAINSCREEN_WIDTH-ZMT_LIST_LINE_WIDTH, 3*ZMT_LIST_LINE_HIGHT},
             SONG_FONT_16, SONG_FONT_16,
             0, 0
         },
@@ -5989,24 +5959,24 @@ LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_gpt_1_icon_and_1_text_ms =
     0, MMILIST_INVALID_ITEM_INDEX
 };
 #endif
-#ifdef POETRY_LISTEN_SUPPORT
+#if defined(POETRY_LISTEN_SUPPORT) || defined(WORD_CARD_SUPPORT)
 //GUIITEM_STYLE_POETRY_GRADE_LIST_MS
 LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_poetry_grade_list_ms =
 {
-    2*POETRY_LINE_HIGHT, 2*POETRY_LINE_HIGHT,
+    2*ZMT_LIST_LINE_HIGHT, 2*ZMT_LIST_LINE_HIGHT,
     {
         //icon
         {
             0,
-            {0.4*POETRY_LINE_WIDTH, 0, 1.4*POETRY_LINE_WIDTH, 2*POETRY_LINE_HIGHT},
-            {0.4*POETRY_LINE_WIDTH, 0, 1.4*POETRY_LINE_WIDTH, 2*POETRY_LINE_HIGHT},
+            {0.4*ZMT_LIST_LINE_WIDTH, 0, 1.4*ZMT_LIST_LINE_WIDTH, 2*ZMT_LIST_LINE_HIGHT},
+            {0.4*ZMT_LIST_LINE_WIDTH, 0, 1.4*ZMT_LIST_LINE_WIDTH, 2*ZMT_LIST_LINE_HIGHT},
             0, 0
         }, 
         //text
         {
             0,
-            {1.4*POETRY_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH, 2*POETRY_LINE_HIGHT},
-            {1.4*POETRY_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH, 2*POETRY_LINE_HIGHT},
+            {1.4*ZMT_LIST_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH, 2*ZMT_LIST_LINE_HIGHT},
+            {1.4*ZMT_LIST_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH, 2*ZMT_LIST_LINE_HIGHT},
             SONG_FONT_16, SONG_FONT_16,
             0, 0
         },    
@@ -6020,21 +5990,21 @@ LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_poetry_grade_list_ms =
 //GUIITEM_STYLE_POETRY_ITEM_LIST_MS
 LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_poetry_item_list_ms =
 {
-    2*POETRY_LINE_HIGHT, 2*POETRY_LINE_HIGHT,
+    2*ZMT_LIST_LINE_HIGHT, 2*ZMT_LIST_LINE_HIGHT,
     {
         //bg
         {
             0,
-            {0, 0, MMI_MAINSCREEN_WIDTH, 2*POETRY_LINE_HIGHT},
-            {0, 0, MMI_MAINSCREEN_WIDTH, 2*POETRY_LINE_HIGHT},
+            {0, 0, MMI_MAINSCREEN_WIDTH, 2*ZMT_LIST_LINE_HIGHT},
+            {0, 0, MMI_MAINSCREEN_WIDTH, 2*ZMT_LIST_LINE_HIGHT},
             0, 0,
             0, 0
         }, 
         //text
         {
             GUIITEM_CONTENT_STATE_TEXT_M_ALIGN,
-            {0.2*POETRY_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH - 0.2*POETRY_LINE_WIDTH, 2*POETRY_LINE_HIGHT},
-            {0.2*POETRY_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH - 0.2*POETRY_LINE_WIDTH, 2*POETRY_LINE_HIGHT},
+            {0.2*ZMT_LIST_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH - 0.2*ZMT_LIST_LINE_WIDTH, 2*ZMT_LIST_LINE_HIGHT},
+            {0.2*ZMT_LIST_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH - 0.2*ZMT_LIST_LINE_WIDTH, 2*ZMT_LIST_LINE_HIGHT},
             SONG_FONT_20, SONG_FONT_20,
             0, 0
         },   
@@ -6047,51 +6017,16 @@ LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_poetry_item_list_ms =
 };
 #endif
 #ifdef FORMULA_SUPPORT
-//GUIITEM_STYLE_FORMULA_LIST_MS
-LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_formula_list_ms =
-{
-    3*FORMULA_LIST_ITEM_HIGHT, 3*FORMULA_LIST_ITEM_HIGHT,
-    {
-        //bg
-        {
-            0,
-            {0, 0, MMI_MAINSCREEN_WIDTH, 3*FORMULA_LIST_ITEM_HIGHT},
-            {0, 0, MMI_MAINSCREEN_WIDTH, 3*FORMULA_LIST_ITEM_HIGHT},
-            0, 0,
-            0, 0
-        }, 
-        //icon
-        {
-            0,
-            {0.4*FORMULA_LINE_WIDTH, 0, 1.4*FORMULA_LINE_WIDTH, 2.5*POETRY_LINE_HIGHT},
-            {0.4*FORMULA_LINE_WIDTH, 0, 1.4*FORMULA_LINE_WIDTH, 2.5*POETRY_LINE_HIGHT},
-            0, 0
-        }, 
-        //text
-        {
-            0,
-            {1.6*FORMULA_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH, 2.5*POETRY_LINE_HIGHT},
-            {1.6*FORMULA_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH, 2.5*POETRY_LINE_HIGHT},
-            SONG_FONT_16, SONG_FONT_16,
-            0, 0
-        },      
-        {0},
-        {0},
-        {0},
-    },
-    0, MMILIST_INVALID_ITEM_INDEX
-};
-
 //GUIITEM_STYLE_FORMULA_ITEM_LIST_MS
 LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_formula_item_list_ms =
 {
-    FORMULA_LIST_ITEM_HIGHT, FORMULA_LIST_ITEM_HIGHT,
+    ZMT_LIST_ITEM_HIGHT, ZMT_LIST_ITEM_HIGHT,
     {
         //text
         {
             0,
-            {10, 0, MMI_MAINSCREEN_WIDTH/2, FORMULA_LIST_ITEM_HIGHT},
-            {10, 0, MMI_MAINSCREEN_WIDTH/2, FORMULA_LIST_ITEM_HIGHT},
+            {10, 0, MMI_MAINSCREEN_WIDTH/2, ZMT_LIST_ITEM_HIGHT},
+            {10, 0, MMI_MAINSCREEN_WIDTH/2, ZMT_LIST_ITEM_HIGHT},
             SONG_FONT_20, SONG_FONT_20,
             0, 0
         }, 
@@ -6104,33 +6039,33 @@ LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_formula_item_list_ms =
     0, MMILIST_INVALID_ITEM_INDEX
 };
 #endif
-#ifdef ZMT_CLASS_SUPPORT
+#if defined(ZMT_CLASS_SUPPORT) || defined(FORMULA_SUPPORT)
 //GUIITEM_STYLE_CLASS_MAIN_LIST_MS
 LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_class_main_list_ms =
 {
-    2.5*CLASS_SYN_LINE_HIGHT, 2.5*CLASS_SYN_LINE_HIGHT,
+    2.5*ZMT_LIST_LINE_HIGHT, 2.5*ZMT_LIST_LINE_HIGHT,
     {
         //bg
         {
             0,
-            {0, 0, MMI_MAINSCREEN_WIDTH, 2.5*CLASS_SYN_LINE_HIGHT},
-            {0, 0, MMI_MAINSCREEN_WIDTH, 2.5*CLASS_SYN_LINE_HIGHT},
+            {0, 0, MMI_MAINSCREEN_WIDTH, 2.5*ZMT_LIST_LINE_HIGHT},
+            {0, 0, MMI_MAINSCREEN_WIDTH, 2.5*ZMT_LIST_LINE_HIGHT},
             0, 0,
             0, 0
         }, 
         //icon
         {
             0,
-            {0.3*CLASS_SYN_LINE_WIDTH, 0, 2*CLASS_SYN_LINE_WIDTH, 2.5*CLASS_SYN_LINE_HIGHT},
-            {0.3*CLASS_SYN_LINE_WIDTH, 0, 2*CLASS_SYN_LINE_WIDTH, 2.5*CLASS_SYN_LINE_HIGHT},
+            {0.3*ZMT_LIST_LINE_WIDTH, 0, 2*ZMT_LIST_LINE_WIDTH, 2.5*ZMT_LIST_LINE_HIGHT},
+            {0.3*ZMT_LIST_LINE_WIDTH, 0, 2*ZMT_LIST_LINE_WIDTH, 2.5*ZMT_LIST_LINE_HIGHT},
             0, 0,
             0, 0
         }, 
         //text
         {
             GUIITEM_CONTENT_STATE_MULTILINE,
-            {2*CLASS_SYN_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH-10, 2.5*CLASS_SYN_LINE_HIGHT},
-            {2*CLASS_SYN_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH-10, 2.5*CLASS_SYN_LINE_HIGHT},
+            {2*ZMT_LIST_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH-10, 2.5*ZMT_LIST_LINE_HIGHT},
+            {2*ZMT_LIST_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH-10, 2.5*ZMT_LIST_LINE_HIGHT},
             SONG_FONT_18, SONG_FONT_18,
             0, 0
         },   
@@ -6146,21 +6081,21 @@ LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_class_main_list_ms =
 //GUIITEM_STYLE_CLASS_SECTION_LIST_MS
 LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_class_section_list_ms =
 {
-    1.5*CLASS_SYN_LINE_HIGHT, 1.5*CLASS_SYN_LINE_HIGHT,
+    1.5*ZMT_LIST_LINE_HIGHT, 1.5*ZMT_LIST_LINE_HIGHT,
     {
         //text
         {
             GUIITEM_CONTENT_STATE_MULTILINE,
-            {0.3*CLASS_SYN_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH-1.2*CLASS_SYN_LINE_WIDTH, 1.5*CLASS_SYN_LINE_HIGHT},
-            {0.3*CLASS_SYN_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH-1.2*CLASS_SYN_LINE_WIDTH, 1.5*CLASS_SYN_LINE_HIGHT},
-            SONG_FONT_18, SONG_FONT_18,
+            {0.3*ZMT_LIST_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH-1.2*ZMT_LIST_LINE_WIDTH, 1.5*ZMT_LIST_LINE_HIGHT},
+            {0.3*ZMT_LIST_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH-1.2*ZMT_LIST_LINE_WIDTH, 1.5*ZMT_LIST_LINE_HIGHT},
+            SONG_FONT_20, SONG_FONT_20,
             0, 0
         },
         //icon
         {
             0,
-            {MMI_MAINSCREEN_WIDTH-1.2*CLASS_SYN_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH-5, 1.5*CLASS_SYN_LINE_HIGHT},
-            {MMI_MAINSCREEN_WIDTH-1.2*CLASS_SYN_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH-5, 1.5*CLASS_SYN_LINE_HIGHT},
+            {MMI_MAINSCREEN_WIDTH-1.2*ZMT_LIST_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH-5, 1.5*ZMT_LIST_LINE_HIGHT},
+            {MMI_MAINSCREEN_WIDTH-1.2*ZMT_LIST_LINE_WIDTH, 0, MMI_MAINSCREEN_WIDTH-5, 1.5*ZMT_LIST_LINE_HIGHT},
             0, 0,
             0, 0
         }, 
@@ -6465,26 +6400,23 @@ LOCAL THEMELIST_STYLE_TABLE_T const s_style_table[] =
     {GUIITEM_STYLE_TWO_ICON_AND_ONE_TEXT_MS, &s_item_style_2_icon_and_1_text_ms},
     {GUIITEM_STYLE_ONE_ICON_AND_ONE_TEXT_MS, &s_item_style_1_icon_and_1_text_ms},
 #endif    
-#ifdef WORD_CARD_SUPPORT   
+#if defined(WORD_CARD_SUPPORT) || defined(HANZI_CARD_SUPPORT)
     {GUIITEM_SYTLE_ZMT_PUBLISH_LIST_MS, &zmt_publish_list_item},
     {GUIITEM_SYTLE_ZMT_BOOK_LIST_MS, &zmt_book_list_item},
     {GUIITEM_SYTLE_ZMT_UNIT_LIST_MS, &zmt_unit_list_item},
 #endif
-#ifdef HANZI_CARD_SUPPORT
+#if defined(ZMT_GPT_SUPPORT) || defined(ZMT_DIAL_STORE_SUPPORT)
     {GUIITEM_SYTLE_ZMT_HANZI_TEXT_MS, &zmt_hanzi_text_list},
-#endif
-#ifdef ZMT_GPT_SUPPORT
     {GUIITEM_STYLE_GPT_ONE_ICON_AND_ONE_TEXT_MS, &s_item_style_gpt_1_icon_and_1_text_ms},
 #endif
-#ifdef POETRY_LISTEN_SUPPORT
+#if defined(POETRY_LISTEN_SUPPORT) || defined(WORD_CARD_SUPPORT)
     {GUIITEM_STYLE_POETRY_GRADE_LIST_MS, &s_item_style_poetry_grade_list_ms},
     {GUIITEM_STYLE_POETRY_ITEM_LIST_MS, &s_item_style_poetry_item_list_ms},
 #endif
 #ifdef FORMULA_SUPPORT
-    {GUIITEM_STYLE_FORMULA_LIST_MS, &s_item_style_formula_list_ms},
     {GUIITEM_STYLE_FORMULA_ITEM_LIST_MS, &s_item_style_formula_item_list_ms},
 #endif
-#ifdef ZMT_CLASS_SUPPORT
+#if defined(ZMT_CLASS_SUPPORT) || defined(FORMULA_SUPPORT)
     {GUIITEM_STYLE_CLASS_MAIN_LIST_MS, &s_item_style_class_main_list_ms},
     {GUIITEM_STYLE_CLASS_SECTION_LIST_MS, &s_item_style_class_section_list_ms},
 #endif
@@ -6493,7 +6425,6 @@ LOCAL THEMELIST_STYLE_TABLE_T const s_style_table[] =
 //============================================================================//
 
 };
-
 
 //0 default, 1 focus
 const uint8 s_item_theme_font_table[GUIITEM_THEME_MAX][2] =
