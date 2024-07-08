@@ -293,10 +293,6 @@ PMIC_CHARGER_DETECT_SUPPORT = FALSE                  ### support charger type de
                                                      # Option1:FALSE      #6121E is not support right now
                                                      # Option2:TRUE       #for extend in the future
 
-UAL_GNSS_SUPPORT = FALSE                            ### ual gnss
-                                                    # Option1:TRUE
-                                                    # Option2:FALSE
-
 AT_CMD_OP_SUPPORT = TRUE                             ### support ATC cmd to test daps function
                                                      # Option1:FALSE      not support
                                                      # Option2:TRUE       support

@@ -250,7 +250,7 @@ AUDIO_CODEC_TYPE = ES8311                            ### audio codec selection
                                                      # Option1:ES8311     #define ES8311
                                                      # Option2:ES8374     #define ES8374
 
-AUDIO_EXTPA_TYPE = AW87390#GPIO                              ### audio codec extpa selection
+AUDIO_EXTPA_TYPE = GPIO #AW87390 #                              ### audio codec extpa selection
                                                      # Option1:AW87390      #define AW87390
                                                      # Option2:GPIO         #define GPIO
 												 

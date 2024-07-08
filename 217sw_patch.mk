@@ -229,7 +229,7 @@ UAL_WIFI_SUPPORT = TRUE                              ### ual_wifi
                                                      # Option1:TRUE
                                                      # Option2:FALSE
 
-UAL_GNSS_SUPPORT = TRUE                            ### ual gnss
+UAL_GNSS_SUPPORT = FALSE                            ### ual gnss
                                                     # Option1:TRUE
                                                     # Option2:FALSE
 
