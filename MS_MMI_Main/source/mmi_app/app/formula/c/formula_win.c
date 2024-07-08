@@ -51,6 +51,10 @@ LOCAL GUI_RECT_T formula_multi_left_list_rect = {0, FORMULA_LINE_HIGHT, 3*FORMUL
 LOCAL GUI_RECT_T formula_multi_right_list_rect = {3*FORMULA_LINE_WIDTH, FORMULA_LINE_HIGHT, 6*FORMULA_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT - 1.5*FORMULA_LINE_HIGHT};
 LOCAL GUI_RECT_T formula_left_button_rect = {9, MMI_MAINSCREEN_HEIGHT - 1.5*FORMULA_LINE_HIGHT, 115, MMI_MAINSCREEN_HEIGHT - 2};
 LOCAL GUI_RECT_T formula_right_button_rect = {125, MMI_MAINSCREEN_HEIGHT - 1.5*FORMULA_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-9, MMI_MAINSCREEN_HEIGHT - 2};
+LOCAL GUI_RECT_T formula_msg_rect = {FORMULA_LINE_WIDTH, 3*FORMULA_LINE_HIGHT, MMI_MAINSCREEN_WIDTH - FORMULA_LINE_WIDTH, 7*FORMULA_LINE_HIGHT};
+LOCAL GUI_RECT_T formula_msg_tips_left_rect = {1.2*FORMULA_LINE_WIDTH, 5.5*FORMULA_LINE_HIGHT, 2.7*FORMULA_LINE_WIDTH, 7*FORMULA_LINE_HIGHT};
+LOCAL GUI_RECT_T formula_msg_tips_right_rect = {3.3*FORMULA_LINE_WIDTH, 5.5*FORMULA_LINE_HIGHT, 4.8*FORMULA_LINE_WIDTH, 7*FORMULA_LINE_HIGHT};
+
 
 LOCAL FORMULA_MULTI_TEXT_T formula_multi_text[FORMULA_COUNT_ITEM_MAX] = {
     "1  x  1  =  1", "1  x  2  =  2", "1  x  3  =  3", "1  x  4  =  4", "1  x  5  =  5", "1  x  6  =  6", "1  x  7  =  7", "1  x  8  =  8", "1  x  9  =  9",
@@ -65,10 +69,38 @@ LOCAL FORMULA_MULTI_TEXT_T formula_multi_text[FORMULA_COUNT_ITEM_MAX] = {
 
 LOCAL FORMULA_PLAY_INFO_T formula_play_info = {0};
 LOCAL MMISRV_HANDLE_T formula_player_handle = PNULL;
+LOCAL uint8 formula_table_play_status = 0;
 
+LOCAL void MMI_CloseFormulaTableTipWin(void);
 LOCAL void FormulaWin_StopRing(void);
 LOCAL void FormulaWin_PlayRing(uint8 idx);
 LOCAL void FormulaWin_ShowMultiText(MMI_WIN_ID_T win_id);
+LOCAL void FormulaTableTipWin_UpdateButton(BOOLEAN status);
+
+LOCAL BOOLEAN FormulaTableTipWin_PlayRingCallback(MMISRV_HANDLE_T handle, MMISRVMGR_NOTIFY_PARAM_T *param)
+{
+    MMISRVAUD_REPORT_T *report_ptr = PNULL;
+    if(param != PNULL && handle > 0)
+    {
+        report_ptr = (MMISRVAUD_REPORT_T *)param->data;
+        if(report_ptr != PNULL && handle == formula_player_handle)
+        {
+            switch(report_ptr->report)
+            {
+                case MMISRVAUD_REPORT_END:  
+                    {
+                        formula_table_play_status = 0;
+                        if(MMK_IsFocusWin(FORMULA_TABLE_TIP_WIN_ID)){
+                            FormulaTableTipWin_UpdateButton(formula_table_play_status);
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+}
 
 LOCAL BOOLEAN FormulaWin_PlayRingCallback(MMISRV_HANDLE_T handle, MMISRVMGR_NOTIFY_PARAM_T *param)
 {
@@ -83,19 +115,22 @@ LOCAL BOOLEAN FormulaWin_PlayRingCallback(MMISRV_HANDLE_T handle, MMISRVMGR_NOTI
             {
                 case MMISRVAUD_REPORT_END:  
                     {
-                        if(MMK_IsOpenWin(FORMULA_WIN_ID) && formula_play_info.play_status == FORMULA_ACTION_PLAY &&
-                            !MMK_IsOpenWin(FORMULA_TABLE_WIN_ID))
+                        if(MMK_IsOpenWin(FORMULA_WIN_ID) && formula_play_info.play_status == FORMULA_ACTION_PLAY)
                         {
                             if(formula_play_info.play_idx + 1 >= FORMULA_COUNT_ITEM_MAX){
                                 FormulaWin_StopRing();
                                 formula_play_info.play_status = FORMULA_ACTION_END;
-                                MMK_SendMsg(FORMULA_WIN_ID, MSG_FULL_PAINT, PNULL);
+                                if(MMK_IsFocusWin(FORMULA_WIN_ID)){
+                                    MMK_SendMsg(FORMULA_WIN_ID, MSG_FULL_PAINT, PNULL);
+                                }
                                 MMI_CreateFormulaTableWin();
                             }else{
                                 formula_play_info.play_idx++;
                                 SCI_SLEEP(1000);
                                 FormulaWin_PlayRing(formula_play_info.play_idx);
-                                FormulaWin_ShowMultiText(FORMULA_WIN_ID);
+                                if(MMK_IsFocusWin(FORMULA_WIN_ID)){
+                                    FormulaWin_ShowMultiText(FORMULA_WIN_ID);
+                                }
                             }
                         }
                         else
@@ -138,8 +173,13 @@ LOCAL void FormulaWin_PlayRing(uint8 idx)
         return;
     }
 
-    req.is_auto_free = FALSE;
-    req.notify = FormulaWin_PlayRingCallback;
+    if(MMK_IsOpenWin(FORMULA_TABLE_TIP_WIN_ID)){
+        req.is_auto_free = TRUE;
+        req.notify = FormulaTableTipWin_PlayRingCallback;
+    }else{
+        req.is_auto_free = FALSE;
+        req.notify = FormulaWin_PlayRingCallback;
+    }
     req.pri = MMISRVAUD_PRI_NORMAL;
 
     audio_srv.info.type = MMISRVAUD_TYPE_RING_BUF;
@@ -274,11 +314,11 @@ LOCAL void FormulaWin_FULL_PAINT(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_dev_i
                 FormulaWin_ShowMultiText(win_id);
                 if(formula_play_info.play_status == FORMULA_ACTION_PLAY)
                 {
-                    GUIRES_DisplayImg(PNULL, &formula_action_stop_rect, PNULL, win_id, FORMULA_START_IMG, &lcd_dev_info);
+                    GUIRES_DisplayImg(PNULL, &formula_action_stop_rect, PNULL, win_id, FORMULA_STOP_IMG, &lcd_dev_info);
                 }
                 else
                 {
-                    GUIRES_DisplayImg(PNULL, &formula_action_stop_rect, PNULL, win_id, FORMULA_STOP_IMG, &lcd_dev_info);
+                    GUIRES_DisplayImg(PNULL, &formula_action_stop_rect, PNULL, win_id, FORMULA_START_IMG, &lcd_dev_info);
                 }
                 GUIRES_DisplayImg(PNULL, &formula_action_reset_rect, PNULL, win_id, FORMULA_RESET_IMG, &lcd_dev_info);      
             }
@@ -301,6 +341,43 @@ LOCAL void FormulaWin_FULL_PAINT(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_dev_i
             break;
         default:
             break;
+    }
+}
+
+LOCAL void FormulaWin_CTL_PENOK(MMI_WIN_ID_T win_id)
+{
+    if(formula_play_info.play_status == FORMULA_ACTION_NONE)
+    {
+        formula_play_info.play_status = FORMULA_ACTION_PLAY;
+        formula_play_info.play_idx = 0;
+        FormulaWin_PlayRing(0);
+        MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
+    }
+    else
+    {
+        if(formula_play_info.play_status == FORMULA_ACTION_PLAY)
+        {
+            formula_play_info.play_status = FORMULA_ACTION_STOP;
+            FormulaWin_StopRing();
+            MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
+        }
+        else
+        {
+            formula_play_info.play_status = FORMULA_ACTION_PLAY;
+            FormulaWin_PlayRing(formula_play_info.play_idx);
+            MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
+        }
+    }
+}
+
+LOCAL void FormulaWin_KEYDOWN_FORWARD(MMI_WIN_ID_T win_id)
+{
+    if(formula_play_info.play_status == FORMULA_ACTION_PLAY || formula_play_info.play_status == FORMULA_ACTION_STOP)
+    {
+        formula_play_info.play_status = FORMULA_ACTION_NONE;
+        formula_play_info.play_idx = 0;
+        FormulaWin_StopRing();
+        MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
     }
 }
 
@@ -383,6 +460,24 @@ LOCAL MMI_RESULT_E HandleFormulaWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_
                 }
             }
             break;
+        case MSG_APP_OK:
+        case MSG_APP_WEB:
+        case MSG_CTL_MIDSK:
+        case MSG_CTL_OK:
+        case MSG_CTL_PENOK:
+            {
+                FormulaWin_CTL_PENOK(win_id);
+            }           
+            break;
+        case MSG_KEYDOWN_BACKWARD:
+        case MSG_KEYDOWN_FORWARD:
+            {
+                FormulaWin_KEYDOWN_FORWARD(win_id);
+            }
+            break;
+        case MSG_KEYDOWN_CANCEL:
+            break;
+        case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
                 MMK_CloseWin(win_id);
@@ -391,7 +486,7 @@ LOCAL MMI_RESULT_E HandleFormulaWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_
         case MSG_CLOSE_WINDOW:
             {
                 memset(&formula_play_info, 0, sizeof(FORMULA_PLAY_INFO_T));
-                MMIAPISET_StopRing(MMISET_RING_TYPE_OTHER);
+                FormulaWin_StopRing();
             }
             break;
         default:
@@ -418,6 +513,143 @@ PUBLIC void MMI_CreateFormulaWin(void)
     MMK_CreateWin(FORMULA_WIN_TAB, NULL);
 }
 
+LOCAL void FormulaTableTipWin_UpdateButton(BOOLEAN status)
+{
+    GUI_LCD_DEV_INFO lcd_dev_info = {GUI_MAIN_LCD_ID,GUI_BLOCK_MAIN};
+    GUI_BG_T bg = {0};
+    
+    GUI_FillRect(&lcd_dev_info, formula_msg_tips_left_rect, MMI_WHITE_COLOR);
+
+    bg.bg_type = GUI_BG_IMG;
+    if(status){
+        bg.img_id = FORMULA_TIPS_STOP_IMG;
+    }else{
+        bg.img_id = FORMULA_TIPS_START_IMG;
+    }
+    GUIBUTTON_SetBg(FORMULA_TABLE_TIP_LEFT_BUTTON_CTRL_ID, &bg);
+    GUIBUTTON_Update(FORMULA_TABLE_TIP_LEFT_BUTTON_CTRL_ID);
+}
+
+LOCAL void FormulaTableTipWin_LeftButtonCallback(void)
+{
+    uint8 idx = MMK_GetWinAddDataPtr(FORMULA_TABLE_TIP_WIN_ID);
+    if(formula_table_play_status == 0){
+        formula_table_play_status = 1;
+        FormulaWin_PlayRing(idx);
+    }else{
+        formula_table_play_status = 0;
+        FormulaWin_StopRing();
+    }
+    FormulaTableTipWin_UpdateButton(formula_table_play_status);
+}
+
+LOCAL void FormulaTableTipWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
+{
+    GUI_BG_T bg = {0};
+    bg.bg_type = GUI_BG_IMG;
+    bg.img_id = FORMULA_TIPS_START_IMG;
+    GUIBUTTON_SetRect(FORMULA_TABLE_TIP_LEFT_BUTTON_CTRL_ID, &formula_msg_tips_left_rect);
+    GUIBUTTON_SetCallBackFunc(FORMULA_TABLE_TIP_LEFT_BUTTON_CTRL_ID, FormulaTableTipWin_LeftButtonCallback);
+    GUIBUTTON_SetBg(FORMULA_TABLE_TIP_LEFT_BUTTON_CTRL_ID, &bg);
+
+    GUIBUTTON_SetRect(FORMULA_TABLE_TIP_RIGHT_BUTTON_CTRL_ID, &formula_msg_tips_right_rect);
+    GUIBUTTON_SetCallBackFunc(FORMULA_TABLE_TIP_RIGHT_BUTTON_CTRL_ID, MMI_CloseFormulaTableTipWin);
+}
+
+LOCAL void FormulaTableTipWin_FULL_PAINT(MMI_WIN_ID_T win_id)
+{
+    GUI_LCD_DEV_INFO lcd_dev_info = {GUI_MAIN_LCD_ID,GUI_BLOCK_MAIN};
+    GUISTR_STATE_T text_state = GUISTR_STATE_ALIGN | GUISTR_STATE_WORDBREAK;
+    GUISTR_STYLE_T text_style = {0};
+    MMI_STRING_T text_string = {0};
+    GUI_RECT_T text_rect = {0};
+    wchar text_wchar[100] = {0};
+    uint8 idx = MMK_GetWinAddDataPtr(win_id);
+
+    LCD_FillRoundedRect(&lcd_dev_info, formula_msg_rect, formula_msg_rect, MMI_WHITE_COLOR);
+
+    text_style.align = ALIGN_HVMIDDLE;
+    text_style.font = DP_FONT_26;
+    text_style.font_color = GUI_RGB2RGB565(80, 162, 254);
+
+    text_rect = formula_msg_rect;
+    text_rect.bottom = formula_msg_tips_right_rect.top;
+    GUI_GBToWstr(&text_wchar, formula_multi_text[idx].text, strlen(formula_multi_text[idx].text));
+    text_string.wstr_ptr = text_wchar;
+    text_string.wstr_len = MMIAPICOM_Wstrlen(text_wchar);
+    GUISTR_DrawTextToLCDInRect(
+        (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
+        &text_rect,
+        &text_rect,
+        &text_string,
+        &text_style,
+        text_state,
+        GUISTR_TEXT_DIR_AUTO
+    );
+}
+
+LOCAL MMI_RESULT_E HandleFormulaTableTipWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E msg_id, DPARAM param)
+{
+    MMI_RESULT_E result = MMI_RESULT_TRUE;
+    switch(msg_id)
+    {
+        case MSG_OPEN_WINDOW:  
+            {
+                FormulaTableTipWin_OPEN_WINDOW(win_id);
+            }
+            break;
+        case MSG_FULL_PAINT:
+            {    
+                FormulaTableTipWin_FULL_PAINT(win_id);
+            }
+            break;
+        case MSG_KEYDOWN_CANCEL:
+            break;
+        case MSG_KEYUP_RED:
+        case MSG_KEYUP_CANCEL:
+            MMK_CloseWin(win_id);
+            break;
+        case MSG_CLOSE_WINDOW:
+            {
+                formula_table_play_status = 0;
+                FormulaWin_StopRing();
+            }
+            break;
+        default:
+            result = MMI_RESULT_FALSE;
+            break;
+    }
+    return result;
+}
+
+WINDOW_TABLE(FORMULA_TABLE_TIP_WIN_TAB) =
+{
+    WIN_ID(FORMULA_TABLE_TIP_WIN_ID),
+    WIN_FUNC((uint32)HandleFormulaTableTipWinMsg),
+    CREATE_BUTTON_CTRL(PNULL, FORMULA_TABLE_TIP_LEFT_BUTTON_CTRL_ID),
+    CREATE_BUTTON_CTRL(FORMULA_TIPS_CLOSE_IMG, FORMULA_TABLE_TIP_RIGHT_BUTTON_CTRL_ID),
+    WIN_HIDE_STATUS,
+    END_WIN
+};
+
+LOCAL void MMI_CloseFormulaTableTipWin(void)
+{
+    if(MMK_IsOpenWin(FORMULA_TABLE_TIP_WIN_ID))
+    {
+        MMK_CloseWin(FORMULA_TABLE_TIP_WIN_ID);
+    }
+}
+
+PUBLIC void MMI_CreateFormulaTableTipWin(uint8 idx)
+{
+    MMI_HANDLE_T win_handle = 0;
+    GUI_RECT_T rect = formula_msg_rect;
+    
+    MMI_CloseFormulaTableTipWin();
+    win_handle = MMK_CreateWin(FORMULA_TABLE_TIP_WIN_TAB, (ADD_DATA)idx);
+    MMK_SetWinRect(win_handle,&rect);
+}
+
 LOCAL void FormulaTableWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
 {
     GUIFORM_CHILD_WIDTH_T list_ctrl_width  = {0};
@@ -442,6 +674,7 @@ LOCAL void FormulaTableWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
     GUIFORM_PermitChildFont(FORMULA_FORM_CTRL_ID,FALSE);
     GUIFORM_PermitChildBorder(FORMULA_FORM_CTRL_ID, FALSE);
     GUIFORM_SetDisplayScrollBar(FORMULA_FORM_CTRL_ID, FALSE);
+    MMK_SetActiveCtrl(FORMULA_FORM_CTRL_ID, FALSE);
     for(i = 0;i < 4;i++)
     {
         form_ctrl_id = FORMULA_FORM_CHILD_1_CTRL_ID + i;
@@ -465,11 +698,9 @@ LOCAL void FormulaTableWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
             list_ctrl_width.type = GUIFORM_CHILD_WIDTH_FIXED;
             list_ctrl_width.add_data = (formula_multi_table_rect.right - formula_multi_table_rect.left) / 2;
             GUIFORM_SetChildWidth(form_ctrl_id, list_ctrl_id, &list_ctrl_width);
-            MMK_SetAtvCtrl(win_id, list_ctrl_id);
             m++;
         }
     }
-    GUIFORM_SetActiveChild(FORMULA_FORM_CTRL_ID, FORMULA_FORM_CHILD_1_CTRL_ID);
 }
 
 LOCAL void FormulaTableWin_ShowMultiTable(MMI_WIN_ID_T win_id)
@@ -493,9 +724,10 @@ LOCAL void FormulaTableWin_ShowMultiTable(MMI_WIN_ID_T win_id)
         if(i % 2 == 1){
             list_num++;
         }
+        list_ctrl_id = FORMULA_FORM_CHILD_1_LIST_1_CTRL_ID + i;
+        GUILIST_RemoveAllItems(list_ctrl_id);
         for(j = 0;j < list_num;j++)
         {
-            list_ctrl_id = FORMULA_FORM_CHILD_1_LIST_1_CTRL_ID + i;
             item_info.item_style = GUIITEM_STYLE_FORMULA_ITEM_LIST_MS;
             item_info.item_data_ptr = &item_data;
 
@@ -511,9 +743,7 @@ LOCAL void FormulaTableWin_ShowMultiTable(MMI_WIN_ID_T win_id)
                 item_data.item_content[0].item_data.text_buffer = text_string;
                 m++;
             }
-
             GUILIST_AppendItem(list_ctrl_id, &item_info);
-            
         }
     }
 }
@@ -528,7 +758,7 @@ LOCAL void FormulaTableWin_FULL_PAINT(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_
     GUI_FillRect(&lcd_dev_info, formula_title_rect, GUI_RGB2RGB565(108, 181, 255));
 
     text_style.align = ALIGN_HVMIDDLE;
-    text_style.font = DP_FONT_22;
+    text_style.font = DP_FONT_24;
     text_style.font_color = MMI_WHITE_COLOR;
 
     MMIRES_GetText(TXT_FORMULA_TABLE_TITLE, win_id, &text_string);
@@ -576,12 +806,16 @@ LOCAL void FormulaTableWin_CTL_PENOK(MMI_WIN_ID_T win_id, DPARAM param)
 {
     uint8 i = 0;
     uint8 num = 9;
-    uint8 play_idx = 0;
-    uint8 cur_idx = 0;
-    uint8 cur_ctrl_idx = 0;
+    int8 play_idx = 0;
+    int8 cur_idx = 0;
+    int8 cur_ctrl_idx = 0;
     MMI_CTRL_ID_T ctrl_id = ((MMI_NOTIFY_T *)param)->src_id;
 
     cur_ctrl_idx = ctrl_id - FORMULA_FORM_CHILD_1_LIST_1_CTRL_ID;
+    if(cur_ctrl_idx < 0){
+        ctrl_id = FORMULA_FORM_CHILD_1_LIST_1_CTRL_ID;
+        cur_ctrl_idx = 0;
+    }
     cur_idx = GUILIST_GetCurItemIndex(ctrl_id);
     for(i = 0;i < cur_ctrl_idx;i++)
     {
@@ -593,7 +827,7 @@ LOCAL void FormulaTableWin_CTL_PENOK(MMI_WIN_ID_T win_id, DPARAM param)
         play_idx--;
     }
     SCI_TRACE_LOW("%s: play_idx = %d", __FUNCTION__, play_idx);
-    FormulaWin_PlayRing(play_idx);
+    MMI_CreateFormulaTableTipWin(play_idx);
 }
 
 LOCAL void FormulaTableWin_TP_PRESS_UP(MMI_WIN_ID_T win_id, GUI_POINT_T point)
@@ -628,6 +862,10 @@ LOCAL MMI_RESULT_E HandleFormulaTableWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
                 FormulaTableWin_FULL_PAINT(win_id, lcd_dev_info);
             }
             break;
+        case MSG_APP_OK:
+        case MSG_APP_WEB:
+        case MSG_CTL_MIDSK:
+        case MSG_CTL_OK:
         case MSG_CTL_PENOK:
             {
                 FormulaTableWin_CTL_PENOK(win_id, param);
@@ -666,18 +904,18 @@ WINDOW_TABLE(FORMULA_TABLE_WIN_TAB) =
     WIN_ID(FORMULA_TABLE_WIN_ID),
     WIN_FUNC((uint32)HandleFormulaTableWinMsg),
     CREATE_FORM_CTRL(GUIFORM_LAYOUT_ORDER,FORMULA_FORM_CTRL_ID),
-        CHILD_FORM_CTRL(TRUE,GUIFORM_LAYOUT_SBS,FORMULA_FORM_CHILD_1_CTRL_ID,FORMULA_FORM_CTRL_ID),
-            CHILD_LIST_CTRL(TRUE, GUILIST_TYPE_TEXT_ID, FORMULA_FORM_CHILD_1_LIST_1_CTRL_ID, FORMULA_FORM_CHILD_1_CTRL_ID),
-            CHILD_LIST_CTRL(TRUE, GUILIST_TYPE_TEXT_ID, FORMULA_FORM_CHILD_1_LIST_2_CTRL_ID, FORMULA_FORM_CHILD_1_CTRL_ID),
-        CHILD_FORM_CTRL(TRUE,GUIFORM_LAYOUT_SBS,FORMULA_FORM_CHILD_2_CTRL_ID,FORMULA_FORM_CTRL_ID),
-            CHILD_LIST_CTRL(TRUE, GUILIST_TYPE_TEXT_ID, FORMULA_FORM_CHILD_2_LIST_1_CTRL_ID, FORMULA_FORM_CHILD_2_CTRL_ID),
-            CHILD_LIST_CTRL(TRUE, GUILIST_TYPE_TEXT_ID, FORMULA_FORM_CHILD_2_LIST_2_CTRL_ID, FORMULA_FORM_CHILD_2_CTRL_ID),
-        CHILD_FORM_CTRL(TRUE,GUIFORM_LAYOUT_SBS,FORMULA_FORM_CHILD_3_CTRL_ID,FORMULA_FORM_CTRL_ID),
-            CHILD_LIST_CTRL(TRUE, GUILIST_TYPE_TEXT_ID, FORMULA_FORM_CHILD_3_LIST_1_CTRL_ID, FORMULA_FORM_CHILD_3_CTRL_ID),
-            CHILD_LIST_CTRL(TRUE, GUILIST_TYPE_TEXT_ID, FORMULA_FORM_CHILD_3_LIST_2_CTRL_ID, FORMULA_FORM_CHILD_3_CTRL_ID),
-        CHILD_FORM_CTRL(TRUE,GUIFORM_LAYOUT_SBS,FORMULA_FORM_CHILD_4_CTRL_ID,FORMULA_FORM_CTRL_ID),
-            CHILD_LIST_CTRL(TRUE, GUILIST_TYPE_TEXT_ID, FORMULA_FORM_CHILD_4_LIST_1_CTRL_ID, FORMULA_FORM_CHILD_4_CTRL_ID),
-            CHILD_LIST_CTRL(TRUE, GUILIST_TYPE_TEXT_ID, FORMULA_FORM_CHILD_4_LIST_2_CTRL_ID, FORMULA_FORM_CHILD_4_CTRL_ID),
+        CHILD_FORM_CTRL(FALSE,GUIFORM_LAYOUT_SBS,FORMULA_FORM_CHILD_1_CTRL_ID,FORMULA_FORM_CTRL_ID),
+            CHILD_LIST_CTRL(FALSE, GUILIST_TYPE_TEXT_ID, FORMULA_FORM_CHILD_1_LIST_1_CTRL_ID, FORMULA_FORM_CHILD_1_CTRL_ID),
+            CHILD_LIST_CTRL(FALSE, GUILIST_TYPE_TEXT_ID, FORMULA_FORM_CHILD_1_LIST_2_CTRL_ID, FORMULA_FORM_CHILD_1_CTRL_ID),
+        CHILD_FORM_CTRL(FALSE,GUIFORM_LAYOUT_SBS,FORMULA_FORM_CHILD_2_CTRL_ID,FORMULA_FORM_CTRL_ID),
+            CHILD_LIST_CTRL(FALSE, GUILIST_TYPE_TEXT_ID, FORMULA_FORM_CHILD_2_LIST_1_CTRL_ID, FORMULA_FORM_CHILD_2_CTRL_ID),
+            CHILD_LIST_CTRL(FALSE, GUILIST_TYPE_TEXT_ID, FORMULA_FORM_CHILD_2_LIST_2_CTRL_ID, FORMULA_FORM_CHILD_2_CTRL_ID),
+        CHILD_FORM_CTRL(FALSE,GUIFORM_LAYOUT_SBS,FORMULA_FORM_CHILD_3_CTRL_ID,FORMULA_FORM_CTRL_ID),
+            CHILD_LIST_CTRL(FALSE, GUILIST_TYPE_TEXT_ID, FORMULA_FORM_CHILD_3_LIST_1_CTRL_ID, FORMULA_FORM_CHILD_3_CTRL_ID),
+            CHILD_LIST_CTRL(FALSE, GUILIST_TYPE_TEXT_ID, FORMULA_FORM_CHILD_3_LIST_2_CTRL_ID, FORMULA_FORM_CHILD_3_CTRL_ID),
+        CHILD_FORM_CTRL(FALSE,GUIFORM_LAYOUT_SBS,FORMULA_FORM_CHILD_4_CTRL_ID,FORMULA_FORM_CTRL_ID),
+            CHILD_LIST_CTRL(FALSE, GUILIST_TYPE_TEXT_ID, FORMULA_FORM_CHILD_4_LIST_1_CTRL_ID, FORMULA_FORM_CHILD_4_CTRL_ID),
+            CHILD_LIST_CTRL(FALSE, GUILIST_TYPE_TEXT_ID, FORMULA_FORM_CHILD_4_LIST_2_CTRL_ID, FORMULA_FORM_CHILD_4_CTRL_ID),
     WIN_HIDE_STATUS,
     END_WIN
 };
@@ -792,6 +1030,9 @@ LOCAL MMI_RESULT_E HandleFormulaMnemonicWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_I
                 FormulaMnemonicWin_CTL_PENOK(win_id);
             }
             break;
+        case MSG_KEYDOWN_CANCEL:
+            break;
+        case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
                 MMK_CloseWin(win_id);
@@ -825,4 +1066,9 @@ PUBLIC void MMI_CreateMathMnemonicWin(void)
         MMK_CloseWin(FORMULA_MNEMONIC_WIN_ID);
     }
     MMK_CreateWin(FORMULA_MNEMONIC_WIN_TAB, NULL);
+}
+
+PUBLIC void MMIZMT_CloseFormulaPlayer(void)
+{
+    FormulaWin_StopRing();
 }

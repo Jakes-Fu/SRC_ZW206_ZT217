@@ -40,3 +40,4 @@ typedef struct
 }FORMULA_PLAY_INFO_T;
 
 PUBLIC void MMI_CreateFormulaTableWin(void);
+PUBLIC void MMIZMT_CloseFormulaPlayer(void);
