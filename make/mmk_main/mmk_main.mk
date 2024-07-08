@@ -56,9 +56,9 @@ endif
 ifeq ($(strip $(GPS_SUPPORT)),TRUE)
 MINCPATH += ms_ref/source/gps/green_eye2/ge2_libgps_mp/gps_lib/inc
 MINCPATH += BASE/l4/export/inc
-MINCPATH += BASE/Layer1/export/inc
 endif
 
+MINCPATH += BASE/Layer1/export/inc
 MINCPATH += BASE/l4/export/inc
 
 ifeq ($(strip $(BAIDU_AI_SUPPORT)),TRUE)
