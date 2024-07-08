@@ -878,7 +878,7 @@ BOOLEAN MMK_DefaultMSGKbd(
     */
     /*--按键音处理 key press tone*/
 #ifndef BAIDU_VIDEOCHAT_SUPPORT
-    DefaultKeyTone(keystatus, keycode);
+    //DefaultKeyTone(keystatus, keycode);
 #endif
 
     /*--dtmf处理*/
