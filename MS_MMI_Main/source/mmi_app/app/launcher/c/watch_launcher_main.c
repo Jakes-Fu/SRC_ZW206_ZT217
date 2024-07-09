@@ -241,6 +241,10 @@ const APP_LIST_ITEM_T  g_app_list_info[] =
    MENU_TOOLS,
 #endif
 
+#ifdef ZMT_PINYIN_SUPPORT
+    MENU_PINYIN,
+#endif
+
 };
 
 LOCAL uint8 APP_MENU_SIZE = sizeof(g_app_list_info)/sizeof(APP_LIST_ITEM_T);

@@ -175,6 +175,10 @@ PUBLIC void MMIZMT_CreateZmtGptWin(void);
 PUBLIC void MMI_CreateClassMainWin(void);
 #endif
 
+#ifdef ZMT_PINYIN_SUPPORT
+PUBLIC void MMI_CreatePinyinMainWin(void);
+#endif
+
 #ifdef MAINMENU_STYLE_SUPPORT
 PUBLIC void WatchSET_MenuStyle_Enter( void );//²Ëµ¥ÇÐ»»
 #endif
@@ -292,7 +296,7 @@ extern PUBLIC uint8 Video_Call_Incoming_Test();
 #endif
 
 #ifdef FORMULA_SUPPORT
-#define MENU_MNEMONICS {19, 0, mnemonics_text, res_app_ic_mnemonics, light_pink_bg, MMI_CreateMathMnemonicWin} 
+#define MENU_MNEMONICS {19, 0, mnemonics_text, res_app_ic_mnemonics, light_cyan_bg, MMI_CreateMathMnemonicWin} 
 #endif
 
 #ifdef LISTENING_PRATICE_SUPPORT
@@ -316,11 +320,15 @@ extern PUBLIC uint8 Video_Call_Incoming_Test();
 #endif
 
 #if defined(ZDT_TOOLS_MENU_SUPPORT)// wuxx add.
-#define MENU_TOOLS {25, 0, tools_text, res_app_ic_tools, light_cyan_bg, WatchTools_MainWin_Enter} 
+#define MENU_TOOLS {25, 0, tools_text, res_app_ic_tools, dark_orange_bg, WatchTools_MainWin_Enter} 
 #endif
 
 #ifdef ZMT_CLASS_SUPPORT
 #define MENU_CLASS {26, 0, textbook_text, res_app_ic_contact, textbook_bg, MMI_CreateClassMainWin} 
+#endif
+
+#ifdef ZMT_PINYIN_SUPPORT
+#define MENU_PINYIN {27, 0, pinyin_text, res_app_ic_pinyin, dark_blue_bg, MMI_CreatePinyinMainWin} 
 #endif
 
 //*******²Ëµ¥***************//

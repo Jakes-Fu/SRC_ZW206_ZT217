@@ -1484,3 +1484,7 @@ RES_ADD_MODULE(MMI_MODULE_ZMT_NET,"\\zmt_net\\zmt_net_mdu_def.h")
 #ifdef  ZMT_CLASS_SUPPORT
 RES_ADD_MODULE(MMI_MODULE_ZMT_CLASS,"\\zmt_class\\zmt_class_mdu_def.h")
 #endif
+
+#ifdef  ZMT_PINYIN_SUPPORT
+RES_ADD_MODULE(MMI_MODULE_ZMT_PINYIN,"\\zmt_pinyin\\zmt_pinyin_mdu_def.h")
+#endif

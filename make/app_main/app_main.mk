@@ -2633,3 +2633,9 @@ MINCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_class/h
 MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_class/c
 SOURCES			+=  zmt_class_win.c zmt_class_data.c
 endif
+
+ifeq ($(strip $(ZMT_PINYIN_SUPPORT)), TRUE)
+MINCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_pinyin/h
+MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_pinyin/c
+SOURCES			+=  zmt_pinyin_win.c zmt_pinyin_data.c
+endif
