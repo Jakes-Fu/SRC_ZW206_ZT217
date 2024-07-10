@@ -627,11 +627,11 @@ LOCAL MMI_RESULT_E HandlePinyinTableWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
                 PinyinTableWin_FULL_PAINT(win_id);
             }
             break;
-        //case MSG_APP_WEB:
-        //case MSG_APP_OK:
+        case MSG_APP_WEB:
+        case MSG_APP_OK:
         case MSG_CTL_MIDSK:
         case MSG_CTL_OK:
-        //case MSG_CTL_PENOK:
+        case MSG_CTL_PENOK:
             { 
                 PinyinTableWin_CTL_PENOK(win_id, param);
             }
