@@ -2590,7 +2590,7 @@ ifeq ($(strip $(LISTENING_PRATICE_SUPPORT)), TRUE)
 MINCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_listening/h
 MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_listening/c
 SOURCES			+=  zmt_listening_win.c zmt_listening_http.c zmt_listening_parse.c zmt_listening_player.c
-SOURCES			+=  zmt_listening_download.c zmt_listening_local.c zmt_listening_nv.c zmt_main_file.c corepush_md5.c
+SOURCES			+=  zmt_listening_download.c zmt_listening_local.c zmt_listening_nv.c zmt_main_file.c
 endif
 
 ifeq ($(strip $(WORD_CARD_SUPPORT)), TRUE)

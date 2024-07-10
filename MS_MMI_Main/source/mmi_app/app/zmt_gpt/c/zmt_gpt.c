@@ -36,9 +36,7 @@
 #endif
 #include "graphics_draw.h"
 #include "img_dec_interface.h"
-#ifndef WIN32
-#include "mbedtls/base64.h"
-#endif
+#include "mbedtls/md5.h"
 
 #define ZMT_GPT_MAX_ITEM 2
 
@@ -52,11 +50,31 @@ char * gpt_baidu_access_token = NULL;
 uint32 baidu_access_token_times = 0;
 char gpt_record_encry_buf[GPT_MAX_RECORD_SIZE] = {0};
 
-PUBLIC void ZMT_makeGptTokenUrl(uint8 type, char * url, int page, int size)
+LOCAL uint8 * GPT_MakeMd5Str(char * sign)
+{
+    mbedtls_md5_context md5_ctx = {0};
+    char digest[16] = {0};
+    uint8 i = 0;
+    uint8 *md5 = (uint8 *)SCI_ALLOC_APPZ(33);
+#ifndef WIN32
+    mbedtls_md5_init(&md5_ctx);
+    mbedtls_md5_starts(&md5_ctx);
+    mbedtls_md5_update(&md5_ctx, sign, strlen(sign));
+    mbedtls_md5_finish(&md5_ctx, digest);
+    mbedtls_md5_free(&md5_ctx);
+#endif
+    for(i = 0; i < 16; i++)
+    {
+        sprintf(md5+(i*2),"%02x",digest[i]);
+    }
+    return md5;
+}
+
+PUBLIC void GPT_makeGptTokenUrl(uint8 type, char * url, int page, int size)
 {
     char imei[20] = {0};
     char ua[200] = {0};
-    char sn[200] = {0};
+    char * sn = NULL;
     long t = 0; 
     char sn_str[200] = {0};
 
@@ -65,7 +83,7 @@ PUBLIC void ZMT_makeGptTokenUrl(uint8 type, char * url, int page, int size)
     sprintf(ua, "%s%s", GPT_HTTP_URL_KOUYU_UA, imei);
     t = MMIAPICOM_GetCurTime() + ZMT_GPT_TIMES_DIFF_FROM_1978_TO_1980;
     sprintf(sn_str, "%s%s%ld", ua, GPT_HTTP_URL_KOUYU_APPSEC, t);
-    corepush_md5_str(&sn_str, &sn);
+    sn = GPT_MakeMd5Str(sn_str);
     if(type == 0){
         sprintf(url, "%s%s?platform=%s&page=%d&size=%d&ua=%s&t=%ld&sn=%s", 
             GPT_HTTP_URL_KOUYU, GPT_HTTP_URL_KOUYU_MODEL_LIST, GPT_HTTP_URL_KOUYU_PLATFORM, page, size, ua, t, sn);
@@ -73,6 +91,7 @@ PUBLIC void ZMT_makeGptTokenUrl(uint8 type, char * url, int page, int size)
         sprintf(url, "%s%s?&ua=%s&t=%ld&sn=%s",
             GPT_HTTP_URL_KOUYU, GPT_HTTP_URL_KOUYU_SEND_CHAT, ua, t, sn);
     }
+    SCI_FREE(sn);
     SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
 }
 
@@ -339,7 +358,7 @@ PUBLIC void ZmtGpt_SendTxt(uint32 app_type, char * send_txt, char * sys_param, c
     SCI_TRACE_LOW("%s: strlen(out) = %d", __FUNCTION__, strlen(out));
     SCI_TRACE_LOW("%s: out = %s", __FUNCTION__, out);
 	
-    ZMT_makeGptTokenUrl(1, &url, 1, 10);
+    GPT_makeGptTokenUrl(1, &url, 1, 10);
     if(post_type == 0)
     {
 #if ZMT_GPT_USE_FOR_TEST != 0
@@ -506,7 +525,9 @@ LOCAL MMI_RESULT_E HandleZmtGptWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_i
                 ZmtGpt_CTL_PENOK(win_id);
             }
             break;
-        case MSG_APP_RED:
+        case MSG_KEYDOWN_CANCEL:
+            break;
+        case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
                 MMK_CloseWin(win_id);

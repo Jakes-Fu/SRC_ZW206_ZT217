@@ -405,6 +405,9 @@ LOCAL MMI_RESULT_E HandleWordPopupWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E m
                 WordPopupWin_CTL_PENOK(win_id);
             }
             break;
+        case MSG_KEYDOWN_CANCEL:
+            break;
+        case MSG_KEYDOWN_RED:
         case MSG_KEYUP_CANCEL:
             MMK_CloseWin(win_id);
             break;
@@ -666,6 +669,8 @@ LOCAL MMI_RESULT_E HandleWordMainWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg
                     MMI_CreateWordTipsWin();
                 }
             }
+            break;
+        case MSG_KEYDOWN_CANCEL:
             break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
@@ -950,6 +955,7 @@ LOCAL void WordChapterWin_CTL_PENOK(MMI_WIN_ID_T win_id, DPARAM param)
 {
     uint16 cur_idx = GUILIST_GetCurItemIndex(MMI_ZMT_WORD_CHAPTER_LIST_CTRL_ID);
     if(cur_idx == word_book_info.cur_chapter_idx){
+        is_open_new_word = FALSE;
         MMI_CreateWordDetailWin();
     }else{
         word_book_info.cur_chapter_idx = cur_idx;
@@ -976,6 +982,8 @@ LOCAL MMI_RESULT_E HandleWordChapterWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
             {
                 WordChapterWin_FULL_PAINT(win_id);
             }
+            break;
+        case MSG_KEYDOWN_CANCEL:
             break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
@@ -1765,6 +1773,8 @@ LOCAL MMI_RESULT_E HandleWordDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E m
                 main_tp_down_y = MMK_GET_TP_Y(param);
             }
             break;
+        case MSG_KEYDOWN_CANCEL:
+            break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
@@ -1928,6 +1938,8 @@ LOCAL MMI_RESULT_E HandleWordListenInfoWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID
                 main_tp_down_x = MMK_GET_TP_X(param);
                 main_tp_down_y = MMK_GET_TP_Y(param);
             }
+            break;
+        case MSG_KEYDOWN_CANCEL:
             break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
@@ -2238,6 +2250,8 @@ LOCAL MMI_RESULT_E HandleWordListenSetWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_
             {
                 WordListenSetWin_CTL_PENOK(win_id, param);
             }
+            break;
+        case MSG_KEYDOWN_CANCEL:
             break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
@@ -2626,6 +2640,8 @@ LOCAL MMI_RESULT_E HandleWordListenWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E m
             {
                 WordListenWin_BottomActionFunc();
             }
+            break;
+        case MSG_KEYDOWN_CANCEL:
             break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:

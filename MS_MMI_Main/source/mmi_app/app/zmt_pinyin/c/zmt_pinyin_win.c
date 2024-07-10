@@ -801,6 +801,8 @@ LOCAL MMI_RESULT_E HandlePinyinMainWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E m
                 PinyinMainWin_CTL_PENOK(win_id, param);
             }
             break;
+        case MSG_KEYDOWN_CANCEL:
+            break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {

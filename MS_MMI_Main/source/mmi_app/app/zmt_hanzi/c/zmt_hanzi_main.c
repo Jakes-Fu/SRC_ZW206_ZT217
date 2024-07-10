@@ -354,6 +354,9 @@ LOCAL MMI_RESULT_E HandleHanziPopupWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E 
                 HanziPopupWin_FULL_PAINT(win_id);
             }
             break;
+        case MSG_KEYDOWN_CANCEL:
+            break;
+        case MSG_KEYDOWN_RED:
         case MSG_KEYUP_CANCEL:
             MMK_CloseWin(win_id);
             break;
@@ -515,6 +518,8 @@ LOCAL MMI_RESULT_E HandleHanziWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_id
                     MMI_CreateHanziTipsWin();
                 }
             }
+            break;
+        case MSG_KEYDOWN_CANCEL:
             break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
@@ -816,6 +821,7 @@ LOCAL void HanziChapterWin_CTL_PENOK(MMI_WIN_ID_T win_id)
     SCI_TRACE_LOW("%s: cur_idx = %d", __FUNCTION__, cur_idx);
     if(cur_idx == hanzi_book_info.cur_chapter_idx)
     {
+        is_open_new_hanzi = FALSE;
         Hanzi_OpenNormalHanzi();
     }
     else
@@ -868,6 +874,8 @@ LOCAL MMI_RESULT_E HandleHanziChapterWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
             {
                 HanziChapterWin_FULL_PAINT(win_id);
             }
+            break;
+        case MSG_KEYDOWN_CANCEL:
             break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
@@ -1584,6 +1592,8 @@ LOCAL MMI_RESULT_E HandleHanziDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
                 main_tp_down_y = MMK_GET_TP_Y(param);
             }
             break;
+        case MSG_KEYDOWN_CANCEL:
+            break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
@@ -1743,6 +1753,8 @@ LOCAL MMI_RESULT_E HandleHanziListenInfoWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_I
                 main_tp_down_x = MMK_GET_TP_X(param);
                 main_tp_down_y = MMK_GET_TP_Y(param);
             }
+            break;
+        case MSG_KEYDOWN_CANCEL:
             break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
@@ -2051,6 +2063,8 @@ LOCAL MMI_RESULT_E HandleHanziListenSetWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID
             {
                 HanziListenSetWin_CTL_PENOK(win_id, param);
             }
+            break;
+        case MSG_KEYDOWN_CANCEL:
             break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
@@ -2441,6 +2455,8 @@ LOCAL MMI_RESULT_E HandleHanziListenWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
             {
                 HanziListenWin_BottomActionFunc();
             }
+            break;
+        case MSG_KEYDOWN_CANCEL:
             break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:

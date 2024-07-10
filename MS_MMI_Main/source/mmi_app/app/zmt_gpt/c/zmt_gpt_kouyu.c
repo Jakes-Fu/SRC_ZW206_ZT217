@@ -145,8 +145,6 @@ LOCAL BOOLEAN ZmtGptKouYuTalk_PlayAmrDataNotify(MMISRV_HANDLE_T handle, MMISRVMG
                 case MMISRVAUD_REPORT_END:  
                     {
                         SCI_TRACE_LOW("%s player end", __FUNCTION__);
-                        MMISRVAUD_Stop(handle);
-                        MMISRVMGR_Free(handle);
                     }
                     break;
                 default:
@@ -170,7 +168,7 @@ LOCAL void ZmtGptKouYuTalk_PlayAmrData(uint8 *data,uint32 data_len)
         gpt_kouyu_player_handle = NULL;
     }
 
-    req.is_auto_free = FALSE;
+    req.is_auto_free = TRUE;
     req.notify = ZmtGptKouYuTalk_PlayAmrDataNotify;
     req.pri = MMISRVAUD_PRI_NORMAL;
 
@@ -1386,6 +1384,11 @@ LOCAL MMI_RESULT_E HandleZmtGptKouYuTalkWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_I
                 ZmtGptKouYuTalk_FULL_PAINT(win_id);               
             }
             break;
+        case MSG_LOSE_FOCUS:
+            {
+                SCI_TRACE_LOW("%s: ", __FUNCTION__);
+            }
+            break;
         case MSG_APP_OK:
         case MSG_APP_WEB:
         case MSG_CTL_MIDSK:
@@ -1405,6 +1408,9 @@ LOCAL MMI_RESULT_E HandleZmtGptKouYuTalkWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_I
                 ZmtGptKouYuTalk_KEYDOWN_UP_DOWN(win_id, FALSE);
             }
             break;
+        case MSG_KEYDOWN_CANCEL:
+            break;
+        case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
                 MMK_CloseWin(win_id);
@@ -1758,6 +1764,7 @@ LOCAL MMI_RESULT_E HandleZmtGptKouYuTopicWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_
     {
         case MSG_OPEN_WINDOW:
             {
+                zmt_gpt_topic_status = 0;
                 ZmtGptTopic_RequsetTopicList();
             }
             break;
@@ -1771,6 +1778,9 @@ LOCAL MMI_RESULT_E HandleZmtGptKouYuTopicWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_
                 ZmtGptKouYuTopic_CTL_PENOK(win_id);
             }
             break;
+        case MSG_KEYDOWN_CANCEL:
+            break;
+        case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
                 MMK_CloseWin(win_id);

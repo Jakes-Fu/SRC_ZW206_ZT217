@@ -1282,6 +1282,9 @@ LOCAL MMI_RESULT_E HandleZmtGptZuoWenWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
                 }
             }
             break;  
+        case MSG_KEYDOWN_CANCEL:
+            break;
+        case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
                 MMK_CloseWin(win_id);
