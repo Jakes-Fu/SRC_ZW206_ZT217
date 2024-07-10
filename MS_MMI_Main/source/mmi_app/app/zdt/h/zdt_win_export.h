@@ -179,6 +179,10 @@ PUBLIC void MMI_CreateClassMainWin(void);
 PUBLIC void MMI_CreatePinyinMainWin(void);
 #endif
 
+#ifdef ZMT_YINBIAO_SUPPORT
+PUBLIC void MMI_CreateYinbiaoMainWin(void);
+#endif
+
 #ifdef MAINMENU_STYLE_SUPPORT
 PUBLIC void WatchSET_MenuStyle_Enter( void );//²Ëµ¥ÇÐ»»
 #endif
@@ -331,6 +335,9 @@ extern PUBLIC uint8 Video_Call_Incoming_Test();
 #define MENU_PINYIN {27, 0, pinyin_text, res_app_ic_pinyin, dark_blue_bg, MMI_CreatePinyinMainWin} 
 #endif
 
+#ifdef ZMT_YINBIAO_SUPPORT
+#define MENU_YINBIAO {28, 0, yinbiao_text, res_app_ic_pinyin, dark_blue_bg, MMI_CreateYinbiaoMainWin} 
+#endif
 //*******²Ëµ¥***************//
 
 #ifdef __cplusplus

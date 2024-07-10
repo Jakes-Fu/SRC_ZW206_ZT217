@@ -88,7 +88,10 @@ RES_ADD_IMG(ai_text,"\\MMI_RES_##\\IMAG\\ai_text.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(res_app_ic_pinyin,"\\MMI_RES_##\\IMAG\\res_app_ic_pinyin.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(pinyin_text,"\\MMI_RES_##\\IMAG\\pinyin_text.png",IMG_CMP_PNG_ARGB_RLE,0)
 #endif
+#ifdef ZMT_PINYIN_SUPPORT
 
+RES_ADD_IMG(yinbiao_text,"\\MMI_RES_##\\IMAG\\yinbiao_text.png",IMG_CMP_PNG_ARGB_RLE,0)
+#endif
 #ifdef ZDT_TOOLS_MENU_SUPPORT
 RES_ADD_IMG(res_app_ic_tools,"\\MMI_RES_##\\IMAG\\res_app_ic_tools.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(tools_text,"\\MMI_RES_##\\IMAG\\tools_text.png",IMG_CMP_PNG_ARGB_RLE,0)

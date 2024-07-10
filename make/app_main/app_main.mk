@@ -2639,3 +2639,11 @@ MINCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_pinyin/h
 MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_pinyin/c
 SOURCES			+=  zmt_pinyin_win.c zmt_pinyin_data.c
 endif
+
+
+
+ifeq ($(strip $(ZMT_YINBIAO_SUPPORT)), TRUE)
+MINCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_yinbiao/h
+MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_yinbiao/c
+SOURCES			+=  zmt_yinbiao_win.c 
+endif

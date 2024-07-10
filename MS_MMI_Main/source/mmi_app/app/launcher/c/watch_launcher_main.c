@@ -245,6 +245,10 @@ const APP_LIST_ITEM_T  g_app_list_info[] =
     MENU_PINYIN,
 #endif
 
+#ifdef ZMT_YINBIAO_SUPPORT
+    MENU_YINBIAO,
+#endif
+
 };
 
 LOCAL uint8 APP_MENU_SIZE = sizeof(g_app_list_info)/sizeof(APP_LIST_ITEM_T);
