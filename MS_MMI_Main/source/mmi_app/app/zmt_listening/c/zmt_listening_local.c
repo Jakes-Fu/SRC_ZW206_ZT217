@@ -190,7 +190,6 @@ LOCAL void ListeningLocalAudioWin_ButtonDeleteCallback(void)
         uint8 i = 0;
         BOOLEAN delete_module = FALSE;
         uint8 delete_count = 0;
-        int audio_id[100] = {0};
         LISTEING_LOCAL_INFO * local_info = NULL;
         uint8 id_index = 0;
         local_info = Listening_GetLocalDataInfo();
@@ -199,7 +198,6 @@ LOCAL void ListeningLocalAudioWin_ButtonDeleteCallback(void)
         {
             if(delete_info.select_info[i].is_select)
             {
-                audio_id[delete_count] = local_info->module_info[id_index].album_info[0].audio_info[i].audio_id;
                 delete_count++;
             }
         }
@@ -211,18 +209,22 @@ LOCAL void ListeningLocalAudioWin_ButtonDeleteCallback(void)
         {
             delete_module = TRUE;
         }
-        for(i = 0;i < delete_count;i++)
-        {
-            Listening_DeleteOneAudio(delete_module, local_info->module_info[id_index].module_id, audio_id[i]);
-            if(delete_module) break;
-        }
-        memset(&delete_info, 0, sizeof(LISTEING_LOCAL_DELETE_INFO));
+        SCI_TRACE_LOW("%s: delete_module = %d", __FUNCTION__, delete_module);
         if(delete_module)
         {
+            Listening_DeleteOneAlbum(local_info->module_info[id_index].module_id);
+            memset(&delete_info, 0, sizeof(LISTEING_LOCAL_DELETE_INFO));
             MMK_CloseWin(LISTENING_LOCAL_AUDIO_WIN_ID);
         }
         else
         {
+            for(i = 0;i < local_info->module_info[id_index].album_info[0].audio_count;i++)
+            {
+                if(delete_info.select_info[i].is_select){
+                    Listening_DeleteOneAudio(local_info->module_info[id_index].module_id, local_info->module_info[id_index].album_info[0].audio_info[i].audio_id);
+                }
+            }
+            memset(&delete_info, 0, sizeof(LISTEING_LOCAL_DELETE_INFO));
             MMK_SendMsg(LISTENING_LOCAL_AUDIO_WIN_ID, MSG_FULL_PAINT, PNULL);
         }
     }
@@ -535,14 +537,18 @@ LOCAL MMI_RESULT_E HandleListeningLocalAudioWinMsg(
 				}
 			}
 			break;
+		case MSG_APP_OK:
+		case MSG_APP_WEB:
+		case MSG_CTL_MIDSK:
+		case MSG_CTL_OK:
 		case MSG_CTL_PENOK:
 			{
 				uint16 index = GUILIST_GetCurItemIndex(ctrl_id);
 				id_index = (uint8) MMK_GetWinAddDataPtr(win_id);
-				//index += AUDIO_LIST_SHOW_ITEM_MAX * listening_info->local_audio_cur;
+				SCI_TRACE_LOW("%s: delete_info.is_select_delete = %d", __FUNCTION__, delete_info.is_select_delete);
 				if(!delete_info.is_select_delete)
 				{
-					listening_info->local_audio_cur = 0;//
+					listening_info->local_audio_cur = 0;
 					#ifdef WIN32
 						MMI_TestToOpenPlayerWin();
 					#else
@@ -589,11 +595,14 @@ LOCAL MMI_RESULT_E HandleListeningLocalAudioWinMsg(
 				point.y = MMK_GET_TP_Y(param);
 			}
 			break;
+		case MSG_KEYDOWN_CANCEL:
+		    break;
+		case MSG_KEYUP_RED:
 		case MSG_KEYUP_CANCEL:
 			{
-				MMK_CloseWin(win_id);	
+			    MMK_CloseWin(win_id);
 			}
-			break;
+		    break;
 		case MSG_CLOSE_WINDOW:
 			{
 				memset(&delete_info, 0, sizeof(LISTEING_LOCAL_DELETE_INFO));
@@ -983,6 +992,10 @@ LOCAL MMI_RESULT_E HandleListeningLocalWinMsg(
 				ListeningLocalWin_DisplayListAndDir(win_id);
 			}
 			break;
+		case MSG_APP_OK:
+		case MSG_APP_WEB:
+		case MSG_CTL_MIDSK:
+		case MSG_CTL_OK:
 		case MSG_CTL_PENOK:
 			{
 				uint16 index = GUILIST_GetCurItemIndex(ctrl_id);
@@ -1014,11 +1027,14 @@ LOCAL MMI_RESULT_E HandleListeningLocalWinMsg(
 				point.y = MMK_GET_TP_Y(param);
 			}
 			break;
+		case MSG_KEYDOWN_CANCEL:
+		    break;
+		case MSG_KEYUP_RED:
 		case MSG_KEYUP_CANCEL:
 			{
-				MMK_CloseWin(win_id);	
+			    MMK_CloseWin(win_id);
 			}
-			break;
+		    break;
 		case MSG_CLOSE_WINDOW:
 			{
 				if(listening_info != NULL)

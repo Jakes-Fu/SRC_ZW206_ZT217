@@ -145,8 +145,6 @@ LOCAL BOOLEAN ZmtGptKouYuTalk_PlayAmrDataNotify(MMISRV_HANDLE_T handle, MMISRVMG
                 case MMISRVAUD_REPORT_END:  
                     {
                         SCI_TRACE_LOW("%s player end", __FUNCTION__);
-                        MMISRVAUD_Stop(handle);
-                        MMISRVMGR_Free(handle);
                     }
                     break;
                 default:
@@ -170,7 +168,7 @@ LOCAL void ZmtGptKouYuTalk_PlayAmrData(uint8 *data,uint32 data_len)
         gpt_kouyu_player_handle = NULL;
     }
 
-    req.is_auto_free = FALSE;
+    req.is_auto_free = TRUE;
     req.notify = ZmtGptKouYuTalk_PlayAmrDataNotify;
     req.pri = MMISRVAUD_PRI_NORMAL;
 
@@ -1089,7 +1087,7 @@ LOCAL BOOLEAN ZmtGptKouYuTalk_DestoryDynaCtrl(MMI_WIN_ID_T win_id)
     uint8 i = 0;
     if(MMK_GetCtrlHandleByWin(win_id, ZMT_GPT_FORM_CTRL_ID))
     {
-        for(i = 0; i < gpt_kouyu_talk_size;i++)
+        for(i = 0; i < gpt_kouyu_talk_size + 1;i++)
         {
             if(MMK_GetCtrlHandleByWin(win_id, ZMT_GPT_FORM_TEXT_1_CTRL_ID+i))
             {
@@ -1112,6 +1110,7 @@ LOCAL void ZmtGptKouYuTalk_ShowFormList(MMI_WIN_ID_T win_id)
     GUI_BG_T form_bg = {GUI_BG_COLOR, GUI_SHAPE_ROUNDED_RECT, 0, GPT_WIN_BG_COLOR, FALSE};
     GUI_BG_T text_bg = {GUI_BG_COLOR, GUI_SHAPE_ROUNDED_RECT, 0, MMI_WHITE_COLOR, FALSE};
     GUIFORM_CHILD_WIDTH_T child_width = {0};
+    GUIFORM_CHILD_HEIGHT_T child_height = {0};
     GUI_BORDER_T border = {1, MMI_WHITE_COLOR, GUI_BORDER_ROUNDED};
     GUI_COLOR_T font_color = GPT_WIN_BG_COLOR;
     GUI_FONT_T font_size = DP_FONT_18;
@@ -1122,7 +1121,7 @@ LOCAL void ZmtGptKouYuTalk_ShowFormList(MMI_WIN_ID_T win_id)
 
     ZmtGptKouYuTalk_DestoryDynaCtrl(win_id);
     SCI_TRACE_LOW("%s: gpt_kouyu_talk_size = %d", __FUNCTION__, gpt_kouyu_talk_size);
-    for(i = 0;i < gpt_kouyu_talk_size;i++)
+    for(i = 0;i < gpt_kouyu_talk_size + 1;i++)
     {
         GUITEXT_INIT_DATA_T text_init_data = {0};
         GUIFORM_DYNA_CHILD_T text_form_child_ctrl = {0};
@@ -1172,6 +1171,25 @@ LOCAL void ZmtGptKouYuTalk_ShowFormList(MMI_WIN_ID_T win_id)
     }
     GUITEXT_SetBorder(&border, ZMT_GPT_FORM_TEXT_1_CTRL_ID + gpt_kouyu_cur_idx);
     GUIFORM_SetActiveChild(ctrl_handle, ZMT_GPT_FORM_TEXT_1_CTRL_ID + gpt_kouyu_cur_idx);
+    {
+        text_ctrl_id++;
+        child_width.type = GUIFORM_CHILD_WIDTH_FIXED;
+        child_width.add_data = width;
+        GUIFORM_SetChildWidth(ctrl_handle, text_ctrl_id, &child_width);
+        child_height.type = GUIFORM_CHILD_HEIGHT_FIXED;
+        child_height.add_data = 2*ZMT_GPT_LINE_HIGHT;
+        GUIFORM_SetChildHeight(ctrl_handle, text_ctrl_id, &child_width);
+        GUIFORM_SetChildAlign(ctrl_handle, text_ctrl_id, GUIFORM_CHILD_ALIGN_LEFT);
+        GUITEXT_SetAlign(text_ctrl_id, ALIGN_LVMIDDLE);
+        text_bg.color = GPT_WIN_BG_COLOR;
+        GUITEXT_SetBg(text_ctrl_id, &text_bg);
+        GUITEXT_SetFont(text_ctrl_id, &font_size, &font_color);
+        GUITEXT_IsDisplayPrg(FALSE, text_ctrl_id);
+        GUITEXT_SetClipboardEnabled(text_ctrl_id, FALSE);
+        MMIRES_GetText(ZMT_CHAT_GPT_EMPTY_TXT, win_id, &text_string);
+        GUITEXT_SetString(text_ctrl_id, text_string.wstr_ptr, text_string.wstr_len, TRUE);
+        GUITEXT_SetHandleTpMsg(FALSE, text_ctrl_id);
+    }
 }
 
 LOCAL void ZmtGptKouYuTalk_FULL_PAINT(MMI_WIN_ID_T win_id)
@@ -1386,6 +1404,11 @@ LOCAL MMI_RESULT_E HandleZmtGptKouYuTalkWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_I
                 ZmtGptKouYuTalk_FULL_PAINT(win_id);               
             }
             break;
+        case MSG_LOSE_FOCUS:
+            {
+                SCI_TRACE_LOW("%s: ", __FUNCTION__);
+            }
+            break;
         case MSG_APP_OK:
         case MSG_APP_WEB:
         case MSG_CTL_MIDSK:
@@ -1405,6 +1428,9 @@ LOCAL MMI_RESULT_E HandleZmtGptKouYuTalkWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_I
                 ZmtGptKouYuTalk_KEYDOWN_UP_DOWN(win_id, FALSE);
             }
             break;
+        case MSG_KEYDOWN_CANCEL:
+            break;
+        case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
                 MMK_CloseWin(win_id);
@@ -1758,6 +1784,7 @@ LOCAL MMI_RESULT_E HandleZmtGptKouYuTopicWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_
     {
         case MSG_OPEN_WINDOW:
             {
+                zmt_gpt_topic_status = 0;
                 ZmtGptTopic_RequsetTopicList();
             }
             break;
@@ -1771,6 +1798,9 @@ LOCAL MMI_RESULT_E HandleZmtGptKouYuTopicWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_
                 ZmtGptKouYuTopic_CTL_PENOK(win_id);
             }
             break;
+        case MSG_KEYDOWN_CANCEL:
+            break;
+        case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
                 MMK_CloseWin(win_id);

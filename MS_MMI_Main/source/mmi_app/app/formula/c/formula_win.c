@@ -16,7 +16,6 @@
 #include "mmi_theme.h"
 #include "mmidisplay_data.h"
 #include "mmi_timer_export.h"
-#include "os_api.h"
 #include "mmk_type.h"
 #include "formula_id.h"
 #include "mmi_default.h"
@@ -603,6 +602,15 @@ LOCAL MMI_RESULT_E HandleFormulaTableTipWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_
                 FormulaTableTipWin_FULL_PAINT(win_id);
             }
             break;
+        case MSG_APP_OK:
+        case MSG_APP_WEB:
+        case MSG_CTL_MIDSK:
+        case MSG_CTL_OK:
+        case MSG_CTL_PENOK:
+            {
+                FormulaTableTipWin_LeftButtonCallback();
+            }
+            break;
         case MSG_KEYDOWN_CANCEL:
             break;
         case MSG_KEYUP_RED:
@@ -882,6 +890,9 @@ LOCAL MMI_RESULT_E HandleFormulaTableWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
                 }
             }
             break;
+        case MSG_KEYDOWN_CANCEL:
+            break;
+        case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
                 MMK_CloseWin(win_id);

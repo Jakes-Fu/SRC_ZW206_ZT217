@@ -29,6 +29,9 @@
 #define pinyin_title_rect {0, 0, MMI_MAINSCREEN_WIDTH, PINYIN_LINE_HIGHT}//¶¥²¿
 #define pinyin_list_rect {0, PINYIN_LINE_HIGHT, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT-5}//ÁÐ±í
 #define pinyin_yinbiao_rect {10, 2.5*PINYIN_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-10, 8*PINYIN_LINE_HIGHT}
+#define pinyin_msg_rect {PINYIN_LINE_WIDTH, 3*PINYIN_LINE_HIGHT, MMI_MAINSCREEN_WIDTH - PINYIN_LINE_WIDTH, 7*PINYIN_LINE_HIGHT}
+#define pinyin_msg_tips_left_rect {1.2*PINYIN_LINE_WIDTH, 5.5*PINYIN_LINE_HIGHT, 2.7*PINYIN_LINE_WIDTH, 7*PINYIN_LINE_HIGHT}
+#define pinyin_msg_tips_right_rect {3.3*PINYIN_LINE_WIDTH, 5.5*PINYIN_LINE_HIGHT, 4.8*PINYIN_LINE_WIDTH, 7*PINYIN_LINE_HIGHT}
 
 PINYIN_INFO_TEXT_T pinyin_info_text[PINYIN_ICON_LIST_ITEM_MAX][PINYIN_SHENG_ITEM_MAX] = {
     {"a", "o", "e", "i", "u", "¨¹"}, {"ai", "ei", "ao", "ou",  "ie", "iu",  "¨¹e"}, {"an", "en", "in", "un",  "¨¹n"},
@@ -45,9 +48,12 @@ LOCAL PINYIN_READ_INFO_T pinyin_read_info = {0};
 LOCAL MMISRV_HANDLE_T pinyin_player_handle = PNULL;
 LOCAL uint8 pinyin_player_timer_id = 0;
 LOCAL MMI_CTRL_ID_T pinyin_cur_select_id = ZMT_PINYIN_BUTTON_1_CTRL_ID;
+LOCAL int8 pinyin_table_play_status = 0;
 
 LOCAL void Pinyin_StopMp3Data(void);
 LOCAL void Pinyin_PlayMp3Data(uint8 idx, char * text);
+LOCAL void PinyinTableTipWin_UpdateButton(BOOLEAN status);
+LOCAL void MMI_ClosePinyinTableTipWin(void);
 LOCAL void PinyinReadWin_PreCallback(void);
 LOCAL void PinyinReadWin_PlayCallback(void);
 LOCAL void PinyinReadWin_NextCallback(void);
@@ -58,12 +64,12 @@ LOCAL void Pinyin_InitIconlist(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id, GUI_R
     GUI_BORDER_T border={0};
     GUI_BG_T ctrl_bg = {0};
     GUI_FONT_ALL_T font_all = {0};
-    GUIICONLIST_MARGINSPACE_INFO_T margin_space = {10,15,0,2};
+    GUIICONLIST_MARGINSPACE_INFO_T margin_space = {5,15,0,0};
     
     GUIICONLIST_SetTotalIcon(ctrl_id,max_item);
     GUIICONLIST_SetCurIconIndex(0,ctrl_id);
-    GUIICONLIST_SetStyle(ctrl_id,GUIICONLIST_STYLE_ICON);
-    GUIICONLIST_SetIconWidthHeight(ctrl_id, 100, 48);
+    GUIICONLIST_SetStyle(ctrl_id,GUIICONLIST_STYLE_ICON_UIDT);
+    GUIICONLIST_SetIconWidthHeight(ctrl_id, 110, 48);
     GUIICONLIST_SetLayoutStyle(ctrl_id,GUIICONLIST_LAYOUT_V);
     border.type = GUI_BORDER_NONE;
     GUIICONLIST_SetItemBorderStyle(ctrl_id,FALSE,&border);
@@ -79,7 +85,7 @@ LOCAL void Pinyin_InitIconlist(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id, GUI_R
     GUIICONLIST_SetIconItemSpace(ctrl_id, margin_space);
     GUIICONLIST_SetRect(ctrl_id, &list_rect);
     font_all.color = MMI_WHITE_COLOR;
-    font_all.font = DP_FONT_20;
+    font_all.font = DP_FONT_24;
     GUIICONLIST_SetIconListTextInfo(ctrl_id, font_all);
     MMK_SetAtvCtrl(win_id, ctrl_id);
 }
@@ -162,7 +168,9 @@ LOCAL void Pinyin_IntervalTimerCallback(uint8 timer_id, uint32 param)
             pinyin_read_info.is_play = FALSE;
             Pinyin_StopMp3Data();
         }
-        PinyinReadWin_UpdateButtonBgWin(pinyin_read_info.is_play);
+        if(MMK_IsFocusWin(ZMT_PINYIN_READ_WIN_ID)){
+            PinyinReadWin_UpdateButtonBgWin(pinyin_read_info.is_play);
+        }
     }
 }
 
@@ -175,7 +183,34 @@ LOCAL void Pinyin_CreateIntervalTimer(void)
     MMK_StartTimerCallback(pinyin_player_timer_id, 2000, Pinyin_IntervalTimerCallback, PNULL, FALSE);
     
     pinyin_read_info.is_play = FALSE;
-    PinyinReadWin_UpdateButtonBgWin(pinyin_read_info.is_play);
+    if(MMK_IsFocusWin(ZMT_PINYIN_READ_WIN_ID)){
+        PinyinReadWin_UpdateButtonBgWin(pinyin_read_info.is_play);
+    }
+}
+
+LOCAL BOOLEAN PinyinTableTipWin_PlayRingCallback(MMISRV_HANDLE_T handle, MMISRVMGR_NOTIFY_PARAM_T *param)
+{
+    MMISRVAUD_REPORT_T *report_ptr = PNULL;
+    if(param != PNULL && handle > 0)
+    {
+        report_ptr = (MMISRVAUD_REPORT_T *)param->data;
+        if(report_ptr != PNULL && handle == pinyin_player_handle)
+        {
+            switch(report_ptr->report)
+            {
+                case MMISRVAUD_REPORT_END:  
+                    {
+                        pinyin_table_play_status = 0;
+                        if(MMK_IsFocusWin(ZMT_PINYIN_TABLE_TIP_WIN_ID)){
+                            PinyinTableTipWin_UpdateButton(pinyin_table_play_status);
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 }
 
 LOCAL BOOLEAN Pinyin_PlayMp3DataCallback(MMISRV_HANDLE_T handle, MMISRVMGR_NOTIFY_PARAM_T *param)
@@ -225,15 +260,34 @@ LOCAL void Pinyin_PlayMp3Data(uint8 idx, char * text)
 
     sprintf(file_path, PINYIN_MP3_DATA_BASE_PATH, idx, text);
     GUI_GBToWstr(file_name, file_path, strlen(file_path));
-    if(!MMIFILE_IsFileExist(file_name, MMIAPICOM_Wstrlen(file_name))){
-        pinyin_read_info.is_play = FALSE;
-        PinyinReadWin_UpdateButtonBgWin(pinyin_read_info.is_play);
+    if(!MMIFILE_IsFileExist(file_name, MMIAPICOM_Wstrlen(file_name)))
+    {
+        if(MMK_IsOpenWin(ZMT_PINYIN_TABLE_TIP_WIN_ID))
+        {
+            pinyin_table_play_status = -1;
+            PinyinTableTipWin_UpdateButton(pinyin_table_play_status);
+            MMK_SendMsg(ZMT_PINYIN_TABLE_TIP_WIN_ID, MSG_FULL_PAINT, PNULL);
+        }
+        else
+        {
+            pinyin_read_info.is_play = FALSE;
+            PinyinReadWin_UpdateButtonBgWin(pinyin_read_info.is_play);
+        }
         return;
     }
-    
-    req.is_auto_free = FALSE;
-    req.notify = Pinyin_PlayMp3DataCallback;
-    req.pri = MMISRVAUD_PRI_NORMAL;
+
+    if(MMK_IsOpenWin(ZMT_PINYIN_TABLE_TIP_WIN_ID))
+    {
+        req.is_auto_free = TRUE;
+        req.notify = PinyinTableTipWin_PlayRingCallback;
+        req.pri = MMISRVAUD_PRI_NORMAL;
+    }
+    else
+    {
+        req.is_auto_free = FALSE;
+        req.notify = Pinyin_PlayMp3DataCallback;
+        req.pri = MMISRVAUD_PRI_NORMAL;
+    }
 
     audio_srv.info.type = MMISRVAUD_TYPE_RING_FILE;
     audio_srv.info.ring_file.fmt  = MMISRVAUD_RING_FMT_MP3;
@@ -261,6 +315,371 @@ LOCAL void Pinyin_PlayMp3Data(uint8 idx, char * text)
     {
         SCI_TRACE_LOW("%s pinyin_player_handle <= 0", __FUNCTION__);
     }
+}
+
+LOCAL void PinyinTableTipWin_UpdateButton(BOOLEAN status)
+{
+    GUI_LCD_DEV_INFO lcd_dev_info = {GUI_MAIN_LCD_ID,GUI_BLOCK_MAIN};
+    GUI_BG_T bg = {GUI_BG_IMG, 0};
+    GUI_RECT_T text_left_rect = pinyin_msg_tips_left_rect;
+
+    text_left_rect.bottom -= 2;
+    GUI_FillRect(&lcd_dev_info, text_left_rect, MMI_WHITE_COLOR);
+
+    if(status){
+        bg.img_id = IMG_PINYIN_TABLE_TIPS_START_IMG;
+    }else{
+        bg.img_id = IMG_PINYIN_TABLE_TIPS_STOP_IMG;
+    }
+    GUIBUTTON_SetBg(ZMT_PINYIN_TABLE_TIP_LEFT_CTRL_ID, &bg);
+    GUIBUTTON_Update(ZMT_PINYIN_TABLE_TIP_LEFT_CTRL_ID);
+}
+
+LOCAL void PinyinTableTipWin_LeftButtonCallback(void)
+{
+    uint8 idx = MMK_GetWinAddDataPtr(ZMT_PINYIN_TABLE_TIP_WIN_ID);
+    if(pinyin_table_play_status == 0){
+        pinyin_table_play_status = 1;
+        Pinyin_PlayMp3Data(pinyin_read_info.cur_icon_idx, pinyin_info_text[pinyin_read_info.cur_icon_idx][idx].text);
+    }else{
+        pinyin_table_play_status = 0;
+        Pinyin_StopMp3Data();
+    }
+    PinyinTableTipWin_UpdateButton(pinyin_table_play_status);
+}
+
+LOCAL void PinyinTableTipWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
+{
+    GUI_RECT_T text_left_rect = pinyin_msg_tips_left_rect;
+    GUI_RECT_T text_right_rect = pinyin_msg_tips_right_rect;
+    GUI_BG_T bg = {0};
+    bg.bg_type = GUI_BG_IMG;
+    bg.img_id = IMG_PINYIN_TABLE_TIPS_STOP_IMG;
+    GUIBUTTON_SetRect(ZMT_PINYIN_TABLE_TIP_LEFT_CTRL_ID, &text_left_rect);
+    GUIBUTTON_SetCallBackFunc(ZMT_PINYIN_TABLE_TIP_LEFT_CTRL_ID, PinyinTableTipWin_LeftButtonCallback);
+    GUIBUTTON_SetBg(ZMT_PINYIN_TABLE_TIP_LEFT_CTRL_ID, &bg);
+
+    GUIBUTTON_SetRect(ZMT_PINYIN_TABLE_TIP_RIGHT_CTRL_ID, &text_right_rect);
+    GUIBUTTON_SetCallBackFunc(ZMT_PINYIN_TABLE_TIP_RIGHT_CTRL_ID, MMI_ClosePinyinTableTipWin);
+}
+
+LOCAL void PinyinTableTipWin_FULL_PAINT(MMI_WIN_ID_T win_id)
+{
+    GUI_LCD_DEV_INFO lcd_dev_info = {GUI_MAIN_LCD_ID,GUI_BLOCK_MAIN};
+    GUISTR_STATE_T text_state = GUISTR_STATE_ALIGN | GUISTR_STATE_WORDBREAK;
+    GUISTR_STYLE_T text_style = {0};
+    MMI_STRING_T text_string = {0};
+    GUI_RECT_T text_rect = pinyin_msg_rect;
+    GUI_RECT_T text_left_rect = pinyin_msg_tips_left_rect;
+    GUI_RECT_T text_right_rect = pinyin_msg_tips_right_rect;
+    wchar text_wchar[100] = {0};
+    uint8 idx = MMK_GetWinAddDataPtr(win_id);
+    uint8 size = 0;
+
+    LCD_FillRoundedRect(&lcd_dev_info, text_rect, text_rect, MMI_WHITE_COLOR);
+    LCD_DrawRoundedRect(&lcd_dev_info, text_rect, text_rect, PINYIN_TITLE_BG_COLOR);
+
+    text_style.align = ALIGN_HVMIDDLE;
+    text_style.font_color = PINYIN_WIN_BG_COLOR;
+
+    text_rect.bottom = text_left_rect.top;
+    text_rect.left += 10;
+    text_rect.right -= 10;
+    if(pinyin_table_play_status == -1)
+    {
+        GUIBUTTON_SetVisible(ZMT_PINYIN_TABLE_TIP_LEFT_CTRL_ID, FALSE, FALSE);
+        MMIRES_GetText(PINYIN_MP3_ERROR_TIP_TXT, win_id, &text_string);
+        text_style.font = DP_FONT_22;
+    }
+    else
+    {
+        GUIBUTTON_SetVisible(ZMT_PINYIN_TABLE_TIP_LEFT_CTRL_ID, TRUE, TRUE);
+        size = strlen(pinyin_info_text[pinyin_read_info.cur_icon_idx][idx].text);
+        GUI_GBToWstr(&text_wchar, pinyin_info_text[pinyin_read_info.cur_icon_idx][idx].text, size);
+        text_string.wstr_ptr = text_wchar;
+        text_string.wstr_len = MMIAPICOM_Wstrlen(text_wchar);
+        text_style.font = DP_FONT_28;
+    }
+    GUISTR_DrawTextToLCDInRect(
+        (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
+        &text_rect,
+        &text_rect,
+        &text_string,
+        &text_style,
+        text_state,
+        GUISTR_TEXT_DIR_AUTO
+    );
+}
+
+LOCAL MMI_RESULT_E HandlePinyinTableTipWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E msg_id, DPARAM param)
+{
+    MMI_RESULT_E result = MMI_RESULT_TRUE;
+    switch(msg_id)
+    {
+        case MSG_OPEN_WINDOW:  
+            {
+                PinyinTableTipWin_OPEN_WINDOW(win_id);
+            }
+            break;
+        case MSG_FULL_PAINT:
+            {    
+                PinyinTableTipWin_FULL_PAINT(win_id);
+            }
+            break;
+        case MSG_APP_OK:
+        case MSG_APP_WEB:
+        case MSG_CTL_MIDSK:
+        case MSG_CTL_OK:
+        case MSG_CTL_PENOK:
+            {
+                PinyinTableTipWin_LeftButtonCallback();
+            }
+            break;
+        case MSG_KEYDOWN_CANCEL:
+            break;
+        case MSG_KEYUP_RED:
+        case MSG_KEYUP_CANCEL:
+            MMK_CloseWin(win_id);
+            break;
+        case MSG_CLOSE_WINDOW:
+            {
+                pinyin_table_play_status = 0;
+                Pinyin_StopMp3Data();
+            }
+            break;
+        default:
+            result = MMI_RESULT_FALSE;
+            break;
+    }
+    return result;
+}
+
+WINDOW_TABLE(PINYIN_TABLE_TIP_WIN_TAB) =
+{
+    WIN_ID(ZMT_PINYIN_TABLE_TIP_WIN_ID),
+    WIN_FUNC((uint32)HandlePinyinTableTipWinMsg),
+    CREATE_BUTTON_CTRL(PNULL, ZMT_PINYIN_TABLE_TIP_LEFT_CTRL_ID),
+    CREATE_BUTTON_CTRL(IMG_PINYIN_TABLE_TIPS_CLOSE_IMG, ZMT_PINYIN_TABLE_TIP_RIGHT_CTRL_ID),
+    WIN_HIDE_STATUS,
+    END_WIN
+};
+
+LOCAL void MMI_ClosePinyinTableTipWin(void)
+{
+    if(MMK_IsOpenWin(ZMT_PINYIN_TABLE_TIP_WIN_ID))
+    {
+        MMK_CloseWin(ZMT_PINYIN_TABLE_TIP_WIN_ID);
+    }
+}
+
+PUBLIC void MMI_CreatePinyinTableTipWin(uint8 idx)
+{
+    MMI_HANDLE_T win_handle = 0;
+    GUI_RECT_T rect = pinyin_msg_rect;
+    
+    MMI_ClosePinyinTableTipWin();
+    win_handle = MMK_CreateWin(PINYIN_TABLE_TIP_WIN_TAB, (ADD_DATA)idx);
+    MMK_SetWinRect(win_handle,&rect);
+}
+
+LOCAL void PinyinTableWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
+{
+    uint8 i = 0;
+    uint8 idx = MMK_GetWinAddDataPtr(win_id);
+    uint8 num = pinyin_info_num[idx].num;
+    GUIFORM_CHILD_WIDTH_T list_ctrl_width  = {0};
+    GUIFORM_CHILD_HEIGHT_T list_ctrl_height = {0};
+    MMI_CTRL_ID_T form_id = ZMT_PINYIN_TABLE_FORM_CTRL_ID;
+    MMI_CTRL_ID_T form_ctrl_id = ZMT_PINYIN_TABLE_FORM_CHILD_CTRL_ID;
+    MMI_CTRL_ID_T list_ctrl_id = 0;
+    GUI_RECT_T form_rect = pinyin_list_rect;
+    GUI_BG_T form_bg = {GUI_BG_COLOR, GUI_SHAPE_ROUNDED_RECT, 0, PINYIN_WIN_BG_COLOR, FALSE};
+    uint16 form_hspace = 0;
+    uint16 form_vspave = 10;
+
+    GUIFORM_SetBg(form_id, &form_bg);
+    GUIFORM_SetRect(form_id, &form_rect);
+    GUIFORM_PermitChildBg(form_id,FALSE);
+    GUIFORM_PermitChildFont(form_id,FALSE);
+    GUIFORM_PermitChildBorder(form_id, FALSE);
+    GUIFORM_SetDisplayScrollBar(form_id, FALSE);
+    MMK_SetActiveCtrl(form_id, FALSE);
+
+    GUIFORM_SetBg(form_ctrl_id, &form_bg);
+    GUIFORM_SetRect(form_ctrl_id, &form_rect);
+    for(i = 0;i < 2;i++)
+    {
+        list_ctrl_id = ZMT_PINYIN_TABLE_FORM_LEFT_CTRL_ID + i;
+        GUILIST_SetListState(list_ctrl_id, GUILIST_STATE_SPLIT_LINE, FALSE);
+        GUILIST_SetNeedHiLightBar(list_ctrl_id,FALSE);
+        GUILIST_SetMaxItem(list_ctrl_id, 11, FALSE);
+        GUILIST_SetNeedPrgbarBlock(list_ctrl_id,FALSE);
+        GUILIST_SetUserBg(list_ctrl_id,TRUE);
+        GUILIST_SetBgColor(list_ctrl_id,PINYIN_WIN_BG_COLOR);
+        GUILIST_SetTextFont(list_ctrl_id, DP_FONT_24, PINYIN_WIN_BG_COLOR);
+        GUILIST_PermitBorder(list_ctrl_id, FALSE);
+        GUILIST_SetSlideState(list_ctrl_id, FALSE);
+        list_ctrl_height.type = GUIFORM_CHILD_HEIGHT_FIXED;
+        list_ctrl_height.add_data = 1.5*PINYIN_LINE_HIGHT*(num/2+num%2);
+        GUIFORM_SetChildHeight(form_ctrl_id, list_ctrl_id, &list_ctrl_height);
+        list_ctrl_width.type = GUIFORM_CHILD_WIDTH_AUTO;
+        GUIFORM_SetChildWidth(form_ctrl_id, list_ctrl_id, &list_ctrl_width);
+    }
+}
+
+LOCAL void PinyinTableWin_DisplayTableList(MMI_WIN_ID_T win_id)
+{
+    MMI_CTRL_ID_T list_ctrl_id = 0;
+    MMI_STRING_T text_string = {0};
+    wchar text_str[20] = {0};
+    uint8 idx = MMK_GetWinAddDataPtr(win_id);
+    uint8 num = pinyin_info_num[idx].num;
+    uint8 list_idx = 0;
+    uint8 list_num = 0;
+    uint8 i,j = 0;
+    for(i = 0;i < 2;i++)
+    {
+        GUILIST_ITEM_T item_info = {0};
+        GUILIST_ITEM_DATA_T item_data= {0};
+        uint8 size = 0;
+
+        list_ctrl_id = ZMT_PINYIN_TABLE_FORM_LEFT_CTRL_ID + i;
+        GUILIST_RemoveAllItems(list_ctrl_id);
+        if(i == 0){
+            list_num = num/2 + num%2;
+        }else{
+            list_num = num/2;
+        }
+        for(j = 0;j < list_num;j++)
+        {
+            item_info.item_style = GUIITEM_STYLE_PINYIN_TABLE_LIST_MS;
+            item_info.item_data_ptr = &item_data;
+            if(i == 0){
+                list_idx = j*2;
+            }else{
+                list_idx = j*2 + 1;
+            }
+
+            item_data.item_content[0].item_data_type = GUIITEM_DATA_IMAGE_ID;
+            item_data.item_content[0].item_data.image_id = IMG_PINYIN_TABLE_ITEM_BG;
+
+            memset(text_str, 0, 20);
+            size = strlen(pinyin_info_text[idx][list_idx].text);
+            GUI_GBToWstr(text_str, pinyin_info_text[idx][list_idx].text, size);
+            text_string.wstr_ptr = text_str;
+            text_string.wstr_len = MMIAPICOM_Wstrlen(text_str);
+            item_data.item_content[1].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
+            item_data.item_content[1].item_data.text_buffer = text_string;
+
+            GUILIST_AppendItem(list_ctrl_id, &item_info);
+        }
+    }
+}
+
+LOCAL void PinyinTableWin_FULL_PAINT(MMI_WIN_ID_T win_id)
+{
+    GUI_LCD_DEV_INFO lcd_dev_info = {GUI_MAIN_LCD_ID,GUI_BLOCK_MAIN};
+    GUISTR_STATE_T text_state = GUISTR_STATE_ALIGN | GUISTR_STATE_ELLIPSIS_EX;
+    GUISTR_STYLE_T text_style = {0};
+    MMI_STRING_T text_string = {0};
+    GUI_RECT_T title_rect = pinyin_title_rect;
+    MMI_TEXT_ID_T text_id[PINYIN_ICON_LIST_ITEM_MAX] = {
+        PINYIN_DAN_YM_TXT, PINYIN_FU_YM_TXT, PINYIN_QIAN_YM_TXT,
+        PINYIN_HOU_YM_TXT, PINYIN_SEHNG_MU_TXT, PINYIN_ZHENG_TI_TXT
+    };
+    uint8 idx = (uint8)MMK_GetWinAddDataPtr(win_id);
+
+    MMIRES_GetText(text_id[idx], win_id, &text_string);
+    Pinyin_DrawWinTitle(win_id, 0, text_string, title_rect, DP_FONT_24);
+
+    PinyinTableWin_DisplayTableList(win_id);
+}
+
+LOCAL void PinyinTableWin_CTL_PENOK(MMI_WIN_ID_T win_id, DPARAM param)
+{
+    int cur_ctrl_idx = 0;
+    uint16 cur_idx = 0;
+    MMI_CTRL_ID_T ctrl_id = ((MMI_NOTIFY_T *)param)->src_id;
+    cur_ctrl_idx = ctrl_id - ZMT_PINYIN_TABLE_FORM_LEFT_CTRL_ID;
+    if(cur_ctrl_idx < 0){
+        cur_ctrl_idx = 0;
+        ctrl_id = ZMT_PINYIN_TABLE_FORM_LEFT_CTRL_ID;
+    }
+    cur_idx = GUILIST_GetCurItemIndex(ctrl_id);
+    cur_idx *= 2;
+    cur_idx += cur_ctrl_idx;
+    SCI_TRACE_LOW("%s: cur_idx = %d", __FUNCTION__, cur_idx);
+    MMI_CreatePinyinTableTipWin(cur_idx);
+}
+
+LOCAL MMI_RESULT_E HandlePinyinTableWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_id, DPARAM param)
+{
+    MMI_RESULT_E recode = MMI_RESULT_TRUE;
+    switch (msg_id) 
+    {
+        case MSG_OPEN_WINDOW:
+            {
+                PinyinTableWin_OPEN_WINDOW(win_id);
+            }
+            break;
+        case MSG_FULL_PAINT:
+            {
+                PinyinTableWin_FULL_PAINT(win_id);
+            }
+            break;
+        case MSG_APP_WEB:
+        case MSG_APP_OK:
+        case MSG_CTL_MIDSK:
+        case MSG_CTL_OK:
+        case MSG_CTL_PENOK:
+            { 
+                PinyinTableWin_CTL_PENOK(win_id, param);
+            }
+            break;
+        case MSG_KEYDOWN_CANCEL:
+            break;
+        case MSG_KEYUP_RED:
+        case MSG_KEYUP_CANCEL:
+            {
+                MMK_CloseWin(win_id);
+            }
+            break;
+        case MSG_CLOSE_WINDOW:
+            {
+                
+            }
+            break;
+        default:
+            recode = MMI_RESULT_FALSE;
+            break;
+    }
+    return recode;
+}
+
+WINDOW_TABLE(MMI_PINYIN_TABLE_WIN_TAB) = {
+    WIN_ID(ZMT_PINYIN_TABLE_WIN_ID),
+    WIN_FUNC((uint32)HandlePinyinTableWinMsg),
+    CREATE_FORM_CTRL(GUIFORM_LAYOUT_ORDER, ZMT_PINYIN_TABLE_FORM_CTRL_ID),
+        CHILD_FORM_CTRL(TRUE, GUIFORM_LAYOUT_SBS, ZMT_PINYIN_TABLE_FORM_CHILD_CTRL_ID, ZMT_PINYIN_TABLE_FORM_CTRL_ID),
+            CHILD_LIST_CTRL(FALSE, GUILIST_TYPE_TEXT_ID, ZMT_PINYIN_TABLE_FORM_LEFT_CTRL_ID, ZMT_PINYIN_TABLE_FORM_CHILD_CTRL_ID),
+            CHILD_LIST_CTRL(FALSE, GUILIST_TYPE_TEXT_ID, ZMT_PINYIN_TABLE_FORM_RIGHT_CTRL_ID, ZMT_PINYIN_TABLE_FORM_CHILD_CTRL_ID),
+    WIN_HIDE_STATUS,
+    END_WIN
+};
+
+LOCAL MMI_RESULT_E MMI_ClosePinyinTableWin(void)
+{
+    MMI_RESULT_E result = MMI_RESULT_TRUE;
+    if(MMK_IsOpenWin(ZMT_PINYIN_TABLE_WIN_ID)){
+        MMK_CloseWin(ZMT_PINYIN_TABLE_WIN_ID);
+    }
+    return result;
+}
+
+PUBLIC void MMI_CreatePinyinTableWin(uint8 idx)
+{
+    MMI_ClosePinyinTableWin();
+    MMK_CreateWin((uint32 *)MMI_PINYIN_TABLE_WIN_TAB, (ADD_DATA)idx);
 }
 
 LOCAL void PinyinReadWin_UpdateTopButton(BOOLEAN is_circulate, BOOLEAN is_single)
@@ -325,6 +744,12 @@ LOCAL void PinyinReadWin_UpdateButtonBgWin(BOOLEAN is_play)
     bg.img_id = IMG_PINYIN_NEXT;
     GUIBUTTON_SetBg(ZMT_PINYIN_READ_NEXT_CTRL_ID, &bg);
     GUIBUTTON_Update(ZMT_PINYIN_READ_NEXT_CTRL_ID);
+}
+
+LOCAL void PinyinReadWin_TableCallback(void)
+{
+    uint8 idx = MMK_GetWinAddDataPtr(ZMT_PINYIN_READ_WIN_ID);
+    MMI_CreatePinyinTableWin(idx);
 }
 
 LOCAL void PinyinReadWin_CirculateCallback(void)
@@ -408,6 +833,7 @@ LOCAL void PinyinReadWin_NextCallback(void)
 
 LOCAL void PinyinReadWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
 {
+    GUI_RECT_T table_rect = pinyin_title_rect;
     GUI_RECT_T yinbiao_rect = pinyin_yinbiao_rect;
     GUI_RECT_T single_rect = pinyin_list_rect;
     GUI_RECT_T button_rect = pinyin_list_rect;
@@ -449,6 +875,9 @@ LOCAL void PinyinReadWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
     GUIBUTTON_SetBg(ZMT_PINYIN_READ_NEXT_CTRL_ID, &bg);
 
     GUIBUTTON_SetRect(ZMT_PINYIN_READ_YINBIAO_CTRL_ID, &yinbiao_rect);
+    table_rect.left = MMI_MAINSCREEN_WIDTH - PINYIN_LINE_WIDTH;
+    GUIBUTTON_SetRect(ZMT_PINYIN_READ_TABLE_CTRL_ID, &table_rect);
+    GUIBUTTON_SetCallBackFunc(ZMT_PINYIN_READ_TABLE_CTRL_ID, PinyinReadWin_TableCallback);
 }
 
 LOCAL void PinyinReadWin_DisplayPinyinTie(MMI_WIN_ID_T win_id)
@@ -576,6 +1005,7 @@ LOCAL MMI_RESULT_E HandlePinyinReadWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E m
 WINDOW_TABLE(MMI_PINYIN_READ_WIN_TAB) = {
     WIN_ID(ZMT_PINYIN_READ_WIN_ID),
     WIN_FUNC((uint32)HandlePinyinReadWinMsg),
+    CREATE_BUTTON_CTRL(IMG_PINYIN_TABLE_BG, ZMT_PINYIN_READ_TABLE_CTRL_ID),
     CREATE_BUTTON_CTRL(PNULL, ZMT_PINYIN_READ_CIRCULATE_CTRL_ID),
     CREATE_BUTTON_CTRL(PNULL, ZMT_PINYIN_READ_SINGLE_CTRL_ID),
     CREATE_BUTTON_CTRL(IMG_PINYIN_TIE_BG, ZMT_PINYIN_READ_YINBIAO_CTRL_ID),
@@ -621,12 +1051,12 @@ LOCAL void PinyinMainWin_DisplayButton(MMI_WIN_ID_T win_id)
         PINYIN_DAN_YM_TXT, PINYIN_FU_YM_TXT, PINYIN_QIAN_YM_TXT,
         PINYIN_HOU_YM_TXT, PINYIN_SEHNG_MU_TXT, PINYIN_ZHENG_TI_TXT
     };
-    button_rect.top += 5;
-    button_rect.bottom = button_rect.top + 1.5*PINYIN_LINE_HIGHT;
+    button_rect.top += 10;
+    button_rect.bottom = button_rect.top + 1.5*PINYIN_LINE_HIGHT + 2;
     for(i = 0;i < 3;i++)
     {
         button_rect.left = 5;
-        button_rect.right = MMI_MAINSCREEN_WIDTH / 2 - 5;
+        button_rect.right = MMI_MAINSCREEN_WIDTH / 2 - 3;
         for(j = 0;j < 2;j++)
         {
             ctrl_id = ZMT_PINYIN_BUTTON_1_CTRL_ID + k;
@@ -636,7 +1066,7 @@ LOCAL void PinyinMainWin_DisplayButton(MMI_WIN_ID_T win_id)
             }
             GUIBUTTON_SetFont(ctrl_id, &font);
             MMK_SetActiveCtrl(ctrl_id, FALSE);
-            button_rect.left = button_rect.right + 5;
+            button_rect.left = MMI_MAINSCREEN_WIDTH / 2 + 3;
             button_rect.right = MMI_MAINSCREEN_WIDTH - 5;
             k++;
         }
@@ -800,6 +1230,8 @@ LOCAL MMI_RESULT_E HandlePinyinMainWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E m
             { 
                 PinyinMainWin_CTL_PENOK(win_id, param);
             }
+            break;
+        case MSG_KEYDOWN_CANCEL:
             break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:

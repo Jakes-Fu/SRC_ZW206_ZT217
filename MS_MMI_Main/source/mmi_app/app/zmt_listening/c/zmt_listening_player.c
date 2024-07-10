@@ -92,38 +92,38 @@ PUBLIC void ListeningPlayerWin_LrcParser(MMI_WIN_ID_T win_id, char * lrc_path);
 
 LOCAL void Listening_PlayMp3Notify(MMISRV_HANDLE_T handle, MMISRVMGR_NOTIFY_PARAM_T *param)
 {
-	MMISRVAUD_REPORT_T *report_ptr = PNULL;
-	BOOLEAN result = TRUE;
-	if(param != PNULL && handle > 0)
-	{
-		report_ptr = (MMISRVAUD_REPORT_T *)param->data;
-		if(report_ptr != PNULL && handle == listening_player_handle)
-		{
-			SCI_TRACE_LOW("%s: report_ptr->report = %d", __FUNCTION__, report_ptr->report);
-			switch(report_ptr->report)
-			{
-				case MMISRVAUD_REPORT_END:
-				{ 
-                    if (MMISRVAUD_REPORT_RESULT_STOP != report_ptr->data1)
-                    {
-                        if (MMISRVAUD_REPORT_RESULT_SUCESS != report_ptr->data1)
+    MMISRVAUD_REPORT_T *report_ptr = PNULL;
+    BOOLEAN result = TRUE;
+    if(param != PNULL && handle > 0)
+    {
+        report_ptr = (MMISRVAUD_REPORT_T *)param->data;
+        if(report_ptr != PNULL && handle == listening_player_handle)
+        {
+            SCI_TRACE_LOW("%s: report_ptr->report = %d", __FUNCTION__, report_ptr->report);
+            switch(report_ptr->report)
+            {
+                case MMISRVAUD_REPORT_END:
+                    { 
+                        if (MMISRVAUD_REPORT_RESULT_STOP != report_ptr->data1)
                         {
-                            result = FALSE;
+                            if (MMISRVAUD_REPORT_RESULT_SUCESS != report_ptr->data1)
+                            {
+                                result = FALSE;
+                            }
+                        }
+                        if(result)
+                        {
+                            Listening_StopPlayMp3();
+                            ListeningPlayer_ButtonNextCallback();
                         }
                     }
-					if(result)
-					{
-						Listening_StopPlayMp3();
-						ListeningPlayer_ButtonNextCallback();
-					}
-            	}
-				break;
-               	default:
-				break;
+                    break;
+                default:
+                    break;
             }
         }
     }
-	SCI_TRACE_LOW("%s: result = %d", __FUNCTION__, result);
+    SCI_TRACE_LOW("%s: result = %d", __FUNCTION__, result);
 }
 
 LOCAL BOOLEAN Listening_Play_RequestHandle( 
@@ -133,11 +133,11 @@ LOCAL BOOLEAN Listening_Play_RequestHandle(
                         MMISRVMGR_NOTIFY_FUNC notify
                         )
 {
-	MMISRVMGR_SERVICE_REQ_T req = {0};
+    MMISRVMGR_SERVICE_REQ_T req = {0};
     MMISRVAUD_TYPE_T audio_srv = {0};
     
     req.notify = notify;
-   	req.pri = MMISRVAUD_PRI_NORMAL;
+    req.pri = MMISRVAUD_PRI_NORMAL;
 
     audio_srv.duation = 0;
     audio_srv.eq_mode = 0;
@@ -146,65 +146,63 @@ LOCAL BOOLEAN Listening_Play_RequestHandle(
     audio_srv.all_support_route = route;
     audio_srv.volume = 1;//MMIAPISET_GetMultimVolume();
 
-	audio_srv.info.record_file.type = audio_data->type;        
-	audio_srv.info.record_file.fmt  = audio_data->record_file.fmt;
-	audio_srv.info.record_file.name = audio_data->record_file.name;
-	audio_srv.info.record_file.name_len = audio_data->record_file.name_len;    
-	audio_srv.info.record_file.source   = audio_data->record_file.source;
-	audio_srv.info.record_file.frame_len= audio_data->record_file.frame_len;
-	audio_srv.volume = AUD_MAX_SPEAKER_VOLUME;
+    audio_srv.info.record_file.type = audio_data->type;        
+    audio_srv.info.record_file.fmt  = audio_data->record_file.fmt;
+    audio_srv.info.record_file.name = audio_data->record_file.name;
+    audio_srv.info.record_file.name_len = audio_data->record_file.name_len;    
+    audio_srv.info.record_file.source   = audio_data->record_file.source;
+    audio_srv.info.record_file.frame_len= audio_data->record_file.frame_len;
+    audio_srv.volume = AUD_MAX_SPEAKER_VOLUME;
 
     *audio_handle = MMISRVMGR_Request(STR_SRV_AUD_NAME, &req, &audio_srv);
 
     if(*audio_handle > 0)
     {
-       	return TRUE;
+        return TRUE;
     }
     else
     {
-       	return FALSE;
+        return FALSE;
     }
 }
 
 PUBLIC void Listening_StopPlayMp3(void)
 {
-	SCI_TRACE_LOW("%s: handle = %d", __FUNCTION__, listening_player_handle);
-	if (0 != listening_player_handle)
-	{
-		MMISRVAUD_Stop(listening_player_handle);
-		MMISRVMGR_Free(listening_player_handle);
-		listening_player_handle = PNULL;
-	}
-	listening_play_times = 0;
+    SCI_TRACE_LOW("%s: handle = %d", __FUNCTION__, listening_player_handle);
+    if (0 != listening_player_handle)
+    {
+        MMISRVAUD_Stop(listening_player_handle);
+        MMISRVMGR_Free(listening_player_handle);
+        listening_player_handle = PNULL;
+    }
+    listening_play_times = 0;
 }
 
 PUBLIC void Listening_PausePlayMp3(void)
 {
-	if (0 != listening_player_handle)
-	{
-		MMISRVAUD_Pause(listening_player_handle);
-		
-	}
-	if(0 != listening_play_timer_id)
-	{
-		MMK_StopTimer(listening_play_timer_id);
-		listening_play_timer_id = 0;
-	}
+    if (0 != listening_player_handle)
+    {
+        MMISRVAUD_Pause(listening_player_handle);
+    }
+    if(0 != listening_play_timer_id)
+    {
+        MMK_StopTimer(listening_play_timer_id);
+        listening_play_timer_id = 0;
+    }
 }
 
 PUBLIC void Listening_ResumePlayMp3(void)
 {
-	if (0 != listening_player_handle)
-	{
-		MMISRVAUD_Resume(listening_player_handle);
-		
-	}
-	if(0 != listening_play_timer_id)
-	{
-		MMK_StopTimer(listening_play_timer_id);
-		listening_play_timer_id = 0;
-	}
-	listening_play_timer_id = MMK_CreateTimerCallback(1000, ListeningPlayerTimerCallback, PNULL, TRUE);
+    if (0 != listening_player_handle)
+    {
+        MMISRVAUD_Resume(listening_player_handle);
+    }
+    if(0 != listening_play_timer_id)
+    {
+        MMK_StopTimer(listening_play_timer_id);
+        listening_play_timer_id = 0;
+    }
+    listening_play_timer_id = MMK_CreateTimerCallback(1000, ListeningPlayerTimerCallback, PNULL, TRUE);
 }
 
 PUBLIC uint8 Listening_StartPlayMp3(char* file_name)
@@ -246,10 +244,10 @@ PUBLIC uint8 Listening_StartPlayMp3(char* file_name)
     {        
        	ret = 2;
     }
-	SCI_TRACE_LOW("%s: ret = %d", __FUNCTION__, ret);
+    SCI_TRACE_LOW("%s: ret = %d", __FUNCTION__, ret);
     if (ret != 0)
     {
-		listening_player_handle = NULL;
+        listening_player_handle = NULL;
         return ret;
     }
     return ret;
@@ -958,19 +956,19 @@ LOCAL void ListeningPlayerWin_LrcShowText(BOOLEAN is_full_paint)
             return;
         }
         MMISRVAUD_GetPlayingInfo(listening_player_handle, &play_info);
-        SCI_TRACE_LOW("%s: play_info.cur_time = %d", __FUNCTION__, play_info.cur_time);
+        //SCI_TRACE_LOW("%s: play_info.cur_time = %d", __FUNCTION__, play_info.cur_time);
         curtimsMs = play_info.cur_time * 1000;
     #else
         curtimsMs = listening_lrc_timers*1000;
     #endif  
         lyric_sel_index = lyric_get_node_index(listening_lrc_p, (long) curtimsMs);
-        SCI_TRACE_LOW("%s: lyric_sel_index = %d", __FUNCTION__, lyric_sel_index);
+        //SCI_TRACE_LOW("%s: lyric_sel_index = %d", __FUNCTION__, lyric_sel_index);
         if (lyric_sel_index >= 0 && (lyric_sel_index != g_lrc_sel_index || is_full_paint == TRUE))
         {
             MMI_STRING_T text_string = {0};
             wchar * text_str = NULL;
             lyric_content_node * node = lyric_get_node_by_index(listening_lrc_p, lyric_sel_index);
-            SCI_TRACE_LOW("%s: node->content = %s", __FUNCTION__, node->content);
+            //SCI_TRACE_LOW("%s: node->content = %s", __FUNCTION__, node->content);
             text_str = SCI_ALLOC_APPZ(3*strlen(node->content));
             memset(text_str, 0, 3*strlen(node->content));
             GUI_UTF8ToWstr(text_str, 3*strlen(node->content), node->content, strlen(node->content));
@@ -1192,6 +1190,10 @@ LOCAL MMI_RESULT_E HandleListeningPlayerWinMsg(
 			}
 			break;
 		case MSG_APP_OK:
+		case MSG_APP_WEB:
+		case MSG_CTL_MIDSK:
+		case MSG_CTL_OK:
+		case MSG_CTL_PENOK:
 			{
 			    ListeningPlayer_ButtonPlayCallback();
 			}

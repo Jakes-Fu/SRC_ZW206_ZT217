@@ -262,6 +262,10 @@ LOCAL MMI_RESULT_E HandleListeningAudioWinMsg(
 				ListeningAudioWin_DisplayAudioList(win_id, ctrl_id);
 			}
 			break;
+		case MSG_APP_OK:
+		case MSG_APP_WEB:
+		case MSG_CTL_MIDSK:
+		case MSG_CTL_OK:
 		case MSG_CTL_PENOK:
 			{
 				uint16 index = GUILIST_GetCurItemIndex(ctrl_id);
@@ -714,15 +718,16 @@ LOCAL MMI_RESULT_E HandleListeningWinMsg(
 				}
 			}
 			break;
+		case MSG_APP_OK:
+		case MSG_APP_WEB:
+		case MSG_CTL_MIDSK:
+		case MSG_CTL_OK:
 		case MSG_CTL_PENOK:
 			{
 				uint16 index = GUILIST_GetCurItemIndex(ctrl_id);
-				//if(listening_load_win == 1)
-				{
-					SCI_TRACE_LOW("%s: index = %d", __FUNCTION__, index);
-					MMI_CreateListeningAudioWin(index);
-					Listening_RequestAudioListInfo(module_info->item_info[index].album_id);
-				}
+				SCI_TRACE_LOW("%s: index = %d", __FUNCTION__, index);
+				MMI_CreateListeningAudioWin(index);
+				Listening_RequestAudioListInfo(module_info->item_info[index].album_id);
 			}
 			break;
 		case MSG_TP_PRESS_UP:
@@ -732,11 +737,14 @@ LOCAL MMI_RESULT_E HandleListeningWinMsg(
 				point.y = MMK_GET_TP_Y(param);
 			}
 			break;
+		case MSG_KEYDOWN_CANCEL:
+		    break;
+		case MSG_KEYUP_RED:
 		case MSG_KEYUP_CANCEL:
 			{
-				MMK_CloseWin(win_id);
+			    MMK_CloseWin(win_id);
 			}
-			break;
+		    break;
 		case MSG_CLOSE_WINDOW:
 			{
 				if(module_info)

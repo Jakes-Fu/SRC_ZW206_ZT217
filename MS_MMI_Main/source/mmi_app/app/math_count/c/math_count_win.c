@@ -1102,10 +1102,10 @@ LOCAL MMI_RESULT_E HandleCountingWinMsg(
                 }
             }
             break;
-        case MSG_KEYDOWN_RED:
+        case MSG_KEYDOWN_CANCEL:
             break;
         case MSG_KEYUP_RED:
-        case MSG_APP_CANCEL:
+        case MSG_KEYUP_CANCEL:
             MMK_CloseWin(win_id);
             break;
         case MSG_CLOSE_WINDOW:
@@ -1268,10 +1268,10 @@ LOCAL MMI_RESULT_E HandleScoreWinMsg(
                 }
             }
             break;
-        case MSG_KEYDOWN_RED:
+        case MSG_KEYDOWN_CANCEL:
             break;
         case MSG_KEYUP_RED:
-        case MSG_APP_CANCEL:
+        case MSG_KEYUP_CANCEL:
             MMK_CloseWin(win_id);
             break;
         default:

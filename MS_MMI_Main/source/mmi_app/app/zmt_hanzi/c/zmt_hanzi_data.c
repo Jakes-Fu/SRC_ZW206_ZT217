@@ -12,6 +12,7 @@
 #include "zmt_main_file.h"
 #include "zmt_listening_export.h"
 #endif
+#include "mbedtls/md5.h"
 
 extern HANZI_LEARN_INFO_T * hanzi_learn_info;
 extern HANZI_BOOK_INFO_T hanzi_book_info;
@@ -28,6 +29,26 @@ HANZI_BOOK_HANZI_INFO * hanzi_detail_info[HANZI_CHAPTER_WORD_MAX];
 int16 hanzi_detail_count = 0;
 int16 hanzi_detail_cur_idx = 0;
 BOOLEAN hanzi_is_load_local = FALSE;
+
+LOCAL uint8 * Hanzi_MakeMd5Str(char * sign)
+{
+    mbedtls_md5_context md5_ctx = {0};
+    char digest[16] = {0};
+    uint8 i = 0;
+    uint8 *md5 = (uint8 *)SCI_ALLOC_APPZ(33);
+#ifndef WIN32
+    mbedtls_md5_init(&md5_ctx);
+    mbedtls_md5_starts(&md5_ctx);
+    mbedtls_md5_update(&md5_ctx, sign, strlen(sign));
+    mbedtls_md5_finish(&md5_ctx, digest);
+    mbedtls_md5_free(&md5_ctx);
+#endif
+    for(i = 0; i < 16; i++)
+    {
+        sprintf(md5+(i*2),"%02x",digest[i]);
+    }
+    return md5;
+}
 
 PUBLIC void Hanzi_UpdateBookInfo(void)
 {
@@ -692,18 +713,19 @@ LOCAL BOOLEAN Hanzi_DetailMakeAudioUrl(uint8 idx, char * text, char * pinyin, ch
 {
     //http://8.130.95.8:8866/file/audio/word/000f310ee13acf86b7e347d5dd52f11f/name/li%C3%A1n.mp3
     char url[100] = {0};
-    char sn[50] = {0};
+    char * sn = NULL;
     if(text == NULL || pinyin == NULL)
     {
         SCI_TRACE_LOW("%s: param is null", __FUNCTION__);
         return FALSE;
     }
-    corepush_md5_str(text, &sn);
+    sn = Hanzi_MakeMd5Str(text);
     if(baseUrl != NULL){
         sprintf(url, HANZI_BOOK_AUDIO_PATH, baseUrl, sn, pinyin);
     }else{
         sprintf(url, HANZI_BOOK_AUDIO_PATH, HANZI_BOOK_AUDIO_BASE_PATH, sn, pinyin);
     }
+    SCI_FREE(sn);
     hanzi_detail_info[idx]->audio_uri = (char *)SCI_ALLOC_APP(strlen(url) + 1);
     memset(hanzi_detail_info[idx]->audio_uri, 0, strlen(url) + 1);
     SCI_MEMCPY(hanzi_detail_info[idx]->audio_uri, url, strlen(url));

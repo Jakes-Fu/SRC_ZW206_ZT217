@@ -27,17 +27,16 @@
 #include "mmisrvrecord_export.h"
 #include "mmirecord_export.h"
 #include "mmiphone_export.h"
-
 #include "zmt_listening_export.h"
 #include "zmt_listening_id.h"
 #include "zmt_listening_image.h"
 #include "zmt_listening_text.h"
-#include "corepush_md5.h"
 #include "http_api.h"
 #include "in_message.h"
 #include "mmi_module.h"
 #include "sig_code.h"
 #include "zdthttp_api.h"
+#include "mbedtls/md5.h"
 
 #define LISTENING_BASE_URL_USE_TEST 0
 
@@ -70,16 +69,40 @@ extern LISTENING_ALBUM_INFO * album_info;
 uint32 request_http_listening_idx = 0;
 BOOLEAN listening_download_audio = FALSE;
 
+LOCAL uint8 * Listening_MakeMd5Str(char * sign)
+{
+    mbedtls_md5_context md5_ctx = {0};
+    char digest[16] = {0};
+    uint8 i = 0;
+    uint8 *md5 = (uint8 *)SCI_ALLOC_APPZ(33);
+#ifndef WIN32
+    mbedtls_md5_init(&md5_ctx);
+    mbedtls_md5_starts(&md5_ctx);
+    mbedtls_md5_update(&md5_ctx, sign, strlen(sign));
+    mbedtls_md5_finish(&md5_ctx, digest);
+    mbedtls_md5_free(&md5_ctx);
+#endif
+    for(i = 0; i < 16; i++)
+    {
+        sprintf(md5+(i*2),"%02x",digest[i]);
+    }
+    return md5;
+}
+
 LOCAL void Listening_MakeMD5(char * md5_str, uint32 timestamp)
 {
-	char tmp_buf[255] = {0};
-	
-	sprintf(tmp_buf, "%d", timestamp);
-	strcat(tmp_buf, LISTENING_appSec);
-	strcat(tmp_buf, LISTENING_UID_MD5);
-	SCI_TRACE_LOW("%s: tmp_buf = %s", __FUNCTION__, tmp_buf);
-	corepush_md5_str(&tmp_buf, md5_str);
-	SCI_TRACE_LOW("%s: md5_str = %s", __FUNCTION__, md5_str);
+    char tmp_buf[255] = {0};
+    char * md5 = NULL;
+
+    sprintf(tmp_buf, "%d", timestamp);
+    strcat(tmp_buf, LISTENING_appSec);
+    strcat(tmp_buf, LISTENING_UID_MD5);
+    SCI_TRACE_LOW("%s: tmp_buf = %s", __FUNCTION__, tmp_buf);
+
+    md5 = Listening_MakeMd5Str(tmp_buf);
+    strcpy(md5_str, md5);
+    SCI_TRACE_LOW("%s: md5_str = %s", __FUNCTION__, md5_str);
+    SCI_FREE(md5);
 }
 
 LOCAL void Listening_MakeSn(char * sn_str)
