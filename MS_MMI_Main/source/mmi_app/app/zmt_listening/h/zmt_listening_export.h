@@ -203,5 +203,5 @@ PUBLIC void Listening_Encryption(char * file_buf, uint8 file_len);
 PUBLIC void Listening_Decryption(char * file_buf, uint8 file_len);
 
 PUBLIC void Listening_DeleteOneAlbum(int module_id);
-PUBLIC void Listening_DeleteOneAudio(BOOLEAN delete_module, int module_id, int audio_id);
+PUBLIC void Listening_DeleteOneAudio(int del_module_id, int del_audio_id);
 
