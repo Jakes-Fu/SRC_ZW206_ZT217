@@ -296,27 +296,27 @@ extern PUBLIC uint8 Video_Call_Incoming_Test();
 #endif
 
 #ifdef FORMULA_SUPPORT
-#define MENU_MNEMONICS {19, 0, mnemonics_text, res_app_ic_mnemonics, light_cyan_bg, MMI_CreateMathMnemonicWin} 
+#define MENU_MNEMONICS {19, 1, mnemonics_text, res_app_ic_mnemonics, light_cyan_bg, MMI_CreateMathMnemonicWin} 
 #endif
 
 #ifdef LISTENING_PRATICE_SUPPORT
-#define MENU_LISTEN {20, 0, listen_text, res_app_ic_listen, bright_yellow_bg, MMI_CreateListeningLocalWin} 
+#define MENU_LISTEN {20, 1, listen_text, res_app_ic_listen, bright_yellow_bg, MMI_CreateListeningLocalWin} 
 #endif
 
 #ifdef WORD_CARD_SUPPORT
-#define MENU_LEARN_WORD {21, 0, learn_word_text, res_app_ic_learn_word, dark_red_bg, MMI_CreateWordWin} 
+#define MENU_LEARN_WORD {21, 1, learn_word_text, res_app_ic_learn_word, dark_red_bg, MMI_CreateWordWin} 
 #endif
 
 #ifdef POETRY_LISTEN_SUPPORT
-#define MENU_POETRY {22, 0, poetry_text, res_app_ic_poetry, bright_green_bg, MMI_CreatePoetryWin} 
+#define MENU_POETRY {22, 1, poetry_text, res_app_ic_poetry, bright_green_bg, MMI_CreatePoetryWin} 
 #endif
 
 #ifdef HANZI_CARD_SUPPORT
-#define MENU_HANZI {23, 0, hanzi_text, res_app_ic_hanzi, bright_purple_bg, MMI_CreateHanziWin}
+#define MENU_HANZI {23, 1, hanzi_text, res_app_ic_hanzi, bright_purple_bg, MMI_CreateHanziWin}
 #endif
 
 #ifdef ZMT_GPT_SUPPORT
-#define MENU_AI {24, 0, ai_text, res_app_ic_ai, light_pink_bg, MMIZMT_CreateZmtGptWin} 
+#define MENU_AI {24, 1, ai_text, res_app_ic_ai, light_pink_bg, MMIZMT_CreateZmtGptWin} 
 #endif
 
 #if defined(ZDT_TOOLS_MENU_SUPPORT)// wuxx add.
@@ -324,11 +324,11 @@ extern PUBLIC uint8 Video_Call_Incoming_Test();
 #endif
 
 #ifdef ZMT_CLASS_SUPPORT
-#define MENU_CLASS {26, 0, textbook_text, res_app_ic_contact, textbook_bg, MMI_CreateClassMainWin} 
+#define MENU_CLASS {26, 1, textbook_text, res_app_ic_contact, textbook_bg, MMI_CreateClassMainWin} 
 #endif
 
 #ifdef ZMT_PINYIN_SUPPORT
-#define MENU_PINYIN {27, 0, pinyin_text, res_app_ic_pinyin, dark_blue_bg, MMI_CreatePinyinMainWin} 
+#define MENU_PINYIN {27, 1, pinyin_text, res_app_ic_pinyin, dark_blue_bg, MMI_CreatePinyinMainWin} 
 #endif
 
 //*******²Ëµ¥***************//
