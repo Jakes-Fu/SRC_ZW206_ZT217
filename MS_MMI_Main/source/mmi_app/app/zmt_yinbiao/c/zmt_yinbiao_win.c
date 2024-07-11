@@ -34,6 +34,10 @@
 #include "mmiacc_nv.h"
 #include "guistring.h"
 #include "mmi_theme.h"
+#ifdef LISTENING_PRATICE_SUPPORT
+#include "zmt_listening_export.h"
+#endif
+
 wchar test_yinbiao[8] = {0x02E9,0x02E7,0x02E5,0xE6,0x030d,0x03b7,0x0254 };
 #define yinbiao_win_rect {0, 0, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT}//窗口
 #define yinbiao_title_rect {0, 0, MMI_MAINSCREEN_WIDTH, YINBIAO_LINE_HIGHT}//顶部
@@ -677,15 +681,11 @@ LOCAL void YinbiaoMainWin_DisplayButton(MMI_WIN_ID_T win_id)
         {
             ctrl_id = ZMT_YINBIAO_BUTTON_1_CTRL_ID + k;
             Yinbiao_InitButton(ctrl_id, button_rect, text_id[k], ALIGN_HVMIDDLE, TRUE, NULL);
-            if(k == 6){
-                font.font = DP_FONT_18;
-            }
             GUIBUTTON_SetFont(ctrl_id, &font);
             MMK_SetActiveCtrl(ctrl_id, FALSE);
             button_rect.left = button_rect.right + 5;
             button_rect.right = MMI_MAINSCREEN_WIDTH - 5;
             k++;
-			if(k==7)break;
         }
         button_rect.top = button_rect.bottom + 10;
         button_rect.bottom = button_rect.top + 1.5*YINBIAO_LINE_HIGHT;
@@ -720,10 +720,9 @@ LOCAL void YinbiaoMainWin_UpdateSelectButton(MMI_CTRL_ID_T ctrl_id)
 
 LOCAL void YinbiaoMainWin_APP_LEFT(MMI_WIN_ID_T win_id)
 {
-    int8 idx = yinbiao_cur_select_id - ZMT_YINBIAO_BUTTON_1_CTRL_ID; 
-    idx--;
-    if(idx < 0){
-        idx = 1;
+    int8 idx = 0;
+    if(yinbiao_cur_select_id == ZMT_YINBIAO_BUTTON_1_CTRL_ID){
+        idx = ZMT_YINBIAO_BUTTON_7_CTRL_ID - ZMT_YINBIAO_BUTTON_1_CTRL_ID;
     }else{
         idx = -1;
     }
@@ -734,10 +733,9 @@ LOCAL void YinbiaoMainWin_APP_LEFT(MMI_WIN_ID_T win_id)
 
 LOCAL void YinbiaoMainWin_APP_RIGHT(MMI_WIN_ID_T win_id)
 {
-    int8 idx = yinbiao_cur_select_id - ZMT_YINBIAO_BUTTON_1_CTRL_ID;
-    idx++;
-    if(idx % 2 == 0){
-        idx = -1;
+    int8 idx = 0;
+    if(yinbiao_cur_select_id == ZMT_YINBIAO_BUTTON_7_CTRL_ID){
+        idx = ZMT_YINBIAO_BUTTON_1_CTRL_ID - ZMT_YINBIAO_BUTTON_7_CTRL_ID;
     }else{
         idx = 1;
     }
@@ -749,8 +747,9 @@ LOCAL void YinbiaoMainWin_APP_RIGHT(MMI_WIN_ID_T win_id)
 LOCAL void YinbiaoMainWin_APP_UP(MMI_WIN_ID_T win_id)
 {
     int8 idx = 0;
-    if(yinbiao_cur_select_id == ZMT_YINBIAO_BUTTON_1_CTRL_ID ||
-        yinbiao_cur_select_id == ZMT_YINBIAO_BUTTON_2_CTRL_ID ){
+    if(yinbiao_cur_select_id == ZMT_YINBIAO_BUTTON_1_CTRL_ID){
+        idx = 6;
+    }else if(yinbiao_cur_select_id == ZMT_YINBIAO_BUTTON_2_CTRL_ID){
         idx = 4;
     }else{
         idx = -2;
@@ -763,8 +762,9 @@ LOCAL void YinbiaoMainWin_APP_UP(MMI_WIN_ID_T win_id)
 LOCAL void YinbiaoMainWin_APP_DOWN(MMI_WIN_ID_T win_id)
 {
     int8 idx = 0;
-    if(yinbiao_cur_select_id == ZMT_YINBIAO_BUTTON_5_CTRL_ID ||
-        yinbiao_cur_select_id == ZMT_YINBIAO_BUTTON_6_CTRL_ID ){
+    if(yinbiao_cur_select_id == ZMT_YINBIAO_BUTTON_7_CTRL_ID){
+        idx = -6;
+    }else if(yinbiao_cur_select_id == ZMT_YINBIAO_BUTTON_6_CTRL_ID){
         idx = -4;
     }else{
         idx = 2;
@@ -894,7 +894,7 @@ PUBLIC void MMI_CreateYinbiaoMainWin(void)
 #ifdef LISTENING_PRATICE_SUPPORT
     if(!zmt_tfcard_exist())
     {
-        MMI_CreateListeningTipWin(ZMT_YINBIAO_MAIN_WIN_ID);
+        MMI_CreateListeningTipWin(PALYER_PLAY_NO_TFCARD_TIP);
     }
     else
 #endif

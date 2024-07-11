@@ -24,6 +24,9 @@
 #include "zmt_pinyin_id.h"
 #include "zmt_pinyin_text.h"
 #include "zmt_pinyin_image.h"
+#ifdef LISTENING_PRATICE_SUPPORT
+#include "zmt_listening_export.h"
+#endif
 
 #define pinyin_win_rect {0, 0, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT}//´°¿Ú
 #define pinyin_title_rect {0, 0, MMI_MAINSCREEN_WIDTH, PINYIN_LINE_HIGHT}//¶¥²¿
@@ -1063,6 +1066,8 @@ LOCAL void PinyinMainWin_DisplayButton(MMI_WIN_ID_T win_id)
             Pinyin_InitButton(ctrl_id, button_rect, text_id[k], ALIGN_HVMIDDLE, TRUE, NULL);
             if(k == 5){
                 font.font = DP_FONT_18;
+            }else{
+                font.font = DP_FONT_24;
             }
             GUIBUTTON_SetFont(ctrl_id, &font);
             MMK_SetActiveCtrl(ctrl_id, FALSE);
@@ -1103,10 +1108,9 @@ LOCAL void PinyinMainWin_UpdateSelectButton(MMI_CTRL_ID_T ctrl_id)
 
 LOCAL void PinyinMainWin_APP_LEFT(MMI_WIN_ID_T win_id)
 {
-    int8 idx = pinyin_cur_select_id - ZMT_PINYIN_BUTTON_1_CTRL_ID; 
-    idx--;
-    if(idx < 0){
-        idx = 1;
+    int8 idx = 0;
+    if(pinyin_cur_select_id == ZMT_PINYIN_BUTTON_1_CTRL_ID){
+        idx = ZMT_PINYIN_BUTTON_6_CTRL_ID - ZMT_PINYIN_BUTTON_1_CTRL_ID;
     }else{
         idx = -1;
     }
@@ -1117,10 +1121,9 @@ LOCAL void PinyinMainWin_APP_LEFT(MMI_WIN_ID_T win_id)
 
 LOCAL void PinyinMainWin_APP_RIGHT(MMI_WIN_ID_T win_id)
 {
-    int8 idx = pinyin_cur_select_id - ZMT_PINYIN_BUTTON_1_CTRL_ID;
-    idx++;
-    if(idx % 2 == 0){
-        idx = -1;
+    int8 idx = 0;
+    if(pinyin_cur_select_id == ZMT_PINYIN_BUTTON_6_CTRL_ID){
+        idx =  ZMT_PINYIN_BUTTON_1_CTRL_ID - ZMT_PINYIN_BUTTON_6_CTRL_ID;
     }else{
         idx = 1;
     }
@@ -1278,7 +1281,7 @@ PUBLIC void MMI_CreatePinyinMainWin(void)
 #ifdef LISTENING_PRATICE_SUPPORT
     if(!zmt_tfcard_exist())
     {
-        MMI_CreateListeningTipWin(ZMT_PINYIN_MAIN_WIN_ID);
+        MMI_CreateListeningTipWin(PALYER_PLAY_NO_TFCARD_TIP);
     }
     else
 #endif

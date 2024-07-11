@@ -591,7 +591,7 @@ LOCAL BOOLEAN  ZMT_Net_PDPTry(MN_DUAL_SYS_E sim_sys)
 
     if (FALSE == MMIAPIPHONE_GetDataServiceSIM(&sim_sys))
     {
-        SCI_TraceLow("[ZMT_NET] %s: ConnectPDP [SIM ERROR]", __FUNCTION__);
+        SCI_TRACE_LOW("[ZMT_NET] %s: ConnectPDP [SIM ERROR]", __FUNCTION__);
         return FALSE;
     }
 

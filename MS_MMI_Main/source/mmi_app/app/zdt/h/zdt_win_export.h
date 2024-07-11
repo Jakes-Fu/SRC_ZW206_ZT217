@@ -336,7 +336,7 @@ extern PUBLIC uint8 Video_Call_Incoming_Test();
 #endif
 
 #ifdef ZMT_YINBIAO_SUPPORT
-#define MENU_YINBIAO {28, 0, yinbiao_text, res_app_ic_pinyin, dark_blue_bg, MMI_CreateYinbiaoMainWin} 
+#define MENU_YINBIAO {28, 1, yinbiao_text, res_app_ic_yinbiao, light_pink_bg, MMI_CreateYinbiaoMainWin} 
 #endif
 //*******²Ëµ¥***************//
 
