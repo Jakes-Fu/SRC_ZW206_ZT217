@@ -2206,10 +2206,18 @@ LOCAL MMI_RESULT_E HandleBrightnessWindow(
         MMK_CloseWin(win_id);
         break;
     case MSG_KEYDOWN_LEFT:
-        updateCurrentBrightness(win_id, (s_setting_brightness_value-1));
+        {
+            if(s_setting_brightness_value > 0){
+                updateCurrentBrightness(win_id, (s_setting_brightness_value-1));
+            }
+        }
         break;
     case MSG_KEYDOWN_RIGHT:
-        updateCurrentBrightness(win_id, (s_setting_brightness_value+1));
+        {
+            if(s_setting_brightness_value < MMISET_CONTRAST_SEVEN){
+                updateCurrentBrightness(win_id, (s_setting_brightness_value+1));
+            }
+        }
         break;
     default:
         recode = MMI_RESULT_FALSE;
@@ -2576,6 +2584,7 @@ LOCAL void updateVolumeProgress(MMI_WIN_ID_T win_id, uint32 cur_item_index, uint
         }
         WATCHCOM_ProgressBarByIndex(win_id, progressrect, current_volume_img_index,volume_item_total,res_progress_bg, res_progress_fg, res_progress_hand);
         MMK_UpdateScreen();
+        Settings_Volume_SoundUpdate(current_volume_img_index);
     }
 }
 
@@ -2967,12 +2976,20 @@ LOCAL MMI_RESULT_E HandleCallVolumeSetWindow(
     case MSG_KEYDOWN_DOWNSIDE:
     case MSG_KEYDOWN_VOL_DOWN:
     case MSG_KEYDOWN_LEFT:
-        updateVolumeProgress(win_id, (cur_call_volume_img_id-1), cur_call_volume_img_id,COMM_VOL);
+        {
+            if(cur_call_volume_img_id > 0){
+                updateVolumeProgress(win_id, (cur_call_volume_img_id-1), cur_call_volume_img_id,COMM_VOL);
+            }
+        }
         break;
     case MSG_KEYDOWN_UPSIDE:
     case MSG_KEYDOWN_VOL_UP:
     case MSG_KEYDOWN_RIGHT:
-        updateVolumeProgress(win_id, (cur_call_volume_img_id+1), cur_call_volume_img_id,COMM_VOL);
+        {
+            if(cur_call_volume_img_id < MMISET_VOL_MAX){
+                updateVolumeProgress(win_id, (cur_call_volume_img_id+1), cur_call_volume_img_id,COMM_VOL);
+            }
+        }
         break;
 	default:
 	    recode = MMI_RESULT_FALSE;
@@ -3366,12 +3383,20 @@ LOCAL MMI_RESULT_E HandleRingVolumeSetWindow(
     case MSG_KEYDOWN_DOWNSIDE:
     case MSG_KEYDOWN_VOL_DOWN:
     case MSG_KEYDOWN_LEFT:
-        updateVolumeProgress(win_id, (cur_ring_volume_img_id-1), cur_ring_volume_img_id,CALL_RING_VOL);
+        {
+            if(cur_ring_volume_img_id > 0){
+                updateVolumeProgress(win_id, (cur_ring_volume_img_id-1), cur_ring_volume_img_id,CALL_RING_VOL);
+            }
+        }
         break;
     case MSG_KEYDOWN_UPSIDE:
     case MSG_KEYDOWN_VOL_UP:
     case MSG_KEYDOWN_RIGHT:
-        updateVolumeProgress(win_id, (cur_ring_volume_img_id+1), cur_ring_volume_img_id,CALL_RING_VOL);
+        {
+            if(cur_ring_volume_img_id < MMISET_VOL_MAX){
+                updateVolumeProgress(win_id, (cur_ring_volume_img_id+1), cur_ring_volume_img_id,CALL_RING_VOL);
+            }
+        }
         break;
     default:
         recode = MMI_RESULT_FALSE;

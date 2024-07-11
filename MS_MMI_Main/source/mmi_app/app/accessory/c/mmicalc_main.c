@@ -4054,47 +4054,13 @@ LOCAL MMI_RESULT_E HandleCalcWinMsg(
         UpdateOperatorIcons(win_id, FALSE);
         //MMK_CreateWin((uint32 *)MMIACC_CALC_POPWIN_TAB, PNULL);
         break;  
-    case MSG_KEYLONG_CANCEL:
-    case MSG_CTL_CANCEL:
-// #ifdef TOUCH_PANEL_SUPPORT//cr132551
-//     case MSG_KEYDOWN_CANCEL:
-// #else
     case MSG_KEYDOWN_CANCEL:
-// #endif
-    case MSG_KEYDOWN_DEL:
-    case MSG_KEYLONG_DEL:
-#ifdef MMI_PDA_SUPPORT
-        MMK_CloseWin(win_id);
-#else
-// #ifdef TOUCH_PANEL_SUPPORT//cr132551
-// 		if (MSG_KEYDOWN_CANCEL == msg_id)
-// 		{
-//            msg_id = MSG_KEYUP_CANCEL;
-// 		}
-// #endif
-// #ifndef TOUCH_PANEL_SUPPORT
-// 		if (focusflag == 0)
-// 		{
-// #endif
-        if (CALC_NO_ERROR != s_math_error_info)
-        {
-            InitCalc(win_id);   
-            DisplayCalcFormulaEx(win_id);           
-            UpdateSoftkey(win_id, msg_id);
-        }
-        else if (!FormatFormula(win_id, msg_id))
-        {
-           // MMK_CloseWin(win_id);
-        }
-// #ifndef TOUCH_PANEL_SUPPORT//cr132551
-// 		}
-// 		else
-//          focusflag = 0;
-// #endif
- #endif
         break;
-
-//#if defined (TOUCH_PANEL_SUPPORT) || defined (MMI_CALCULATOR_MINI_SUPPORT)//IGNORE9527
+    case MSG_KEYUP_CANCEL:
+        {
+            MMK_CloseWin(win_id);
+        }
+        break;
     case MSG_CTL_PENOK:
         if(((MMI_NOTIFY_T*)param)->src_id == MMIACC_CALC_CLEAR_CTRL_ID)
         {

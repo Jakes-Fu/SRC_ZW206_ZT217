@@ -585,7 +585,7 @@ PUBLIC MMI_RESULT_E WatchLAUNCHER_HandleCommonWinMsg(
         case MSG_APP_OK:
         {
             SCI_TRACE_LOW("WatchCC_DialpadWin_Enter");
-            WatchCC_DialpadWin_Enter();
+            //WatchCC_DialpadWin_Enter();
             break;
         }
 

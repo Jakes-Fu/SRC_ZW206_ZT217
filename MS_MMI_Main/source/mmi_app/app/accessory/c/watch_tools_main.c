@@ -405,22 +405,22 @@ LOCAL MMI_RESULT_E  HandleWatchToolsMainWindow(
 		    GUISTR_STYLE_T      text_style      = {0};/*lint !e64*/
 		    GUISTR_STATE_T      state =         GUISTR_STATE_ALIGN|GUISTR_STATE_WORDBREAK|GUISTR_STATE_SINGLE_LINE; 
 		    MMI_STRING_T        string = {0};	
-		    GUI_RECT_T          text_rect={42,0,240,MMI_SPECIAL_TITLE_HEIGHT}; 
+		    GUI_RECT_T          text_rect={0,0,240,MMI_SPECIAL_TITLE_HEIGHT}; 
             #endif
             WATCHCOM_DisplayBackground(win_id);
 			
 
 		    #if defined(ADD_TITLE_IN_ALL_SETTING_MENU)		
 				//draw TITLE bg		
-					GUIRES_DisplayImg(PNULL,
+					/*GUIRES_DisplayImg(PNULL,
 					    &rect,
 					    PNULL,
 					    win_id,
 					    IMAGE_THEME_BLACK_BG_SPEC, 
-					    &lcd_dev_info); 
+					    &lcd_dev_info); */
 
 				///////draw title
-				text_style.align = ALIGN_LVMIDDLE;
+				text_style.align = ALIGN_HVMIDDLE;
 				text_style.font = SONG_FONT_28;
 				text_style.font_color = MMI_WHITE_COLOR;
 				text_style.char_space = 0;
@@ -449,11 +449,10 @@ LOCAL MMI_RESULT_E  HandleWatchToolsMainWindow(
             WatchTools_Main_APP_OK();
             break;
         }
-        case MSG_KEYDOWN_RED:
+        case MSG_KEYDOWN_CANCEL:
             break;
         case MSG_KEYUP_RED:
-        case MSG_CTL_CANCEL:
-        case MSG_APP_CANCEL:
+        case MSG_KEYUP_CANCEL:
         {
             WatchTools_Main_APP_CANCEL();
             break;

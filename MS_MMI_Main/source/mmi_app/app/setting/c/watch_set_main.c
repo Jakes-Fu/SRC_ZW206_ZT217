@@ -827,9 +827,7 @@ LOCAL MMI_RESULT_E  HandleLongRangeModeWindow(
             }
             WATCHCOM_DisplayBackground(win_id);
             WATCHCOM_DisplayTitleEx(win_id,TXT_LONG_RANGE_MODE_ZX,MMI_SPECIAL_TITLE_HEIGHT,MMI_CUSTOM_BLUE_COLOR,ALIGN_HVMIDDLE);
-    
-         
-    
+
             GUITEXT_SetRect( MMISET_LONGRANGEMODE_TEXT_CTRL_ID, &tip_rect);
             text_bg.color = MMI_BLACK_COLOR;//MMI_GRAY_WHITE_COLOR
             GUITEXT_SetBg(MMISET_LONGRANGEMODE_TEXT_CTRL_ID, &text_bg);
@@ -878,10 +876,11 @@ LOCAL MMI_RESULT_E  HandleLongRangeModeWindow(
                 win_id,
                 LongRangeMode_TIP_BG,
                 &lcd_dev_info); 
-            if(LongRangeMode_Switch)
+            if(LongRangeMode_Switch){
                 LongRangeMode_Switch_img_id = IMAGE_COMMON_KEYON_IMAG;
-            else
+            }else{
                 LongRangeMode_Switch_img_id = IMAGE_COMMON_KEYOFF_IMAG;
+            }
             GUIRES_DisplayImg(PNULL,
                 &switchkey_rect,
                 PNULL,
@@ -936,6 +935,8 @@ LOCAL MMI_RESULT_E  HandleLongRangeModeWindow(
             //    MMK_CloseWin( win_id);
         }
         break;
+    case MSG_APP_UP:
+    case MSG_APP_DOWN:
     case MSG_KEYDOWN_RED:
         break;
     case MSG_KEYUP_RED:

@@ -2549,7 +2549,10 @@ LOCAL MMI_RESULT_E ZDT_HandleDialWinMsg
             ZDT_HandleDialGreenUpMsg(win_id,edit_ctrl_id,MN_DUAL_SYS_MAX);
         break;
 
-    case MSG_CTL_CANCEL:
+    case MSG_KEYDOWN_CANCEL:
+        break;
+    case MSG_KEYUP_CANCEL:
+        GUIEDIT_ClearAllStr(edit_ctrl_id);
         MMK_CloseWin(win_id);
         break;
 
@@ -2600,10 +2603,6 @@ LOCAL MMI_RESULT_E ZDT_HandleDialWinMsg
         GUIEDIT_ClearAllStrEx(edit_ctrl_id, MMK_IsFocusWin(win_id));
         break;
 	//yangyu add
-	case MSG_APP_CANCEL:
-		GUIEDIT_ClearAllStr(edit_ctrl_id);
-		MMK_CloseWin(win_id);
-		break;
     case MSG_KEYDOWN_RED:
         break;
     case MSG_KEYUP_RED:
