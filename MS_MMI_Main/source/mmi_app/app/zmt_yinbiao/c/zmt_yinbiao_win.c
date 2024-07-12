@@ -657,12 +657,6 @@ PUBLIC void MMI_CreateYinbiaoReadWin(uint8 idx)
     MMK_CreateWin((uint32 *)MMI_YINBIAO_READ_WIN_TAB, (ADD_DATA)idx);
 }
 
-LOCAL void YinbiaoMainWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
-{
-    memset(&yinbiao_read_info, 0, sizeof(YINBIAO_READ_INFO_T));
-    yinbiao_cur_select_id = ZMT_YINBIAO_BUTTON_1_CTRL_ID;
-}
-
 LOCAL void YinbiaoMainWin_DisplayButton(MMI_WIN_ID_T win_id)
 {
     uint8 i = 0;
@@ -701,18 +695,33 @@ LOCAL void YinbiaoMainWin_DisplayButton(MMI_WIN_ID_T win_id)
     GUIBUTTON_SetBorder(yinbiao_cur_select_id, &border, FALSE);
 }
 
+LOCAL void YinbiaoMainWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
+{
+    memset(&yinbiao_read_info, 0, sizeof(YINBIAO_READ_INFO_T));
+    yinbiao_cur_select_id = ZMT_YINBIAO_BUTTON_1_CTRL_ID;
+
+    YinbiaoMainWin_DisplayButton(win_id);
+}
+
 LOCAL void YinbiaoMainWin_FULL_PAINT(MMI_WIN_ID_T win_id)
 {
     GUI_LCD_DEV_INFO lcd_dev_info = {GUI_MAIN_LCD_ID,GUI_BLOCK_MAIN};
     GUISTR_STATE_T text_state = GUISTR_STATE_ALIGN | GUISTR_STATE_ELLIPSIS_EX;
     GUISTR_STYLE_T text_style = {0};
     MMI_STRING_T text_string = {0};
+    GUI_BORDER_T border = {1, MMI_WHITE_COLOR, GUI_BORDER_ROUNDED};
     GUI_RECT_T title_rect = yinbiao_title_rect;
-
+    uint8 i = 0;
+    
     MMIRES_GetText(YINBIAO_CLASS_TXT, win_id, &text_string);
     Yinbiao_DrawWinTitle(win_id, 0, text_string, title_rect, DP_FONT_22);
 
-    YinbiaoMainWin_DisplayButton(win_id);
+    for(i = 0;i < YINBIAO_ICON_LIST_ITEM_MAX;i++)
+    {
+        MMI_CTRL_ID_T ctrl_id = ZMT_YINBIAO_BUTTON_1_CTRL_ID + i;
+        GUIBUTTON_SetVisible(ctrl_id, TRUE, TRUE);
+    }
+    GUIBUTTON_SetBorder(yinbiao_cur_select_id, &border, FALSE);
 }
 
 LOCAL void YinbiaoMainWin_UpdateSelectButton(MMI_CTRL_ID_T ctrl_id)

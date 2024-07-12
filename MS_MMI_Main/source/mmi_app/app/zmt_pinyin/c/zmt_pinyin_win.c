@@ -1034,12 +1034,6 @@ PUBLIC void MMI_CreatePinyinReadWin(uint8 idx)
     MMK_CreateWin((uint32 *)MMI_PINYIN_READ_WIN_TAB, (ADD_DATA)idx);
 }
 
-LOCAL void PinyinMainWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
-{
-    memset(&pinyin_read_info, 0, sizeof(PINYIN_READ_INFO_T));
-    pinyin_cur_select_id = ZMT_PINYIN_BUTTON_1_CTRL_ID;
-}
-
 LOCAL void PinyinMainWin_DisplayButton(MMI_WIN_ID_T win_id)
 {
     uint8 i = 0;
@@ -1081,18 +1075,33 @@ LOCAL void PinyinMainWin_DisplayButton(MMI_WIN_ID_T win_id)
     GUIBUTTON_SetBorder(pinyin_cur_select_id, &border, FALSE);
 }
 
+LOCAL void PinyinMainWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
+{
+    memset(&pinyin_read_info, 0, sizeof(PINYIN_READ_INFO_T));
+    pinyin_cur_select_id = ZMT_PINYIN_BUTTON_1_CTRL_ID;
+
+    PinyinMainWin_DisplayButton(win_id);
+}
+
 LOCAL void PinyinMainWin_FULL_PAINT(MMI_WIN_ID_T win_id)
 {
     GUI_LCD_DEV_INFO lcd_dev_info = {GUI_MAIN_LCD_ID,GUI_BLOCK_MAIN};
     GUISTR_STATE_T text_state = GUISTR_STATE_ALIGN | GUISTR_STATE_ELLIPSIS_EX;
     GUISTR_STYLE_T text_style = {0};
     MMI_STRING_T text_string = {0};
+    GUI_BORDER_T border = {1, MMI_WHITE_COLOR, GUI_BORDER_ROUNDED};
     GUI_RECT_T title_rect = pinyin_title_rect;
+    uint8 i = 0;
 
     MMIRES_GetText(PINYIN_CLASS_TXT, win_id, &text_string);
     Pinyin_DrawWinTitle(win_id, 0, text_string, title_rect, DP_FONT_22);
 
-    PinyinMainWin_DisplayButton(win_id);
+    for(i = 0;i < PINYIN_ICON_LIST_ITEM_MAX;i++)
+    {
+        MMI_CTRL_ID_T ctrl_id = ZMT_PINYIN_BUTTON_1_CTRL_ID + i;
+        GUIBUTTON_SetVisible(ctrl_id, TRUE, TRUE);
+    }
+    GUIBUTTON_SetBorder(pinyin_cur_select_id, &border, FALSE);
 }
 
 LOCAL void PinyinMainWin_UpdateSelectButton(MMI_CTRL_ID_T ctrl_id)
