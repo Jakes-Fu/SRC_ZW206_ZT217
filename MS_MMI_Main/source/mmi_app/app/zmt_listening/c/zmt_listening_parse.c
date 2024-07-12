@@ -544,8 +544,8 @@ PUBLIC void Listening_DeleteOneAlbum(int del_module_id)
     if(module_count->valueint != 0){
         out = cJSON_PrintUnformatted(root);
         zmt_file_data_write(out, strlen(out), file_path);
+		SCI_FREE(out);
     }
-    SCI_FREE(out);
     cJSON_Delete(root);
     Listening_FreeLocalDataInfo();
     Listening_InitLocalDataInfo();

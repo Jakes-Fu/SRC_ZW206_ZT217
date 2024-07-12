@@ -1432,6 +1432,7 @@ LOCAL void PoetryItemWin_HanldeTpUp(MMI_WIN_ID_T win_id, GUI_POINT_T point)
     {
         is_open_favorite = TRUE;
         poetry_is_favorite = TRUE;
+        where_open_favorite = 1;
         getFavoritePoetry();
         MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
     }
@@ -1876,9 +1877,10 @@ LOCAL void PoetryDetailWin_HanldeTpUp(MMI_WIN_ID_T win_id, GUI_POINT_T point)
 LOCAL void PoetryDetailWin_CLOSE_WINDOW(MMI_WIN_ID_T win_id)
 {
     BOOLEAN is_favorite = FALSE;
-    if(poetry_detail_infos != NULL && poetry_detail_infos->id != NULL){
-        is_favorite = getPoemIsFavorite(poetry_detail_infos->id);
+    if(poetry_detail_infos == NULL || poetry_detail_infos->id == NULL){
+        return;
     }
+    is_favorite = getPoemIsFavorite(poetry_detail_infos->id);
     SCI_TRACE_LOW("%s: is_favorite = %d, poetry_is_favorite = %d", __FUNCTION__, is_favorite, poetry_is_favorite);
     if(is_favorite){
         if(!poetry_is_favorite){
