@@ -178,7 +178,9 @@ LOCAL void Yinbiao_IntervalTimerCallback(uint8 timer_id, uint32 param)
             yinbiao_read_info.is_play = FALSE;
             Yinbiao_StopMp3Data();
         }
-        YinbiaoReadWin_UpdateButtonBgWin(yinbiao_read_info.is_play);
+        if(MMK_IsFocusWin(ZMT_YINBIAO_READ_WIN_ID)){
+            YinbiaoReadWin_UpdateButtonBgWin(yinbiao_read_info.is_play);
+        }
     }
 }
 
@@ -191,7 +193,9 @@ LOCAL void Yinbiao_CreateIntervalTimer(void)
     MMK_StartTimerCallback(yinbiao_player_timer_id, 2000, Yinbiao_IntervalTimerCallback, PNULL, FALSE);
     
     yinbiao_read_info.is_play = FALSE;
-    YinbiaoReadWin_UpdateButtonBgWin(yinbiao_read_info.is_play);
+    if(MMK_IsFocusWin(ZMT_YINBIAO_READ_WIN_ID)){
+        YinbiaoReadWin_UpdateButtonBgWin(yinbiao_read_info.is_play);
+    }
 }
 
 LOCAL BOOLEAN Yinbiao_PlayMp3DataCallback(MMISRV_HANDLE_T handle, MMISRVMGR_NOTIFY_PARAM_T *param)
@@ -271,7 +275,9 @@ LOCAL void Yinbiao_PlayMp3Data(uint8 idx, char * text)
 	   GUI_OtherCodeToWstr(file_name,50, GUI_GetCodeType(file_path,strlen(file_path)), file_path,strlen(file_path));
     if(!MMIFILE_IsFileExist(file_name, MMIAPICOM_Wstrlen(file_name))){
         yinbiao_read_info.is_play = FALSE;
-        YinbiaoReadWin_UpdateButtonBgWin(yinbiao_read_info.is_play);
+        if(MMK_IsFocusWin(ZMT_YINBIAO_READ_WIN_ID)){
+            YinbiaoReadWin_UpdateButtonBgWin(yinbiao_read_info.is_play);
+        }
         return;
     }
     
@@ -405,7 +411,9 @@ LOCAL void YinbiaoReadWin_PlayCallback(void)
         Yinbiao_PlayMp3Data(idx, yinbiao_info_text[idx][yinbiao_read_info.cur_read_idx].text);
     }
     Yinbiao_StopIntervalTimer();
-    YinbiaoReadWin_UpdateButtonBgWin(yinbiao_read_info.is_play);
+    if(MMK_IsFocusWin(ZMT_YINBIAO_READ_WIN_ID)){
+        YinbiaoReadWin_UpdateButtonBgWin(yinbiao_read_info.is_play);
+    }
 }
 
 LOCAL void YinbiaoReadWin_PreCallback(void)
