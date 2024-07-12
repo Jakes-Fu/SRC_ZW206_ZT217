@@ -556,6 +556,7 @@ LOCAL void Class_DownloadNextMp3(BOOLEAN is_download_file)
         class_download_next_now = FALSE;
         have_new_quest = FALSE;
         class_cur_down_idx = 0;
+        Class_DownloadMp3Complete();
         return;
     }
     if(class_read_info[class_cur_down_idx] == NULL){
@@ -681,18 +682,6 @@ PUBLIC void Class_RequestMp3Data(char * url, uint16 course_id, uint16 section_id
         if(is_download_file){
             char file_path[50] = {0};
             Class_GetClassReadAudioName(file_path, course_id, section_id, idx);
-            /*if(!zmt_tfcard_exist()){
-                MMI_CreateListeningTipWin(PALYER_PLAY_NO_TFCARD_TIP);
-            }else{
-                char file_path[50] = {0};
-                Class_GetClassReadAudioName(file_path, course_id, section_id, idx);
-                if(zmt_tfcard_get_free_kb() > 100*1024){
-                    MMIZDT_HTTP_AppSend(TRUE,url,PNULL,0,101,0,1,20000,file_path,strlen(file_path),Class_ParseMp3FileDownload);
-                }else{
-                    MMI_CreateListeningTipWin(PALYER_PLAY_NO_SPACE_TIP);
-                }
-                MMIZDT_HTTP_AppSend(TRUE,url,PNULL,0,101,0,1,20000,file_path,strlen(file_path),Class_ParseMp3FileDownload);
-            }*/
             MMIZDT_HTTP_AppSend(TRUE,url,PNULL,0,101,0,1,20000,file_path,strlen(file_path),Class_ParseMp3FileDownload);
         }else{
             MMIZDT_HTTP_AppSend(TRUE, url, PNULL, 0, 1000, 0, 0, 20000, 0, 0, Class_ParseMp3Response);

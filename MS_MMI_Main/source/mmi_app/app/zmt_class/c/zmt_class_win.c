@@ -513,6 +513,15 @@ LOCAL void Class_StartWin32TestTimer(void)
 }
 #endif
 
+PUBLIC void Class_DownloadMp3Complete(void)
+{
+    if(class_player_handle == 0){
+        if(class_cur_info.cur_idx + 1 < class_read_count){
+            Class_PlayAudioMp3();
+        }
+    }
+}
+
 LOCAL void Class_StopPlayMp3Data(void)
 {
     if(class_player_handle)
@@ -526,6 +535,7 @@ LOCAL void Class_StopPlayMp3Data(void)
 
 LOCAL void Class_PlayerReportEnd(void)
 {
+    Class_StopPlayMp3Data();
     if(class_cur_info.is_single)
     {
         Class_PlayAudioMp3();
@@ -551,7 +561,6 @@ LOCAL void Class_PlayerReportEnd(void)
         class_cur_info.is_single = FALSE;
         ClassReadWin_UpdateButtonBgWin(FALSE, FALSE);
         SCI_TRACE_LOW("%s: mp3 play end, stop mp3", __FUNCTION__);
-        Class_StopPlayMp3Data();
     }
 }
 
