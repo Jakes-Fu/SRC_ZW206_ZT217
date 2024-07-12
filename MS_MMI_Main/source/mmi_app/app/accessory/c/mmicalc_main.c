@@ -4061,6 +4061,23 @@ LOCAL MMI_RESULT_E HandleCalcWinMsg(
             MMK_CloseWin(win_id);
         }
         break;
+    case MSG_KEYDOWN_DEL:
+    case MSG_KEYLONG_DEL:
+#ifdef MMI_PDA_SUPPORT
+        MMK_CloseWin(win_id);
+#else
+        if (CALC_NO_ERROR != s_math_error_info)
+        {
+            InitCalc(win_id);   
+            DisplayCalcFormulaEx(win_id);           
+            UpdateSoftkey(win_id, msg_id);
+        }
+        else if (!FormatFormula(win_id, msg_id))
+        {
+           // MMK_CloseWin(win_id);
+        }
+        break;
+#endif
     case MSG_CTL_PENOK:
         if(((MMI_NOTIFY_T*)param)->src_id == MMIACC_CALC_CLEAR_CTRL_ID)
         {
@@ -4172,7 +4189,7 @@ LOCAL MMI_RESULT_E HandleCalcWinMsg(
 	            {
 			        if(s_is_tp_CANCEL_key == TRUE)
 			        {
-			            MMK_SendMsg(win_id, MSG_KEYDOWN_CANCEL, PNULL);
+			            MMK_SendMsg(win_id, MSG_KEYDOWN_DEL, PNULL);
 			        }
 	            }
                // DisplayCalcImage(win_id); 

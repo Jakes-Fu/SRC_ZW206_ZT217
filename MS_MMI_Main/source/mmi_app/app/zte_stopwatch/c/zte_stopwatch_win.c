@@ -375,7 +375,8 @@ LOCAL MMI_RESULT_E HandleMsgStopWatchWindow( MMI_WIN_ID_T win_id, MMI_MESSAGE_ID
         break;
 
         case MSG_KEYDOWN_CANCEL:
-        case MSG_CTL_CANCEL:
+            break;
+        case MSG_KEYUP_CANCEL:
         {
             MMK_CloseWin(win_id);
         }

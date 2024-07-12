@@ -1063,9 +1063,10 @@ LOCAL MMI_RESULT_E  HandleAlarmMainListWindow(
         case MSG_APP_OK:
         case MSG_KEYDOWN_RED:
             break;
+        case MSG_KEYDOWN_CANCEL:
+            break;
         case MSG_KEYUP_RED:
-        case MSG_CTL_CANCEL:
-        case MSG_APP_CANCEL:
+        case MSG_KEYUP_CANCEL:
         {
             MMK_CloseWin( win_id );
             break;

@@ -1374,8 +1374,9 @@ LOCAL MMI_RESULT_E  HandleZDT_2VMWinMsg(
                 //MAIN_SetIdleRoamingState(MN_DUAL_SYS_1,FALSE);
             break;
             
-        case MSG_CTL_CANCEL:
-        case MSG_APP_CANCEL:
+        case MSG_KEYDOWN_CANCEL:
+            break;
+        case MSG_KEYUP_CANCEL:
             unbind_click_count = 0;
             MMK_CloseWin(win_id);         
             break;
@@ -1511,8 +1512,9 @@ LOCAL MMI_RESULT_E  HandleZDT_Watch2VMSelectWinMsg(
         MMK_CloseWin(win_id);
         break;
        
-    case MSG_CTL_CANCEL:
-    case MSG_APP_CANCEL:
+    case MSG_KEYDOWN_CANCEL:
+        break;
+    case MSG_KEYUP_CANCEL:
         MMK_CloseWin(win_id);
         break;
 
