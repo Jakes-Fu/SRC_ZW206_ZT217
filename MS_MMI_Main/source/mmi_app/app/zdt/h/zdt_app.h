@@ -550,14 +550,19 @@ PUBLIC BOOLEAN MMIZDT_ShouldStayInClassModeWin();
 //*********************************************************
 
 //**********************¼ÆËãÆ÷***********************************
-#define CALC_NUMBER_START_Y  65
+//#define CALC_NUMBER_START_Y  65
 #define CALC_NUMBER_START_X  7
 #define CALC_NUMBER_IMG_WIDTH  55
 #define CALC_NUMBER_IMG_HEIGHT  36
 #define CALC_NUMBER_MARGIN_X 2
 #ifdef MAINLCD_DEV_SIZE_240X284
+#define CALC_NUMBER_START_Y  65
 #define CALC_NUMBER_MARGIN_Y 14
+#elif defined MAINLCD_DEV_SIZE_240X320
+#define CALC_NUMBER_START_Y  85
+#define CALC_NUMBER_MARGIN_Y 16
 #else
+#define CALC_NUMBER_START_Y  65
 #define CALC_NUMBER_MARGIN_Y 3
 #endif
 #define CALC_NUMBER_NEXT_X (CALC_NUMBER_IMG_WIDTH+CALC_NUMBER_MARGIN_X)

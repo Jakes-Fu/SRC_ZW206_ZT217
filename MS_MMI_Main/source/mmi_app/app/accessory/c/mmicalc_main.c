@@ -5376,7 +5376,7 @@ PUBLIC void MMIAPICALC_OpenMainWin(void)
     {
         MMK_CloseWin(MMIACC_CALC_WIN_ID);
     }
-#if defined MAINLCD_SIZE_128X160 ||defined MAINLCD_SIZE_176X220 || (defined(MAINLCD_SIZE_240X320) || defined(MAINLCD_SIZE_240X240)) \
+#if defined MAINLCD_SIZE_128X160 ||defined MAINLCD_SIZE_176X220 || defined(MAINLCD_SIZE_240X240) \
     || defined MAINLCD_SIZE_240X400 || defined MAINLCD_SIZE_320X480
     MMK_CreateWin((uint32 *)CALC_WIN_TAB,PNULL);
     //MMK_CreateCtrlByWinTabEx(MMIACC_CALC_WIN_ID,
