@@ -38,7 +38,7 @@ typedef struct
 //  Author:
 //  Note:
 /*****************************************************************************/
-PUBLIC char *sfr_get_post_data(uint32 *p_dst_data_len);
+PUBLIC unsigned char *sfr_get_post_data(uint32 *p_dst_data_len);
 
 /*****************************************************************************/
 //  Description :

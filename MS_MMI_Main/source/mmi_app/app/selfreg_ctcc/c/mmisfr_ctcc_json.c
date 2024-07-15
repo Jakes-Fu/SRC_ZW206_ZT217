@@ -59,9 +59,9 @@ LOCAL const char *s_json_tags_str[] =
 
 char s_dm_str[MMISFR_INDEX_MAX][MMISFR_STR_LEN + 2] ={
     "RTOS",//MMISFR_INDEX_SYS_VERSION
-    "1.0.0.1",//MMISFR_INDEX_SOFTWARE_VER
-    "TEST",//MMISFR_INDEX_SOFTWARE_NAME
-    "11",//MMISFR_INDEX_UETYPE
+    "ZT217_LT-T01V1.0.1",//MMISFR_INDEX_SOFTWARE_VER
+    "LT-T01",//MMISFR_INDEX_SOFTWARE_NAME
+    "99",//MMISFR_INDEX_UETYPE
     "",//MMISFR_INDEX_EID
 };
 
@@ -240,7 +240,7 @@ LOCAL const char *sfr_get_sim1_cell_id(void)
     SCI_TRACE_LOW("[DMCTCC] sfr_get_sim1_cell_id,  plmn_info.cell_id =%d",
                   plmn_info.cell_id);
     SCI_MEMSET(s_ue_info, 0, sizeof(s_ue_info));
-    sprintf(s_ue_info, "%d", plmn_info.cell_id);
+    sprintf(s_ue_info, "%07x", plmn_info.cell_id);
 
     return s_ue_info;
 }
@@ -372,7 +372,7 @@ PUBLIC BOOLEAN sfr_parse_data(uint8 *data, uint32 data_len)
     return (PARSE_DATA_SUCCESS == parse_ctx.retCode);
 }
 
-PUBLIC char *sfr_get_post_data(uint32 *p_dst_data_len)
+PUBLIC unsigned char *sfr_get_post_data(uint32 *p_dst_data_len)
 {
     uint16 base64_max_len;
     char *p_json;
@@ -420,7 +420,7 @@ PUBLIC char *sfr_get_post_data(uint32 *p_dst_data_len)
     sfr_add_item("MEID", "");
 
     // - NETWORKTYPE
-    sfr_add_item("NETWORKTYPE", "LTE");
+    sfr_add_item("NETWORKTYPE", "4");
 
     // - SIM1CDMAIMSI
     sfr_add_item("SIM1CDMAIMSI", "");
@@ -447,6 +447,7 @@ PUBLIC char *sfr_get_post_data(uint32 *p_dst_data_len)
         dst_data_len = strlen(be_encoded_buff);
         *p_dst_data_len = dst_data_len;
     }
+
 
     sfr_free_buff();
 

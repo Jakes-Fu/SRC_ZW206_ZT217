@@ -180,7 +180,7 @@ SFR_SUPPORT = FALSE                                  ### DM Register R
                                                      # Option1:TRUE
                                                      # Option2:FALSE
 
-SFR_SUPPORT_CTCC = FALSE                             ### DM CTCC
+SFR_SUPPORT_CTCC = TRUE                             ### DM CTCC
                                                      # Option1:TRUE
                                                      # Option2:FALSE
 
