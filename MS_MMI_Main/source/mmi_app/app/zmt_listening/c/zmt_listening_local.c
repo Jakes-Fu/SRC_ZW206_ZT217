@@ -763,13 +763,15 @@ LOCAL void ListeningLocalWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
         SCI_FREE(listening_info);
         listening_info = NULL;
     }
+    local_info = Listening_GetLocalDataInfo();
+    
     listening_info = (LISTENING_LIST_INFO *)SCI_ALLOC_APPZ(sizeof(LISTENING_LIST_INFO));
     SCI_MEMSET(listening_info, 0, sizeof(LISTENING_LIST_INFO));
-    local_info = Listening_GetLocalDataInfo();
-    listening_info->local_album_total = local_info->module_count;
+    if(local_info != NULL){
+        listening_info->local_album_total = local_info->module_count;
+    }
     listening_info->select_cur_class = SELECT_MODULE_LOCAL;
-    SCI_TRACE_LOW("%s: local_album_total = %d", __FUNCTION__, listening_info->local_album_total);
-				
+    SCI_TRACE_LOW("%s: local_album_total = %d", __FUNCTION__, listening_info->local_album_total);			
     GUIBUTTON_SetCallBackFunc(LISTENING_BUTTON_PRE_CTRL_ID, ButtonPreClass_CallbackFunc);
     GUIBUTTON_SetCallBackFunc(LISTENING_BUTTON_PRI_CTRL_ID, ButtonPriClass_CallbackFunc);
     GUIBUTTON_SetCallBackFunc(LISTENING_BUTTON_JUR_CTRL_ID, ButtonJurClass_CallbackFunc);
@@ -883,25 +885,8 @@ PUBLIC void ListeningLocalWin_DisplayListAndDir(MMI_WIN_ID_T win_id)
 	text_style.font = DP_FONT_24;
 	text_style.font_color = MMI_WHITE_COLOR;
 
-    if(listening_info == NULL)
-    {
-        SCI_TRACE_LOW("%s: listening_info empty!!", __FUNCTION__);
-        win_rect.top += 40;
-        MMIRES_GetText(ZMT_TXT_NO_LOCAL, win_id, &text_string);
-        GUISTR_DrawTextToLCDInRect(
-            (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
-            &win_rect,
-            &win_rect,
-            &text_string,
-            &text_style,
-            text_state,
-            GUISTR_TEXT_DIR_AUTO
-        );
-        return;
-    }
-	
-	SCI_TRACE_LOW("%s: listening_info->local_album_total = %d", __FUNCTION__, listening_info->local_album_total);
-	if(listening_info->local_album_total == 0 || listening_info->local_album_total > 12)
+	local_info = Listening_GetLocalDataInfo();
+	if(local_info == NULL ||local_info->module_count <= 0)
 	{
 		win_rect.top += 40;
 		MMIRES_GetText(ZMT_TXT_NO_LOCAL, win_id, &text_string);
@@ -1080,7 +1065,7 @@ PUBLIC void MMI_CreateListeningLocalWin(void)
 	}
     
 #ifdef WIN32
-	ListeningLocal_DownloadDataInit();
+	//ListeningLocal_DownloadDataInit();
 #else
 	if(!zmt_tfcard_exist()){
             MMI_CreateListeningTipWin(PALYER_PLAY_NO_TFCARD_TIP);

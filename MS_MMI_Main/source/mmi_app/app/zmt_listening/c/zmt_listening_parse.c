@@ -408,147 +408,153 @@ PUBLIC void Listening_DeleteOneAudio(int del_module_id, int del_audio_id)
 
 PUBLIC void Listening_DeleteOneAlbum(int del_module_id)
 {
-	uint8 i = 0;
-	uint8 j = 0;
-	uint8 m = 0;
-	uint8 k = 0;
-	char * out;
-	cJSON * root;
-	cJSON * module_list;
-	cJSON * module_count;
-	char file_path[50] = {0};
-	LISTEING_LOCAL_INFO * local_info;
-
-	SCI_TRACE_LOW("%s: del_module_id = %d", __FUNCTION__, del_module_id);
-	local_info = Listening_GetLocalDataInfo();
-	{	
-		root = cJSON_CreateObject();
-		module_list = cJSON_CreateArray();
-		module_count = cJSON_CreateNumber(local_info->module_count - 1);
-
-		cJSON_AddItemToObject(root, "count", module_count);
-		cJSON_AddItemToObject(root, "module", module_list);
-		SCI_TRACE_LOW("%s: module_count = %d", __FUNCTION__, local_info->module_count);
-		for(i = 0;i < local_info->module_count;i++)
-		{
-			cJSON * module_root;
-			cJSON * mudule_id;
-			cJSON * album_count;
-			cJSON * album_list;
-			
-			if(local_info->module_info[i].module_id == del_module_id)
-			{
-				SCI_TRACE_LOW("%s: del_module_id = %d delete, not write to .json", __FUNCTION__, del_module_id);
-				continue;
-			}
-			
-			module_root = cJSON_CreateObject();
-			cJSON_AddItemToArray(module_list, module_root);
-
-			mudule_id = cJSON_CreateNumber(local_info->module_info[i].module_id);
-			cJSON_AddItemToObject(module_root, "module_id", mudule_id);
-			SCI_TRACE_LOW("%s: mudule_id->valueint = %d", __FUNCTION__, mudule_id->valueint);
-	
-			album_count = cJSON_CreateNumber(local_info->module_info[i].album_count);
-			cJSON_AddItemToObject(module_root, "album_count", album_count);
-
-			album_list = cJSON_CreateArray();
-			cJSON_AddItemToObject(module_root, "album_list", album_list);
-			for(j = 0; j < 1; j++)
-			{
-				cJSON * album_root;
-				cJSON * album_id;
-				cJSON * album_name;
-				cJSON * audio_count;
-				cJSON * audio_list;
-
-				album_root = cJSON_CreateObject();
-				cJSON_AddItemToArray(album_list, album_root);
-					
-				album_id = cJSON_CreateNumber(local_info->module_info[i].album_info[j].album_id);
-				cJSON_AddItemToObject(album_root, "album_id", album_id);
-
-				if(local_info->module_info[i].album_info[j].album_name)
-				{
-					album_name = cJSON_CreateString(local_info->module_info[i].album_info[j].album_name);
-					cJSON_AddItemToObject(album_root, "album_name", album_name);
-				}
-
-				audio_count = cJSON_CreateNumber(local_info->module_info[i].album_info[j].audio_count);
-				cJSON_AddItemToObject(album_root, "audio_count", audio_count);
-
-				audio_list = cJSON_CreateArray();
-				cJSON_AddItemToObject(album_root, "audio_list", audio_list);
-				SCI_TRACE_LOW("%s: audio_count = %d", __FUNCTION__, local_info->module_info[i].album_info[j].audio_count);
-				for(m = 0; m < local_info->module_info[i].album_info[j].audio_count; m++)
-				{
-					cJSON * audio_root;
-					cJSON * audio_id;
-					cJSON * audio_name;
-					cJSON * audio_lrc;
-
-					audio_root = cJSON_CreateObject();
-					cJSON_AddItemToArray(audio_list, audio_root);
-						
-					audio_id = cJSON_CreateNumber(local_info->module_info[i].album_info[j].audio_info[m].audio_id);
-					cJSON_AddItemToObject(audio_root, "audio_id", audio_id);
-
-					if(local_info->module_info[i].album_info[j].audio_info[m].audio_name)
-					{
-						audio_name = cJSON_CreateString(local_info->module_info[i].album_info[j].audio_info[m].audio_name);
-						cJSON_AddItemToObject(audio_root, "audio_name", audio_name);
-					}
-				}
-			}
-		}
-	}
-
-	for(i = 0;i < local_info->module_count;i++)
-	{
-		if(local_info->module_info[i].module_id == del_module_id)
-		{
-			SCI_TRACE_LOW("%s: del_module_id = %d delete mp3 && lrc", __FUNCTION__, del_module_id);
-			for(j = 0;j < local_info->module_info[i].album_count;j++)
-			{
-				SCI_TRACE_LOW("%s: audio_count = %d", __FUNCTION__, local_info->module_info[i].album_info[j].audio_count);
-				for(m = 0;m < local_info->module_info[i].album_info[j].audio_count;m++)
-				{
-					memset(file_path, 0, 50);
-					Listening_GetFileName(file_path,
-						local_info->module_info[i].module_id,
-						local_info->module_info[i].album_info[j].album_id, 
-						local_info->module_info[i].album_info[j].audio_info[m].audio_id);
-					zmt_file_delete(file_path);
-					
-					memset(file_path, 0, 50);
-					Listening_GetLrcFileName(file_path,
-						local_info->module_info[i].module_id,
-						local_info->module_info[i].album_info[j].album_id, 
-						local_info->module_info[i].album_info[j].audio_info[m].audio_id);
-					zmt_file_delete(file_path);
-				}
-				memset(file_path, 0, 50);
-				sprintf(file_path, LISTENING_DIRECTORY_BASE_PATH, 
-					local_info->module_info[i].module_id,
-					local_info->module_info[i].album_info[j].album_id);
-				zmt_directory_delete(file_path);
-			}
-		}
-	}
-
+    uint8 i = 0;
+    uint8 j = 0;
+    uint8 m = 0;
+    uint8 k = 0;
+    char * out;
+    cJSON * root;
+    cJSON * module_list;
+    cJSON * module_count;
+    char file_path[50] = {0};
+    LISTEING_LOCAL_INFO * local_info;
+    
     memset(file_path, 0, 50);
     strcpy(file_path, LISTENING_FILE_INFO_PATH);
-    if(zmt_file_exist(file_path)){
-        zmt_file_delete(file_path);
+	
+    local_info = Listening_GetLocalDataInfo();
+    if(local_info->module_count == 1)
+    {
+        if(zmt_file_exist(file_path)){
+            zmt_file_delete(file_path);
+        }
     }
-    if(module_count->valueint != 0){
-        out = cJSON_PrintUnformatted(root);
-        zmt_file_data_write(out, strlen(out), file_path);
-		SCI_FREE(out);
+    else
+    {
+        SCI_TRACE_LOW("%s: del_module_id = %d", __FUNCTION__, del_module_id);
+        root = cJSON_CreateObject();
+        module_list = cJSON_CreateArray();
+        module_count = cJSON_CreateNumber(local_info->module_count - 1);
+
+        cJSON_AddItemToObject(root, "count", module_count);
+        cJSON_AddItemToObject(root, "module", module_list);
+        SCI_TRACE_LOW("%s: module_count = %d", __FUNCTION__, local_info->module_count);
+        for(i = 0;i < local_info->module_count;i++)
+        {
+            cJSON * module_root;
+            cJSON * mudule_id;
+            cJSON * album_count;
+            cJSON * album_list;
+			
+            if(local_info->module_info[i].module_id == del_module_id)
+            {
+                SCI_TRACE_LOW("%s: del_module_id = %d delete, not write to .json", __FUNCTION__, del_module_id);
+                continue;
+            }
+			
+            module_root = cJSON_CreateObject();
+            cJSON_AddItemToArray(module_list, module_root);
+
+            mudule_id = cJSON_CreateNumber(local_info->module_info[i].module_id);
+            cJSON_AddItemToObject(module_root, "module_id", mudule_id);
+            SCI_TRACE_LOW("%s: mudule_id->valueint = %d", __FUNCTION__, mudule_id->valueint);
+	
+            album_count = cJSON_CreateNumber(local_info->module_info[i].album_count);
+            cJSON_AddItemToObject(module_root, "album_count", album_count);
+
+            album_list = cJSON_CreateArray();
+            cJSON_AddItemToObject(module_root, "album_list", album_list);
+            for(j = 0; j < 1; j++)
+            {
+                cJSON * album_root;
+                cJSON * album_id;
+                cJSON * album_name;
+                cJSON * audio_count;
+                cJSON * audio_list;
+
+                album_root = cJSON_CreateObject();
+                cJSON_AddItemToArray(album_list, album_root);
+					
+                album_id = cJSON_CreateNumber(local_info->module_info[i].album_info[j].album_id);
+                cJSON_AddItemToObject(album_root, "album_id", album_id);
+
+                if(local_info->module_info[i].album_info[j].album_name)
+                {
+                    album_name = cJSON_CreateString(local_info->module_info[i].album_info[j].album_name);
+                    cJSON_AddItemToObject(album_root, "album_name", album_name);
+                }
+
+                audio_count = cJSON_CreateNumber(local_info->module_info[i].album_info[j].audio_count);
+                cJSON_AddItemToObject(album_root, "audio_count", audio_count);
+
+                audio_list = cJSON_CreateArray();
+                cJSON_AddItemToObject(album_root, "audio_list", audio_list);
+                SCI_TRACE_LOW("%s: audio_count = %d", __FUNCTION__, local_info->module_info[i].album_info[j].audio_count);
+                for(m = 0; m < local_info->module_info[i].album_info[j].audio_count; m++)
+                {
+                    cJSON * audio_root;
+                    cJSON * audio_id;
+                    cJSON * audio_name;
+                    cJSON * audio_lrc;
+
+                    audio_root = cJSON_CreateObject();
+                    cJSON_AddItemToArray(audio_list, audio_root);
+						
+                    audio_id = cJSON_CreateNumber(local_info->module_info[i].album_info[j].audio_info[m].audio_id);
+                    cJSON_AddItemToObject(audio_root, "audio_id", audio_id);
+
+                    if(local_info->module_info[i].album_info[j].audio_info[m].audio_name)
+                    {
+                        audio_name = cJSON_CreateString(local_info->module_info[i].album_info[j].audio_info[m].audio_name);
+                        cJSON_AddItemToObject(audio_root, "audio_name", audio_name);
+                    }
+                }
+            }
+        }
+        if(zmt_file_exist(file_path)){
+            zmt_file_delete(file_path);
+        }
+        if(module_count->valueint != 0){
+            out = cJSON_PrintUnformatted(root);
+            zmt_file_data_write(out, strlen(out), file_path);
+            SCI_FREE(out);
+        }
+        cJSON_Delete(root);
+        Listening_FreeLocalDataInfo();
+        Listening_InitLocalDataInfo();
     }
-    cJSON_Delete(root);
+
+    for(i = 0;i < local_info->module_count;i++)
+    {
+        if(local_info->module_info[i].module_id == del_module_id)
+        {
+            SCI_TRACE_LOW("%s: del_module_id = %d delete mp3 && lrc", __FUNCTION__, del_module_id);
+            for(j = 0;j < local_info->module_info[i].album_count;j++)
+            {
+                SCI_TRACE_LOW("%s: audio_count = %d", __FUNCTION__, local_info->module_info[i].album_info[j].audio_count);
+                for(m = 0;m < local_info->module_info[i].album_info[j].audio_count;m++)
+                {
+                    memset(file_path, 0, 50);
+                    Listening_GetFileName(file_path,local_info->module_info[i].module_id,
+                        local_info->module_info[i].album_info[j].album_id, 
+                        local_info->module_info[i].album_info[j].audio_info[m].audio_id
+                    );
+                    zmt_file_delete(file_path);
+					
+                    memset(file_path, 0, 50);
+                    Listening_GetLrcFileName(file_path,local_info->module_info[i].module_id,
+                        local_info->module_info[i].album_info[j].album_id, 
+                        local_info->module_info[i].album_info[j].audio_info[m].audio_id
+                    );
+                    zmt_file_delete(file_path);
+                }
+                memset(file_path, 0, 50);
+                sprintf(file_path, LISTENING_DIRECTORY_BASE_PATH, local_info->module_info[i].module_id, local_info->module_info[i].album_info[j].album_id);
+                zmt_directory_delete(file_path);
+            }
+        }
+    }
     Listening_FreeLocalDataInfo();
-    Listening_InitLocalDataInfo();
 }
 
 PUBLIC void Listening_ParseAudioDownload(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id)
