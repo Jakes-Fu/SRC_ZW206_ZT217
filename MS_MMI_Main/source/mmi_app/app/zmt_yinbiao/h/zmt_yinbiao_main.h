@@ -26,11 +26,17 @@
 #define YINBIAO_ZHENG_ITEM_MAX 10
 #define YINBIAO_HALF_ITEM_MAX  2
 
+#define YINBIAO_AUDIO_ITEM_MAX YINBIAO_DAN_ITEM_MAX
+
+#define YINBIAO_APP_ID "00000005"
+#define YINBIAO_APP_SECRET "ZmtYinbiaoSec"
+#define YINBIAO_BASE_URL_HEADER_PATH "http://8.130.95.8:8866/"
+#define YINBIAO_AUDIO_BASE_URL_PATH "english/getIPAAudio?%s"
 #define YINBIAO_MP3_DATA_BASE_PATH "E:/zmt_yinbiao/yinbiao_%d/%s.mp3"
 
 typedef struct
 {
-    uint8 text[8];
+    uint8 text[10];
 }YINBIAO_INFO_TEXT_T;
 
 typedef struct
@@ -48,6 +54,19 @@ typedef struct
     BOOLEAN is_single;
 }YINBIAO_READ_INFO_T;
 
+typedef struct
+{
+    char * audio_uri;
+    char * audio_data;
+    int16 audio_len;
+}YINBIAO_AUDIO_INFO_T;
+
+
 PUBLIC void MMI_CreateYinbiaoMainWin(void);
+
+PUBLIC void Yinbiao_ReleaseAudioPath(void);
+PUBLIC void Yinbiao_RequestAudioPath(void);
+PUBLIC void Yinbiao_RequestAudioData(uint8 idx, char * url);
+PUBLIC void Yinbiao_PlayAudioMp3(uint8 idx, char * text);
 
 #endif

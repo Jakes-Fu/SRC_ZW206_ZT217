@@ -1,5 +1,5 @@
 /*****************************************************************************
-** File Name:      zmt_pinyin_id.h                                               *
+** File Name:      zmt_yinbiao_id.h                                               *
 ** Author:         fys                                               *
 ** Date:           2024/07/08                                                *
 ******************************************************************************/
@@ -38,6 +38,8 @@ typedef enum {
 
     ZMT_YINBIAO_MAIN_WIN_ID,
     ZMT_YINBIAO_READ_WIN_ID,
+    ZMT_YINBIAO_TABLE_WIN_ID,
+    ZMT_YINBIAO_TABLE_TIP_WIN_ID,
 
     MMIZMT_YINBIAO_MAX_WIN_ID
 } MMIZMT_YINBIAO_WINDOW_ID_E;
@@ -54,15 +56,24 @@ typedef enum {
     ZMT_YINBIAO_BUTTON_4_CTRL_ID,
     ZMT_YINBIAO_BUTTON_5_CTRL_ID,
     ZMT_YINBIAO_BUTTON_6_CTRL_ID,
-     ZMT_YINBIAO_BUTTON_7_CTRL_ID,
+    ZMT_YINBIAO_BUTTON_7_CTRL_ID,
 
-    ZMT_YINBIAO_READ_FOUR_CTRL_ID,
+    ZMT_YINBIAO_READ_TABLE_CTRL_ID,
     ZMT_YINBIAO_READ_YINBIAO_CTRL_ID,
     ZMT_YINBIAO_READ_CIRCULATE_CTRL_ID,
     ZMT_YINBIAO_READ_SINGLE_CTRL_ID,
     ZMT_YINBIAO_READ_NEXT_CTRL_ID,
     ZMT_YINBIAO_READ_PLAY_CTRL_ID,
     ZMT_YINBIAO_READ_PRE_CTRL_ID,
+
+    ZMT_YINBIAO_TABLE_ICONLIST_CTRL_ID,
+    ZMT_YINBIAO_TABLE_FORM_CTRL_ID,
+    ZMT_YINBIAO_TABLE_FORM_CHILD_CTRL_ID,
+    ZMT_YINBIAO_TABLE_FORM_LEFT_CTRL_ID,
+    ZMT_YINBIAO_TABLE_FORM_RIGHT_CTRL_ID,
+
+    ZMT_YINBIAO_TABLE_TIP_LEFT_CTRL_ID,
+    ZMT_YINBIAO_TABLE_TIP_RIGHT_CTRL_ID,
     
     MMIZMT_YINBIAO_MAX_CTRL_ID
 } MMIZMT_YINBIAO_CONTROL_ID_E;

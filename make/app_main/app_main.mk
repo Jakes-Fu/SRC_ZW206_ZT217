@@ -2645,5 +2645,5 @@ endif
 ifeq ($(strip $(ZMT_YINBIAO_SUPPORT)), TRUE)
 MINCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_yinbiao/h
 MSRCPATH		+=  MS_MMI_Main/source/mmi_app/app/zmt_yinbiao/c
-SOURCES			+=  zmt_yinbiao_win.c 
+SOURCES			+=  zmt_yinbiao_win.c zmt_yinbiao_data.c
 endif

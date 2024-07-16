@@ -1,10 +1,10 @@
 /*****************************************************************************
-** File Name:      zmt_pinyin_text.h                                               *
+** File Name:      zmt_yinbiao_text.h                                               *
 ** Author:         fys                                               *
 ** Date:           2024/07/08                                                *
 ******************************************************************************/
-#ifndef ZMT_PINYIN_TEXT_H
-#define ZMT_PINYIN_TEXT_H
+#ifndef ZMT_YINBIAO_TEXT_H
+#define ZMT_YINBIAO_TEXT_H
 
 #include "sci_types.h"
 #include "mmi_module.h"
@@ -21,17 +21,17 @@ extern   "C" {
 #include "macro_mdu_def.h"
 
 #ifdef CODE_MATCH_RES_CHECK
-#include "zmt_pinyin_mdu_def.h"
+#include "zmt_yinbiao_mdu_def.h"
 #endif
 
-typedef enum ZMT_PINYIN_MMI_TEXT_ID_E
+typedef enum ZMT_YINBIAO_MMI_TEXT_ID_E
 {
-	ZMT_PINYIN_TXT_NULL = ( MMI_MODULE_ZMT_PINYIN << 16 ) | MMI_SYS_RES_FLAG,
+	ZMT_YINBIAO_TXT_NULL = ( MMI_MODULE_ZMT_YINBIAO << 16 ) | MMI_SYS_RES_FLAG,
 
-#include "zmt_pinyin_mdu_def.h"
+#include "zmt_yinbiao_mdu_def.h"
 
-	ZMT_PINYIN_TXT_MAX
-} ZMT_PINYIN_MMI_TEXT_ID_E;
+	ZMT_YINBIAO_TXT_MAX
+} ZMT_YINBIAO_MMI_TEXT_ID_E;
 
 #undef MACRO_MDU_TYPE
 
