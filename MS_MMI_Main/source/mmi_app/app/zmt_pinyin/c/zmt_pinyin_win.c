@@ -28,16 +28,16 @@
 #include "zmt_listening_export.h"
 #endif
 
-#define pinyin_win_rect {0, 0, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT}//´°¿Ú
-#define pinyin_title_rect {0, 0, MMI_MAINSCREEN_WIDTH, PINYIN_LINE_HIGHT}//¶¥²¿
-#define pinyin_list_rect {0, PINYIN_LINE_HIGHT, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT-5}//ÁÐ±í
+#define pinyin_win_rect {0, 0, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT}//çª—å£
+#define pinyin_title_rect {0, 0, MMI_MAINSCREEN_WIDTH, PINYIN_LINE_HIGHT}//é¡¶éƒ¨
+#define pinyin_list_rect {0, PINYIN_LINE_HIGHT, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT-5}//åˆ—è¡¨
 #define pinyin_yinbiao_rect {10, 2.5*PINYIN_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-10, 8*PINYIN_LINE_HIGHT}
 #define pinyin_msg_rect {PINYIN_LINE_WIDTH, 3*PINYIN_LINE_HIGHT, MMI_MAINSCREEN_WIDTH - PINYIN_LINE_WIDTH, 7*PINYIN_LINE_HIGHT}
 #define pinyin_msg_tips_left_rect {1.2*PINYIN_LINE_WIDTH, 5.5*PINYIN_LINE_HIGHT, 2.7*PINYIN_LINE_WIDTH, 7*PINYIN_LINE_HIGHT}
 #define pinyin_msg_tips_right_rect {3.3*PINYIN_LINE_WIDTH, 5.5*PINYIN_LINE_HIGHT, 4.8*PINYIN_LINE_WIDTH, 7*PINYIN_LINE_HIGHT}
 
 PINYIN_INFO_TEXT_T pinyin_info_text[PINYIN_ICON_LIST_ITEM_MAX][PINYIN_SHENG_ITEM_MAX] = {
-    {"a", "o", "e", "i", "u", "¨¹"}, {"ai", "ei", "ao", "ou",  "ie", "iu",  "¨¹e"}, {"an", "en", "in", "un",  "¨¹n"},
+    {"a", "o", "e", "i", "u", "Ã¼"}, {"ai", "ei", "ao", "ou",  "ie", "iu",  "Ã¼e"}, {"an", "en", "in", "un",  "Ã¼n"},
     {"ang", "eng", "ing", "ong"}, {"b", "p", "m", "f", "d", "t", "n", "l", "g", "k", "h", "j", "q", "x", "zh", "ch", "sh", "r", "z", "c", "s"},
     {"zhi", "chi", "shi", "ri", "zi", "ci", "si", "yi", "wu", "yu", "ye", "yue", "yuan", "yin", "yun", "ying"}
 };
@@ -47,7 +47,12 @@ PINYIN_INFO_NUM_T pinyin_info_num[PINYIN_ICON_LIST_ITEM_MAX] = {
     PINYIN_HOU_ITEM_MAX, PINYIN_SHENG_ITEM_MAX, PINYIN_ZHENG_ITEM_MAX
 };
 
-LOCAL PINYIN_READ_INFO_T pinyin_read_info = {0};
+PINYIN_AUDIO_INFO_T * pinyin_audio_info[PINYIN_AUDIO_ITEM_MAX];
+int pinyin_request_status = 0;
+int pinyin_request_idx = 0;
+BOOLEAN pinyin_request_now = FALSE;
+PINYIN_READ_INFO_T pinyin_read_info = {0};
+
 LOCAL MMISRV_HANDLE_T pinyin_player_handle = PNULL;
 LOCAL uint8 pinyin_player_timer_id = 0;
 LOCAL MMI_CTRL_ID_T pinyin_cur_select_id = ZMT_PINYIN_BUTTON_1_CTRL_ID;
@@ -159,12 +164,16 @@ LOCAL void Pinyin_IntervalTimerCallback(uint8 timer_id, uint32 param)
         if(pinyin_read_info.is_single)
         {
             pinyin_read_info.is_play = TRUE;
-            Pinyin_PlayMp3Data(idx, pinyin_info_text[idx][pinyin_read_info.cur_read_idx].text);
+            if(!MMK_IsOpenWin(ZMT_PINYIN_TABLE_WIN_ID)){
+                Pinyin_PlayAudioMp3(idx, pinyin_info_text[idx][pinyin_read_info.cur_read_idx].text);
+            }
         }
         else if(pinyin_read_info.is_circulate)
         {
             pinyin_read_info.is_play = TRUE;
-            PinyinReadWin_NextCallback();
+            if(!MMK_IsOpenWin(ZMT_PINYIN_TABLE_WIN_ID)){
+                PinyinReadWin_NextCallback();
+            }
         }
         else
         {
@@ -250,6 +259,7 @@ LOCAL void Pinyin_StopMp3Data(void)
     }
 }
 
+
 LOCAL void Pinyin_PlayMp3Data(uint8 idx, char * text)
 {
     MMIAUD_RING_DATA_INFO_T ring_data = {MMISRVAUD_RING_FMT_MIDI, 0, NULL};
@@ -258,11 +268,13 @@ LOCAL void Pinyin_PlayMp3Data(uint8 idx, char * text)
     BOOLEAN result = FALSE;
     char file_path[50] = {0};
     wchar file_name[50] = {0};
-
+    char text_str[20] = {0};
+    
     Pinyin_StopMp3Data();
 
-    sprintf(file_path, PINYIN_MP3_DATA_BASE_PATH, idx, text);
-    GUI_GBToWstr(file_name, file_path, strlen(file_path));
+    Pinyin_urlencode(text, text_str);
+    sprintf(file_path, PINYIN_MP3_DATA_BASE_PATH, idx, text_str, 20);
+    GUI_UTF8ToWstr(file_name, 50, file_path, strlen(file_path));
     if(!MMIFILE_IsFileExist(file_name, MMIAPICOM_Wstrlen(file_name)))
     {
         if(MMK_IsOpenWin(ZMT_PINYIN_TABLE_TIP_WIN_ID))
@@ -283,14 +295,13 @@ LOCAL void Pinyin_PlayMp3Data(uint8 idx, char * text)
     {
         req.is_auto_free = TRUE;
         req.notify = PinyinTableTipWin_PlayRingCallback;
-        req.pri = MMISRVAUD_PRI_NORMAL;
     }
     else
     {
         req.is_auto_free = FALSE;
         req.notify = Pinyin_PlayMp3DataCallback;
-        req.pri = MMISRVAUD_PRI_NORMAL;
     }
+    req.pri = MMISRVAUD_PRI_NORMAL;
 
     audio_srv.info.type = MMISRVAUD_TYPE_RING_FILE;
     audio_srv.info.ring_file.fmt  = MMISRVAUD_RING_FMT_MP3;
@@ -320,6 +331,116 @@ LOCAL void Pinyin_PlayMp3Data(uint8 idx, char * text)
     }
 }
 
+LOCAL void Pinyin_PlayAudioMp3Data(uint8 *data,uint32 data_len)
+{
+    MMIAUD_RING_DATA_INFO_T ring_data = {MMISRVAUD_RING_FMT_MIDI, 0, NULL};
+    MMISRVMGR_SERVICE_REQ_T req = {0};
+    MMISRVAUD_TYPE_T audio_srv = {0};
+    BOOLEAN result = FALSE;
+
+    Pinyin_StopMp3Data();
+
+    if(MMK_IsOpenWin(ZMT_PINYIN_TABLE_TIP_WIN_ID))
+    {
+        req.is_auto_free = TRUE;
+        req.notify = PinyinTableTipWin_PlayRingCallback;
+    }
+    else
+    {
+        req.is_auto_free = FALSE;
+        req.notify = Pinyin_PlayMp3DataCallback;
+    }
+    req.pri = MMISRVAUD_PRI_NORMAL;
+
+    audio_srv.info.type = MMISRVAUD_TYPE_RING_BUF;
+    audio_srv.info.ring_buf.fmt = MMISRVAUD_RING_FMT_MP3;
+    audio_srv.info.ring_buf.data = data;
+    audio_srv.info.ring_buf.data_len = data_len;
+    audio_srv.volume=MMIAPISET_GetMultimVolume();
+
+    audio_srv.all_support_route = MMISRVAUD_ROUTE_SPEAKER | MMISRVAUD_ROUTE_EARPHONE;
+    pinyin_player_handle = MMISRVMGR_Request(STR_SRV_AUD_NAME, &req, &audio_srv);
+    if(pinyin_player_handle > 0)
+    {
+        result = MMISRVAUD_Play(pinyin_player_handle, 0);
+        if(!result)
+        {
+            SCI_TRACE_LOW("%s pinyin_player_handle error", __FUNCTION__);
+            MMISRVMGR_Free(pinyin_player_handle);
+            pinyin_player_handle = 0;
+        }
+        if(result == MMISRVAUD_RET_OK)
+        {
+            SCI_TRACE_LOW("%s pinyin_player_handle = %d", __FUNCTION__, pinyin_player_handle);
+        }
+    }
+    else
+    {
+        SCI_TRACE_LOW("%s pinyin_player_handle <= 0", __FUNCTION__);
+    }
+}
+
+LOCAL void Pinyin_PlayAudioMp3Error(int error_id)
+{
+    SCI_TRACE_LOW("%s: error_id = %d", __FUNCTION__, error_id);
+    pinyin_read_info.is_play = FALSE;
+    Pinyin_StopMp3Data();
+    Pinyin_StopIntervalTimer();
+    if(pinyin_read_info.is_circulate)
+    {
+        pinyin_read_info.is_play = TRUE;
+        PinyinReadWin_NextCallback();
+    }
+    PinyinReadWin_UpdateButtonBgWin(pinyin_read_info.is_play);
+}
+
+PUBLIC void Pinyin_PlayAudioMp3(uint8 idx, char * text)
+{
+    if(pinyin_audio_info[pinyin_read_info.cur_read_idx] == NULL){
+        SCI_TRACE_LOW("%s: empty audio info!!", __FUNCTION__);
+        return;
+    }
+    if(pinyin_audio_info[pinyin_read_info.cur_read_idx]->audio_len == 0)
+    {
+        if(pinyin_audio_info[pinyin_read_info.cur_read_idx]->audio_uri != NULL)
+        {
+            char file_path[50] = {0};
+            wchar file_name[50] = {0};
+            char text_str[20] = {0};
+            Pinyin_urlencode(text, text_str);
+            sprintf(file_path, PINYIN_MP3_DATA_BASE_PATH, idx, text_str, 20);
+            GUI_UTF8ToWstr(file_name, 50, file_path, strlen(file_path));
+            if(!MMIFILE_IsFileExist(file_name, MMIAPICOM_Wstrlen(file_name)))
+            {
+                Pinyin_RequestAudioData(pinyin_read_info.cur_read_idx, pinyin_audio_info[pinyin_read_info.cur_read_idx]->audio_uri);
+            }
+            else
+            {
+                Pinyin_PlayMp3Data(idx, text);
+            }
+        }
+        else
+        {
+            SCI_TRACE_LOW("%s: empty audio uri!!", __FUNCTION__);
+            Pinyin_PlayAudioMp3Error(0);
+        }
+    }
+    else if(pinyin_audio_info[pinyin_read_info.cur_read_idx]->audio_len == -1)
+    {
+        Pinyin_PlayAudioMp3Error(-1);
+    }
+    else if(pinyin_audio_info[pinyin_read_info.cur_read_idx]->audio_len == -2)
+    {
+        Pinyin_PlayAudioMp3Error(-2);
+    }
+    else
+    {
+        if(pinyin_audio_info[pinyin_read_info.cur_read_idx]->audio_data != NULL){
+            Pinyin_PlayAudioMp3Data(pinyin_audio_info[pinyin_read_info.cur_read_idx]->audio_data ,pinyin_audio_info[pinyin_read_info.cur_read_idx]->audio_len);
+        }
+    }
+}
+
 LOCAL void PinyinTableTipWin_UpdateButton(BOOLEAN status)
 {
     GUI_LCD_DEV_INFO lcd_dev_info = {GUI_MAIN_LCD_ID,GUI_BLOCK_MAIN};
@@ -343,7 +464,8 @@ LOCAL void PinyinTableTipWin_LeftButtonCallback(void)
     uint8 idx = MMK_GetWinAddDataPtr(ZMT_PINYIN_TABLE_TIP_WIN_ID);
     if(pinyin_table_play_status == 0){
         pinyin_table_play_status = 1;
-        Pinyin_PlayMp3Data(pinyin_read_info.cur_icon_idx, pinyin_info_text[pinyin_read_info.cur_icon_idx][idx].text);
+        pinyin_read_info.cur_read_idx = idx;
+        Pinyin_PlayAudioMp3(pinyin_read_info.cur_icon_idx, pinyin_info_text[pinyin_read_info.cur_icon_idx][idx].text);
     }else{
         pinyin_table_play_status = 0;
         Pinyin_StopMp3Data();
@@ -375,7 +497,7 @@ LOCAL void PinyinTableTipWin_FULL_PAINT(MMI_WIN_ID_T win_id)
     GUI_RECT_T text_rect = pinyin_msg_rect;
     GUI_RECT_T text_left_rect = pinyin_msg_tips_left_rect;
     GUI_RECT_T text_right_rect = pinyin_msg_tips_right_rect;
-    wchar text_wchar[100] = {0};
+    wchar text_wchar[20] = {0};
     uint8 idx = MMK_GetWinAddDataPtr(win_id);
     uint8 size = 0;
 
@@ -398,7 +520,7 @@ LOCAL void PinyinTableTipWin_FULL_PAINT(MMI_WIN_ID_T win_id)
     {
         GUIBUTTON_SetVisible(ZMT_PINYIN_TABLE_TIP_LEFT_CTRL_ID, TRUE, TRUE);
         size = strlen(pinyin_info_text[pinyin_read_info.cur_icon_idx][idx].text);
-        GUI_GBToWstr(&text_wchar, pinyin_info_text[pinyin_read_info.cur_icon_idx][idx].text, size);
+        GUI_UTF8ToWstr(&text_wchar, 20, pinyin_info_text[pinyin_read_info.cur_icon_idx][idx].text, size);
         text_string.wstr_ptr = text_wchar;
         text_string.wstr_len = MMIAPICOM_Wstrlen(text_wchar);
         text_style.font = DP_FONT_28;
@@ -568,7 +690,7 @@ LOCAL void PinyinTableWin_DisplayTableList(MMI_WIN_ID_T win_id)
 
             memset(text_str, 0, 20);
             size = strlen(pinyin_info_text[idx][list_idx].text);
-            GUI_GBToWstr(text_str, pinyin_info_text[idx][list_idx].text, size);
+            GUI_UTF8ToWstr(text_str, 20, pinyin_info_text[idx][list_idx].text, size);
             text_string.wstr_ptr = text_str;
             text_string.wstr_len = MMIAPICOM_Wstrlen(text_str);
             item_data.item_content[1].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
@@ -753,6 +875,8 @@ LOCAL void PinyinReadWin_TableCallback(void)
 {
     uint8 idx = MMK_GetWinAddDataPtr(ZMT_PINYIN_READ_WIN_ID);
     MMI_CreatePinyinTableWin(idx);
+    pinyin_read_info.is_play = FALSE;
+    Pinyin_StopMp3Data();
 }
 
 LOCAL void PinyinReadWin_CirculateCallback(void)
@@ -786,7 +910,7 @@ LOCAL void PinyinReadWin_PlayCallback(void)
     }else{
         uint8 idx = MMK_GetWinAddDataPtr(ZMT_PINYIN_READ_WIN_ID);
         pinyin_read_info.is_play = TRUE;
-        Pinyin_PlayMp3Data(idx, pinyin_info_text[idx][pinyin_read_info.cur_read_idx].text);
+        Pinyin_PlayAudioMp3(idx, pinyin_info_text[idx][pinyin_read_info.cur_read_idx].text);
     }
     Pinyin_StopIntervalTimer();
     PinyinReadWin_UpdateButtonBgWin(pinyin_read_info.is_play);
@@ -806,7 +930,7 @@ LOCAL void PinyinReadWin_PreCallback(void)
         pinyin_read_info.cur_read_idx = pinyin_info_num[idx].num - 1;
     }
     if(pinyin_read_info.is_play){
-        Pinyin_PlayMp3Data(idx, pinyin_info_text[idx][pinyin_read_info.cur_read_idx].text);
+        Pinyin_PlayAudioMp3(idx, pinyin_info_text[idx][pinyin_read_info.cur_read_idx].text);
     }
     if(MMK_IsFocusWin(ZMT_PINYIN_READ_WIN_ID)){
         MMK_SendMsg(ZMT_PINYIN_READ_WIN_ID, MSG_FULL_PAINT, PNULL);
@@ -827,7 +951,7 @@ LOCAL void PinyinReadWin_NextCallback(void)
         pinyin_read_info.cur_read_idx = 0;
     }
     if(pinyin_read_info.is_play){
-        Pinyin_PlayMp3Data(idx, pinyin_info_text[idx][pinyin_read_info.cur_read_idx].text);
+        Pinyin_PlayAudioMp3(idx, pinyin_info_text[idx][pinyin_read_info.cur_read_idx].text);
     }
     if(MMK_IsFocusWin(ZMT_PINYIN_READ_WIN_ID)){
         MMK_SendMsg(ZMT_PINYIN_READ_WIN_ID, MSG_FULL_PAINT, PNULL);
@@ -847,13 +971,13 @@ LOCAL void PinyinReadWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
     single_rect.bottom = single_rect.top + 1.5*PINYIN_LINE_HIGHT;
     single_rect.left = 0;
     single_rect.right = 2*PINYIN_LINE_WIDTH;
-    Pinyin_InitButton(ZMT_PINYIN_READ_CIRCULATE_CTRL_ID, single_rect, NULL, ALIGN_HVMIDDLE, TRUE, PinyinReadWin_CirculateCallback);
+    Pinyin_InitButton(ZMT_PINYIN_READ_CIRCULATE_CTRL_ID, single_rect, NULL, ALIGN_HVMIDDLE, FALSE, PinyinReadWin_CirculateCallback);
     bg.img_id = IMG_PINYIN_CIRCULATE_DEF;
     GUIBUTTON_SetBg(ZMT_PINYIN_READ_CIRCULATE_CTRL_ID, &bg);
     
     single_rect.left = MMI_MAINSCREEN_WIDTH - 2*PINYIN_LINE_WIDTH;
     single_rect.right = MMI_MAINSCREEN_WIDTH;
-    Pinyin_InitButton(ZMT_PINYIN_READ_SINGLE_CTRL_ID, single_rect, NULL, ALIGN_HVMIDDLE, TRUE, PinyinReadWin_SingleCallback);
+    Pinyin_InitButton(ZMT_PINYIN_READ_SINGLE_CTRL_ID, single_rect, NULL, ALIGN_HVMIDDLE, FALSE, PinyinReadWin_SingleCallback);
     bg.img_id = IMG_PINYIN_SINGLE_DEF;
     GUIBUTTON_SetBg(ZMT_PINYIN_READ_SINGLE_CTRL_ID, &bg);
 
@@ -861,26 +985,31 @@ LOCAL void PinyinReadWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
     button_rect.bottom = MMI_MAINSCREEN_HEIGHT;
     button_rect.left = 0;
     button_rect.right = 2*PINYIN_LINE_WIDTH;
-    Pinyin_InitButton(ZMT_PINYIN_READ_PRE_CTRL_ID, button_rect, NULL, ALIGN_HVMIDDLE, TRUE, PinyinReadWin_PreCallback);
+    Pinyin_InitButton(ZMT_PINYIN_READ_PRE_CTRL_ID, button_rect, NULL, ALIGN_HVMIDDLE, FALSE, PinyinReadWin_PreCallback);
     bg.img_id = IMG_PINYIN_PREVIEW;
     GUIBUTTON_SetBg(ZMT_PINYIN_READ_PRE_CTRL_ID, &bg);
 
     button_rect.left = button_rect.right;
     button_rect.right += 2*PINYIN_LINE_WIDTH;
-    Pinyin_InitButton(ZMT_PINYIN_READ_PLAY_CTRL_ID, button_rect, NULL, ALIGN_HVMIDDLE, TRUE, PinyinReadWin_PlayCallback);
+    Pinyin_InitButton(ZMT_PINYIN_READ_PLAY_CTRL_ID, button_rect, NULL, ALIGN_HVMIDDLE, FALSE, PinyinReadWin_PlayCallback);
     bg.img_id = IMG_PINYIN_STOP;
     GUIBUTTON_SetBg(ZMT_PINYIN_READ_PLAY_CTRL_ID, &bg);
 
     button_rect.left = button_rect.right;
     button_rect.right += 2*PINYIN_LINE_WIDTH;
-    Pinyin_InitButton(ZMT_PINYIN_READ_NEXT_CTRL_ID, button_rect, NULL, ALIGN_HVMIDDLE, TRUE, PinyinReadWin_NextCallback);
+    Pinyin_InitButton(ZMT_PINYIN_READ_NEXT_CTRL_ID, button_rect, NULL, ALIGN_HVMIDDLE, FALSE, PinyinReadWin_NextCallback);
     bg.img_id = IMG_PINYIN_NEXT;
     GUIBUTTON_SetBg(ZMT_PINYIN_READ_NEXT_CTRL_ID, &bg);
 
     GUIBUTTON_SetRect(ZMT_PINYIN_READ_YINBIAO_CTRL_ID, &yinbiao_rect);
+    GUIBUTTON_SetVisible(ZMT_PINYIN_READ_YINBIAO_CTRL_ID, FALSE, FALSE);
+    
     table_rect.left = MMI_MAINSCREEN_WIDTH - PINYIN_LINE_WIDTH;
     GUIBUTTON_SetRect(ZMT_PINYIN_READ_TABLE_CTRL_ID, &table_rect);
     GUIBUTTON_SetCallBackFunc(ZMT_PINYIN_READ_TABLE_CTRL_ID, PinyinReadWin_TableCallback);
+    GUIBUTTON_SetVisible(ZMT_PINYIN_READ_TABLE_CTRL_ID, FALSE, FALSE);
+    
+    Pinyin_RequestAudioPath();
 }
 
 LOCAL void PinyinReadWin_DisplayPinyinTie(MMI_WIN_ID_T win_id)
@@ -902,7 +1031,7 @@ LOCAL void PinyinReadWin_DisplayPinyinTie(MMI_WIN_ID_T win_id)
     LCD_FillRoundedRect(&lcd_dev_info, yinbiao_rect, yinbiao_rect, PINYIN_TITLE_BG_COLOR);
 
     size = strlen(pinyin_info_text[idx][pinyin_read_info.cur_read_idx].text);
-    GUI_GBToWstr(text_str, pinyin_info_text[idx][pinyin_read_info.cur_read_idx].text, size);
+    GUI_UTF8ToWstr(text_str, 20, pinyin_info_text[idx][pinyin_read_info.cur_read_idx].text, size);
     text_string.wstr_ptr = text_str;
     text_string.wstr_len = MMIAPICOM_Wstrlen(text_str);
     yinbiao_rect.top -= 5;
@@ -923,6 +1052,7 @@ LOCAL void PinyinReadWin_FULL_PAINT(MMI_WIN_ID_T win_id)
     GUISTR_STATE_T text_state = GUISTR_STATE_ALIGN | GUISTR_STATE_ELLIPSIS_EX;
     GUISTR_STYLE_T text_style = {0};
     MMI_STRING_T text_string = {0};
+    GUI_RECT_T win_rect = pinyin_win_rect;
     GUI_RECT_T title_rect = pinyin_title_rect;
     MMI_TEXT_ID_T text_id[PINYIN_ICON_LIST_ITEM_MAX] = {
         PINYIN_DAN_YM_TXT, PINYIN_FU_YM_TXT, PINYIN_QIAN_YM_TXT,
@@ -933,6 +1063,46 @@ LOCAL void PinyinReadWin_FULL_PAINT(MMI_WIN_ID_T win_id)
     MMIRES_GetText(text_id[idx], win_id, &text_string);
     Pinyin_DrawWinTitle(win_id, 0, text_string, title_rect, DP_FONT_24);
 
+    text_style.align = ALIGN_HVMIDDLE;
+    text_style.font = DP_FONT_24;
+    text_style.font_color = MMI_WHITE_COLOR;
+    if(pinyin_request_status <= 0)
+    {
+        switch(pinyin_request_status)
+        {
+            case 0:
+                MMIRES_GetText(TXT_PINYIN_INFO_LOADING, win_id, &text_string);
+                break;
+            case -1:
+                MMIRES_GetText(TXT_PINYIN_INFO_LOAD_FAIL, win_id, &text_string);
+                break;
+            case -2:
+                MMIRES_GetText(TXT_PINYIN_INFO_REQUESET_FAIL, win_id, &text_string);
+                break;
+            default:
+                break;
+        }
+        text_style.font = DP_FONT_24;
+        GUISTR_DrawTextToLCDInRect(
+            (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
+            &win_rect,
+            &win_rect,
+            &text_string,
+            &text_style,
+            text_state,
+            GUISTR_TEXT_DIR_AUTO
+        );
+        return;
+    }
+    
+    GUIBUTTON_SetVisible(ZMT_PINYIN_READ_CIRCULATE_CTRL_ID, TRUE, TRUE);
+    GUIBUTTON_SetVisible(ZMT_PINYIN_READ_SINGLE_CTRL_ID, TRUE, TRUE);
+    GUIBUTTON_SetVisible(ZMT_PINYIN_READ_NEXT_CTRL_ID, TRUE, TRUE);
+    GUIBUTTON_SetVisible(ZMT_PINYIN_READ_PLAY_CTRL_ID, TRUE, TRUE);
+    GUIBUTTON_SetVisible(ZMT_PINYIN_READ_PRE_CTRL_ID, TRUE, TRUE);
+    GUIBUTTON_SetVisible(ZMT_PINYIN_READ_YINBIAO_CTRL_ID, TRUE, TRUE);
+    GUIBUTTON_SetVisible(ZMT_PINYIN_READ_TABLE_CTRL_ID, TRUE, TRUE);
+    
     PinyinReadWin_DisplayPinyinTie(win_id);
 }
 
@@ -941,6 +1111,9 @@ LOCAL void PinyinReadWin_CLOSE_WINDOW(void)
     pinyin_read_info.cur_read_idx = 0;
     Pinyin_StopMp3Data();
     Pinyin_StopIntervalTimer();
+    Pinyin_ReleaseAudioPath();
+    pinyin_request_status = 0;
+    pinyin_request_now = FALSE;
 }
 
 LOCAL MMI_RESULT_E HandlePinyinReadWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_id, DPARAM param)
