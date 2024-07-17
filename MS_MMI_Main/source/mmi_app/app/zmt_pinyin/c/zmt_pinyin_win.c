@@ -57,6 +57,7 @@ LOCAL MMISRV_HANDLE_T pinyin_player_handle = PNULL;
 LOCAL uint8 pinyin_player_timer_id = 0;
 LOCAL MMI_CTRL_ID_T pinyin_cur_select_id = ZMT_PINYIN_BUTTON_1_CTRL_ID;
 LOCAL int8 pinyin_table_play_status = 0;
+LOCAL int pinyin_player_voulme = 0;
 
 LOCAL void Pinyin_StopMp3Data(void);
 LOCAL void Pinyin_PlayMp3Data(uint8 idx, char * text);
@@ -307,7 +308,7 @@ LOCAL void Pinyin_PlayMp3Data(uint8 idx, char * text)
     audio_srv.info.ring_file.fmt  = MMISRVAUD_RING_FMT_MP3;
     audio_srv.info.ring_file.name = file_name;
     audio_srv.info.ring_file.name_len = MMIAPICOM_Wstrlen(file_name);
-    audio_srv.volume=MMIAPISET_GetMultimVolume();
+    audio_srv.volume = pinyin_player_voulme;
 
     audio_srv.all_support_route = MMISRVAUD_ROUTE_SPEAKER | MMISRVAUD_ROUTE_EARPHONE;
     pinyin_player_handle = MMISRVMGR_Request(STR_SRV_AUD_NAME, &req, &audio_srv);
@@ -356,7 +357,7 @@ LOCAL void Pinyin_PlayAudioMp3Data(uint8 *data,uint32 data_len)
     audio_srv.info.ring_buf.fmt = MMISRVAUD_RING_FMT_MP3;
     audio_srv.info.ring_buf.data = data;
     audio_srv.info.ring_buf.data_len = data_len;
-    audio_srv.volume=MMIAPISET_GetMultimVolume();
+    audio_srv.volume = pinyin_player_voulme;
 
     audio_srv.all_support_route = MMISRVAUD_ROUTE_SPEAKER | MMISRVAUD_ROUTE_EARPHONE;
     pinyin_player_handle = MMISRVMGR_Request(STR_SRV_AUD_NAME, &req, &audio_srv);
@@ -549,6 +550,18 @@ LOCAL MMI_RESULT_E HandlePinyinTableTipWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_I
         case MSG_FULL_PAINT:
             {    
                 PinyinTableTipWin_FULL_PAINT(win_id);
+            }
+            break;
+        case MSG_KEYDOWN_UPSIDE:
+        case MSG_KEYDOWN_VOL_UP:
+            {
+                pinyin_player_voulme = ZmtApp_VolumeChange(pinyin_player_handle, TRUE, pinyin_player_voulme);
+            }
+            break;
+        case MSG_KEYDOWN_DOWNSIDE:
+        case MSG_KEYDOWN_VOL_DOWN:
+            {
+                pinyin_player_voulme = ZmtApp_VolumeChange(pinyin_player_handle, FALSE, pinyin_player_voulme);
             }
             break;
         case MSG_APP_OK:
@@ -750,6 +763,18 @@ LOCAL MMI_RESULT_E HandlePinyinTableWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
         case MSG_FULL_PAINT:
             {
                 PinyinTableWin_FULL_PAINT(win_id);
+            }
+            break;
+        case MSG_KEYDOWN_UPSIDE:
+        case MSG_KEYDOWN_VOL_UP:
+            {
+                pinyin_player_voulme = ZmtApp_VolumeChange(pinyin_player_handle, TRUE, pinyin_player_voulme);
+            }
+            break;
+        case MSG_KEYDOWN_DOWNSIDE:
+        case MSG_KEYDOWN_VOL_DOWN:
+            {
+                pinyin_player_voulme = ZmtApp_VolumeChange(pinyin_player_handle, FALSE, pinyin_player_voulme);
             }
             break;
         case MSG_APP_WEB:
@@ -1008,7 +1033,8 @@ LOCAL void PinyinReadWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
     GUIBUTTON_SetRect(ZMT_PINYIN_READ_TABLE_CTRL_ID, &table_rect);
     GUIBUTTON_SetCallBackFunc(ZMT_PINYIN_READ_TABLE_CTRL_ID, PinyinReadWin_TableCallback);
     GUIBUTTON_SetVisible(ZMT_PINYIN_READ_TABLE_CTRL_ID, FALSE, FALSE);
-    
+
+    pinyin_player_voulme = MMIAPISET_GetMultimVolume();
     Pinyin_RequestAudioPath();
 }
 
@@ -1130,6 +1156,18 @@ LOCAL MMI_RESULT_E HandlePinyinReadWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E m
         case MSG_FULL_PAINT:
             {
                 PinyinReadWin_FULL_PAINT(win_id);
+            }
+            break;
+        case MSG_KEYDOWN_UPSIDE:
+        case MSG_KEYDOWN_VOL_UP:
+            {
+                pinyin_player_voulme = ZmtApp_VolumeChange(pinyin_player_handle, TRUE, pinyin_player_voulme);
+            }
+            break;
+        case MSG_KEYDOWN_DOWNSIDE:
+        case MSG_KEYDOWN_VOL_DOWN:
+            {
+                pinyin_player_voulme = ZmtApp_VolumeChange(pinyin_player_handle, FALSE, pinyin_player_voulme);
             }
             break;
         case MSG_APP_OK:

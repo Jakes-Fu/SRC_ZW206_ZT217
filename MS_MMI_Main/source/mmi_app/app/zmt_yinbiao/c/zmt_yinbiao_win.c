@@ -69,6 +69,7 @@ LOCAL MMISRV_HANDLE_T yinbiao_player_handle = PNULL;
 LOCAL uint8 yinbiao_player_timer_id = 0;
 LOCAL MMI_CTRL_ID_T yinbiao_cur_select_id = ZMT_YINBIAO_BUTTON_1_CTRL_ID;
 LOCAL int8 yinbiao_table_play_status = 0;
+LOCAL int yinbiao_player_voulme = 0;
 
 LOCAL void Yinbiao_StopMp3Data(void);
 LOCAL void Yinbiao_PlayMp3Data(uint8 idx, char * text);
@@ -310,7 +311,7 @@ LOCAL void Yinbiao_PlayMp3Data(uint8 idx, char * text)
     audio_srv.info.ring_file.fmt  = MMISRVAUD_RING_FMT_MP3;
     audio_srv.info.ring_file.name = file_name;
     audio_srv.info.ring_file.name_len = MMIAPICOM_Wstrlen(file_name);
-    audio_srv.volume=MMIAPISET_GetMultimVolume();
+    audio_srv.volume = yinbiao_player_voulme;
 
     audio_srv.all_support_route = MMISRVAUD_ROUTE_SPEAKER | MMISRVAUD_ROUTE_EARPHONE;
     yinbiao_player_handle = MMISRVMGR_Request(STR_SRV_AUD_NAME, &req, &audio_srv);
@@ -359,7 +360,7 @@ LOCAL void Yinbiao_PlayAudioMp3Data(uint8 *data,uint32 data_len)
     audio_srv.info.ring_buf.fmt = MMISRVAUD_RING_FMT_MP3;
     audio_srv.info.ring_buf.data = data;
     audio_srv.info.ring_buf.data_len = data_len;
-    audio_srv.volume=MMIAPISET_GetMultimVolume();
+    audio_srv.volume = yinbiao_player_voulme;
 
     audio_srv.all_support_route = MMISRVAUD_ROUTE_SPEAKER | MMISRVAUD_ROUTE_EARPHONE;
     yinbiao_player_handle = MMISRVMGR_Request(STR_SRV_AUD_NAME, &req, &audio_srv);
@@ -443,6 +444,7 @@ PUBLIC void Yinbiao_PlayAudioMp3(uint8 idx, char * text)
         }
     }
 }
+
 LOCAL void YinbiaoTableTipWin_UpdateButton(BOOLEAN status)
 {
     GUI_LCD_DEV_INFO lcd_dev_info = {GUI_MAIN_LCD_ID,GUI_BLOCK_MAIN};
@@ -553,6 +555,18 @@ LOCAL MMI_RESULT_E HandleYinbiaoTableTipWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_
         case MSG_FULL_PAINT:
             {    
                 YinbiaoTableTipWin_FULL_PAINT(win_id);
+            }
+            break;
+        case MSG_KEYDOWN_UPSIDE:
+        case MSG_KEYDOWN_VOL_UP:
+            {
+                yinbiao_player_voulme = ZmtApp_VolumeChange(yinbiao_player_handle, TRUE, yinbiao_player_voulme);
+            }
+            break;
+        case MSG_KEYDOWN_DOWNSIDE:
+        case MSG_KEYDOWN_VOL_DOWN:
+            {
+                yinbiao_player_voulme = ZmtApp_VolumeChange(yinbiao_player_handle, FALSE, yinbiao_player_voulme);
             }
             break;
         case MSG_APP_OK:
@@ -758,6 +772,18 @@ LOCAL MMI_RESULT_E HandleYinbiaoTableWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
         case MSG_FULL_PAINT:
             {
                 YinbiaoTableWin_FULL_PAINT(win_id);
+            }
+            break;
+        case MSG_KEYDOWN_UPSIDE:
+        case MSG_KEYDOWN_VOL_UP:
+            {
+                yinbiao_player_voulme = ZmtApp_VolumeChange(yinbiao_player_handle, TRUE, yinbiao_player_voulme);
+            }
+            break;
+        case MSG_KEYDOWN_DOWNSIDE:
+        case MSG_KEYDOWN_VOL_DOWN:
+            {
+                yinbiao_player_voulme = ZmtApp_VolumeChange(yinbiao_player_handle, FALSE, yinbiao_player_voulme);
             }
             break;
         case MSG_APP_WEB:
@@ -1020,6 +1046,7 @@ LOCAL void YinbiaoReadWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
     GUIBUTTON_SetCallBackFunc(ZMT_YINBIAO_READ_TABLE_CTRL_ID, YinbiaoReadWin_TableCallback);
     GUIBUTTON_SetVisible(ZMT_YINBIAO_READ_TABLE_CTRL_ID, FALSE, FALSE);
 
+    yinbiao_player_voulme = MMIAPISET_GetMultimVolume();
     Yinbiao_RequestAudioPath();
 }
 
@@ -1145,6 +1172,18 @@ LOCAL MMI_RESULT_E HandleYinbiaoReadWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
         case MSG_FULL_PAINT:
             {
                 YinbiaoReadWin_FULL_PAINT(win_id);
+            }
+            break;
+        case MSG_KEYDOWN_UPSIDE:
+        case MSG_KEYDOWN_VOL_UP:
+            {
+                yinbiao_player_voulme = ZmtApp_VolumeChange(yinbiao_player_handle, TRUE, yinbiao_player_voulme);
+            }
+            break;
+        case MSG_KEYDOWN_DOWNSIDE:
+        case MSG_KEYDOWN_VOL_DOWN:
+            {
+                yinbiao_player_voulme = ZmtApp_VolumeChange(yinbiao_player_handle, FALSE, yinbiao_player_voulme);
             }
             break;
         case MSG_APP_OK:

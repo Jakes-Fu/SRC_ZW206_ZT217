@@ -99,6 +99,7 @@ LOCAL BOOLEAN audio_download_now = FALSE;
 LOCAL uint8 audio_play_progress = 0;
 LOCAL uint8 audio_download_progress = 0;
 LOCAL uint8 audio_download_retry_num = 0;
+LOCAL int poetry_player_volume = 0;
 
 LOCAL void MMI_CreatePoetryItemWin(void);
 LOCAL void MMI_CreatePoetryDetailWin(void);
@@ -195,7 +196,7 @@ LOCAL BOOLEAN Poetry_Play_RequestHandle(
                         MMISRVMGR_NOTIFY_FUNC notify
                         )
 {
-	MMISRVMGR_SERVICE_REQ_T req = {0};
+    MMISRVMGR_SERVICE_REQ_T req = {0};
     MMISRVAUD_TYPE_T audio_srv = {0};
     
     req.notify = notify;
@@ -206,23 +207,23 @@ LOCAL BOOLEAN Poetry_Play_RequestHandle(
     audio_srv.is_mixing_enable = FALSE;
     audio_srv.play_times = 1;
     audio_srv.all_support_route = route;
-    audio_srv.volume = MMIAPISET_GetMultimVolume();
+    audio_srv.volume = poetry_player_volume;
 
-	audio_srv.info.record_file.type = audio_data->type;        
-	audio_srv.info.record_file.fmt  = audio_data->record_file.fmt;
-	audio_srv.info.record_file.name = audio_data->record_file.name;
-	audio_srv.info.record_file.name_len = audio_data->record_file.name_len;    
-	audio_srv.info.record_file.source   = audio_data->record_file.source;
-	audio_srv.info.record_file.frame_len= audio_data->record_file.frame_len;
-	audio_srv.volume = AUD_MAX_SPEAKER_VOLUME;
+    audio_srv.info.record_file.type = audio_data->type;        
+    audio_srv.info.record_file.fmt  = audio_data->record_file.fmt;
+    audio_srv.info.record_file.name = audio_data->record_file.name;
+    audio_srv.info.record_file.name_len = audio_data->record_file.name_len;    
+    audio_srv.info.record_file.source   = audio_data->record_file.source;
+    audio_srv.info.record_file.frame_len= audio_data->record_file.frame_len;
+    audio_srv.volume = AUD_MAX_SPEAKER_VOLUME;
 
-	*audio_handle = MMISRVMGR_Request(STR_SRV_AUD_NAME, &req, &audio_srv);
+    *audio_handle = MMISRVMGR_Request(STR_SRV_AUD_NAME, &req, &audio_srv);
     if(*audio_handle > 0)
     {
-       	return TRUE;
+        return TRUE;
     }
-	else
-	{
+    else
+    {
         return FALSE;
     }
 }
@@ -1567,6 +1568,7 @@ LOCAL void PoetryDetailWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
     audio_play_now = FALSE;
     audio_download_now = FALSE;
     detail_get_status = 0;
+    poetry_player_volume = MMIAPISET_GetMultimVolume();
     Read_detail_data_from_tf_and_parse();
 }
 
@@ -1949,6 +1951,18 @@ LOCAL MMI_RESULT_E HandlePoetryDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
             {
                 main_tp_down_x = MMK_GET_TP_X(param);
                 main_tp_down_y = MMK_GET_TP_Y(param);
+            }
+            break;
+        case MSG_KEYDOWN_UPSIDE:
+        case MSG_KEYDOWN_VOL_UP:
+            {
+                poetry_player_volume = ZmtApp_VolumeChange(poetry_player_handle, TRUE, poetry_player_volume);
+            }
+            break;
+        case MSG_KEYDOWN_DOWNSIDE:
+        case MSG_KEYDOWN_VOL_DOWN:
+            {
+                poetry_player_volume = ZmtApp_VolumeChange(poetry_player_handle, FALSE, poetry_player_volume);
             }
             break;
 	case MSG_KEYDOWN_CANCEL:

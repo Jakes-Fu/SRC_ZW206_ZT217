@@ -69,6 +69,7 @@ LOCAL FORMULA_MULTI_TEXT_T formula_multi_text[FORMULA_COUNT_ITEM_MAX] = {
 LOCAL FORMULA_PLAY_INFO_T formula_play_info = {0};
 LOCAL MMISRV_HANDLE_T formula_player_handle = PNULL;
 LOCAL uint8 formula_table_play_status = 0;
+LOCAL int formula_player_volume = 0;
 
 LOCAL void MMI_CloseFormulaTableTipWin(void);
 LOCAL void FormulaWin_StopRing(void);
@@ -440,6 +441,7 @@ LOCAL MMI_RESULT_E HandleFormulaWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_
     {
         case MSG_OPEN_WINDOW:
             {
+                formula_player_volume = MMIAPISET_GetMultimVolume();
                 memset(&formula_play_info, 0, sizeof(FORMULA_PLAY_INFO_T));
             }
             break;
@@ -457,6 +459,18 @@ LOCAL MMI_RESULT_E HandleFormulaWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_
                 {
                     FormulaWin_HANDLE_UP(win_id, point);
                 }
+            }
+            break;
+        case MSG_KEYDOWN_UPSIDE:
+        case MSG_KEYDOWN_VOL_UP:
+            {
+                formula_player_volume = ZmtApp_VolumeChange(formula_player_handle, TRUE, formula_player_volume);
+            }
+            break;
+        case MSG_KEYDOWN_DOWNSIDE:
+        case MSG_KEYDOWN_VOL_DOWN:
+            {
+                formula_player_volume = ZmtApp_VolumeChange(formula_player_handle, FALSE, formula_player_volume);
             }
             break;
         case MSG_APP_OK:
@@ -600,6 +614,18 @@ LOCAL MMI_RESULT_E HandleFormulaTableTipWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_
         case MSG_FULL_PAINT:
             {    
                 FormulaTableTipWin_FULL_PAINT(win_id);
+            }
+            break;
+        case MSG_KEYDOWN_UPSIDE:
+        case MSG_KEYDOWN_VOL_UP:
+            {
+                formula_player_volume = ZmtApp_VolumeChange(formula_player_handle, TRUE, formula_player_volume);
+            }
+            break;
+        case MSG_KEYDOWN_DOWNSIDE:
+        case MSG_KEYDOWN_VOL_DOWN:
+            {
+                formula_player_volume = ZmtApp_VolumeChange(formula_player_handle, FALSE, formula_player_volume);
             }
             break;
         case MSG_APP_OK:
@@ -890,6 +916,18 @@ LOCAL MMI_RESULT_E HandleFormulaTableWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
                 }
             }
             break;
+        case MSG_KEYDOWN_UPSIDE:
+        case MSG_KEYDOWN_VOL_UP:
+            {
+                formula_player_volume = ZmtApp_VolumeChange(formula_player_handle, TRUE, formula_player_volume);
+            }
+            break;
+        case MSG_KEYDOWN_DOWNSIDE:
+        case MSG_KEYDOWN_VOL_DOWN:
+            {
+                formula_player_volume = ZmtApp_VolumeChange(formula_player_handle, FALSE, formula_player_volume);
+            }
+            break; 
         case MSG_KEYDOWN_CANCEL:
             break;
         case MSG_KEYUP_RED:

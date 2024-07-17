@@ -61,6 +61,7 @@ LOCAL RECORD_SRV_HANDLE gpt_kouyu_record_handle = PNULL;
 LOCAL MMISRV_HANDLE_T gpt_kouyu_player_handle=PNULL;
 LOCAL BOOLEAN gpt_kouyu_load_text = FALSE;
 LOCAL uint8 gpt_kouyu_cur_idx = 0;
+LOCAL int gpt_kouyu_player_volume = 0;
 
 LOCAL void ZmtGptKouYuTalk_RecordSuccess(MMI_WIN_ID_T win_id);
 LOCAL void ZmtGptKouYuTalk_DispalyRecord(MMI_WIN_ID_T win_id, int record_type);
@@ -1350,6 +1351,8 @@ LOCAL void ZmtGptKouYuTalk_OPEN_WINDOW(MMI_WIN_ID_T win_id)
         create_info.is_static_layer = FALSE;
         UILAYER_CreateLayer(&create_info, &gpt_kouyu_record_layer);
     }
+    
+    gpt_kouyu_player_volume = MMIAPISET_GetMultimVolume();
 }
 
 LOCAL void ZmtGptKouYuTalk_CLOSE_WINDOW(void)
@@ -1407,6 +1410,18 @@ LOCAL MMI_RESULT_E HandleZmtGptKouYuTalkWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_I
         case MSG_LOSE_FOCUS:
             {
                 SCI_TRACE_LOW("%s: ", __FUNCTION__);
+            }
+            break;
+        case MSG_KEYDOWN_UPSIDE:
+        case MSG_KEYDOWN_VOL_UP:
+            {
+                gpt_kouyu_player_volume = ZmtApp_VolumeChange(gpt_kouyu_player_handle, TRUE, gpt_kouyu_player_volume);
+            }
+            break;
+        case MSG_KEYDOWN_DOWNSIDE:
+        case MSG_KEYDOWN_VOL_DOWN:
+            {
+                gpt_kouyu_player_volume = ZmtApp_VolumeChange(gpt_kouyu_player_handle, FALSE, gpt_kouyu_player_volume);
             }
             break;
         case MSG_APP_OK:
