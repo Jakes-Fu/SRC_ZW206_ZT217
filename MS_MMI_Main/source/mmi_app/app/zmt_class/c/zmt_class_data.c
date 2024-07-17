@@ -556,7 +556,6 @@ LOCAL void Class_DownloadNextMp3(BOOLEAN is_download_file)
         class_download_next_now = FALSE;
         have_new_quest = FALSE;
         class_cur_down_idx = 0;
-        Class_DownloadMp3Complete();
         return;
     }
     if(class_read_info[class_cur_down_idx] == NULL){
@@ -617,6 +616,8 @@ LOCAL void Class_ParseMp3Response(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint
         SCI_TRACE_LOW("%s: class_download_next_now = %d", __FUNCTION__, class_download_next_now);
         if(!class_download_next_now){
             Class_PlayAudioMp3();
+        }else{
+            Class_DownloadMp3Complete();
         }
     }
     else
@@ -653,6 +654,8 @@ LOCAL void Class_ParseMp3FileDownload(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,
         SCI_TRACE_LOW("%s: class_download_next_now = %d", __FUNCTION__, class_download_next_now);
         if(!class_download_next_now){
             Class_PlayAudioMp3();
+        }else{
+            Class_DownloadMp3Complete();
         }
     }
     else

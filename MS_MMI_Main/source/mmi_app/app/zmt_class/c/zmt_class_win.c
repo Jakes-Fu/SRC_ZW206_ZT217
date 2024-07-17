@@ -515,7 +515,9 @@ LOCAL void Class_StartWin32TestTimer(void)
 
 PUBLIC void Class_DownloadMp3Complete(void)
 {
-    if(class_player_handle == 0){
+    SCI_TRACE_LOW("%s: class_player_handle = %d, is_play = %d, is_single = %d", 
+        __FUNCTION__, class_player_handle, class_cur_info.is_play, class_cur_info.is_single);
+    if(class_player_handle == 0 && (class_cur_info.is_play || class_cur_info.is_single)){
         if(class_cur_info.cur_idx + 1 < class_read_count){
             Class_PlayAudioMp3();
         }
@@ -686,7 +688,15 @@ PUBLIC BOOLEAN Class_PlayAudioMp3(void)
             Class_PlayAudioMp3();
             result = TRUE;
         }else{
-            Class_RequestMp3Data(class_read_info[class_cur_info.cur_idx]->audio_url, book_id, section_id, class_cur_info.cur_idx, TRUE);
+            if(zmt_tfcard_get_free_kb() < 100 * 1024){
+                class_cur_info.is_play = FALSE;
+                ClassReadWin_UpdateButtonBgWin(FALSE, class_cur_info.is_single);
+                MMI_CreateListeningTipWin(PALYER_PLAY_NO_SPACE_TIP);
+            }
+            else
+            {
+                Class_RequestMp3Data(class_read_info[class_cur_info.cur_idx]->audio_url, book_id, section_id, class_cur_info.cur_idx, TRUE);
+            }
         }
     }
     else if(class_read_info[class_cur_info.cur_idx]->audio_len == -1)
