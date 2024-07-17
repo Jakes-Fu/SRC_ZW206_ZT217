@@ -2703,9 +2703,52 @@ int YX_Net_Receive_TK_VocFile(YX_APP_T *pMe,uint8 * pFiledata,uint16 DataLen,uin
             ZDT_LOG("YX_Net_Receive_TK_VocFile Err SCI_ALLOC_APPZ Len=%d",DataLen);
             return 0;
         }
-        
+        #ifdef ZDT_PLAT_YX_SUPPORT_YS
+		for(i = 0; i < DataLen; i++)
+        {
+            if(pFiledata[i] == 0x7D && i != (DataLen-1))
+            {
+                if(pFiledata[i+1] == 0x01)
+                {
+                    voc_rcv_data.voc_data[j] = 0x7D;
+                    i++;
+                }
+                else if(pFiledata[i+1] == 0x02)
+                {
+                    voc_rcv_data.voc_data[j] = 0x5B;
+                    i++;
+                }
+                else if(pFiledata[i+1] == 0x03)
+                {
+                    voc_rcv_data.voc_data[j] = 0x5D;
+                    i++;
+                }
+                else if(pFiledata[i+1] == 0x04)
+                {
+                    voc_rcv_data.voc_data[j] = 0x2C;
+                    i++;
+                }
+                else if(pFiledata[i+1] == 0x05)
+                {
+                    voc_rcv_data.voc_data[j] = 0x2A;
+                    i++;
+                }
+                else
+                {
+                    voc_rcv_data.voc_data[j] = 0x7D;
+                }
+            }
+            else
+            {
+                voc_rcv_data.voc_data[j] = pFiledata[i];
+            }
+            j++;
+        }
+        voc_rcv_data.voc_data_len = j;
+		#else
         SCI_MEMCPY(voc_rcv_data.voc_data,pFiledata,DataLen);
         voc_rcv_data.voc_data_len = DataLen;
+		#endif
 
         if(FALSE == YX_VOC_RcvFile_Link_Add(pMe,&voc_rcv_data))
         {
@@ -2793,9 +2836,52 @@ int YX_Net_Receive_TK2_VocFile(YX_APP_T *pMe,uint8 * pFiledata,uint16 DataLen,ui
             ZDT_LOG("YX_Net_Receive_TK2_VocFile Err SCI_ALLOC_APPZ Len=%d",DataLen);
             return 0;
         }
-        
+        #ifdef ZDT_PLAT_YX_SUPPORT_YS
+		for(i = 0; i < DataLen; i++)
+        {
+            if(pFiledata[i] == 0x7D && i != (DataLen-1))
+            {
+                if(pFiledata[i+1] == 0x01)
+                {
+                    voc_rcv_data.voc_data[j] = 0x7D;
+                    i++;
+                }
+                else if(pFiledata[i+1] == 0x02)
+                {
+                    voc_rcv_data.voc_data[j] = 0x5B;
+                    i++;
+                }
+                else if(pFiledata[i+1] == 0x03)
+                {
+                    voc_rcv_data.voc_data[j] = 0x5D;
+                    i++;
+                }
+                else if(pFiledata[i+1] == 0x04)
+                {
+                    voc_rcv_data.voc_data[j] = 0x2C;
+                    i++;
+                }
+                else if(pFiledata[i+1] == 0x05)
+                {
+                    voc_rcv_data.voc_data[j] = 0x2A;
+                    i++;
+                }
+                else
+                {
+                    voc_rcv_data.voc_data[j] = 0x7D;
+                }
+            }
+            else
+            {
+                voc_rcv_data.voc_data[j] = pFiledata[i];
+            }
+            j++;
+        }
+        voc_rcv_data.voc_data_len = j;
+		#else		
         SCI_MEMCPY(voc_rcv_data.voc_data,pFiledata,DataLen);
         voc_rcv_data.voc_data_len = DataLen;
+		#endif
 
         if(FALSE == YX_VOC_RcvFile_Link_Add(pMe,&voc_rcv_data))
         {
