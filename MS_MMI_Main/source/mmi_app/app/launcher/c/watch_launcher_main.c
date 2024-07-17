@@ -211,7 +211,7 @@ const APP_LIST_ITEM_T  g_app_list_info[] =
     MENU_STYLE,//主菜单风格切换
 #endif
 #ifdef FOTA_SUPPORT // bao add. wuxx add 20231031
-    MENU_FOTA,
+    //MENU_FOTA,
 #endif
 #ifdef MATH_COUNT_SUPPORT
     MENU_MNEMONICS, 
