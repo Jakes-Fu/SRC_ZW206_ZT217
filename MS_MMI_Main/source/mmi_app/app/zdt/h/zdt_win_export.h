@@ -261,7 +261,7 @@ extern PUBLIC uint8 Video_Call_Incoming_Test();
 //1-绑定，2-拨号，3-计算器，4-计步，5-交友，6-秒表，7-闹钟，8-设置，9-视频通话，10-天气，11-通话记录，12-通讯录，13-微聊，14-喜马拉雅，15-相册，16-相机，17-小度，18-支付宝
 //****** 列表菜单***************//
 #define MENU_TEXTBOOK {12, 1, textbook_text, res_app_ic_contact, textbook_bg, MMIZDT_OpenPBWin}
-#define MENU_PHONEBOOK {12, 1, contact_text, res_app_ic_contact, dark_orange_bg, MMIZDT_OpenPBWin}
+#define MENU_PHONEBOOK {12, 1, contact_text, res_app_ic_contact, bright_green_bg, MMIZDT_OpenPBWin}
 #define MENU_CAMERA {16, 0, camera_text, res_app_ic_camera, light_cyan_bg, MMIAPIDC_OpenPhotoWin} //相机
 #ifdef ZDT_PLAT_YX_SUPPORT_VOICE
     #ifdef ZDT_PLAT_YX_SUPPORT_FRIEND
@@ -275,7 +275,7 @@ extern PUBLIC uint8 Video_Call_Incoming_Test();
 #define MENU_SETTINGS {8, 0, settings_text, res_app_ic_settings, light_gray_bg, WatchSET_MainWin_Enter}
 #define MENU_VIDEO_CALL {9, 1, video_call_text, res_app_ic_video_call, dark_red_bg, MMIVideo_Call_MainWin} //视频通话
 //#define MENU_WEATHER  {10, 1, weather_text, res_app_ic_weather,dark_red_bg, ZTEWEATHER_CreateMainWin} //天气
-#define MENU_WEATHER  {10, 1, weather_text, res_app_ic_weather,dark_red_bg, MMIZDT_OpenWeatherWin}
+#define MENU_WEATHER  {10, 1, weather_text, res_app_ic_weather,light_cyan_bg, MMIZDT_OpenWeatherWin}
 #define MENU_CALLLOG {11, 0, calllog_text, res_app_ic_calllog, light_pink_bg, WatchCL_ListWin_Enter} //通话记录 
 #define MENU_FIND_FRIEND  {5, 1, find_friend_text, res_app_ic_find_friend, bright_green_bg, MMIZDT_OpenFriendPPWin} //加好友
 #define MENU_DIAL   {2, 0, dialer_text, res_app_ic_dailer, dark_blue_bg, MMIZDT_OpenDialWin}//拨号盘
@@ -300,43 +300,43 @@ extern PUBLIC uint8 Video_Call_Incoming_Test();
 #endif
 
 #ifdef FORMULA_SUPPORT
-#define MENU_MNEMONICS {19, 1, mnemonics_text, res_app_ic_mnemonics, light_cyan_bg, MMI_CreateMathMnemonicWin} 
+#define MENU_MNEMONICS {19, 1, mnemonics_text, res_app_ic_mnemonics, bright_purple_bg, MMI_CreateMathMnemonicWin} 
 #endif
 
 #ifdef LISTENING_PRATICE_SUPPORT
-#define MENU_LISTEN {20, 1, listen_text, res_app_ic_listen, bright_yellow_bg, MMI_CreateListeningLocalWin} 
+#define MENU_LISTEN {20, 1, listen_text, res_app_ic_listen, light_cyan_bg, MMI_CreateListeningLocalWin} 
 #endif
 
 #ifdef WORD_CARD_SUPPORT
-#define MENU_LEARN_WORD {21, 1, learn_word_text, res_app_ic_learn_word, dark_red_bg, MMI_CreateWordWin} 
+#define MENU_LEARN_WORD {21, 1, learn_word_text, res_app_ic_learn_word, light_blue_bg, MMI_CreateWordWin} 
 #endif
 
 #ifdef POETRY_LISTEN_SUPPORT
-#define MENU_POETRY {22, 1, poetry_text, res_app_ic_poetry, bright_green_bg, MMI_CreatePoetryWin} 
+#define MENU_POETRY {22, 1, poetry_text, res_app_ic_poetry, bright_yellow_bg, MMI_CreatePoetryWin} 
 #endif
 
 #ifdef HANZI_CARD_SUPPORT
-#define MENU_HANZI {23, 1, hanzi_text, res_app_ic_hanzi, bright_purple_bg, MMI_CreateHanziWin}
+#define MENU_HANZI {23, 1, hanzi_text, res_app_ic_hanzi, cherry_bg, MMI_CreateHanziWin}
 #endif
 
 #ifdef ZMT_GPT_SUPPORT
-#define MENU_AI {24, 1, ai_text, res_app_ic_ai, light_pink_bg, MMIZMT_CreateZmtGptWin} 
+#define MENU_AI {24, 1, ai_text, res_app_ic_ai, dark_red_bg, MMIZMT_CreateZmtGptWin} 
 #endif
 
 #if defined(ZDT_TOOLS_MENU_SUPPORT)// wuxx add.
-#define MENU_TOOLS {25, 0, tools_text, res_app_ic_tools, dark_orange_bg, WatchTools_MainWin_Enter} 
+#define MENU_TOOLS {25, 0, tools_text, res_app_ic_tools, bright_purple_bg, WatchTools_MainWin_Enter} 
 #endif
 
 #ifdef ZMT_CLASS_SUPPORT
-#define MENU_CLASS {26, 1, textbook_text, res_app_ic_contact, textbook_bg, MMI_CreateClassMainWin} 
+#define MENU_CLASS {26, 1, textbook_text, res_app_ic_contact, class_sync_bg, MMI_CreateClassMainWin} 
 #endif
 
 #ifdef ZMT_PINYIN_SUPPORT
-#define MENU_PINYIN {27, 1, pinyin_text, res_app_ic_pinyin, dark_blue_bg, MMI_CreatePinyinMainWin} 
+#define MENU_PINYIN {27, 1, pinyin_text, res_app_ic_pinyin, bright_yellow_bg, MMI_CreatePinyinMainWin} 
 #endif
 
 #ifdef ZMT_YINBIAO_SUPPORT
-#define MENU_YINBIAO {28, 1, yinbiao_text, res_app_ic_yinbiao, light_pink_bg, MMI_CreateYinbiaoMainWin} 
+#define MENU_YINBIAO {28, 1, yinbiao_text, res_app_ic_yinbiao, bright_purple_bg, MMI_CreateYinbiaoMainWin} 
 #endif
 //*******菜单***************//
 

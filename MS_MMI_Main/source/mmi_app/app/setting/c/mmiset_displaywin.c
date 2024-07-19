@@ -7702,6 +7702,30 @@ PUBLIC BOOLEAN MMIAPISET_IsPoweroffCall(void)
 #endif
 
 
+PUBLIC int ZmtApp_VolumeChange(MMISRV_HANDLE_T player_hanlde, BOOLEAN is_up, int voulme)
+{
+    BOOLEAN is_have_change = FALSE;
+    if(is_up){
+        if(voulme < 9){
+            voulme++;
+            is_have_change = TRUE;
+        }
+    }else{
+        if(voulme > 0){
+            voulme--;
+            
+            is_have_change = TRUE;
+        }
+    }
+    if(is_have_change){
+        if(player_hanlde != 0){
+            MMISRVAUD_SetVolume(player_hanlde, voulme);
+        }
+        MMIAPISET_SetMultimVolume(voulme);
+    }
+    SCI_TRACE_LOW("%s: voulme = %d", __FUNCTION__, voulme);
+    return voulme;
+}
 
 /*Edit by script, ignore 1 case. Thu Apr 26 19:01:05 2012*/ //IGNORE9527
 

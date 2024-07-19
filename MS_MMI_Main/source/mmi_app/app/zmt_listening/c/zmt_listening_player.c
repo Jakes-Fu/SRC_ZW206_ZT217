@@ -144,7 +144,7 @@ LOCAL BOOLEAN Listening_Play_RequestHandle(
     audio_srv.is_mixing_enable = FALSE;
     audio_srv.play_times = 1;
     audio_srv.all_support_route = route;
-    audio_srv.volume = 1;//MMIAPISET_GetMultimVolume();
+    audio_srv.volume = player_play_info.volume;
 
     audio_srv.info.record_file.type = audio_data->type;        
     audio_srv.info.record_file.fmt  = audio_data->record_file.fmt;
@@ -221,6 +221,8 @@ PUBLIC uint8 Listening_StartPlayMp3(char* file_name)
         listening_player_handle = PNULL;
     }
 
+    ListeningPlayer_InitPlayerInfo();
+
     full_path_len = GUI_GBToWstr(full_path, (const uint8*)file_name, SCI_STRLEN(file_name));
     audio_data.ring_file.type = MMISRVAUD_TYPE_RING_FILE;
     audio_data.ring_file.name = full_path;
@@ -229,7 +231,6 @@ PUBLIC uint8 Listening_StartPlayMp3(char* file_name)
 
     if(Listening_Play_RequestHandle(&audio_handle, MMISRVAUD_ROUTE_NONE, &audio_data, Listening_PlayMp3Notify))
     {
-        ListeningPlayer_InitPlayerInfo();
         listening_player_handle = audio_handle;
         MMISRVAUD_SetVolume(audio_handle, player_play_info.volume);
         if(!MMISRVAUD_Play(audio_handle, 0))

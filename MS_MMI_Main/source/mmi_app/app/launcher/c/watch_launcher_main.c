@@ -177,7 +177,7 @@ const APP_LIST_ITEM_T  g_app_list_info[] =
 {
     MENU_CLASS,
     MENU_PHONEBOOK,//通讯录
-    MENU_DIAL,//拨号
+    MENU_GALLERY,//相册
 #if defined(ZDT_VIDEOCHAT_SUPPORT) && defined(VIDEO_CALL_AGORA_SUPPORT) //声网视频通话
     #ifndef WIN32//视频通话
     MENU_VIDEO_CALL,
@@ -187,9 +187,11 @@ const APP_LIST_ITEM_T  g_app_list_info[] =
 #endif
     MENU_WECHART,//微聊
     MENU_CAMERA,//相机
-    MENU_GALLERY,//相册
+    MENU_DIAL,//拨号
     MENU_FIND_FRIEND,// 交友
-    MENU_SETTINGS, //设置
+#if defined(ZDT_TOOLS_MENU_SUPPORT)
+   MENU_TOOLS,
+#endif
     MENU_CALLLOG,
     MENU_WEATHER, //天气
 #ifdef ZDT_ZFB_SUPPORT
@@ -213,8 +215,9 @@ const APP_LIST_ITEM_T  g_app_list_info[] =
 #ifdef FOTA_SUPPORT // bao add. wuxx add 20231031
     //MENU_FOTA,
 #endif
-#ifdef MATH_COUNT_SUPPORT
-    MENU_MNEMONICS, 
+
+#ifdef POETRY_LISTEN_SUPPORT
+    MENU_POETRY, 
 #endif
 
 #ifdef LISTENING_PRATICE_SUPPORT
@@ -225,8 +228,8 @@ const APP_LIST_ITEM_T  g_app_list_info[] =
     MENU_LEARN_WORD, 
 #endif
 
-#ifdef POETRY_LISTEN_SUPPORT
-    MENU_POETRY, 
+#ifdef MATH_COUNT_SUPPORT
+    MENU_MNEMONICS, 
 #endif
 
 #ifdef HANZI_CARD_SUPPORT
@@ -237,10 +240,6 @@ const APP_LIST_ITEM_T  g_app_list_info[] =
     MENU_AI,
 #endif
 
-#if defined(ZDT_TOOLS_MENU_SUPPORT)
-   MENU_TOOLS,
-#endif
-
 #ifdef ZMT_PINYIN_SUPPORT
     MENU_PINYIN,
 #endif
@@ -248,6 +247,8 @@ const APP_LIST_ITEM_T  g_app_list_info[] =
 #ifdef ZMT_YINBIAO_SUPPORT
     MENU_YINBIAO,
 #endif
+
+    MENU_SETTINGS, //设置
 
 };
 
@@ -547,7 +548,7 @@ PUBLIC MMI_RESULT_E WatchLAUNCHER_HandleCommonWinMsg(
                 else if(b_drop_from_bottom)
                 {
 				//#ifdef ZTE_WATCH
-                    MMIZDT_DropUp_EnterWin(SLIDEWIN_STARTUPMODE_AUTO);
+                    //MMIZDT_DropUp_EnterWin(SLIDEWIN_STARTUPMODE_AUTO);
 				//#endif
                     b_drop_from_bottom = FALSE;
                 }

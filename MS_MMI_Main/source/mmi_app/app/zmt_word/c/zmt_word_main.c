@@ -85,6 +85,7 @@ LOCAL GUI_LCD_DEV_INFO word_detail_tip_layer = {0};
 LOCAL int8 word_is_display_tip = 0;
 LOCAL uint8 word_tip_timer = 0;
 LOCAL MMISRV_HANDLE_T word_player_handle = PNULL;
+LOCAL int word_player_volume = 0;
 LOCAL uint8 chapter_unmaster_count = 0;
 LOCAL BOOLEAN new_word_haved_delete = FALSE;
 int16 word_detail_cur_idx = 0;
@@ -1102,7 +1103,7 @@ LOCAL void Word_ChatPlayMp3Data(uint8 *data,uint32 data_len)
     audio_srv.info.ring_buf.fmt = MMISRVAUD_RING_FMT_MP3;
     audio_srv.info.ring_buf.data = data;
     audio_srv.info.ring_buf.data_len = data_len;
-    audio_srv.volume=MMIAPISET_GetMultimVolume();
+    audio_srv.volume = word_player_volume;
     
     SCI_TRACE_LOW("%s: audio_srv.volume=%d", __FUNCTION__, audio_srv.volume);
     audio_srv.all_support_route = MMISRVAUD_ROUTE_SPEAKER | MMISRVAUD_ROUTE_EARPHONE;
@@ -1519,6 +1520,7 @@ LOCAL void WordDetailWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
 
     new_word_haved_delete = FALSE;
     word_detail_count = 0;
+    word_player_volume = MMIAPISET_GetMultimVolume();
     memset(chapter_unmaster_idx, 0, sizeof(chapter_unmaster_idx));
     if(is_open_new_word){
         Word_RequestNewWord(
@@ -1777,6 +1779,18 @@ LOCAL MMI_RESULT_E HandleWordDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E m
             {
                 main_tp_down_x = MMK_GET_TP_X(param);
                 main_tp_down_y = MMK_GET_TP_Y(param);
+            }
+            break;
+        case MSG_KEYDOWN_UPSIDE:
+        case MSG_KEYDOWN_VOL_UP:
+            {
+                word_player_volume = ZmtApp_VolumeChange(word_player_handle, TRUE, word_player_volume);
+            }
+            break;
+        case MSG_KEYDOWN_DOWNSIDE:
+        case MSG_KEYDOWN_VOL_DOWN:
+            {
+                word_player_volume = ZmtApp_VolumeChange(word_player_handle, FALSE, word_player_volume);
             }
             break;
         case MSG_KEYDOWN_CANCEL:
@@ -2636,6 +2650,18 @@ LOCAL MMI_RESULT_E HandleWordListenWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E m
         case MSG_FULL_PAINT:
             {
                 WordListenWin_FULL_PAINT(win_id);
+            }
+            break;
+        case MSG_KEYDOWN_UPSIDE:
+        case MSG_KEYDOWN_VOL_UP:
+            {
+                word_player_volume = ZmtApp_VolumeChange(word_player_handle, TRUE, word_player_volume);
+            }
+            break;
+        case MSG_KEYDOWN_DOWNSIDE:
+        case MSG_KEYDOWN_VOL_DOWN:
+            {
+                word_player_volume = ZmtApp_VolumeChange(word_player_handle, FALSE, word_player_volume);
             }
             break;
         case MSG_APP_OK:

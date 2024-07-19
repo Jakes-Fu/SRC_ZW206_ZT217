@@ -81,6 +81,7 @@ LOCAL GUI_LCD_DEV_INFO hanzi_detail_tip_layer = {0};
 LOCAL int8 hanzi_is_display_tip = 0;
 LOCAL uint8 hanzi_tip_timer = 0;
 LOCAL MMISRV_HANDLE_T hanzi_player_handle = PNULL;
+LOCAL int hanzi_player_volume = 0;
 LOCAL uint8 cur_chapter_total_count = 0;
 LOCAL uint8 cur_chapter_unmaster_count = 0;
 LOCAL BOOLEAN new_hanzi_haved_delete = FALSE;
@@ -988,7 +989,7 @@ LOCAL void Hanzi_ChatPlayMp3Data(uint8 *data,uint32 data_len)
     audio_srv.info.ring_buf.fmt = MMISRVAUD_RING_FMT_MP3;
     audio_srv.info.ring_buf.data = data;
     audio_srv.info.ring_buf.data_len = data_len;
-    audio_srv.volume=MMIAPISET_GetMultimVolume();
+    audio_srv.volume = hanzi_player_volume;
     
     SCI_TRACE_LOW("%s: audio_srv.volume=%d", __FUNCTION__, audio_srv.volume);
 
@@ -1361,6 +1362,7 @@ LOCAL void HanziDetailWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
     GUILABEL_SetFont(MMI_ZMT_HANZI_DETAIL_LABEL_PINYIN_CTRL_ID, DP_FONT_22,MMI_WHITE_COLOR);
 
     new_hanzi_haved_delete = FALSE;
+    hanzi_player_volume = MMIAPISET_GetMultimVolume();
     memset(cur_chapter_unmaster_idx, 0, sizeof(cur_chapter_unmaster_idx));
     if(is_open_new_hanzi){
         Hanzi_RequestNewWord(
@@ -1627,6 +1629,18 @@ LOCAL MMI_RESULT_E HandleHanziDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
             {
                 main_tp_down_x = MMK_GET_TP_X(param);
                 main_tp_down_y = MMK_GET_TP_Y(param);
+            }
+            break;
+        case MSG_KEYDOWN_UPSIDE:
+        case MSG_KEYDOWN_VOL_UP:
+            {
+                hanzi_player_volume = ZmtApp_VolumeChange(hanzi_player_handle, TRUE, hanzi_player_volume);
+            }
+            break;
+        case MSG_KEYDOWN_DOWNSIDE:
+        case MSG_KEYDOWN_VOL_DOWN:
+            {
+                hanzi_player_volume = ZmtApp_VolumeChange(hanzi_player_handle, FALSE, hanzi_player_volume);
             }
             break;
         case MSG_KEYDOWN_CANCEL:
@@ -2482,6 +2496,18 @@ LOCAL MMI_RESULT_E HandleHanziListenWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
         case MSG_FULL_PAINT:
             {
                 HanziListenWin_FULL_PAINT(win_id);
+            }
+            break;
+        case MSG_KEYDOWN_UPSIDE:
+        case MSG_KEYDOWN_VOL_UP:
+            {
+                hanzi_player_volume = ZmtApp_VolumeChange(hanzi_player_handle, TRUE, hanzi_player_volume);
+            }
+            break;
+        case MSG_KEYDOWN_DOWNSIDE:
+        case MSG_KEYDOWN_VOL_DOWN:
+            {
+                hanzi_player_volume = ZmtApp_VolumeChange(hanzi_player_handle, FALSE, hanzi_player_volume);
             }
             break;
         case MSG_APP_OK:

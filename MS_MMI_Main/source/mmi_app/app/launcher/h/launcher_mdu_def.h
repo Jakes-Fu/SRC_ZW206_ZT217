@@ -125,4 +125,4 @@ RES_ADD_IMG(light_gray_bg,"\\MMI_RES_##\\IMAG\\card_bg\\light_gray.png",IMG_CMP_
 RES_ADD_IMG(light_orange_bg,"\\MMI_RES_##\\IMAG\\card_bg\\light_orange.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(light_pink_bg,"\\MMI_RES_##\\IMAG\\card_bg\\light_pink.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(sky_blue_bg,"\\MMI_RES_##\\IMAG\\card_bg\\sky_blue.png",IMG_CMP_PNG_ARGB_RLE,0)
-RES_ADD_IMG(textbook_bg,"\\MMI_RES_##\\IMAG\\card_bg\\textbook.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(class_sync_bg,"\\MMI_RES_##\\IMAG\\card_bg\\textbook.png",IMG_CMP_PNG_ARGB_RLE,0)
