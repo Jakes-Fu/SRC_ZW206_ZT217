@@ -1018,7 +1018,7 @@ LOCAL void Hanzi_ChatPlayMp3Data(uint8 *data,uint32 data_len)
 
 LOCAL void HanziDetail_NextChapterInfo(void)
 {
-    hanzi_book_info.cur_section_children_idx++;
+    
     if(hanzi_book_info.cur_section_children_idx < hanzi_chapter_children_count[hanzi_book_info.cur_section_idx])
     {
         Hanzi_WriteUnmasterHanzi(
@@ -1026,6 +1026,7 @@ LOCAL void HanziDetail_NextChapterInfo(void)
             hanzi_content_info[hanzi_book_info.cur_section_idx]->content_id, 
             cur_chapter_unmaster_count
         );
+		hanzi_book_info.cur_section_children_idx++;
         cur_chapter_unmaster_count = 0;
         hanzi_detail_cur_idx = 0;
         hanzi_book_info.cur_chapter_idx++;

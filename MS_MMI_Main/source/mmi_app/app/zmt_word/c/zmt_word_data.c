@@ -910,7 +910,7 @@ PUBLIC void Word_RequestNewWord(uint16 book_id, uint16 chapter_id)
     char * data_buf = PNULL;
     uint32 file_len = 0;
     sprintf(file_path, WORD_BOOK_NEW_WORD_PATH, book_id, chapter_id);
-    Word_ReleaseNewWordInfo();
+  //  Word_ReleaseNewWordInfo();
     if(zmt_file_exist(file_path)){
         data_buf = zmt_file_data_read(file_path, &file_len);
         SCI_TRACE_LOW("%s: file_len = %d", __FUNCTION__, file_len);
@@ -1100,7 +1100,7 @@ PUBLIC void Word_SaveDeleteNewWord(uint16 book_id, uint16 chap_id, char * chap_n
     cJSON * translation;
 
     sprintf(file_path, WORD_BOOK_NEW_WORD_PATH, book_id, chap_id);
-    if(word_detail_count < 1)
+    if(word_detail_count < 0)
     {
         if(zmt_file_exist(file_path)){
             zmt_file_delete(file_path);
