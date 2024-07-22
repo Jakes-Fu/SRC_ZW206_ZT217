@@ -1814,9 +1814,11 @@ WINDOW_TABLE( MMIALM_JUMP_CLOCK_TAB ) =
 /*****************************************************************************/
 LOCAL BOOLEAN Check_Date_Data(MMIACC_SMART_EVENT_FAST_TABLE_T* event_ptr)
 {
+    //start_day, start_mon, start_year is none,remove define
+    //edit by fys
     if(event_ptr->day < 1 || event_ptr->day > 31 || event_ptr->mon < 1 || event_ptr->mon > 12 || event_ptr->hour < 0 || event_ptr->hour > 24
-        || event_ptr->minute < 0 || event_ptr->minute > 59 || event_ptr->year < 2000 || event_ptr->year > 2100 || event_ptr->start_day < 1 
-        || event_ptr->start_day > 31 || event_ptr->start_mon < 1 || event_ptr->start_mon > 12 || event_ptr->start_year < 2000 || event_ptr->start_year > 2100)
+        || event_ptr->minute < 0 || event_ptr->minute > 59 || event_ptr->year < 2000 || event_ptr->year > 2100 /*|| event_ptr->start_day < 1 
+        || event_ptr->start_day > 31 || event_ptr->start_mon < 1 || event_ptr->start_mon > 12 || event_ptr->start_year < 2000 || event_ptr->start_year > 2100*/)
     {
         SCI_TRACE_LOW("error date day:%d mon:%d year:%d hour:%d min:%d",event_ptr->day,event_ptr->mon,event_ptr->year,event_ptr->hour,event_ptr->minute);
         return TRUE;

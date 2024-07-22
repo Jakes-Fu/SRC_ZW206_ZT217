@@ -3537,39 +3537,6 @@ int YX_Net_Receive_SILENCETIME2(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen
             pTime = (uint8 *)&tmp_str[0];
             con_len = ret;
             SCI_MEMSET(timer_str,0,11);
-            timer_type = 0;
-            ret = YX_Func_TimerGetNextPara(&pTime,&con_len,timer_str,10);
-            //获取格式: 日一二三四五六
-            if(ret > 6)
-            {
-                
-                //转换为: 六五四三二一日ONOFF
-                if(timer_str[0] == '1')
-                {
-                    timer_type = (0x01 << 1);
-                }
-                
-                for(j = 1; j < 7; j++)
-                {
-                    if(timer_str[j] == '1')
-                    {
-                        timer_type = timer_type | (0x01 << (j+1));
-                    }
-                }
-            }
-            SCI_MEMSET(timer_str,0,11);
-            ret = YX_Func_TimerGetNextPara(&pTime,&con_len,timer_str,10);//开关
-            if(ret > 0)
-            {
-                is_on = atoi(timer_str);
-            }
-            SCI_MEMSET(timer_str,0,11);
-            ret = YX_Func_TimerGetNextPara(&pTime,&con_len,timer_str,10);//am pm
-            if(ret > 0)
-            {
-                ZDT_LOG("YX_Net_Receive_SILENCETIME2 Rcv idx=%d,am/pm=%s",i,timer_str);
-            }
-            SCI_MEMSET(timer_str,0,11);
             ret = YX_Func_TimerGetNextPara(&pTime,&con_len,timer_str,10);
             if(ret > 0)
             {
@@ -3593,9 +3560,38 @@ int YX_Net_Receive_SILENCETIME2(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen
             {
                 end_min = atoi(timer_str);
             }
+            
+            SCI_MEMSET(timer_str,0,11);
+            ret = YX_Func_TimerGetNextPara(&pTime,&con_len,timer_str,10);
+            if(ret > 0)
+            {
+                is_on = atoi(timer_str);
+            }
+            SCI_MEMSET(timer_str,0,11);
+            timer_type = 0;
+            ret = YX_Func_TimerGetNextPara(&pTime,&con_len,timer_str,10);
+            //获取格式: 日一二三四五六
+            if(ret > 6)
+            {
+                
+                //转换为: 六五四三二一日ONOFF
+                if(timer_str[0] == '1')
+                {
+                    timer_type = (0x01 << 1);
+                }
+                
+                for(j = 1; j < 7; j++)
+                {
+                    if(timer_str[j] == '1')
+                    {
+                        timer_type = timer_type | (0x01 << (j+1));
+                    }
+                }
+            }
+            
             timer_start = (start_hour * 3600) + (start_min * 60);
             timer_end = (end_hour * 3600) + (end_min * 60);
-            if(is_on == 1) //防止开关状态为2
+            if(is_on)
             {
                 timer_type = timer_type | 0x01;
             }
@@ -6594,7 +6590,7 @@ static int YX_Net_ReceiveHandle(YX_APP_T *pMe,uint8 * pData,uint32 DataLen,uint3
     int ret = 0;
     BOOLEAN is_talk= FALSE;
     ZDT_LOG("YX_Net_ReceiveHandle: DataLen=%d, Content_len=%d",DataLen, Content_len);
-    //ZDT_LOG("YX_Net_ReceiveHandle: pData = %s" , pData);
+    ZDT_LOG("YX_Net_ReceiveHandle: pData = %s" , pData);
     pContent = pData+head_len;
     ret = YX_Func_GetNextPara(&pContent, &cont_len,buf,100);
     if(ret > 0)
@@ -6739,10 +6735,8 @@ static int YX_Net_ReceiveHandle(YX_APP_T *pMe,uint8 * pData,uint32 DataLen,uint3
     }
     else if(ret == 6 &&  strncmp( (char *)buf, "REMIND", ret ) == 0)
     {
-    #ifndef ZTE_WATCH
         //闹钟设置指令 
         YX_Net_Receive_REMIND(pMe,pContent,cont_len);
-    #endif
     }
     //yangyu add 
     else if(ret == 7 &&  strncmp( (char *)buf, "BOOTOFF", ret ) == 0)
