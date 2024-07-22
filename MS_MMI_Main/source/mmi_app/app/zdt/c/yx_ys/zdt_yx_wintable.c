@@ -106,6 +106,7 @@ PUBLIC BOOLEAN MMIZDT_FindWatchWin(void)
         LIBXMLYAPI_AppExit();
 #endif
 #endif
+        ZMTApp_CloseRecordAndPlayer();
         MMK_CreateWin((uint32*)MMIZDT_FIND_WATCH_WIN_TAB,PNULL);
     }
     return TRUE;
@@ -1898,6 +1899,7 @@ PUBLIC void MMIVoice_ShowNewMsgPrompt(
         LIBXMLYAPI_AppExit();
 #endif
 #endif
+    ZMTApp_CloseRecordAndPlayer();
     if(is_play_ring)
     {
         YX_PlayRcvVoiceMsgTone();

@@ -1651,8 +1651,14 @@ PUBLIC void MMI_CreateListeningPlayerLrcWin(LISTENING_PLAYER_INFO * player_info)
 	MMK_SetWinRect(win_handle, &rect);
 }
 
-PUBLIC void MMIZMT_CloseListeningPlayer(void)
+PUBLIC void ZMTListening_CloseListeningPlayer(void)
 {
     Listening_StopPlayMp3();
+    player_play_info.play_status = 0;
+    if(0 != listening_play_timer_id)
+    {
+        MMK_StopTimer(listening_play_timer_id);
+        listening_play_timer_id = 0;
+    }
 }
 

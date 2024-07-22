@@ -124,7 +124,7 @@ typedef struct
 
 PUBLIC BOOLEAN MMI_IsPoetryItemWinOpen(void);
 PUBLIC BOOLEAN MMI_IsPoetryDetailWinOpen(void);
-PUBLIC void MMIZMT_ClosePoetryPlayer(void);
+PUBLIC void ZMTPoetry_ClosePoetryPlayer(void);
 
 #ifdef _cplusplus
 }

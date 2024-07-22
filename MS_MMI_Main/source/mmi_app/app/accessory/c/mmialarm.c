@@ -7883,6 +7883,7 @@ LOCAL void OpenAlarmAliveWin(
               //                             res_aw_alarm_ic_close,
               //                             softkey,
               //                             HandleEventAliveWinMsg);
+              ZMTApp_CloseRecordAndPlayer();
               MMI_Alarm_CreateAliveWin();
          }
 #endif

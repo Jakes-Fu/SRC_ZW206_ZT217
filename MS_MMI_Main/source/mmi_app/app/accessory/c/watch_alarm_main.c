@@ -828,7 +828,7 @@ LOCAL void Alarm_MainList_OPEN_WINDOW( MMI_WIN_ID_T win_id )
     //MMI_CTRL_ID_T   ctrlIcon = MMIALM_NO_ALARM_ICON_LABEL_CTRL_ID;
 
     MMI_CTRL_ID_T   listCtrlId = MMIALM_MAIN_LIST_CTRL_ID;
-#ifdef LOCAL_ALARM_CLOCK_SUPPORT 
+/*#ifdef LOCAL_ALARM_CLOCK_SUPPORT 
     MMI_CTRL_ID_T   addBtn = MMIALM_ADD_ALARM_BTN_CTRL_ID;
     GUI_RECT_T      btnRect = WATCH_ALARM_BTN_RECT;
     GUI_FONT_ALL_T      font = {SONG_FONT_22,MMI_WHITE_COLOR};
@@ -836,7 +836,7 @@ LOCAL void Alarm_MainList_OPEN_WINDOW( MMI_WIN_ID_T win_id )
     GUIBUTTON_SetRect(addBtn, &btnRect);
 	GUIBUTTON_SetFont(addBtn,&font);
     GUIBUTTON_SetTextId(addBtn,TXT_ADD_ALARM);
-#endif
+#endif*///edit by fys
 
     //set title text color
     //{
@@ -988,7 +988,7 @@ LOCAL MMI_RESULT_E  HandleAlarmMainListWindow(
                 reCode = GUILIST_GetItemData( listCtrlId, index, &event_id );
                 TRACE_APP_ALARM("Event_id %d", event_id);
                 //WatchAlarm_EditWin_Enter(event_id);
-                WatchAlarm_EditListWin_Enter(event_id);
+                //WatchAlarm_EditListWin_Enter(event_id);//edit by fys
             #endif
             break;
         }
@@ -1006,7 +1006,7 @@ LOCAL MMI_RESULT_E  HandleAlarmMainListWindow(
                 if( AlarmNum < ALM_ALARM_NUM )
                 {
                     //enter Alarm add win
-                    WatchAlarm_AddWin_Enter();
+                    //WatchAlarm_AddWin_Enter();//edit by fys
                 }
                 else
                 {
@@ -1022,7 +1022,7 @@ LOCAL MMI_RESULT_E  HandleAlarmMainListWindow(
                 reCode = GUILIST_GetItemData( listCtrlId, index, &event_id );
                 TRACE_APP_ALARM("Event_id %d", event_id);
                 //WatchAlarm_EditWin_Enter(event_id);
-                WatchAlarm_EditListWin_Enter(event_id);
+                //WatchAlarm_EditListWin_Enter(event_id);//edit by fys
             }
             #endif
             break;
@@ -1053,7 +1053,7 @@ LOCAL MMI_RESULT_E  HandleAlarmMainListWindow(
                 reCode = GUILIST_GetItemData( listCtrlId, index, &event_id );
                 TRACE_APP_ALARM("Event_id %d", event_id);
                  //WatchAlarm_EditWin_Enter(event_id);
-                WatchAlarm_EditListWin_Enter(event_id);
+                //WatchAlarm_EditListWin_Enter(event_id);//edit by fys
             }
         #endif
             break;
@@ -1506,7 +1506,7 @@ WINDOW_TABLE( MMIALARM_MAINLIST_WIN_TAB ) =
     CREATE_LABEL_CTRL( GUILABEL_ALIGN_MIDDLE, MMIALM_NO_ALARM_ICON_LABEL_CTRL_ID ),
     CREATE_LISTBOX_CTRL( GUILIST_TEXTLIST_E, MMIALM_MAIN_LIST_CTRL_ID ),
 #ifdef LOCAL_ALARM_CLOCK_SUPPORT
-    CREATE_BUTTON_CTRL(IMAGE_COMMON_ONEBTN_KBBG_IMAG, MMIALM_ADD_ALARM_BTN_CTRL_ID ),
+    //CREATE_BUTTON_CTRL(IMAGE_COMMON_ONEBTN_KBBG_IMAG, MMIALM_ADD_ALARM_BTN_CTRL_ID ),
 #endif
 #ifndef TOUCH_PANEL_SUPPORT
     WIN_SOFTKEY( STXT_OK, TXT_NULL, STXT_RETURN ),

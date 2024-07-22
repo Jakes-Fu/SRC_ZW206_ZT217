@@ -499,14 +499,14 @@ LOCAL void ZmtGptZuoWen_NotifyRecordCallback(RECORD_SRV_HANDLE record_srv_handle
 
 LOCAL void ZmtGptZuoWen_StopRecord(MMI_WIN_ID_T win_id, BOOLEAN is_send)
 {
-    if (PNULL != gpt_zuowen_record_handle)
-    {
+    if (PNULL != gpt_zuowen_record_handle){
         MMIRECORDSRV_StopRecord(gpt_zuowen_record_handle);
         MMIRECORDSRV_FreeRecordHandle(gpt_zuowen_record_handle);
         gpt_zuowen_record_handle = 0;
+    }else{
+        is_send = FALSE;
     }
-    if(gpt_zuowen_record_timer_id != 0)
-    {
+    if(gpt_zuowen_record_timer_id != 0){
         MMK_StopTimer(gpt_zuowen_record_timer_id);
         gpt_zuowen_record_timer_id = 0;
     }
@@ -1336,5 +1336,14 @@ PUBLIC void MMIZMT_CreateZmtGptZuoWenWin(void)
         MMK_CloseWin(ZMT_GPT_ZUOWEN_WIN_ID);
     }
     MMK_CreateWin((uint32 *)MMI_ZMT_GPT_ZUOWEN_WIN_TAB, PNULL);
+}
+
+PUBLIC void ZMTGpt_CloseZuoWenRecord(void)
+{
+    if (PNULL != gpt_zuowen_record_handle){
+        MMIRECORDSRV_StopRecord(gpt_zuowen_record_handle);
+        MMIRECORDSRV_FreeRecordHandle(gpt_zuowen_record_handle);
+        gpt_zuowen_record_handle = 0;
+    }
 }
 

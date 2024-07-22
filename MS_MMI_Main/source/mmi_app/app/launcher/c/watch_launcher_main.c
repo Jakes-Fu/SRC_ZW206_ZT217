@@ -1366,4 +1366,35 @@ PUBLIC void WatchOpen_Panel_SelectWin()
 }
 #endif
 
+PUBLIC void ZMTApp_CloseRecordAndPlayer(void)
+{
+#ifdef LISTENING_PRATICE_SUPPORT
+    ZMTListening_CloseListeningPlayer();
+#endif
+#ifdef WORD_CARD_SUPPORT
+    ZMTWord_CloseWordPlayer();
+#endif
+#ifdef HANZI_CARD_SUPPORT
+    ZMTHanzi_CloseHanziPlayer();
+#endif
+#ifdef POETRY_LISTEN_SUPPORT
+    ZMTPoetry_ClosePoetryPlayer();
+#endif
+#ifdef ZMT_GPT_SUPPORT
+    ZMTGpt_CloseKouyuRecordAndPlayer();
+    ZMTGpt_CloseZuoWenRecord();
+#endif
+#ifdef FORMULA_SUPPORT
+    ZMTFormula_CloseFormulaPlayer();
+#endif
+#ifdef ZMT_CLASS_SUPPORT
+    ZMTClass_CloseClassPlayer();
+#endif
+#ifdef ZMT_PINYIN_SUPPORT
+    ZMTPinyin_ClosePlayerHandle();
+#endif
+#ifdef ZMT_YINBIAO_SUPPORT
+    ZMTYinbiao_ClosePlayerHandle();
+#endif
+}
 

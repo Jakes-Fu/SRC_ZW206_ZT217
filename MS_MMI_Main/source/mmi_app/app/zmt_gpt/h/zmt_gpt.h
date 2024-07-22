@@ -99,6 +99,8 @@ typedef struct
 {
     BOOLEAN is_user;
     char * str;
+    char * audio_data;
+    uint16 audio_len;
 }gpt_talk_info_t;
 
 typedef enum {
@@ -135,4 +137,6 @@ PUBLIC void MMIZMT_CreateZmtGptZuoWenWin(void);
 
 PUBLIC void ZmtGpt_InitListbox(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id, GUI_RECT_T list_rect, uint16 max_item);
 PUBLIC void ZmtGpt_DisplayTitle(MMI_WIN_ID_T win_id, MMI_STRING_T text_string, GUI_RECT_T title_rect, GUI_FONT_T font);
+
+PUBLIC void ZMTGpt_CloseKouyuRecordAndPlayer(void);
 

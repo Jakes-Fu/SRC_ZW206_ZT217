@@ -194,7 +194,7 @@ PUBLIC BOOLEAN MMI_IsListeningAudioWinOpen(void);
 PUBLIC BOOLEAN Listening_PlayMp3(int module_id, int album_id, int audio_id);
 PUBLIC uint8 Listening_StartPlayMp3(char* file_name);
 PUBLIC void Listening_StopPlayMp3(void);
-PUBLIC void MMIZMT_CloseListeningPlayer(void);
+PUBLIC void ZMTListening_CloseListeningPlayer(void);
 
 PUBLIC void Listening_GetLrcFileName(char * file_name, int module_id, int album_id, int audio_id);
 PUBLIC void Listening_GetAudioLrcData(int module_id, int album_id, int audio_id);

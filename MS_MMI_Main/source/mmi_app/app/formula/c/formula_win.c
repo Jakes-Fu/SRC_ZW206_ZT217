@@ -599,6 +599,8 @@ LOCAL void FormulaTableTipWin_FULL_PAINT(MMI_WIN_ID_T win_id)
         text_state,
         GUISTR_TEXT_DIR_AUTO
     );
+
+    FormulaTableTipWin_UpdateButton(formula_table_play_status);
 }
 
 LOCAL MMI_RESULT_E HandleFormulaTableTipWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E msg_id, DPARAM param)
@@ -1117,7 +1119,10 @@ PUBLIC void MMI_CreateMathMnemonicWin(void)
     MMK_CreateWin(FORMULA_MNEMONIC_WIN_TAB, NULL);
 }
 
-PUBLIC void MMIZMT_CloseFormulaPlayer(void)
+PUBLIC void ZMTFormula_CloseFormulaPlayer(void)
 {
     FormulaWin_StopRing();
+    formula_play_info.play_status = FORMULA_ACTION_STOP;
+    formula_table_play_status = 0;
 }
+
