@@ -927,7 +927,7 @@ LOCAL BOOLEAN ZmtGptZuoWen_DestoryDynaCtrl(MMI_WIN_ID_T win_id)
     uint8 i = 0;
     if(MMK_GetCtrlHandleByWin(win_id, ZMT_GPT_FORM_CTRL_ID))
     {
-        for(i = 0; i < gpt_zuowen_talk_size + 1;i++)
+        for(i = 0; i < gpt_zuowen_talk_size;i++)
         {
             if(MMK_GetCtrlHandleByWin(win_id, ZMT_GPT_FORM_TEXT_1_CTRL_ID+i))
             {
@@ -962,7 +962,7 @@ LOCAL void ZmtGptZuoWen_ShowFormList(MMI_WIN_ID_T win_id)
 
     ZmtGptZuoWen_DestoryDynaCtrl(win_id);
     SCI_TRACE_LOW("%s: gpt_zuowen_talk_size = %d", __FUNCTION__, gpt_zuowen_talk_size);
-    for(i = 0;i < gpt_zuowen_talk_size + 1;i++)
+    for(i = 0;i < gpt_zuowen_talk_size;i++)
     {
         GUITEXT_INIT_DATA_T text_init_data = {0};
         GUIFORM_DYNA_CHILD_T text_form_child_ctrl = {0};
@@ -1012,7 +1012,7 @@ LOCAL void ZmtGptZuoWen_ShowFormList(MMI_WIN_ID_T win_id)
     }
     GUITEXT_SetBorder(&border, ZMT_GPT_FORM_TEXT_1_CTRL_ID + gpt_zuowen_cur_idx);
     GUIFORM_SetActiveChild(ctrl_handle, ZMT_GPT_FORM_TEXT_1_CTRL_ID + gpt_zuowen_cur_idx);
-    {
+    /*{
         text_ctrl_id++;
         child_width.type = GUIFORM_CHILD_WIDTH_FIXED;
         child_width.add_data = width;
@@ -1030,7 +1030,7 @@ LOCAL void ZmtGptZuoWen_ShowFormList(MMI_WIN_ID_T win_id)
         MMIRES_GetText(ZMT_CHAT_GPT_EMPTY_TXT, win_id, &text_string);
         GUITEXT_SetString(text_ctrl_id, text_string.wstr_ptr, text_string.wstr_len, TRUE);
         GUITEXT_SetHandleTpMsg(FALSE, text_ctrl_id);
-    }
+    }*/
 }
 
 LOCAL void ZmtGptZuoWen_FULL_PAINT(MMI_WIN_ID_T win_id)
