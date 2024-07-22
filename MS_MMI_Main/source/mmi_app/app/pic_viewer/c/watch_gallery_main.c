@@ -412,10 +412,13 @@ PUBLIC MMI_RESULT_E HandleGallerytIPWinMsg(
 				Gallery_ShowNoPhotosTip(win_id);
 			}
 			break;
-        case MSG_KEYDOWN_RED:
+       case MSG_KEYDOWN_CANCEL:
             break;
         case MSG_KEYUP_RED:
-            MMK_CloseWin(win_id);
+        case MSG_KEYUP_CANCEL:
+            {
+                MMK_CloseWin(win_id);
+            }
             break;
 		default:
 			result = MMI_RESULT_FALSE;
@@ -1406,8 +1409,8 @@ LOCAL void InitMarkMenuButtons(MMI_WIN_ID_T win_id)
         create_ptr.init_data_ptr = &init_data;
         button_rect.h_rect.left = button_rect.v_rect.left = form_rect.v_rect.right - 20 -28;
         button_rect.h_rect.right = button_rect.v_rect.right = form_rect.v_rect.right - 20;
-        button_rect.v_rect.bottom = 28 + 1;
-        button_rect.h_rect.bottom = 28 + 1;
+        button_rect.v_rect.bottom = DP2PX_VALUE(28 + 1);
+        button_rect.h_rect.bottom = DP2PX_VALUE(28 + 1);
                  
                 
         init_data.bg.bg_type    = GUI_BG_IMG;
@@ -1433,8 +1436,8 @@ LOCAL void InitOptionMenuButtons(MMI_WIN_ID_T win_id)
         create_ptr.init_data_ptr = &init_data;
         button_rect.h_rect.left = button_rect.v_rect.left = form_rect.v_rect.right - 20 -28;
         button_rect.h_rect.right = button_rect.v_rect.right = form_rect.v_rect.right - 20;
-        button_rect.v_rect.bottom = 28 + 1;
-        button_rect.h_rect.bottom = 28 + 1;
+        button_rect.v_rect.bottom = DP2PX_VALUE(28 + 1);
+        button_rect.h_rect.bottom = DP2PX_VALUE(28 + 1);
                  
                 
         init_data.bg.bg_type    = GUI_BG_IMG;
@@ -1737,13 +1740,13 @@ LOCAL void GalleryPicList_TitleButtonCallbackInit(void)
 LOCAL void GalleryPicList_TitleShow(MMI_WIN_ID_T win_id)
 {
 	GUI_LCD_DEV_INFO lcd_dev_info = {0,0};
-	GUI_RECT_T text_rect = {50, 12, 120, 40};
+	GUI_RECT_T text_rect = DP2PX_RECT(50, 12, 120, 40);
 	GUISTR_STATE_T text_state = GUISTR_STATE_ALIGN;
 	GUISTR_STYLE_T text_style = {0};
 	MMI_STRING_T text_string = {0};
-	GUI_RECT_T back_rect = {20, 6, 62, 42};
+	GUI_RECT_T back_rect = DP2PX_RECT(20, 6, 62, 42);
     MMI_CTRL_ID_T back_button_ctrlid = MMIGALLERY_MAIN_BACK_BUTTON_CTRL_ID;
-    GUI_RECT_T del_rect = {180, 6, 220, 42};
+    GUI_RECT_T del_rect = DP2PX_RECT(180, 6, 220, 42);
     MMI_CTRL_ID_T del_button_ctrlid = MMIGALLERY_MAIN_DEL_BUTTON_CTRL_ID;
 
 	//GUIRES_DisplayImg(PNULL, &back_rect, PNULL, win_id, res_zte_gallery_back, &lcd_dev_info);
@@ -2073,10 +2076,13 @@ LOCAL MMI_RESULT_E HandleGalleryMainWinMsg(
 			GalleryPicList_TitleShow(win_id);
         }
         break;
-        case MSG_KEYDOWN_RED:
+        case MSG_KEYDOWN_CANCEL:
             break;
         case MSG_KEYUP_RED:
-            MMK_CloseWin(win_id);
+        case MSG_KEYUP_CANCEL:
+            {
+                MMK_CloseWin(win_id);
+            }
             break;
         
         default:
