@@ -328,7 +328,7 @@ extern PUBLIC uint8 Video_Call_Incoming_Test();
 #endif
 
 #ifdef ZMT_CLASS_SUPPORT
-#define MENU_CLASS {26, 1, textbook_text, res_app_ic_contact, class_sync_bg, MMI_CreateClassMainWin} 
+#define MENU_CLASS {26, 1, class_sync_text, res_app_ic_contact, class_sync_bg, MMI_CreateClassMainWin} 
 #endif
 
 #ifdef ZMT_PINYIN_SUPPORT

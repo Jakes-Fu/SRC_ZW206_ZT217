@@ -15,7 +15,7 @@ RES_ADD_IMG(res_app_ic_find_friend,"\\MMI_RES_##\\IMAG\\res_app_ic_find_friend.p
 RES_ADD_IMG(res_app_ic_video_call,"\\MMI_RES_##\\IMAG\\res_app_ic_video_call.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(res_app_ic_weather,"\\MMI_RES_##\\IMAG\\res_app_ic_weather.png",IMG_CMP_PNG_ARGB_RLE,0)
 
-RES_ADD_IMG(textbook_text,"\\MMI_RES_##\\IMAG\\textbook_text.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(class_sync_text,"\\MMI_RES_##\\IMAG\\class_sync_text.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(contact_text,"\\MMI_RES_##\\IMAG\\contact_text.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(camera_text,"\\MMI_RES_##\\IMAG\\camera_text.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(wechat_text,"\\MMI_RES_##\\IMAG\\wechat_text.png",IMG_CMP_PNG_ARGB_RLE,0)
@@ -125,4 +125,4 @@ RES_ADD_IMG(light_gray_bg,"\\MMI_RES_##\\IMAG\\card_bg\\light_gray.png",IMG_CMP_
 RES_ADD_IMG(light_orange_bg,"\\MMI_RES_##\\IMAG\\card_bg\\light_orange.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(light_pink_bg,"\\MMI_RES_##\\IMAG\\card_bg\\light_pink.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(sky_blue_bg,"\\MMI_RES_##\\IMAG\\card_bg\\sky_blue.png",IMG_CMP_PNG_ARGB_RLE,0)
-RES_ADD_IMG(class_sync_bg,"\\MMI_RES_##\\IMAG\\card_bg\\textbook.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(class_sync_bg,"\\MMI_RES_##\\IMAG\\card_bg\\class_sync_bg.png",IMG_CMP_PNG_ARGB_RLE,0)
