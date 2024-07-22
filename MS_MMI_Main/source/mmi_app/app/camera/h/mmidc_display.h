@@ -147,100 +147,100 @@
 #endif    
 #endif
 #define     FRAME_DISPLAY_POS_HVGA_VER_X_1           0
-#define     FRAME_DISPLAY_POS_HVGA_VER_Y_1           205
+#define     FRAME_DISPLAY_POS_HVGA_VER_Y_1           DP2PX_VALUE(205)
 
-#define     FRAME_DISPLAY_POS_HVGA_VER_X_2           25
-#define     FRAME_DISPLAY_POS_HVGA_VER_Y_2           195
+#define     FRAME_DISPLAY_POS_HVGA_VER_X_2          DP2PX_VALUE( 25)
+#define     FRAME_DISPLAY_POS_HVGA_VER_Y_2              DP2PX_VALUE( 195)
 
-#define     FRAME_DISPLAY_POS_HVGA_VER_X_3           31
-#define     FRAME_DISPLAY_POS_HVGA_VER_Y_3           130
+#define     FRAME_DISPLAY_POS_HVGA_VER_X_3              DP2PX_VALUE( 31)
+#define     FRAME_DISPLAY_POS_HVGA_VER_Y_3              DP2PX_VALUE( 130)
 
-#define     FRAME_DISPLAY_POS_HVGA_VER_X_4           18
-#define     FRAME_DISPLAY_POS_HVGA_VER_Y_4           208
+#define     FRAME_DISPLAY_POS_HVGA_VER_X_4              DP2PX_VALUE( 18)
+#define     FRAME_DISPLAY_POS_HVGA_VER_Y_4              DP2PX_VALUE( 208)
 
-#define     FRAME_DISPLAY_POS_HVGA_HOR_X_1           20
-#define     FRAME_DISPLAY_POS_HVGA_HOR_Y_1           44
+#define     FRAME_DISPLAY_POS_HVGA_HOR_X_1              DP2PX_VALUE( 20)
+#define     FRAME_DISPLAY_POS_HVGA_HOR_Y_1              DP2PX_VALUE( 44)
 
-#define     FRAME_DISPLAY_POS_HVGA_HOR_X_2           107
-#define     FRAME_DISPLAY_POS_HVGA_HOR_Y_2           75
+#define     FRAME_DISPLAY_POS_HVGA_HOR_X_2              DP2PX_VALUE( 107)
+#define     FRAME_DISPLAY_POS_HVGA_HOR_Y_2              DP2PX_VALUE( 75)
 
-#define     FRAME_DISPLAY_POS_HVGA_HOR_X_3           112
-#define     FRAME_DISPLAY_POS_HVGA_HOR_Y_3           49
+#define     FRAME_DISPLAY_POS_HVGA_HOR_X_3              DP2PX_VALUE( 112)
+#define     FRAME_DISPLAY_POS_HVGA_HOR_Y_3              DP2PX_VALUE( 49)
 
-#define     FRAME_DISPLAY_POS_HVGA_HOR_X_4           18
-#define     FRAME_DISPLAY_POS_HVGA_HOR_Y_4           49
+#define     FRAME_DISPLAY_POS_HVGA_HOR_X_4              DP2PX_VALUE( 18)
+#define     FRAME_DISPLAY_POS_HVGA_HOR_Y_4              DP2PX_VALUE( 49)
 
 #define     FRAME_DISPLAY_POS_QVGA_VER_X_1           0
-#define     FRAME_DISPLAY_POS_QVGA_VER_Y_1           125
+#define     FRAME_DISPLAY_POS_QVGA_VER_Y_1              DP2PX_VALUE( 125)
 
-#define     FRAME_DISPLAY_POS_QVGA_VER_X_2           25
-#define     FRAME_DISPLAY_POS_QVGA_VER_Y_2           155
+#define     FRAME_DISPLAY_POS_QVGA_VER_X_2              DP2PX_VALUE( 25)
+#define     FRAME_DISPLAY_POS_QVGA_VER_Y_2              DP2PX_VALUE( 155)
 
-#define     FRAME_DISPLAY_POS_QVGA_VER_X_3           31
-#define     FRAME_DISPLAY_POS_QVGA_VER_Y_3           98
+#define     FRAME_DISPLAY_POS_QVGA_VER_X_3              DP2PX_VALUE( 31)
+#define     FRAME_DISPLAY_POS_QVGA_VER_Y_3              DP2PX_VALUE( 98)
 
-#define     FRAME_DISPLAY_POS_QVGA_VER_X_4           10
-#define     FRAME_DISPLAY_POS_QVGA_VER_Y_4           39
+#define     FRAME_DISPLAY_POS_QVGA_VER_X_4              DP2PX_VALUE( 10)
+#define     FRAME_DISPLAY_POS_QVGA_VER_Y_4              DP2PX_VALUE( 39)
 
 #define     FRAME_DISPLAY_POS_QVGA_HOR_X_1           0
-#define     FRAME_DISPLAY_POS_QVGA_HOR_Y_1           44
+#define     FRAME_DISPLAY_POS_QVGA_HOR_Y_1              DP2PX_VALUE( 44)
 
-#define     FRAME_DISPLAY_POS_QVGA_HOR_X_2           66
-#define     FRAME_DISPLAY_POS_QVGA_HOR_Y_2           75
+#define     FRAME_DISPLAY_POS_QVGA_HOR_X_2              DP2PX_VALUE( 66)
+#define     FRAME_DISPLAY_POS_QVGA_HOR_Y_2              DP2PX_VALUE( 75)
 
-#define     FRAME_DISPLAY_POS_QVGA_HOR_X_3           70
-#define     FRAME_DISPLAY_POS_QVGA_HOR_Y_3           49
+#define     FRAME_DISPLAY_POS_QVGA_HOR_X_3              DP2PX_VALUE( 70)
+#define     FRAME_DISPLAY_POS_QVGA_HOR_Y_3              DP2PX_VALUE( 49)
 
-#define     FRAME_DISPLAY_POS_QVGA_HOR_X_4           18
-#define     FRAME_DISPLAY_POS_QVGA_HOR_Y_4           39
+#define     FRAME_DISPLAY_POS_QVGA_HOR_X_4              DP2PX_VALUE( 18)
+#define     FRAME_DISPLAY_POS_QVGA_HOR_Y_4              DP2PX_VALUE( 39)
 
 #define     FRAME_DISPLAY_POS_WQVGA_VER_X_1           0
-#define     FRAME_DISPLAY_POS_WQVGA_VER_Y_1           205
+#define     FRAME_DISPLAY_POS_WQVGA_VER_Y_1              DP2PX_VALUE( 205)
 
-#define     FRAME_DISPLAY_POS_WQVGA_VER_X_2           25
-#define     FRAME_DISPLAY_POS_WQVGA_VER_Y_2           195
+#define     FRAME_DISPLAY_POS_WQVGA_VER_X_2              DP2PX_VALUE( 25)
+#define     FRAME_DISPLAY_POS_WQVGA_VER_Y_2              DP2PX_VALUE( 195)
 
-#define     FRAME_DISPLAY_POS_WQVGA_VER_X_3           31
-#define     FRAME_DISPLAY_POS_WQVGA_VER_Y_3           130
+#define     FRAME_DISPLAY_POS_WQVGA_VER_X_3              DP2PX_VALUE( 31)
+#define     FRAME_DISPLAY_POS_WQVGA_VER_Y_3              DP2PX_VALUE( 130)
 
-#define     FRAME_DISPLAY_POS_WQVGA_VER_X_4           18
-#define     FRAME_DISPLAY_POS_WQVGA_VER_Y_4           208
+#define     FRAME_DISPLAY_POS_WQVGA_VER_X_4              DP2PX_VALUE( 18)
+#define     FRAME_DISPLAY_POS_WQVGA_VER_Y_4              DP2PX_VALUE( 208)
 
-#define     FRAME_DISPLAY_POS_WQVGA_HOR_X_1           20
-#define     FRAME_DISPLAY_POS_WQVGA_HOR_Y_1           44
+#define     FRAME_DISPLAY_POS_WQVGA_HOR_X_1              DP2PX_VALUE( 20)
+#define     FRAME_DISPLAY_POS_WQVGA_HOR_Y_1              DP2PX_VALUE( 44)
 
-#define     FRAME_DISPLAY_POS_WQVGA_HOR_X_2           107
-#define     FRAME_DISPLAY_POS_WQVGA_HOR_Y_2           75
+#define     FRAME_DISPLAY_POS_WQVGA_HOR_X_2              DP2PX_VALUE( 107)
+#define     FRAME_DISPLAY_POS_WQVGA_HOR_Y_2             DP2PX_VALUE(  75)
 
-#define     FRAME_DISPLAY_POS_WQVGA_HOR_X_3           112
-#define     FRAME_DISPLAY_POS_WQVGA_HOR_Y_3           49
+#define     FRAME_DISPLAY_POS_WQVGA_HOR_X_3              DP2PX_VALUE( 112)
+#define     FRAME_DISPLAY_POS_WQVGA_HOR_Y_3              DP2PX_VALUE( 49)
 
-#define     FRAME_DISPLAY_POS_WQVGA_HOR_X_4           18
-#define     FRAME_DISPLAY_POS_WQVGA_HOR_Y_4           49
+#define     FRAME_DISPLAY_POS_WQVGA_HOR_X_4              DP2PX_VALUE( 18)
+#define     FRAME_DISPLAY_POS_WQVGA_HOR_Y_4              DP2PX_VALUE( 49)
 
 #define     FRAME_DISPLAY_POS_QCIF_VER_X_1           0
-#define     FRAME_DISPLAY_POS_QCIF_VER_Y_1           20
+#define     FRAME_DISPLAY_POS_QCIF_VER_Y_1              DP2PX_VALUE( 20)
 
 #define     FRAME_DISPLAY_POS_QCIF_VER_X_2           0
-#define     FRAME_DISPLAY_POS_QCIF_VER_Y_2           20
+#define     FRAME_DISPLAY_POS_QCIF_VER_Y_2              DP2PX_VALUE( 20)
 
 #define     FRAME_DISPLAY_POS_QCIF_VER_X_3           0
-#define     FRAME_DISPLAY_POS_QCIF_VER_Y_3           20
+#define     FRAME_DISPLAY_POS_QCIF_VER_Y_3              DP2PX_VALUE( 20)
 
-#define     FRAME_DISPLAY_POS_QCIF_VER_X_4           10
-#define     FRAME_DISPLAY_POS_QCIF_VER_Y_4           20
+#define     FRAME_DISPLAY_POS_QCIF_VER_X_4              DP2PX_VALUE( 10)
+#define     FRAME_DISPLAY_POS_QCIF_VER_Y_4              DP2PX_VALUE( 20)
 
-#define     FRAME_DISPLAY_POS_QCIF_HOR_X_1           20
+#define     FRAME_DISPLAY_POS_QCIF_HOR_X_1              DP2PX_VALUE( 20)
 #define     FRAME_DISPLAY_POS_QCIF_HOR_Y_1           0
 
-#define     FRAME_DISPLAY_POS_QCIF_HOR_X_2           47
+#define     FRAME_DISPLAY_POS_QCIF_HOR_X_2              DP2PX_VALUE( 47)
 #define     FRAME_DISPLAY_POS_QCIF_HOR_Y_2           0
 
-#define     FRAME_DISPLAY_POS_QCIF_HOR_X_3           22
+#define     FRAME_DISPLAY_POS_QCIF_HOR_X_3              DP2PX_VALUE( 22)
 #define     FRAME_DISPLAY_POS_QCIF_HOR_Y_3           0
 
-#define     FRAME_DISPLAY_POS_QCIF_HOR_X_4           20
-#define     FRAME_DISPLAY_POS_QCIF_HOR_Y_4           10
+#define     FRAME_DISPLAY_POS_QCIF_HOR_X_4              DP2PX_VALUE( 20)
+#define     FRAME_DISPLAY_POS_QCIF_HOR_Y_4              DP2PX_VALUE( 10)
 
 #define     LAST_FRAME_BUFFER_ARGB888                   4
 
