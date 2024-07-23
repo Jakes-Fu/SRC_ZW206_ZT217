@@ -43,7 +43,7 @@ static void	_lebao_create_msgbox(const int textId, const char* title, const int 
 #elif (LEBAO_SCREEN_WIDTH_MAX == 240) && (LEBAO_SCREEN_HEIGHT_MAX == 320)
 #define LEBAO_SIZE_240X320
 #else
-#define LEBAO_SIZE_240X240
+#define LEBAO_SIZE_240X320
 #endif
 
 #ifdef MAINLCD_CIRCULAR_WATCH
@@ -1179,10 +1179,10 @@ void lebao_player_init_control(MMI_WIN_ID_T win_id)
 		GUI_RECT_T singerRect_ = { 2, 41, 238, 81 };
 		GUI_RECT_T prevRect_ = { 20, 150, 20 + 30, 150 + 30 };	 // 30 x 30
 		GUI_RECT_T nextRect_ = { 190, 150, 190 + 30, 150 + 30 }; // 30 x 30
-		GUI_RECT_T playRect_ = { 70,  115, 70 + 100, 115 + 100 };// 100 x 100
+		GUI_RECT_T playRect_ = { 95,  125, 95 + 100, 125 + 100 };// 100 x 100
 		GUI_RECT_T pgRect_ = { 10, 230, 230, 230 + 6 };
 
-		GUI_RECT_T favRect_ = { 150 - 14, 242, 150 + 14, 242 + 28 };// 28 x 28
+		GUI_RECT_T favRect_ = { 115 , 265, 150, 267 + 28 };// 28 x 28
 		GUI_RECT_T ringRect_ = { 90 - 14, 242, 90 + 14, 242 + 28 };	// 28 x 28
 
 		songRect = songRect_;
@@ -1212,24 +1212,24 @@ void lebao_player_init_control(MMI_WIN_ID_T win_id)
 
 	if (LEBAO_SCREEN_HEIGHT_MAX > 240) {
 		favRect.top -= (LEBAO_SCREEN_HEIGHT_MAX / 240) * 20;
-		favRect.bottom = favRect.top + 36;
+		favRect.bottom = favRect.top + 26;
 
 		volumeRect.top = favRect.top;
 		volumeRect.bottom = favRect.bottom;
 
 		if (lebao_is_round_watch() == 0) {
 			favRect.left += (LEBAO_SCREEN_WIDTH_MAX / 240) * 20;
-			favRect.right = favRect.left + 36;
+			favRect.right = favRect.left + 26;
 
 			volumeRect.left -= (LEBAO_SCREEN_WIDTH_MAX / 240) * 20;
-			volumeRect.right = volumeRect.left + 36;
+			volumeRect.right = volumeRect.left + 26;
 		}
 
 		ringRect = favRect;
 	}
 
 	if (LEBAO_SCREEN_WIDTH_MAX > 240 || LEBAO_SCREEN_HEIGHT_MAX > 240) {
-		int playWidth = 60, playHeight = 60;
+		int playWidth = 120, playHeight = 60;
 
 		if (GUIRES_GetImgWidthHeight(&playWidth, &playHeight, LEBAO_ID_IMG(RES_IMAGE_LEBAO_BTN_PLAY), win_id)) {
 			playRect.left = (LEBAO_SCREEN_WIDTH_MAX - playWidth) / 2;
@@ -1270,11 +1270,11 @@ void lebao_player_init_control(MMI_WIN_ID_T win_id)
 		ringRect = favRect;
 		favRect = volumeRect;
 
-		ringRect.left += 50;
-		ringRect.right += 50;
+		ringRect.left += 40;
+		ringRect.right += 40;
 
-		favRect.left -= 50;
-		favRect.right -= 50;
+		favRect.left -= 40;
+		favRect.right -= 40;
 
 		if(LEBAO_SCREEN_HEIGHT_MAX <= 240) {
 			playRect.top -= 20;
@@ -1315,6 +1315,8 @@ void lebao_player_init_control(MMI_WIN_ID_T win_id)
 	//	GUIBUTTON_SetPressedBg(prevId, &prevRect_bg);
 
 	// play / pause
+	playRect.left-=40;
+	playRect.top-=40;
 	GUIBUTTON_SetRect(playId, &playRect);
 	GUIBUTTON_SetRunSheen(playId, FALSE);
 	//	GUIBUTTON_SetPressedBg(playId, &playRect_bg);
