@@ -110,7 +110,7 @@ PUBLIC void MMI_CreateClassBookWin(void);
 PUBLIC void MMI_CreateClassSectionWin(void);
 PUBLIC void MMI_CreateClassReadWin(void);
 PUBLIC void MMI_CreateClassReadSetWin(void);
-PUBLIC void MMIZMT_CloseClassPlayer(void);
+PUBLIC void ZMTClass_CloseClassPlayer(void);
 
 PUBLIC void Class_ReleaseBookInfo(void);
 PUBLIC void Class_ReuestBookInfo(uint8 subject_id, uint8 grade_id, uint8 page);

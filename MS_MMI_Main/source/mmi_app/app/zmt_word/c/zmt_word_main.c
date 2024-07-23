@@ -1298,6 +1298,7 @@ LOCAL void WordDetail_NextChapterInfo(void)
             word_chapter_info[word_book_info.cur_chapter_idx]->chapter_name,
             chapter_unmaster_count
         );
+        memset(&chapter_unmaster_idx, 0, sizeof(chapter_unmaster_idx));
         chapter_unmaster_count = 0;
         word_detail_cur_idx = 0;
 		word_book_info.cur_chapter_idx++;
@@ -2408,7 +2409,9 @@ LOCAL void WordListenWin_IntervalTimerCallback(uint8 timer_id, uint32 param)
             listen_idx = word_listen_info.listen_idx;
         }
         if(listen_idx < word_detail_count){
-            WordDetail_PlayPinyinAudio();
+            if(MMK_IsFocusWin(MMI_WORD_LISTEN_WIN_ID)){
+                WordDetail_PlayPinyinAudio();
+            }
         }
     }
 }
@@ -2731,8 +2734,10 @@ LOCAL BOOLEAN MMI_IsOpenWordListenWin(void)
     return FALSE;
 }
 
-PUBLIC void MMIZMT_CloseWordPlayer(void)
+PUBLIC void ZMTWord_CloseWordPlayer(void)
 {
     Word_StopPlayMp3Data();
+    WordListenWin_StopIntervalTimer();
+    word_listen_info.status = WORD_LISTEN_PAUSE;
 }
 

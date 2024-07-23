@@ -165,14 +165,14 @@ LOCAL void Pinyin_IntervalTimerCallback(uint8 timer_id, uint32 param)
         if(pinyin_read_info.is_single)
         {
             pinyin_read_info.is_play = TRUE;
-            if(!MMK_IsOpenWin(ZMT_PINYIN_TABLE_WIN_ID)){
+            if(!MMK_IsFocusWin(ZMT_PINYIN_TABLE_WIN_ID)){
                 Pinyin_PlayAudioMp3(idx, pinyin_info_text[idx][pinyin_read_info.cur_read_idx].text);
             }
         }
         else if(pinyin_read_info.is_circulate)
         {
             pinyin_read_info.is_play = TRUE;
-            if(!MMK_IsOpenWin(ZMT_PINYIN_TABLE_WIN_ID)){
+            if(!MMK_IsFocusWin(ZMT_PINYIN_TABLE_WIN_ID)){
                 PinyinReadWin_NextCallback();
             }
         }
@@ -392,7 +392,11 @@ LOCAL void Pinyin_PlayAudioMp3Error(int error_id)
         pinyin_read_info.is_play = TRUE;
         PinyinReadWin_NextCallback();
     }
-    PinyinReadWin_UpdateButtonBgWin(pinyin_read_info.is_play);
+    if(MMK_IsFocusWin(ZMT_PINYIN_TABLE_TIP_WIN_ID)){
+        PinyinTableTipWin_UpdateButton(pinyin_table_play_status);
+    }else{
+        PinyinReadWin_UpdateButtonBgWin(pinyin_read_info.is_play);
+    }
 }
 
 PUBLIC void Pinyin_PlayAudioMp3(uint8 idx, char * text)
@@ -525,6 +529,7 @@ LOCAL void PinyinTableTipWin_FULL_PAINT(MMI_WIN_ID_T win_id)
         text_string.wstr_ptr = text_wchar;
         text_string.wstr_len = MMIAPICOM_Wstrlen(text_wchar);
         text_style.font = DP_FONT_28;
+        PinyinTableTipWin_UpdateButton(pinyin_table_play_status);
     }
     GUISTR_DrawTextToLCDInRect(
         (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
@@ -1509,5 +1514,13 @@ PUBLIC void MMI_CreatePinyinMainWin(void)
         MMI_ClosePinyinMainWin();
         MMK_CreateWin((uint32 *)MMI_PINYIN_MAIN_WIN_TAB, PNULL);
     }
+}
+
+PUBLIC void ZMTPinyin_ClosePlayerHandle(void)
+{
+    Pinyin_StopIntervalTimer();
+    Pinyin_StopMp3Data();
+    pinyin_read_info.is_play = FALSE;
+    pinyin_table_play_status = 0;
 }
 

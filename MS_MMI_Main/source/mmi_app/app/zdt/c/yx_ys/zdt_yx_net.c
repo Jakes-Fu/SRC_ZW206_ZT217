@@ -2763,6 +2763,7 @@ int YX_Net_Receive_MONITOR(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen)
         LIBXMLYAPI_AppExit();
 #endif
 #endif
+    ZMTApp_CloseRecordAndPlayer();
     YX_Net_TCPRespond(g_zdt_phone_imei,"MONITOR",7);
 #ifdef ZDT_VIDEOCHAT_SUPPORT
     if(!VideoChat_IsInCall())
@@ -3123,6 +3124,7 @@ int YX_Net_Receive_POWEROFF(YX_APP_T *pMe)
         LIBXMLYAPI_AppExit();
 #endif
 #endif    
+    ZMTApp_CloseRecordAndPlayer();
     pMe->m_yx_gj_timer_id = MMK_CreateTimerCallback(3*1000, 
                                                                         YX_Net_GJ_TimeOut, 
                                                                         (uint32)pMe, 
@@ -3650,6 +3652,7 @@ int YX_Net_Receive_FIND(YX_APP_T *pMe)
 #ifdef XYSDK_SUPPORT
     LIBXMLYAPI_AppExit();
 #endif
+    ZMTApp_CloseRecordAndPlayer();
     //if(pMe->m_zdt_is_in_call == 0)
     {
         //yangyu add begin
@@ -5256,6 +5259,7 @@ int YX_Net_Receive_RCAPTURE(YX_APP_T *pMe)
     LIBXMLYAPI_AppExit();
 #endif
 #endif
+    ZMTApp_CloseRecordAndPlayer();
 #ifdef ZDT_VIDEOCHAT_SUPPORT
     if(!VideoChat_IsInCall())
 #endif

@@ -538,6 +538,9 @@ LOCAL void Class_StopPlayMp3Data(void)
 LOCAL void Class_PlayerReportEnd(void)
 {
     Class_StopPlayMp3Data();
+    if(!MMK_IsFocusWin(ZMT_CLASS_READ_WIN_ID)){
+        return;
+    }
     if(class_cur_info.is_single)
     {
         Class_PlayAudioMp3();
@@ -548,9 +551,7 @@ LOCAL void Class_PlayerReportEnd(void)
         class_cur_info.cur_idx++;
         class_cur_info.cur_ctrl_id++;
         if(Class_PlayAudioMp3()){
-            if(MMK_IsFocusWin(ZMT_CLASS_READ_WIN_ID)){
-                Class_SetActiveTextFont(class_cur_info.cur_ctrl_id-1, class_cur_info.cur_ctrl_id);
-            }
+            Class_SetActiveTextFont(class_cur_info.cur_ctrl_id-1, class_cur_info.cur_ctrl_id);
         }else{
             SCI_TRACE_LOW("%s: REPORT_END, play mp3 fail!!, cur_idx = %d", class_cur_info.cur_idx);
             class_cur_info.cur_idx--;
@@ -1804,8 +1805,9 @@ PUBLIC void MMI_CreateClassMainWin(void)
     }
 }
 
-PUBLIC void MMIZMT_CloseClassPlayer(void)
+PUBLIC void ZMTClass_CloseClassPlayer(void)
 {
     Class_StopPlayMp3Data();
+    class_cur_info.is_play = FALSE;
 }
 

@@ -177,14 +177,14 @@ LOCAL void Yinbiao_IntervalTimerCallback(uint8 timer_id, uint32 param)
         if(yinbiao_read_info.is_single)
         {
             yinbiao_read_info.is_play = TRUE;
-            if(!MMK_IsOpenWin(ZMT_YINBIAO_TABLE_WIN_ID)){
+            if(!MMK_IsFocusWin(ZMT_YINBIAO_TABLE_WIN_ID)){
                 Yinbiao_PlayAudioMp3(idx, yinbiao_info_text[idx][yinbiao_read_info.cur_read_idx].text);
             }
         }
         else if(yinbiao_read_info.is_circulate)
         {
             yinbiao_read_info.is_play = TRUE;
-            if(!MMK_IsOpenWin(ZMT_YINBIAO_TABLE_WIN_ID)){
+            if(!MMK_IsFocusWin(ZMT_YINBIAO_TABLE_WIN_ID)){
                 YinbiaoReadWin_NextCallback();
             }
         }
@@ -395,7 +395,11 @@ LOCAL void Yinbiao_PlayAudioMp3Error(int error_id)
         yinbiao_read_info.is_play = TRUE;
         YinbiaoReadWin_NextCallback();
     }
-    YinbiaoReadWin_UpdateButtonBgWin(yinbiao_read_info.is_play);
+    if(MMK_IsFocusWin(ZMT_YINBIAO_TABLE_TIP_WIN_ID)){
+        YinbiaoTableTipWin_UpdateButton(yinbiao_table_play_status);
+    }else{
+        YinbiaoReadWin_UpdateButtonBgWin(yinbiao_read_info.is_play);
+    }
 }
 
 PUBLIC void Yinbiao_PlayAudioMp3(uint8 idx, char * text)
@@ -530,6 +534,7 @@ LOCAL void YinbiaoTableTipWin_FULL_PAINT(MMI_WIN_ID_T win_id)
         text_string.wstr_ptr = text_wchar;
         text_string.wstr_len = MMIAPICOM_Wstrlen(text_wchar);
         text_style.font = DP_FONT_28;
+        YinbiaoTableTipWin_UpdateButton(yinbiao_table_play_status);
     }
     GUISTR_DrawTextToLCDInRect(
         (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
@@ -1523,5 +1528,13 @@ PUBLIC void MMI_CreateYinbiaoMainWin(void)
         MMI_CloseYinbiaoMainWin();
         MMK_CreateWin((uint32 *)MMI_YINBIAO_MAIN_WIN_TAB, PNULL);
     }
+}
+
+PUBLIC void ZMTYinbiao_ClosePlayerHandle(void)
+{
+    Yinbiao_StopIntervalTimer();
+    Yinbiao_StopMp3Data();
+    yinbiao_read_info.is_play = FALSE;
+    yinbiao_table_play_status = 0;
 }
 

@@ -504,6 +504,8 @@ LOCAL void ZmtGptZuoWen_StopRecord(MMI_WIN_ID_T win_id, BOOLEAN is_send)
         MMIRECORDSRV_StopRecord(gpt_zuowen_record_handle);
         MMIRECORDSRV_FreeRecordHandle(gpt_zuowen_record_handle);
         gpt_zuowen_record_handle = 0;
+    }else{
+        is_send = FALSE;
     }
     if(gpt_zuowen_record_timer_id != 0)
     {
@@ -927,7 +929,7 @@ LOCAL BOOLEAN ZmtGptZuoWen_DestoryDynaCtrl(MMI_WIN_ID_T win_id)
     uint8 i = 0;
     if(MMK_GetCtrlHandleByWin(win_id, ZMT_GPT_FORM_CTRL_ID))
     {
-        for(i = 0; i < gpt_zuowen_talk_size + 1;i++)
+        for(i = 0; i < gpt_zuowen_talk_size;i++)
         {
             if(MMK_GetCtrlHandleByWin(win_id, ZMT_GPT_FORM_TEXT_1_CTRL_ID+i))
             {
@@ -962,7 +964,7 @@ LOCAL void ZmtGptZuoWen_ShowFormList(MMI_WIN_ID_T win_id)
 
     ZmtGptZuoWen_DestoryDynaCtrl(win_id);
     SCI_TRACE_LOW("%s: gpt_zuowen_talk_size = %d", __FUNCTION__, gpt_zuowen_talk_size);
-    for(i = 0;i < gpt_zuowen_talk_size + 1;i++)
+    for(i = 0;i < gpt_zuowen_talk_size;i++)
     {
         GUITEXT_INIT_DATA_T text_init_data = {0};
         GUIFORM_DYNA_CHILD_T text_form_child_ctrl = {0};
@@ -1012,25 +1014,6 @@ LOCAL void ZmtGptZuoWen_ShowFormList(MMI_WIN_ID_T win_id)
     }
     GUITEXT_SetBorder(&border, ZMT_GPT_FORM_TEXT_1_CTRL_ID + gpt_zuowen_cur_idx);
     GUIFORM_SetActiveChild(ctrl_handle, ZMT_GPT_FORM_TEXT_1_CTRL_ID + gpt_zuowen_cur_idx);
-    {
-        text_ctrl_id++;
-        child_width.type = GUIFORM_CHILD_WIDTH_FIXED;
-        child_width.add_data = width;
-        GUIFORM_SetChildWidth(ctrl_handle, text_ctrl_id, &child_width);
-        child_height.type = GUIFORM_CHILD_HEIGHT_FIXED;
-        child_height.add_data = 2*ZMT_GPT_LINE_HIGHT;
-        GUIFORM_SetChildHeight(ctrl_handle, text_ctrl_id, &child_height);
-        GUIFORM_SetChildAlign(ctrl_handle, text_ctrl_id, GUIFORM_CHILD_ALIGN_LEFT);
-        GUITEXT_SetAlign(text_ctrl_id, ALIGN_LVMIDDLE);
-        text_bg.color = GPT_WIN_BG_COLOR;
-        GUITEXT_SetBg(text_ctrl_id, &text_bg);
-        GUITEXT_SetFont(text_ctrl_id, &font_size, &font_color);
-        GUITEXT_IsDisplayPrg(FALSE, text_ctrl_id);
-        GUITEXT_SetClipboardEnabled(text_ctrl_id, FALSE);
-        MMIRES_GetText(ZMT_CHAT_GPT_EMPTY_TXT, win_id, &text_string);
-        GUITEXT_SetString(text_ctrl_id, text_string.wstr_ptr, text_string.wstr_len, TRUE);
-        GUITEXT_SetHandleTpMsg(FALSE, text_ctrl_id);
-    }
 }
 
 LOCAL void ZmtGptZuoWen_FULL_PAINT(MMI_WIN_ID_T win_id)
@@ -1336,5 +1319,14 @@ PUBLIC void MMIZMT_CreateZmtGptZuoWenWin(void)
         MMK_CloseWin(ZMT_GPT_ZUOWEN_WIN_ID);
     }
     MMK_CreateWin((uint32 *)MMI_ZMT_GPT_ZUOWEN_WIN_TAB, PNULL);
+}
+
+PUBLIC void ZMTGpt_CloseZuoWenRecord(void)
+{
+    if (PNULL != gpt_zuowen_record_handle){
+        MMIRECORDSRV_StopRecord(gpt_zuowen_record_handle);
+        MMIRECORDSRV_FreeRecordHandle(gpt_zuowen_record_handle);
+        gpt_zuowen_record_handle = 0;
+    }
 }
 

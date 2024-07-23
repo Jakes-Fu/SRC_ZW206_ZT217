@@ -69,4 +69,6 @@ PUBLIC void Yinbiao_RequestAudioPath(void);
 PUBLIC void Yinbiao_RequestAudioData(uint8 idx, char * url);
 PUBLIC void Yinbiao_PlayAudioMp3(uint8 idx, char * text);
 
+PUBLIC void ZMTYinbiao_ClosePlayerHandle(void);
+
 #endif

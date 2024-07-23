@@ -2057,7 +2057,7 @@ PUBLIC BOOLEAN MMI_IsPoetryDetailWinOpen(void)
     return FALSE;
 }
 
-PUBLIC void MMIZMT_ClosePoetryPlayer(void)
+PUBLIC void ZMTPoetry_ClosePoetryPlayer(void)
 {
     Poetry_StopPlayMp3();
 }

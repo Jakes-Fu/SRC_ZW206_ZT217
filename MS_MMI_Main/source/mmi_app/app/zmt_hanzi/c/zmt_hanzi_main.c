@@ -1027,7 +1027,8 @@ LOCAL void HanziDetail_NextChapterInfo(void)
             hanzi_content_info[hanzi_book_info.cur_section_idx]->content_id, 
             cur_chapter_unmaster_count
         );
-		hanzi_book_info.cur_section_children_idx++;
+        memset(&cur_chapter_unmaster_idx, 0, sizeof(cur_chapter_unmaster_idx));
+        hanzi_book_info.cur_section_children_idx++;
         cur_chapter_unmaster_count = 0;
         hanzi_detail_cur_idx = 0;
         hanzi_book_info.cur_chapter_idx++;
@@ -1046,6 +1047,7 @@ LOCAL void HanziDetail_NextChapterInfo(void)
                 hanzi_content_info[hanzi_book_info.cur_section_idx]->content_id, 
                 cur_chapter_unmaster_count
             );
+            memset(&cur_chapter_unmaster_idx, 0, sizeof(cur_chapter_unmaster_idx));
             cur_chapter_unmaster_count = 0;
             hanzi_detail_cur_idx = 0;
             hanzi_book_info.cur_section_children_idx = 0;
@@ -2250,7 +2252,9 @@ LOCAL void HanziListenWin_IntervalTimerCallback(uint8 timer_id, uint32 param)
             listen_idx = hanzi_listen_info.listen_idx;
         }
         if(listen_idx < hanzi_detail_count){
-            HanziDetail_PlayPinyinAudio();
+            if(MMK_IsFocusWin(MMI_HANZI_LISTEN_WIN_ID)){
+                HanziDetail_PlayPinyinAudio();
+            }
         }
     }
 }
@@ -2577,9 +2581,11 @@ LOCAL BOOLEAN MMI_IsOpenHanziListenWin(void)
     return FALSE;
 }
 
-PUBLIC void MMIZMT_CloseHanziPlayer(void)
+PUBLIC void ZMTHanzi_CloseHanziPlayer(void)
 {
-    Hanzi_StopPlayMp3Data();    
+    HanziListenWin_StopIntervalTimer();
+    Hanzi_StopPlayMp3Data();
+    hanzi_listen_info.status = HANZI_LISTEN_PAUSE;
 }
 
 
