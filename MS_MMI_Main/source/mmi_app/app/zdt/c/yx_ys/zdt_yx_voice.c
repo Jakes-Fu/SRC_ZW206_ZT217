@@ -3147,13 +3147,6 @@ BOOLEAN YX_Voice_Record_Start(YX_APP_T * pMe)
     }
     return TRUE;
     #endif
-    
-    if(FALSE == YX_Voice_Record_Valid())
-    {
-        YX_Voice_Record_CallBack(pMe,YX_VOCRECORD_ERR_NO_SRV);
-        return FALSE;
-    }
-
     if(ZDT_SIM_Exsit() == FALSE)
     {
         ZDT_LOG("RECORD_START Err NoCard");
@@ -3165,6 +3158,21 @@ BOOLEAN YX_Voice_Record_Start(YX_APP_T * pMe)
     {
         ZDT_LOG("RECORD_START Err HIDDEN");
         YX_Voice_Record_CallBack(pMe,YX_VOCRECORD_ERR_INHIDDEN);
+        return FALSE;
+    }
+#endif
+#if 0
+    else if(CallUtil_Get_Calldraw_Status() != CALLDRAW_STATUS_NONE)
+    {
+        YX_Voice_Record_CallBack(pMe,YX_VOCRECORD_ERR_INCALL);
+        return FALSE;
+    }
+#endif
+#if 0
+    else if( FALSE == CDMA_Service_Status_Isok())
+    {
+        ZDT_LOG("RECORD_START Err NoServer");
+        YX_Voice_Record_CallBack(pMe,YX_VOCRECORD_ERR_NO_SRV);
         return FALSE;
     }
 #endif
@@ -3209,7 +3217,6 @@ BOOLEAN YX_Voice_Record_Stop(YX_APP_T * pMe)
     if(pMe->m_yx_eRecorderStatus == YX_RECOREDER_RECORD)
     {
         YX_Voice_Record_TimerStop(pMe);
-        MMIZDT_OpenVchatSendWait_Win();
         #ifdef WIN32
             MMIZDT_SendSigTo_APP(ZDT_APP_SIGNAL_YX_RECORD_SUCCESS,NULL,0);
             return TRUE;
@@ -3223,6 +3230,7 @@ BOOLEAN YX_Voice_Record_Stop(YX_APP_T * pMe)
         {
             s_yx_voc_is_recording = FALSE;
             pMe->m_yx_eRecorderStatus = YX_RECOREDER_STOP;
+            //ZDT_File_Remove(pMe->m_yx_pFileSendVocName);
             YX_Voice_RecordStop_CallBack(pMe,YX_VOCRCDSTOP_ERR_SPACE);
             return FALSE;
         }
@@ -3246,6 +3254,7 @@ BOOLEAN YX_Voice_Record_Cancel(YX_APP_T * pMe)
         {
             s_yx_voc_is_recording = FALSE;
             pMe->m_yx_eRecorderStatus = YX_RECOREDER_STOP;
+            //ZDT_File_Remove(pMe->m_yx_pFileSendVocName);
             YX_Voice_RecordStop_CallBack(pMe,YX_VOCRCDSTOP_ERR_SPACE);
             return FALSE;
         }

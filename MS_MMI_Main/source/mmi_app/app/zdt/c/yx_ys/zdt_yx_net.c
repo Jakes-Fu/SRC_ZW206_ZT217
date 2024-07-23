@@ -3537,39 +3537,7 @@ int YX_Net_Receive_SILENCETIME2(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen
             pTime = (uint8 *)&tmp_str[0];
             con_len = ret;
             SCI_MEMSET(timer_str,0,11);
-            timer_type = 0;
-            ret = YX_Func_TimerGetNextPara(&pTime,&con_len,timer_str,10);
-            //获取格式: 日一二三四五六
-            if(ret > 6)
-            {
                 
-                //转换为: 六五四三二一日ONOFF
-                if(timer_str[0] == '1')
-                {
-                    timer_type = (0x01 << 1);
-                }
-                
-                for(j = 1; j < 7; j++)
-                {
-                    if(timer_str[j] == '1')
-                    {
-                        timer_type = timer_type | (0x01 << (j+1));
-                    }
-                }
-            }
-            SCI_MEMSET(timer_str,0,11);
-            ret = YX_Func_TimerGetNextPara(&pTime,&con_len,timer_str,10);//开关
-            if(ret > 0)
-            {
-                is_on = atoi(timer_str);
-            }
-            SCI_MEMSET(timer_str,0,11);
-            ret = YX_Func_TimerGetNextPara(&pTime,&con_len,timer_str,10);//am pm
-            if(ret > 0)
-            {
-                ZDT_LOG("YX_Net_Receive_SILENCETIME2 Rcv idx=%d,am/pm=%s",i,timer_str);
-            }
-            SCI_MEMSET(timer_str,0,11);
             ret = YX_Func_TimerGetNextPara(&pTime,&con_len,timer_str,10);
             if(ret > 0)
             {
@@ -3593,9 +3561,32 @@ int YX_Net_Receive_SILENCETIME2(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen
             {
                 end_min = atoi(timer_str);
             }
+            SCI_MEMSET(timer_str,0,11);
+            ret = YX_Func_TimerGetNextPara(&pTime,&con_len,timer_str,10);
+            if(ret > 0)
+            {
+                is_on = atoi(timer_str);
+            }
+            SCI_MEMSET(timer_str,0,11);
+            timer_type = 0;
+            ret = YX_Func_TimerGetNextPara(&pTime,&con_len,timer_str,10);
+            if(ret > 6)
+            {
+                if(timer_str[0] == '1')
+                {
+                    timer_type = (0x01 << 1);
+                }
+                for(j = 1; j < 7; j++)
+                {
+                    if(timer_str[j] == '1')
+                    {
+                        timer_type = timer_type | (0x01 << (j+1));
+                    }
+                }
+            }
             timer_start = (start_hour * 3600) + (start_min * 60);
             timer_end = (end_hour * 3600) + (end_min * 60);
-            if(is_on == 1) //防止开关状态为2
+            if(is_on)
             {
                 timer_type = timer_type | 0x01;
             }
@@ -4868,7 +4859,7 @@ int YX_Net_Receive_PHL(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen,uint16 i
     uint32 len = ContentLen;
     uint8 white_name[YX_DB_WHITE_MAX_NAME_SIZE+1] = {0};
     uint8 white_num[YX_DB_WHITE_MAX_NUMBER_SIZE+1] = {0};
-    uint8 relation_buf[2+1] = {0};
+    
     ZDT_LOG("YX_Net_Receive_PHL idx=%d,ContentLen=%d",idx,ContentLen);
     YX_DB_WHITE_ListDelAllBuf();
     if(len != 0)
@@ -4887,12 +4878,6 @@ int YX_Net_Receive_PHL(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen,uint16 i
             if(ret > 0)
             {
                 YX_DB_WHITE_ListModifyBuf(i,(char *)white_num,SCI_STRLEN((char *)white_num),(char *)white_name,SCI_STRLEN((char *)white_name));
-            }
-	     ret = YX_Func_GetNextPara(&str, &len,(char *)relation_buf,3);
-            if(ret > 0)
-            {
-                yx_DB_White_Reclist[i].relation_id=atoi(relation_buf);
-			  ZDT_LOG("YX_Net_Receive_PHL relation_buf=%s,relation_id=%d",relation_buf,yx_DB_White_Reclist[i].relation_id);
             }
         }
     }
@@ -6211,6 +6196,7 @@ int32 YX_Net_Receive_DOWNVCWW(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen)
 #ifdef XYSDK_SUPPORT
     LIBXMLYAPI_AppExit();
 #endif
+    ZMTApp_CloseRecordAndPlayer();
     if(Video_Call_Device_Idle_Check()) //在打电话上课禁用直接回复挂断
     {
         YX_Net_Send_UPWATCHHANGUP(&videoCallInfo.video_id);
@@ -6738,10 +6724,8 @@ static int YX_Net_ReceiveHandle(YX_APP_T *pMe,uint8 * pData,uint32 DataLen,uint3
     }
     else if(ret == 6 &&  strncmp( (char *)buf, "REMIND", ret ) == 0)
     {
-    #ifndef ZTE_WATCH
         //闹钟设置指令 
         YX_Net_Receive_REMIND(pMe,pContent,cont_len);
-    #endif
     }
     //yangyu add 
     else if(ret == 7 &&  strncmp( (char *)buf, "BOOTOFF", ret ) == 0)
