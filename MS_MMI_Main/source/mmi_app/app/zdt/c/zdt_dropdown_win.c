@@ -759,7 +759,7 @@ LOCAL void DisplayLoginIcon(MMI_WIN_ID_T win_id)
 #endif
 }
 
-LOCAL void DisplayDataInOutIcon(MMI_WIN_ID_T win_id)
+PUBLIC void DisplayDataInOutIcon(MMI_WIN_ID_T win_id)
 {
     if(MMIAPIPHONE_IsSimOk(MN_DUAL_SYS_1))
     {
@@ -899,8 +899,9 @@ LOCAL void ZDT_DropDownWin_DisplayFg(MMI_WIN_ID_T        win_id)
 	GUI_RECT_T progressrect = {12,121, 228, 169};
     MMK_GetWinLcdDevInfo(win_id, &lcd_dev_info);
     ZDT_DisplaySingal(win_id);
-	ZDT_DisplayBattery(win_id);
+    ZDT_DisplayBattery(win_id);
     DisplayLoginIcon(win_id);
+    DisplayDataInOutIcon(win_id);
 #if DROPDOWN_USE_ZDT_SUPPORT != 0
     DisplayDataInOutIcon(win_id);
     DisplayWeather(win_id);

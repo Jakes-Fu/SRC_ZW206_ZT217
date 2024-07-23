@@ -804,6 +804,7 @@ PUBLIC void DisplayLauncherStatusBar(MMI_WIN_ID_T win_id)
         ZDT_DisplaySingal(win_id);
         ZDT_DisplayBattery(win_id);
         Display_DateTime(win_id);
+        DisplayDataInOutIcon(win_id);
     }
 }
 
