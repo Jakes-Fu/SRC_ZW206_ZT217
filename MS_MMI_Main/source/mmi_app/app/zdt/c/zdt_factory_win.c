@@ -5273,7 +5273,11 @@ extern void ZdtWatch_Factory_Camera_Start(void)
             return;
         }
 #ifdef ZT217_LISENNING_PAD
-         if(Sensor_Main_Sub_Switch_Get())
+#ifdef WIN32
+    if(1)
+#else
+    if(Sensor_Main_Sub_Switch_Get())
+#endif
         ZDT_DC_Preview(SENSOR_MAIN);
         else
         ZDT_DC_Preview(SENSOR_SUB);

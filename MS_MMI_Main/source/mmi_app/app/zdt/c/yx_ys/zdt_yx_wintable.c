@@ -3616,7 +3616,9 @@ LOCAL void DisplayWeather(MMI_WIN_ID_T win_id)
 
 PUBLIC void MMIZDT_UpdateWeatherWin()
 {
-    MMK_SendMsg(MMIZDT_WEATHER_WIN_ID, MSG_FULL_PAINT, NULL);
+    if(MMK_IsFocusWin(MMIZDT_WEATHER_WIN_ID)){
+        MMK_SendMsg(MMIZDT_WEATHER_WIN_ID, MSG_FULL_PAINT, NULL);
+    }
 }
 
 LOCAL MMI_RESULT_E  HandleZDT_WeatherWinMsg(

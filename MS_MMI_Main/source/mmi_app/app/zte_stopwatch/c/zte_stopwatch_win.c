@@ -211,7 +211,9 @@ LOCAL void StopWatch_TimeUpdate_CallBack( uint8 timer_id )
             {
                 if ( STOPWATCH_STATUS_RUNNING == s_stopwatch_status )//只有计时进行时才刷新
                 {
-                    MMK_SendMsg(STOPWATCH_WIN_ID, MSG_ACC_UPDATE_STOPWATCH, PNULL);
+                    if(MMK_IsFocusWin(STOPWATCH_WIN_ID)){
+                        MMK_SendMsg(STOPWATCH_WIN_ID, MSG_ACC_UPDATE_STOPWATCH, PNULL);
+                    }
                 }
                 else
                 {

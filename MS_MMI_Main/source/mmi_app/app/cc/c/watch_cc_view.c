@@ -2185,7 +2185,8 @@ LOCAL MMI_RESULT_E   HandleCcVoiceCallConnectedWinMsg(
 			}
 			else if(GUI_PointIsInRect(point,volume_state_rect))
 			{
-                MMIZDT_OpenCallVolumeWin();
+                //MMIZDT_OpenCallVolumeWin();
+                MMIAPISET_CallVolumeWin();
 			}
 		#endif
 			break;
