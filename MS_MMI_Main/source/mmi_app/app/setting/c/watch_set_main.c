@@ -140,7 +140,7 @@ LOCAL WATCHCOM_LIST_ITEM__ST s_settings_main_text_list_data[] =
 LOCAL WATCHCOM_LIST_ITEM_STYLE_1ICON_1STR_ST   list_item_displaysetting    = { IMAGE_DISPLAYSET_ICON,     TXT_DISPLAY_SETTING_ZX };
 LOCAL WATCHCOM_LIST_ITEM_STYLE_1ICON_1STR_ST   list_item_more         = { IMAGE_ABOUT_WATCH_ICON,          TEXT_WATCH_INFO };
 LOCAL WATCHCOM_LIST_ITEM_STYLE_1ICON_1STR_ST   list_item_notetype    = { IMAGE_NOTETYPE_SET_ICON,     TXT_SET_SOUND_LIST_NOTE_MODE };
-LOCAL WATCHCOM_LIST_ITEM_STYLE_1ICON_1STR_ST   list_item_LongRangeMode   = { IMAGE_LONGTIME_SET_ICON,    TXT_LONG_RANGE_MODE_ZX };
+//LOCAL WATCHCOM_LIST_ITEM_STYLE_1ICON_1STR_ST   list_item_LongRangeMode   = { IMAGE_LONGTIME_SET_ICON,    TXT_LONG_RANGE_MODE_ZX };
 LOCAL WATCHCOM_LIST_ITEM_STYLE_1ICON_1STR_ST   list_item_restore      = { IMAGE_RECOVER_SET_ICON,          qtn_sett_list_reset_settings_bc};
 LOCAL WATCHCOM_LIST_ITEM_STYLE_1ICON_1STR_ST   list_item_poweroff     = { IMAGE_SHUTDOWN_SET_ICON,          text_setting_poweroff};
 LOCAL WATCHCOM_LIST_ITEM_STYLE_1ICON_1STR_ST   list_item_restart     = { IMAGE_REBOOT_SET_ICON,          text_setting_powerrestart};
@@ -191,7 +191,7 @@ LOCAL WATCHCOM_LIST_ITEM__ST s_settings_main_text_list_data[] =
 #ifdef  ZTE_SUPPORT_240X284
     { WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR_1LINE_BIG_LAYOUT1, &list_item_displaysetting, WatchSET_DisPlaySetting_Enter},
     { WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR_1LINE_BIG_LAYOUT1, &list_item_notetype,  Settings_NoteTypeSelectWin_Enter},
-    { WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR_1LINE_BIG_LAYOUT1, &list_item_LongRangeMode, Watch_LongRangeMode_switch},    
+    //{ WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR_1LINE_BIG_LAYOUT1, &list_item_LongRangeMode, Watch_LongRangeMode_switch},    
     { WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR_1LINE_BIG_LAYOUT1, &list_item_restore,       MMIAPISET_ZdtPowerRestoreWin },
     { WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR_1LINE_BIG_LAYOUT1, &list_item_poweroff,       MMIAPISET_ZdtPowerOffWin },
     { WatchCOM_List_Item_Visible_Default, GUIITEM_STYLE_1ICON_1STR_1LINE_BIG_LAYOUT1, &list_item_restart,       MMIAPISET_ZdtPowerRestartWin },
