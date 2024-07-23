@@ -4881,7 +4881,8 @@ void ZdtWatch_Factory_WIFI_ShowData(uint8 is_scan)
                 {
                     cur_str_t.wstr_len = strlen(disp_str);
                     cur_str_t.wstr_ptr = disp_wstr;
-                    MMI_STRNTOWSTR(cur_str_t.wstr_ptr, cur_str_t.wstr_len, (uint8*)disp_str, cur_str_t.wstr_len, cur_str_t.wstr_len);
+                    //MMI_STRNTOWSTR(cur_str_t.wstr_ptr, cur_str_t.wstr_len, (uint8*)disp_str, cur_str_t.wstr_len, cur_str_t.wstr_len);
+                    GUI_UTF8ToWstr(cur_str_t.wstr_ptr, &cur_str_t.wstr_len, disp_str, strlen(disp_str));
                     cur_rect.top    = cur_rect.bottom; 
                     cur_rect.bottom = cur_rect.top + height;
                     if(cur_rect.bottom >= UI_DEVICE_HEIGHT)
@@ -4895,7 +4896,7 @@ void ZdtWatch_Factory_WIFI_ShowData(uint8 is_scan)
                         (const MMI_STRING_T    *)&cur_str_t,
                         &text_style,
                         state,
-                        GUISTR_TEXT_DIR_AUTO
+                        GUISTR_TEXT_DIR_LTR
                         );
                     SCI_MEMSET(disp_str,0,sizeof(disp_str));
                     SCI_MEMSET(disp_wstr,0,sizeof(disp_wstr));
