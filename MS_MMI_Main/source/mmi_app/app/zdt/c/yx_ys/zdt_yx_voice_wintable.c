@@ -1008,7 +1008,9 @@ LOCAL void MMIZDT_SetPlayAudioIcon(uint8 anim_idx)
         {
             pre_item_data_ptr->item_content[6].item_data.image_id = IMAGE_TINYCHAT_MY_TALK_ANIM_01+anim_idx;
         }
-        MMK_SendMsg(MMK_ConvertIdToHandle(MMIZDT_TINY_CHAT_LIST_CTRL_ID), MSG_CTL_PAINT, PNULL);
+        if(MMK_IsFocusWin(MMK_ConvertIdToHandle(MMIZDT_TINY_CHAT_LIST_CTRL_ID))){
+            MMK_SendMsg(MMK_ConvertIdToHandle(MMIZDT_TINY_CHAT_LIST_CTRL_ID), MSG_CTL_PAINT, PNULL);
+        }
     }
     return;
 }
@@ -1023,7 +1025,9 @@ PUBLIC void MMIZDT_CleanPlayAudioIcon(void)
         pre_item_data_ptr = pre_item_ptr->data_ptr;
         pre_item_data_ptr->item_content[6].item_data_type = GUIITEM_DATA_NONE;      
         pre_item_data_ptr->item_content[6].item_data.image_id = 0;//IMAGE_NULL;
-        MMK_SendMsg(MMK_ConvertIdToHandle(MMIZDT_TINY_CHAT_LIST_CTRL_ID), MSG_CTL_PAINT, PNULL);
+        if(MMK_IsFocusWin(MMK_ConvertIdToHandle(MMIZDT_TINY_CHAT_LIST_CTRL_ID))){
+            MMK_SendMsg(MMK_ConvertIdToHandle(MMIZDT_TINY_CHAT_LIST_CTRL_ID), MSG_CTL_PAINT, PNULL);
+        }
         MMIZDT_StopPlayAnimTimer();
         s_playing_index = -1;
     }
@@ -1062,7 +1066,9 @@ LOCAL void MMIZDT_ShowPlayAudioIcon(uint16 list_index,BOOLEAN isLeft)
         item_data_ptr->item_content[2].item_data.image_id = IMAGE_TINYCHAT_MY_TALK_ANIM_01;
     }
     MMIZDT_StartPlayAnimTimer();
-    MMK_SendMsg(MMK_ConvertIdToHandle(MMIZDT_TINY_CHAT_LIST_CTRL_ID), MSG_CTL_PAINT, PNULL);//ok ,list will update view
+    if(MMK_IsFocusWin(MMK_ConvertIdToHandle(MMIZDT_TINY_CHAT_LIST_CTRL_ID))){
+        MMK_SendMsg(MMK_ConvertIdToHandle(MMIZDT_TINY_CHAT_LIST_CTRL_ID), MSG_CTL_PAINT, PNULL);//ok ,list will update view
+    }
 }
 
 #ifdef ZYB_APP_SUPPORT
@@ -1259,12 +1265,47 @@ LOCAL void MMIZDT_TinyChatUpdateList()
     uint16 i = 0, j=0;
     uint16 position = 0;
     uint16 line_num = m_pCurGroupInfo->file_num;
-    int user_index = 0;
-    BOOLEAN is_group_chat = FALSE;
-    GUILIST_RemoveAllItems(MMIZDT_TINY_CHAT_LIST_CTRL_ID);
-    if(strcmp(m_pCurGroupInfo->group_id,YX_VCHAT_DEFAULT_GROUP_ID) == 0)
-    {
-        is_group_chat = TRUE;
+	uint16 left_num = 0;
+	MMI_WIN_ID_T        win_id = MMIZDT_TINY_CHAT_WIN_ID;
+	GUILIST_INIT_DATA_T list_init = {0};
+	MMI_CTRL_ID_T           ctrl_id = MMIZDT_TINY_CHAT_LIST_CTRL_ID;
+	GUI_LCD_DEV_INFO  lcd_dev_info 	= {GUI_MAIN_LCD_ID, GUI_BLOCK_MAIN};
+    	GUI_RECT_T rect = {0,0,0,0};
+    	GUI_RECT_T list_rect = {0,ZDT_TITLE_HEIGHT,MMI_MAINSCREEN_WIDTH -1,TINYCHAT_LIS_BOX_BOTTOM};
+	
+	line_num = line_num>= TINY_CHAT_LIST_MAX_SIZE ? TINY_CHAT_LIST_MAX_SIZE:line_num ;
+	if(line_num == 0){		
+        	GUILIST_SetRect(ctrl_id,&list_rect);
+		MMK_GetWinRect(win_id, &rect);
+		rect.bottom = (TINYCHAT_LIS_BOX_BOTTOM -1);
+		LCD_FillRect(&lcd_dev_info, rect, MMI_BLACK_COLOR);
+		//WATCHCOM_DisplayTips(win_id,TXT_NONE_WECHAT_LIST);
+		return;
+    }else{
+            list_init.both_rect.v_rect.left = 0;//0;//mic icon width is 52
+            list_init.both_rect.v_rect.right = (MMI_MAINSCREEN_WIDTH -1);
+            list_init.both_rect.v_rect.top = ZDT_TITLE_HEIGHT;
+            list_init.both_rect.v_rect.bottom = TINYCHAT_LIS_BOX_BOTTOM;//185;//240;//180;
+
+            list_init.both_rect.h_rect.left = 0;
+            list_init.both_rect.h_rect.right = (MMI_MAINSCREEN_WIDTH -1);//185;//240;//180;
+            list_init.both_rect.h_rect.top = ZDT_TITLE_HEIGHT;
+            list_init.both_rect.h_rect.bottom = TINYCHAT_LIS_BOX_BOTTOM; //240;
+            
+            list_init.type = GUILIST_TEXTLIST_E;
+                        
+            GUILIST_CreateListBox(win_id, 0, ctrl_id, &list_init);            
+            MMK_SetAtvCtrl(win_id,ctrl_id);
+            GUILIST_RemoveAllItems(ctrl_id);
+
+            //不需要分割线
+            GUILIST_SetListState( ctrl_id, GUILIST_STATE_SPLIT_LINE, FALSE );
+            //不画高亮条
+            GUILIST_SetListState( ctrl_id, GUILIST_STATE_NEED_HIGHTBAR, FALSE );
+            GUILIST_SetListState( ctrl_id, GUILIST_STATE_TEXTSCROLL_ENABLE | GUILIST_STATE_AUTO_SCROLL, TRUE );//长文本滚动
+            CTRLLIST_SetTextFont(ctrl_id, SONG_FONT_24, MMI_CYAN_COLOR);
+            GUILIST_SetListState(ctrl_id, GUILIST_STATE_EFFECT_STR,TRUE);//item 自定义文本颜色
+            ret = GUILIST_SetMaxItem(ctrl_id, TINY_CHAT_LIST_MAX_SIZE, FALSE);
     }
     for(i = 0 ; i < line_num ; i++)
     {        
@@ -1277,8 +1318,8 @@ LOCAL void MMIZDT_TinyChatUpdateList()
         uint16  full_path_len = 0;
 
         MMISRVAUD_CONTENT_INFO_T  mp3_file_info = {0};
-        char 						temp_str[202] = {0};
-        wchar                       time_wstr[101] = {0};
+        wchar                         temp_wstr[GUILIST_STRING_MAX_NUM + 1] = {0};
+        wchar                       time_wstr[GUILIST_STRING_MAX_NUM + 1] = {0};
         if(!ZDT_File_Exsit(m_pCurGroupInfo->file_arr[i].fullname))
         {
             continue;
@@ -1290,117 +1331,68 @@ LOCAL void MMIZDT_TinyChatUpdateList()
 
         if(isLeft)
         {
-            if(is_group_chat)
-            {
-                item_t.item_style = GUIITEM_STYLE_LF_ONE_LINE_BGICON_WITH_TOP_TEXT_MS;
-            }
-            else
-            {
-                item_t.item_style = GUIITEM_STYLE_LF_ONE_LINE_BGICON_TEXT_MS;
-            }
+            item_t.item_style =  GUIITEM_STYLE_ONE_LINE_BGICON_TEXT_MS;
+            item_data.item_content[1].is_custom_font_color = TRUE;
+            item_data.item_content[1].custom_font_color = 0X043F;        
+            item_data.item_content[1].custom_font_color_focus = 0X043F;                //左边蓝色字
         }
         else
         {
-            item_t.item_style =  GUIITEM_STYLE_LF_ONE_LINE_BGICON_R_TEXT_MS;
+            item_t.item_style =  GUIITEM_STYLE_ONE_LINE_BGICON_R_TEXT_MS;
         }
         
-        full_path_len = GUI_GBToWstr(full_path, (const uint8*)m_pCurGroupInfo->file_arr[i].fullname, SCI_STRLEN(m_pCurGroupInfo->file_arr[i].fullname));
 
-        if(m_pCurGroupInfo->status_arr[i].msg_type == 1) //语音
-        {
             item_data.item_content[0].item_data_type = GUIITEM_DATA_IMAGE_ID;
             item_data.item_content[0].item_data.image_id = isLeft ? IMAGE_TINYCHAT_VOICE_LEFT_BG : IMAGE_TINYCHAT_VOICE_RIGHT_BG;
+        full_path_len = GUI_GBToWstr(full_path, (const uint8*)m_pCurGroupInfo->file_arr[i].fullname, SCI_STRLEN(m_pCurGroupInfo->file_arr[i].fullname));
 
-            if(m_pCurGroupInfo->status_arr[i].druation > 0)
-            {
-                SCI_MEMSET (temp_str, 0, sizeof (temp_str));
-                SCI_MEMSET (time_wstr, 0, sizeof (time_wstr));
-                sprintf ( (char*) temp_str, "  %d\"", m_pCurGroupInfo->status_arr[i].druation);
-                MMIAPICOM_StrToWstr (temp_str, time_wstr);
-            }
-            else
-            {
-                MMISRVAUD_GetFileContentInfo (full_path,full_path_len,&mp3_file_info);
 
-                SCI_MEMSET (temp_str, 0, sizeof (temp_str));
+        MMISRVAUD_GetFileContentInfo (
+                    full_path,
+                    full_path_len,
+                    &mp3_file_info
+                    );
+
+        SCI_MEMSET (temp_wstr, 0, sizeof (temp_wstr));
                 SCI_MEMSET (time_wstr, 0, sizeof (time_wstr));
                 if(mp3_file_info.total_time == 0) 
                 {
                     mp3_file_info.total_time = 1;
                 }
-                sprintf ( (char*) temp_str, "  %d\"", mp3_file_info.total_time);
-                MMIAPICOM_StrToWstr (temp_str, time_wstr);
-            }
+        sprintf ( (char*) temp_wstr, "  %d\"", mp3_file_info.total_time);
+        MMIAPICOM_StrToWstr (temp_wstr, time_wstr);
+
             item_data.item_content[1].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
             item_data.item_content[1].item_data.text_buffer.wstr_ptr = time_wstr;
             item_data.item_content[1].item_data.text_buffer.wstr_len = (uint16) MMIAPICOM_Wstrlen (time_wstr);
+
+            item_data.item_content[2].item_data_type = GUIITEM_DATA_IMAGE_ID;        
+            item_data.item_content[2].item_data.image_id = isLeft ? IMAGE_TINYCHAT_HEAD_SERVER : IMAGE_TINYCHAT_HEAD;   //xiongkai   微聊头像左侧和右侧用不同的    IMAGE_TINYCHAT_HEAD;//isLeft ? IMAGE_TINYCHAT_AUDIO_LEFT : IMAGE_TINYCHAT_AUDIO_RIGHT;
             if(isLeft)
             {
-                item_data.item_content[1].is_custom_font_color = TRUE;
-                item_data.item_content[1].custom_font_color = MMI_BLACK_COLOR;
-                item_data.item_content[1].custom_font_color_focus = MMI_BLACK_COLOR;
-            }
-            if( m_pCurGroupInfo->status_arr[i].is_read == 0)
+            if(m_pCurGroupInfo->status_arr[i].is_read == 0)      //已知BUG LIST设置最大项后data不对应
             {
                 item_data.item_content[3].item_data_type = GUIITEM_DATA_IMAGE_ID;
                 item_data.item_content[3].item_data.image_id = IMAGE_TINYCHAT_UNREAD;
             }
-        }
-        else if(m_pCurGroupInfo->status_arr[i].msg_type == 0) //文本
-        {
-            uint32 read_len = 0;
-            uint8 text[256] = {0};
-            ZDT_File_Read((const uint8*)m_pCurGroupInfo->file_arr[i].fullname , text, 200, &read_len);
-            sscanf(text,"%[^,]",&temp_str);//努比亚增加了消息标识
-            ZDT_UCS_Str16_to_uint16((uint8*)temp_str, SCI_STRLEN(temp_str) ,time_wstr, 100);
-            item_data.item_content[4].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
-            item_data.item_content[4].item_data.text_buffer.wstr_ptr = time_wstr;
-            item_data.item_content[4].item_data.text_buffer.wstr_len = (uint16) MMIAPICOM_Wstrlen (time_wstr);
-            if( m_pCurGroupInfo->status_arr[i].is_read == 0) //文字进来要就标记已读，否则用户看到有未读消息但不知道是哪个消息未读
+            else
             {
-                m_pCurGroupInfo->status_arr[i].is_read = 1;
-            }
-        }
-        else if(m_pCurGroupInfo->status_arr[i].msg_type == 7)
-        {
-            uint32 read_len = 0;
-            uint16 id = 0;
-            ZDT_File_Read((const uint8*)m_pCurGroupInfo->file_arr[i].fullname , temp_str, 100, &read_len);
             //id = atoi(temp_str);
-            sscanf(temp_str,"%d,",&id);//努比亚表情增加了消息标识
-            if(id > 11)
-            {
-                id = 0;
+                item_data.item_content[3].item_data_type = GUIITEM_DATA_NONE;
+                item_data.item_content[3].item_data.image_id = PNULL;
             }
-            item_data.item_content[0].item_data_type = GUIITEM_DATA_IMAGE_ID;
-            item_data.item_content[0].item_data.image_id = tinychat_face_0 + id;
-            if(m_pCurGroupInfo->status_arr[i].is_read == 0) //表情不需要点击，进来要就标记已读，否则用户看到有未读消息但不知道是哪个消息未读
-            {
-                m_pCurGroupInfo->status_arr[i].is_read = 1;
-            }
-        }
-        
-        //item_data.item_content[2].item_data_type = GUIITEM_DATA_IMAGE_ID;
-        user_index = YX_DB_APPUSER_IsValid_ID(m_pCurGroupInfo->status_arr[i].friend_id);
-        if(isLeft && user_index > 0 && is_group_chat) //群聊显示名称
-        {
-            item_data.item_content[7].font_color_id=MMITHEME_COLOR_9;
-            item_data.item_content[7].is_default =TRUE; 
-            SCI_MEMSET (temp_str, 0, sizeof (temp_str));
-            ZDT_UCS_Str16_to_uint16((uint8*)yx_DB_AppUser_Reclist[user_index-1].appuser_name, SCI_STRLEN(yx_DB_AppUser_Reclist[user_index-1].appuser_name) ,temp_str, GUILIST_STRING_MAX_NUM);
-            item_data.item_content[7].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
-            item_data.item_content[7].item_data.text_buffer.wstr_ptr = temp_str;
-            item_data.item_content[7].item_data.text_buffer.wstr_len = (uint16) MMIAPICOM_Wstrlen (temp_str);
         }
 
-        ret = GUILIST_AppendItem (MMIZDT_TINY_CHAT_LIST_CTRL_ID, &item_t);
+        ret = GUILIST_AppendItem (ctrl_id, &item_t);
         ZDT_LOG("MMIZDT_TinyChatUpdateList ret = %d", ret);
         if(ret)
         {
-            CTRLLIST_SetItemUserData(MMIZDT_TINY_CHAT_LIST_CTRL_ID, position, &i);
+            CTRLLIST_SetItemUserData(ctrl_id, position, &i);
             position++;
         }
     }
+    CTRLLIST_SetSelectedItem(ctrl_id, position-1, TRUE);
+    GUILIST_SetCurItemIndex(ctrl_id, position-1);
 }
 
 LOCAL MMI_RESULT_E MMIZDT_ChatVoice_QueryDelete(
@@ -1636,6 +1628,7 @@ LOCAL MMI_RESULT_E  HandleZDT_TinyChatWinMsg(
     BOOLEAN ret = FALSE;
     GUISTR_STATE_T		state =         GUISTR_STATE_ALIGN|GUISTR_STATE_WORDBREAK|GUISTR_STATE_SINGLE_LINE; 
     uint32 cur_group_index = 0; 
+    GUI_RECT_T list_empty_rect = {0};
     MMI_STRING_T        title_string = {0};	
     wchar title_wstr[GUILIST_STRING_MAX_NUM+1] = {0};
     wchar first_wstr[5] = {0x5BB6, 0x5EAD,0x7FA4, 0x804A, 0x0};//家庭群聊
@@ -1653,29 +1646,7 @@ LOCAL MMI_RESULT_E  HandleZDT_TinyChatWinMsg(
 
             //view_win_d = (MMIFMM_VIEW_WIN_DATA_T*) MMK_GetWinUserData (win_id);     
             
-            list_init.both_rect.v_rect.left = 0;//0;//mic icon width is 52
-            list_init.both_rect.v_rect.right = (MMI_MAINSCREEN_WIDTH -1);
-            list_init.both_rect.v_rect.top = ZDT_TITLE_HEIGHT;
-            list_init.both_rect.v_rect.bottom = TINYCHAT_LIS_BOX_BOTTOM;//185;//240;//180;
-
-            list_init.both_rect.h_rect.left = 0;
-            list_init.both_rect.h_rect.right = (MMI_MAINSCREEN_WIDTH -1);//185;//240;//180;
-            list_init.both_rect.h_rect.top = ZDT_TITLE_HEIGHT;
-            list_init.both_rect.h_rect.bottom = TINYCHAT_LIS_BOX_BOTTOM; //240;
             
-            list_init.type = GUILIST_TEXTLIST_E;
-                        
-            GUILIST_CreateListBox(win_id, 0, ctrl_id, &list_init);            
-            MMK_SetAtvCtrl(win_id,ctrl_id);
-
-            //不需要分割线
-            GUILIST_SetListState( ctrl_id, GUILIST_STATE_SPLIT_LINE, FALSE );
-            //不画高亮条
-            GUILIST_SetListState( ctrl_id, GUILIST_STATE_NEED_HIGHTBAR, FALSE );
-            GUILIST_SetListState( ctrl_id, GUILIST_STATE_TEXTSCROLL_ENABLE | GUILIST_STATE_AUTO_SCROLL, TRUE );//长文本滚动
-            CTRLLIST_SetTextFont(ctrl_id, SONG_FONT_24, MMI_CYAN_COLOR);
-            GUILIST_SetListState(ctrl_id, GUILIST_STATE_EFFECT_STR,TRUE);//item 自定义文本颜色
-            ret = GUILIST_SetMaxItem(ctrl_id, TINY_CHAT_LIST_MAX_SIZE, FALSE);
             s_cur_last_list_index = 0xFFFF;
             s_cur_last_list_top_index = 0xFFFF;
             s_cur_long_pen_handle = 0;
@@ -1758,12 +1729,13 @@ LOCAL MMI_RESULT_E  HandleZDT_TinyChatWinMsg(
                 {
                     uint16 page_item_num = CTRLLIST_GetLastPageTopIndex(MMIZDT_TINY_CHAT_LIST_CTRL_ID);
                     s_cur_last_list_top_index = total_item_num-page_item_num;
-                    GUILIST_SetTopItemIndex(MMIZDT_TINY_CHAT_LIST_CTRL_ID,s_cur_last_list_top_index);
+                    //GUILIST_SetTopItemIndex(MMIZDT_TINY_CHAT_LIST_CTRL_ID,s_cur_last_list_top_index);
                 }
                 else
                 {
-                    GUILIST_SetTopItemIndex(MMIZDT_TINY_CHAT_LIST_CTRL_ID,total_item_num-1);
+                    //GUILIST_SetTopItemIndex(MMIZDT_TINY_CHAT_LIST_CTRL_ID,total_item_num-1);
                 }
+                GUILIST_SetCurItemIndex(MMIZDT_TINY_CHAT_LIST_CTRL_ID, s_cur_last_list_index);//edit by fys
             }
             else
             {
