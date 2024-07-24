@@ -540,6 +540,7 @@ RES_ADD_IMG(statusbar_long_battery,"\\MMI_RES_##\\IMAG\\statusbar\\statusbar_lon
 RES_ADD_IMG(statusbar_brightness,"\\MMI_RES_##\\IMAG\\statusbar\\bright_full.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(statusbar_volume,"\\MMI_RES_##\\IMAG\\statusbar\\volume_full.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(statusbar_ring_and_vibrate,"\\MMI_RES_##\\IMAG\\statusbar\\ring_and_vibrate.png",IMG_CMP_PNG_ARGB_RLE,0)
+RES_ADD_IMG(statusbar_setting,"\\MMI_RES_##\\IMAG\\statusbar\\statusbar_setting.png",IMG_CMP_PNG_ARGB_RLE,0)
 
 RES_ADD_IMG(tinychat_face_0,"\\MMI_RES_##\\IMAG\\tinychat\\zte\\0.png",IMG_CMP_PNG_ARGB_RLE,0)
 RES_ADD_IMG(tinychat_face_1,"\\MMI_RES_##\\IMAG\\tinychat\\zte\\1.png",IMG_CMP_PNG_ARGB_RLE,0)

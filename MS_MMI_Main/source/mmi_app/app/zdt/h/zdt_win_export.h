@@ -121,6 +121,7 @@ PUBLIC void WatchTools_MainWin_Enter( void );
 
 PUBLIC void ZDT_DisplayBattery(MMI_WIN_ID_T win_id);
 PUBLIC void ZDT_DisplaySingal(MMI_WIN_ID_T win_id);
+PUBLIC void DisplayDataInOutIcon(MMI_WIN_ID_T win_id);
 
 #if defined(HERO_ENGINE_SUPPORT)
 #if defined(HERO_APP_WSTORE_OPEN)

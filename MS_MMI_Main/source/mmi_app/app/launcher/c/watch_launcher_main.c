@@ -224,12 +224,12 @@ const APP_LIST_ITEM_T  g_app_list_info[] =
     MENU_LISTEN, 
 #endif
 
-#ifdef WORD_CARD_SUPPORT
-    MENU_LEARN_WORD, 
-#endif
-
 #ifdef MATH_COUNT_SUPPORT
     MENU_MNEMONICS, 
+#endif
+
+#ifdef WORD_CARD_SUPPORT
+    MENU_LEARN_WORD, 
 #endif
 
 #ifdef HANZI_CARD_SUPPORT
@@ -804,6 +804,7 @@ PUBLIC void DisplayLauncherStatusBar(MMI_WIN_ID_T win_id)
         ZDT_DisplaySingal(win_id);
         ZDT_DisplayBattery(win_id);
         Display_DateTime(win_id);
+        DisplayDataInOutIcon(win_id);
     }
 }
 
@@ -1366,4 +1367,35 @@ PUBLIC void WatchOpen_Panel_SelectWin()
 }
 #endif
 
+PUBLIC void ZMTApp_CloseRecordAndPlayer(void)
+{
+#ifdef LISTENING_PRATICE_SUPPORT
+    ZMTListening_CloseListeningPlayer();
+#endif
+#ifdef WORD_CARD_SUPPORT
+    ZMTWord_CloseWordPlayer();
+#endif
+#ifdef HANZI_CARD_SUPPORT
+    ZMTHanzi_CloseHanziPlayer();
+#endif
+#ifdef POETRY_LISTEN_SUPPORT
+    ZMTPoetry_ClosePoetryPlayer();
+#endif
+#ifdef ZMT_GPT_SUPPORT
+    ZMTGpt_CloseKouyuRecordAndPlayer();
+    ZMTGpt_CloseZuoWenRecord();
+#endif
+#ifdef FORMULA_SUPPORT
+    ZMTFormula_CloseFormulaPlayer();
+#endif
+#ifdef ZMT_CLASS_SUPPORT
+    ZMTClass_CloseClassPlayer();
+#endif
+#ifdef ZMT_PINYIN_SUPPORT
+    ZMTPinyin_ClosePlayerHandle();
+#endif
+#ifdef ZMT_YINBIAO_SUPPORT
+    ZMTYinbiao_ClosePlayerHandle();
+#endif
+}
 

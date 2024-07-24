@@ -1005,7 +1005,7 @@ PUBLIC void Hanzi_RequestNewWord(uint16 grade_id, uint16 chap_id)
     char * data_buf = PNULL;
     uint32 file_len = 0;
     sprintf(file_path, HANZI_CARD_NEW_HANZI_PATH, grade_id, chap_id);
-  //  Hanzi_ReleaseDetailInfo();
+    Hanzi_ReleaseDetailInfo();
     if(zmt_file_exist(file_path)){
         data_buf = zmt_file_data_read(file_path, &file_len);
         SCI_TRACE_LOW("%s: file_len = %d", __FUNCTION__, file_len);

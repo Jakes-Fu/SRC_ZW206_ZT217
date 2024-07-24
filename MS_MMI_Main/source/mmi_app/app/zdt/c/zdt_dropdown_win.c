@@ -759,7 +759,7 @@ LOCAL void DisplayLoginIcon(MMI_WIN_ID_T win_id)
 #endif
 }
 
-LOCAL void DisplayDataInOutIcon(MMI_WIN_ID_T win_id)
+PUBLIC void DisplayDataInOutIcon(MMI_WIN_ID_T win_id)
 {
     if(MMIAPIPHONE_IsSimOk(MN_DUAL_SYS_1))
     {
@@ -792,7 +792,7 @@ LOCAL void DisplayTopButton(MMI_WIN_ID_T win_id)
 {
 	GUI_LCD_DEV_INFO lcd_dev_info = {0};
     uint8 i = 0;
-    MMI_IMAGE_ID_T img_id[] = {statusbar_flashlight,statusbar_ring_and_vibrate,statusbar_long_battery};
+    MMI_IMAGE_ID_T img_id[] = {statusbar_flashlight,statusbar_ring_and_vibrate,statusbar_setting};
 
 	GUI_RECT_T btn_rect = {DROPDOWN_TOP_TOOLS_BG_MARGIN_LEFT, DROPDOWN_TOP_TOOLS_BG_MARGIN_TOP
         , DROPDOWN_TOP_TOOLS_BG_MARGIN_LEFT+DROPDOWN_TOP_TOOLS_BG_WIDTH, DROPDOWN_TOP_TOOLS_BG_MARGIN_TOP+DROPDOWN_TOP_TOOLS_BG_HEIGHT};
@@ -899,8 +899,9 @@ LOCAL void ZDT_DropDownWin_DisplayFg(MMI_WIN_ID_T        win_id)
 	GUI_RECT_T progressrect = {12,121, 228, 169};
     MMK_GetWinLcdDevInfo(win_id, &lcd_dev_info);
     ZDT_DisplaySingal(win_id);
-	ZDT_DisplayBattery(win_id);
+    ZDT_DisplayBattery(win_id);
     DisplayLoginIcon(win_id);
+    DisplayDataInOutIcon(win_id);
 #if DROPDOWN_USE_ZDT_SUPPORT != 0
     DisplayDataInOutIcon(win_id);
     DisplayWeather(win_id);
@@ -1120,8 +1121,9 @@ LOCAL void HandleTpPressUp(MMI_WIN_ID_T win_id, GUI_POINT_T point)
                     break;
                 case 2:
                     //Watch_LongRangeMode_switch();
-                    WatchSET_LongRangeModeTipsWin(win_id);
+                    //WatchSET_LongRangeModeTipsWin(win_id);
                     //WatchSET_LongRangeModeExitTipsWin();
+                    WatchSET_MainWin_Enter();
                     break;
             }
         }

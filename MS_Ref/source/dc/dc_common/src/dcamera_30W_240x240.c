@@ -413,14 +413,14 @@ static uint32 VideoCall_init_config(DC_CAMERA_CFG* param)
 	pCfg->hal_cfg.scaleEnable = TRUE;
 
 	pCfg->hal_cfg.cropEnable     = TRUE;
-	pCfg->hal_cfg.dstWinColStart = 80;
-	pCfg->hal_cfg.dstWinColEnd   = 640-80;
+	pCfg->hal_cfg.dstWinColStart = 0;
+	pCfg->hal_cfg.dstWinColEnd   = 640;
 	pCfg->hal_cfg.dstWinRowStart = 0;
 	pCfg->hal_cfg.dstWinRowEnd   = 480;
 
     pCfg->preview_rot = 1;       //视频通话送预览YUV数据旋转90度
     
-    pCfg->width  = 240;
+    pCfg->width  = 320;
     pCfg->height = 240;
 #endif
 

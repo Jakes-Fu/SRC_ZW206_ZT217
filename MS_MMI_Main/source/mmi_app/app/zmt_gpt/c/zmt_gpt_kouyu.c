@@ -77,6 +77,10 @@ LOCAL void ZmtGptKouYuTalk_ReleaseTalkInfo(void)
                 SCI_FREE(gpt_kouyu_talk_info[i]->str);
                 gpt_kouyu_talk_info[i]->str = NULL;
             }
+            if(gpt_kouyu_talk_info[i]->audio_data != NULL){
+                SCI_FREE(gpt_kouyu_talk_info[i]->audio_data);
+                gpt_kouyu_talk_info[i]->audio_data = NULL;
+            }
             SCI_FREE(gpt_kouyu_talk_info[i]);
             gpt_kouyu_talk_info[i] = NULL;
         }
@@ -100,6 +104,11 @@ LOCAL void ZmtGptKouYuTalk_DeleteFrontTwoMsg(void)
             talk_info[index]->str = SCI_ALLOC_APPZ(size + 1);
             memset(talk_info[index]->str, 0, size + 1);
             SCI_MEMCPY(talk_info[index]->str, gpt_kouyu_talk_info[i]->str, size);
+            size = strlen(gpt_kouyu_talk_info[i]->audio_data);
+            talk_info[index]->audio_data = SCI_ALLOC_APPZ(size + 1);
+            memset(talk_info[index]->audio_data, 0, size + 1);
+            SCI_MEMCPY(talk_info[index]->audio_data, gpt_kouyu_talk_info[i]->audio_data, size);
+            talk_info[index]->audio_len = gpt_kouyu_talk_info[i]->audio_len;
             index++;
         }
     }
@@ -116,6 +125,11 @@ LOCAL void ZmtGptKouYuTalk_DeleteFrontTwoMsg(void)
             gpt_kouyu_talk_info[i]->str = SCI_ALLOC_APPZ(size + 1);
             memset(gpt_kouyu_talk_info[i]->str, 0, size + 1);
             SCI_MEMCPY(gpt_kouyu_talk_info[i]->str, talk_info[i]->str, size);
+            size = strlen(talk_info[i]->audio_data);
+            gpt_kouyu_talk_info[i]->audio_data = SCI_ALLOC_APPZ(size + 1);
+            memset(gpt_kouyu_talk_info[i]->audio_data, 0, size + 1);
+            SCI_MEMCPY(gpt_kouyu_talk_info[i]->audio_data, talk_info[i]->audio_data, size);
+            gpt_kouyu_talk_info[i]->audio_len = talk_info[i]->audio_len;
         }
     }
 	
@@ -125,6 +139,10 @@ LOCAL void ZmtGptKouYuTalk_DeleteFrontTwoMsg(void)
             if(talk_info[i]->str != NULL){
                 SCI_FREE(talk_info[i]->str);
                 talk_info[i]->str = NULL;
+            }
+            if(talk_info[i]->audio_data != NULL){
+                SCI_FREE(talk_info[i]->audio_data);
+                talk_info[i]->audio_data = NULL;
             }
             SCI_FREE(talk_info[i]);
             talk_info[i] = NULL;
@@ -224,6 +242,10 @@ PUBLIC void ZmtGptKouYuTalk_RecTxtToVoiceResultCb(BOOLEAN is_ok,uint8 * pRcv,uin
         if(MMK_IsOpenWin(ZMT_GPT_KOUYU_TALK_WIN_ID))
         {
             ZmtGptKouYuTalk_PlayAmrData(pRcv, Rcv_len);
+            gpt_kouyu_talk_info[gpt_kouyu_cur_idx]->audio_data = SCI_ALLOC_APPZ(Rcv_len);
+            memset(gpt_kouyu_talk_info[gpt_kouyu_cur_idx]->audio_data, 0, Rcv_len);
+            strcpy(gpt_kouyu_talk_info[gpt_kouyu_cur_idx]->audio_data, pRcv);
+            gpt_kouyu_talk_info[gpt_kouyu_cur_idx]->audio_len = Rcv_len;
         }
     }
     else
@@ -262,6 +284,10 @@ PUBLIC void ZmtGptKouYuTalk_RecAiVoiceResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32
         if(MMK_IsOpenWin(ZMT_GPT_KOUYU_TALK_WIN_ID))
         {
             ZmtGptKouYuTalk_PlayAmrData(pRcv, Rcv_len);
+            gpt_kouyu_talk_info[gpt_kouyu_cur_idx]->audio_data = SCI_ALLOC_APPZ(Rcv_len);
+            memset(gpt_kouyu_talk_info[gpt_kouyu_cur_idx]->audio_data, 0, Rcv_len);
+            strcpy(gpt_kouyu_talk_info[gpt_kouyu_cur_idx]->audio_data, pRcv);
+            gpt_kouyu_talk_info[gpt_kouyu_cur_idx]->audio_len = Rcv_len;
         }
     #endif
     }
@@ -719,6 +745,8 @@ LOCAL void ZmtGptKouYuTalk_StopRecord(MMI_WIN_ID_T win_id, BOOLEAN is_send)
         MMIRECORDSRV_StopRecord(gpt_kouyu_record_handle);
         MMIRECORDSRV_FreeRecordHandle(gpt_kouyu_record_handle);
         gpt_kouyu_record_handle = 0;
+    }else{
+        is_send = FALSE;
     }
     if(gpt_kouyu_record_timer_id != 0)
     {
@@ -790,6 +818,7 @@ LOCAL void ZmtGptKouYuTalk_RightIndentifyClick(MMI_WIN_ID_T win_id)
     if(gpt_kouyu_talk_info[gpt_kouyu_talk_size] == NULL){
         gpt_kouyu_talk_info[gpt_kouyu_talk_size] = SCI_ALLOC_APPZ(sizeof(gpt_talk_info_t));
     }
+    memset(gpt_kouyu_talk_info[gpt_kouyu_talk_size], 0, sizeof(gpt_talk_info_t));
     gpt_kouyu_talk_info[gpt_kouyu_talk_size]->is_user = TRUE;
     gpt_kouyu_talk_info[gpt_kouyu_talk_size]->str = SCI_ALLOC_APPZ(strlen(gpt_kouyu_record_text)+1);
     memset(gpt_kouyu_talk_info[gpt_kouyu_talk_size]->str, 0, strlen(gpt_kouyu_record_text)+1);
@@ -1088,7 +1117,7 @@ LOCAL BOOLEAN ZmtGptKouYuTalk_DestoryDynaCtrl(MMI_WIN_ID_T win_id)
     uint8 i = 0;
     if(MMK_GetCtrlHandleByWin(win_id, ZMT_GPT_FORM_CTRL_ID))
     {
-        for(i = 0; i < gpt_kouyu_talk_size + 1;i++)
+        for(i = 0; i < gpt_kouyu_talk_size;i++)
         {
             if(MMK_GetCtrlHandleByWin(win_id, ZMT_GPT_FORM_TEXT_1_CTRL_ID+i))
             {
@@ -1122,7 +1151,7 @@ LOCAL void ZmtGptKouYuTalk_ShowFormList(MMI_WIN_ID_T win_id)
 
     ZmtGptKouYuTalk_DestoryDynaCtrl(win_id);
     SCI_TRACE_LOW("%s: gpt_kouyu_talk_size = %d", __FUNCTION__, gpt_kouyu_talk_size);
-    for(i = 0;i < gpt_kouyu_talk_size + 1;i++)
+    for(i = 0;i < gpt_kouyu_talk_size;i++)
     {
         GUITEXT_INIT_DATA_T text_init_data = {0};
         GUIFORM_DYNA_CHILD_T text_form_child_ctrl = {0};
@@ -1172,25 +1201,6 @@ LOCAL void ZmtGptKouYuTalk_ShowFormList(MMI_WIN_ID_T win_id)
     }
     GUITEXT_SetBorder(&border, ZMT_GPT_FORM_TEXT_1_CTRL_ID + gpt_kouyu_cur_idx);
     GUIFORM_SetActiveChild(ctrl_handle, ZMT_GPT_FORM_TEXT_1_CTRL_ID + gpt_kouyu_cur_idx);
-    {
-        text_ctrl_id++;
-        child_width.type = GUIFORM_CHILD_WIDTH_FIXED;
-        child_width.add_data = width;
-        GUIFORM_SetChildWidth(ctrl_handle, text_ctrl_id, &child_width);
-        child_height.type = GUIFORM_CHILD_HEIGHT_FIXED;
-        child_height.add_data = 2*ZMT_GPT_LINE_HIGHT;
-        GUIFORM_SetChildHeight(ctrl_handle, text_ctrl_id, &child_width);
-        GUIFORM_SetChildAlign(ctrl_handle, text_ctrl_id, GUIFORM_CHILD_ALIGN_LEFT);
-        GUITEXT_SetAlign(text_ctrl_id, ALIGN_LVMIDDLE);
-        text_bg.color = GPT_WIN_BG_COLOR;
-        GUITEXT_SetBg(text_ctrl_id, &text_bg);
-        GUITEXT_SetFont(text_ctrl_id, &font_size, &font_color);
-        GUITEXT_IsDisplayPrg(FALSE, text_ctrl_id);
-        GUITEXT_SetClipboardEnabled(text_ctrl_id, FALSE);
-        MMIRES_GetText(ZMT_CHAT_GPT_EMPTY_TXT, win_id, &text_string);
-        GUITEXT_SetString(text_ctrl_id, text_string.wstr_ptr, text_string.wstr_len, TRUE);
-        GUITEXT_SetHandleTpMsg(FALSE, text_ctrl_id);
-    }
 }
 
 LOCAL void ZmtGptKouYuTalk_FULL_PAINT(MMI_WIN_ID_T win_id)
@@ -1280,7 +1290,11 @@ LOCAL void ZmtGptKouYuTalk_CTL_PENOK(MMI_WIN_ID_T win_id, DPARAM param)
         }
         if( gpt_kouyu_talk_info[cur_idx] != NULL && gpt_kouyu_talk_info[cur_idx]->str != NULL)
         {
-            ZmtGpt_SendString(NULL, gpt_kouyu_talk_info[cur_idx]->str);
+            if(gpt_kouyu_talk_info[cur_idx]->audio_len > 0){
+                ZmtGptKouYuTalk_PlayAmrData(gpt_kouyu_talk_info[cur_idx]->audio_data, gpt_kouyu_talk_info[cur_idx]->audio_len);
+            }else{
+                ZmtGpt_SendString(NULL, gpt_kouyu_talk_info[cur_idx]->str);
+            }
         }
     }else{
         gpt_kouyu_cur_idx = cur_idx;
@@ -1851,4 +1865,13 @@ PUBLIC void MMIZMT_CreateZmtGptKouYuTopicWin(void)
     MMK_CreateWin((uint32 *)MMI_ZMT_GPT_KOUYU_TOPIC_WIN_TAB, PNULL);
 }
 
+PUBLIC void ZMTGpt_CloseKouyuRecordAndPlayer(void)
+{
+    if (gpt_kouyu_record_handle != 0){
+        MMIRECORDSRV_StopRecord(gpt_kouyu_record_handle);
+        MMIRECORDSRV_FreeRecordHandle(gpt_kouyu_record_handle);
+        gpt_kouyu_record_handle = 0;
+    }
+    ZmtGptKouYuTalk_StopAmrData();
+}
 

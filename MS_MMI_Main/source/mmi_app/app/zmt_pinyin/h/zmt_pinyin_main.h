@@ -67,5 +67,6 @@ PUBLIC void Pinyin_ReleaseAudioPath(void);
 PUBLIC void Pinyin_RequestAudioPath(void);
 PUBLIC void Pinyin_RequestAudioData(uint8 idx, char * url);
 
+PUBLIC void ZMTPinyin_ClosePlayerHandle(void);
 
 #endif

@@ -2763,6 +2763,7 @@ int YX_Net_Receive_MONITOR(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen)
         LIBXMLYAPI_AppExit();
 #endif
 #endif
+    ZMTApp_CloseRecordAndPlayer();
     YX_Net_TCPRespond(g_zdt_phone_imei,"MONITOR",7);
 #ifdef ZDT_VIDEOCHAT_SUPPORT
     if(!VideoChat_IsInCall())
@@ -3123,6 +3124,7 @@ int YX_Net_Receive_POWEROFF(YX_APP_T *pMe)
         LIBXMLYAPI_AppExit();
 #endif
 #endif    
+    ZMTApp_CloseRecordAndPlayer();
     pMe->m_yx_gj_timer_id = MMK_CreateTimerCallback(3*1000, 
                                                                         YX_Net_GJ_TimeOut, 
                                                                         (uint32)pMe, 
@@ -3535,39 +3537,7 @@ int YX_Net_Receive_SILENCETIME2(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen
             pTime = (uint8 *)&tmp_str[0];
             con_len = ret;
             SCI_MEMSET(timer_str,0,11);
-            timer_type = 0;
-            ret = YX_Func_TimerGetNextPara(&pTime,&con_len,timer_str,10);
-            //获取格式: 日一二三四五六
-            if(ret > 6)
-            {
                 
-                //转换为: 六五四三二一日ONOFF
-                if(timer_str[0] == '1')
-                {
-                    timer_type = (0x01 << 1);
-                }
-                
-                for(j = 1; j < 7; j++)
-                {
-                    if(timer_str[j] == '1')
-                    {
-                        timer_type = timer_type | (0x01 << (j+1));
-                    }
-                }
-            }
-            SCI_MEMSET(timer_str,0,11);
-            ret = YX_Func_TimerGetNextPara(&pTime,&con_len,timer_str,10);//开关
-            if(ret > 0)
-            {
-                is_on = atoi(timer_str);
-            }
-            SCI_MEMSET(timer_str,0,11);
-            ret = YX_Func_TimerGetNextPara(&pTime,&con_len,timer_str,10);//am pm
-            if(ret > 0)
-            {
-                ZDT_LOG("YX_Net_Receive_SILENCETIME2 Rcv idx=%d,am/pm=%s",i,timer_str);
-            }
-            SCI_MEMSET(timer_str,0,11);
             ret = YX_Func_TimerGetNextPara(&pTime,&con_len,timer_str,10);
             if(ret > 0)
             {
@@ -3591,9 +3561,32 @@ int YX_Net_Receive_SILENCETIME2(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen
             {
                 end_min = atoi(timer_str);
             }
+            SCI_MEMSET(timer_str,0,11);
+            ret = YX_Func_TimerGetNextPara(&pTime,&con_len,timer_str,10);
+            if(ret > 0)
+            {
+                is_on = atoi(timer_str);
+            }
+            SCI_MEMSET(timer_str,0,11);
+            timer_type = 0;
+            ret = YX_Func_TimerGetNextPara(&pTime,&con_len,timer_str,10);
+            if(ret > 6)
+            {
+                if(timer_str[0] == '1')
+                {
+                    timer_type = (0x01 << 1);
+                }
+                for(j = 1; j < 7; j++)
+                {
+                    if(timer_str[j] == '1')
+                    {
+                        timer_type = timer_type | (0x01 << (j+1));
+                    }
+                }
+            }
             timer_start = (start_hour * 3600) + (start_min * 60);
             timer_end = (end_hour * 3600) + (end_min * 60);
-            if(is_on == 1) //防止开关状态为2
+            if(is_on)
             {
                 timer_type = timer_type | 0x01;
             }
@@ -3650,6 +3643,7 @@ int YX_Net_Receive_FIND(YX_APP_T *pMe)
 #ifdef XYSDK_SUPPORT
     LIBXMLYAPI_AppExit();
 #endif
+    ZMTApp_CloseRecordAndPlayer();
     //if(pMe->m_zdt_is_in_call == 0)
     {
         //yangyu add begin
@@ -4865,7 +4859,7 @@ int YX_Net_Receive_PHL(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen,uint16 i
     uint32 len = ContentLen;
     uint8 white_name[YX_DB_WHITE_MAX_NAME_SIZE+1] = {0};
     uint8 white_num[YX_DB_WHITE_MAX_NUMBER_SIZE+1] = {0};
-    uint8 relation_buf[2+1] = {0};
+    
     ZDT_LOG("YX_Net_Receive_PHL idx=%d,ContentLen=%d",idx,ContentLen);
     YX_DB_WHITE_ListDelAllBuf();
     if(len != 0)
@@ -4884,12 +4878,6 @@ int YX_Net_Receive_PHL(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen,uint16 i
             if(ret > 0)
             {
                 YX_DB_WHITE_ListModifyBuf(i,(char *)white_num,SCI_STRLEN((char *)white_num),(char *)white_name,SCI_STRLEN((char *)white_name));
-            }
-	     ret = YX_Func_GetNextPara(&str, &len,(char *)relation_buf,3);
-            if(ret > 0)
-            {
-                yx_DB_White_Reclist[i].relation_id=atoi(relation_buf);
-			  ZDT_LOG("YX_Net_Receive_PHL relation_buf=%s,relation_id=%d",relation_buf,yx_DB_White_Reclist[i].relation_id);
             }
         }
     }
@@ -5256,6 +5244,7 @@ int YX_Net_Receive_RCAPTURE(YX_APP_T *pMe)
     LIBXMLYAPI_AppExit();
 #endif
 #endif
+    ZMTApp_CloseRecordAndPlayer();
 #ifdef ZDT_VIDEOCHAT_SUPPORT
     if(!VideoChat_IsInCall())
 #endif
@@ -5634,7 +5623,7 @@ uint8 Get_number(char * s1)
 int YX_Net_Receive_SCHEDULE(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen)
 {
 	int ret = 0;
-	char buf[1600] = {0};
+	char *buf;
 	uint8 * str = pContent;
 	uint32 len = ContentLen;
 	double temp = 0;
@@ -5664,15 +5653,16 @@ int YX_Net_Receive_SCHEDULE(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen)
 		ZDT_LOG("ZDT__LOG YX_Net_Receive_SCHEDULE ERR");
 		return 0;
 	}
-
+    buf = SCI_ALLOC_APP(ContentLen + 1);
 	 SCI_MEMSET(&yx_schedule_Rec, 0, sizeof(YX_SCHEDULE_Type));
+    SCI_MEMSET(buf, 0, ContentLen + 1);
 
 	//时间
 	ret = YX_Func_GetNextPara(&str, &len,buf,101);
 	if(ret > 0)
 	{
 		 int i = 0;
-		 pTime = (uint8 *)&buf[0];
+		 pTime = (uint8 *)buf;
          con_len = ret;
 		
 		 ZDT_LOG("ZDT__LOG YX_Net_Receive_SCHEDULE TIME ret=%d buf=%s",ret,buf);
@@ -5695,14 +5685,15 @@ int YX_Net_Receive_SCHEDULE(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen)
 		}
 	}
 	//课程
-	ret = YX_Func_GetNextPara(&str, &len,buf,1450);
+    SCI_MEMSET(buf, 0, ContentLen + 1);
+	ret = YX_Func_GetNextPara(&str, &len,buf,ContentLen);
 	if(ret > 0)
 	{
 		int i = 0;
 		uint8 class_time = 0;
 		uint8 class_num = 0;
 		
-		pCon0 = (uint8 *)&buf[0];
+		pCon0 = (uint8 *)buf;
         con0_len = ret;
 		for( i = 0; i < SCHEDULE_TIME_MUN_MAX * SCHEDULE_DAY_MAX ; i++)
 		{
@@ -5741,12 +5732,10 @@ int YX_Net_Receive_SCHEDULE(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen)
 			}
 
 		}
-
-		
 		ZDT_LOG("ZDT__LOG YX_Net_Receive_SCHEDULE CLASS ret=%d buf=%s",ret,buf);
 	}
 	DB_Schedule_ListSaveBuf();
-
+    SCI_FREE(buf);
 	YX_Net_TCPRespond(g_zdt_phone_imei,"SCHEDULE",8);
 
 	return 0;
@@ -6207,6 +6196,7 @@ int32 YX_Net_Receive_DOWNVCWW(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen)
 #ifdef XYSDK_SUPPORT
     LIBXMLYAPI_AppExit();
 #endif
+    ZMTApp_CloseRecordAndPlayer();
     if(Video_Call_Device_Idle_Check()) //在打电话上课禁用直接回复挂断
     {
         YX_Net_Send_UPWATCHHANGUP(&videoCallInfo.video_id);
@@ -6734,10 +6724,8 @@ static int YX_Net_ReceiveHandle(YX_APP_T *pMe,uint8 * pData,uint32 DataLen,uint3
     }
     else if(ret == 6 &&  strncmp( (char *)buf, "REMIND", ret ) == 0)
     {
-    #ifndef ZTE_WATCH
         //闹钟设置指令 
         YX_Net_Receive_REMIND(pMe,pContent,cont_len);
-    #endif
     }
     //yangyu add 
     else if(ret == 7 &&  strncmp( (char *)buf, "BOOTOFF", ret ) == 0)

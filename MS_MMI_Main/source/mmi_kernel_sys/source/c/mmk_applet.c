@@ -1131,7 +1131,7 @@ PUBLIC BOOLEAN MMK_ReturnIdleWin(
 
     UpdateAppletSystem();
 #ifdef KEYUP_RED_GOTO_IDLE
-    WatchSLIDEAGE_SetCurrentPageIndex(1); // 修复左右两屏power键没有回到表盘待机界面
+    WatchSLIDEAGE_SetCurrentPageIndex(0); // 修复左右两屏power键没有回到表盘待机界面
 #endif
     return TRUE;
 }

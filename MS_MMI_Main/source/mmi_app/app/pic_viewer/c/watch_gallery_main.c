@@ -260,7 +260,7 @@ LOCAL MMI_RESULT_E Gallery_StartLoadFile()
     //get all Gallery file suffix
     Gallery_GetAllSuffixFile(&file_filter);
     // 1389172: 在搜索时指定排序方式，且非递归搜索当前路径下的图片和音频文件
-    if (MMISD_IsSDExistEx() && FALSE)
+    if (MMISD_IsSDExistEx())
     {
         MMIAPIFMM_CombineFullPathEx(path_name, MMIFMM_PATHNAME_LEN, MMI_DEVICE_SDCARD, MMIMULTIM_DIR_MOVIE, PNULL);
     }
