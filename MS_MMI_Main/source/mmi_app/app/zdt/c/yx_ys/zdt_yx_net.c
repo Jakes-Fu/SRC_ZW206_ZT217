@@ -5623,7 +5623,7 @@ uint8 Get_number(char * s1)
 int YX_Net_Receive_SCHEDULE(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen)
 {
 	int ret = 0;
-	char buf[1600] = {0};
+	char *buf;
 	uint8 * str = pContent;
 	uint32 len = ContentLen;
 	double temp = 0;
@@ -5653,15 +5653,16 @@ int YX_Net_Receive_SCHEDULE(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen)
 		ZDT_LOG("ZDT__LOG YX_Net_Receive_SCHEDULE ERR");
 		return 0;
 	}
-
+    buf = SCI_ALLOC_APP(ContentLen + 1);
 	 SCI_MEMSET(&yx_schedule_Rec, 0, sizeof(YX_SCHEDULE_Type));
+    SCI_MEMSET(buf, 0, ContentLen + 1);
 
 	//Ê±¼ä
 	ret = YX_Func_GetNextPara(&str, &len,buf,101);
 	if(ret > 0)
 	{
 		 int i = 0;
-		 pTime = (uint8 *)&buf[0];
+		 pTime = (uint8 *)buf;
          con_len = ret;
 		
 		 ZDT_LOG("ZDT__LOG YX_Net_Receive_SCHEDULE TIME ret=%d buf=%s",ret,buf);
@@ -5684,14 +5685,15 @@ int YX_Net_Receive_SCHEDULE(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen)
 		}
 	}
 	//¿Î³Ì
-	ret = YX_Func_GetNextPara(&str, &len,buf,1450);
+    SCI_MEMSET(buf, 0, ContentLen + 1);
+	ret = YX_Func_GetNextPara(&str, &len,buf,ContentLen);
 	if(ret > 0)
 	{
 		int i = 0;
 		uint8 class_time = 0;
 		uint8 class_num = 0;
 		
-		pCon0 = (uint8 *)&buf[0];
+		pCon0 = (uint8 *)buf;
         con0_len = ret;
 		for( i = 0; i < SCHEDULE_TIME_MUN_MAX * SCHEDULE_DAY_MAX ; i++)
 		{
@@ -5730,12 +5732,10 @@ int YX_Net_Receive_SCHEDULE(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen)
 			}
 
 		}
-
-		
 		ZDT_LOG("ZDT__LOG YX_Net_Receive_SCHEDULE CLASS ret=%d buf=%s",ret,buf);
 	}
 	DB_Schedule_ListSaveBuf();
-
+    SCI_FREE(buf);
 	YX_Net_TCPRespond(g_zdt_phone_imei,"SCHEDULE",8);
 
 	return 0;

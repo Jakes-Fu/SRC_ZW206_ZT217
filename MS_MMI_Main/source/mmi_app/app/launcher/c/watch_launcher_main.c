@@ -224,12 +224,12 @@ const APP_LIST_ITEM_T  g_app_list_info[] =
     MENU_LISTEN, 
 #endif
 
-#ifdef WORD_CARD_SUPPORT
-    MENU_LEARN_WORD, 
-#endif
-
 #ifdef MATH_COUNT_SUPPORT
     MENU_MNEMONICS, 
+#endif
+
+#ifdef WORD_CARD_SUPPORT
+    MENU_LEARN_WORD, 
 #endif
 
 #ifdef HANZI_CARD_SUPPORT
