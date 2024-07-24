@@ -1072,11 +1072,6 @@ LOCAL BOOLEAN Word_ChatPlayMp3DataNotify(MMISRV_HANDLE_T handle, MMISRVMGR_NOTIF
                             {
                                 WordListenWin_CreateIntervalTimer();
                             }
-							 if(MMIZDT_IsClassModeWinOpen() )
-		{
-	             Word_StopPlayMp3Data();
-	             MMI_CloseWordListenWin();
-		  }
                         }
                         break;
                     default:
@@ -1289,7 +1284,7 @@ LOCAL void WordDetail_RightDetail(void)//Î´ÕÆÎÕ/ÏÂÒ»¸ö
 
 LOCAL void WordDetail_NextChapterInfo(void)
 {
- //   word_book_info.cur_chapter_idx++;
+    word_book_info.cur_chapter_idx++;
     if(word_book_info.cur_chapter_idx < word_chapter_count)
     {
         Word_WriteUnmasterChapterWord(
@@ -1301,7 +1296,6 @@ LOCAL void WordDetail_NextChapterInfo(void)
         memset(&chapter_unmaster_idx, 0, sizeof(chapter_unmaster_idx));
         chapter_unmaster_count = 0;
         word_detail_cur_idx = 0;
-		word_book_info.cur_chapter_idx++;
         MMK_SendMsg(MMI_WORD_DETAIL_WIN_ID, MSG_FULL_PAINT, PNULL);
     }
 }
