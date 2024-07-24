@@ -389,12 +389,6 @@ enum
     //|---------------------------|
     GUIITEM_STYLE_ONE_LINE_TWO_BUTTON_TEXT,
 #endif
- #ifdef XYSDK_SUPPORT
-		GUIITEM_STYLE_ONE_LINE_ICON_TEXT_ICON_XMLY,
-		GUIITEM_STYLE_ONE_LINE_ICON_TEXT_ICON_XMLY2,
-		GUIITEM_STYLE_ONE_LINE_TEXT_ICON_XMLY,
-		GUIITEM_STYLE_ONE_LINE_ICON_ICON_TEXT_ICON_XMLY,
-#endif           
 
 	//|---------------------------|
     //| text                text  |
@@ -1086,6 +1080,18 @@ ADULTWATCH
 #ifdef ZMT_PINYIN_SUPPORT
     GUIITEM_STYLE_PINYIN_TABLE_LIST_MS,
 #endif
+#ifdef XYSDK_SUPPORT
+	GUIITEM_STYLE_ONE_LINE_ICON_TEXT_ICON_XMLY = 5000,
+	GUIITEM_STYLE_ONE_LINE_ICON_TEXT_ICON_XMLY_VOICE_HEAD,
+	GUIITEM_STYLE_ONE_LINE_ICON_TEXT_ICON_XMLY_VOICE_BOTTOM,
+	GUIITEM_STYLE_ONE_LINE_TEXT_ICON_XMLY,
+	GUIITEM_STYLE_ONE_LINE_ICON_ICON_TEXT_ICON_XMLY,
+	GUIITEM_STYLE_ONE_LINE_TEXT_ICON_ICON_TEXT_TEXT,
+	GUIITEM_STYLE_ONE_LINE_ICON_ICON_TEXT_TEXT,
+	GUIITEM_STYLE_ONE_LINE_ICON_ICON_ICON_TEXT,
+	GUIITEM_STYLE_ONE_LINE_ICON_ICON_TEXT_ICON_HISTORY,
+#endif    
+
 //============================================================================//
 //                                   For watch                                //
 //============================================================================//

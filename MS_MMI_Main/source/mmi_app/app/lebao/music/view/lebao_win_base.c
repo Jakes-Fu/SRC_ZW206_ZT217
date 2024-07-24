@@ -65,7 +65,7 @@ static void	_lebao_create_msgbox(const int textId, const char* title, const int 
 static int _labelCanRoll = 0;
 
 #if defined(LEBAO_SIZE_240X320)
-	#define  LEBAO_TITLE_HEIGHT_			(40)
+	#define  LEBAO_TITLE_HEIGHT_			DP2PX_VALUE(40)
 	#include "lebao_theme_p_240X320.def"
 #elif defined(LEBAO_SIZE_128X128)
 	#define  LEBAO_TITLE_HEIGHT_			(20)

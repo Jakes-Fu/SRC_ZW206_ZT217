@@ -218,6 +218,11 @@ ifeq ($(strip $(PDA_UI_DROPDOWN_WIN)), TRUE)
 SOURCES	 += dropdownwin_mdu_def.h
 endif
 
+ifeq ($(strip $(XYSDK_SUPPORT)),TRUE)
+SRCPATH	+= $(MMI_DIR)/source/mmi_app/app/xysdk/h 
+SOURCES	 += xysdk_mdu_def.h
+endif
+
 ifeq ($(strip $(CSC_SUPPORT)),TRUE)
 SOURCES	 += customer_mdu_def.h
 endif

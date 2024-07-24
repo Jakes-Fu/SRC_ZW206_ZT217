@@ -81,6 +81,11 @@ ifneq ($(strip $(WIFI_SUPPORT)), NONE)
 SOURCES	 += wifi_mdu_def.h
 endif
 
+ifeq ($(strip $(XYSDK_SUPPORT)),TRUE)
+SRCPATH	+= $(MMI_DIR)/source/mmi_app/app/xysdk/h 
+SOURCES	 += xysdk_mdu_def.h
+endif
+
 ifeq ($(strip $(QBTHEME_SUPPORT)), TRUE)
 SOURCES	 += qbtheme_mdu_def.h
 endif

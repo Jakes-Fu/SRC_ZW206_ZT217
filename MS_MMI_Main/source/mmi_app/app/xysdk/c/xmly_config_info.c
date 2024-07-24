@@ -1,18 +1,11 @@
 ﻿#include "xmly_config_info.h"
 
-#if 0		//YS_公版key
-#define XY_APP_KEY "af440de526064e8caa2eeb1b03438edb"
-#define XY_APP_SECRET "C04F065038BE25103BEF9B7509A0F2F7"
-#define XY_SN "11713_00_100713"
 
-#define XY_HOMEPAGE_CH_ID  "04ce0e1271984007961d968f167a5750"
-#else		// XMLY_努比亚key
-#define XY_APP_KEY "e8106170770244978931eb3dd560ed11"
-#define XY_APP_SECRET "7088A514935ABA87F0348B538020F389"
-#define XY_SN "111060_00_1001060"
+#define XY_APP_KEY "b7b3fe0d44cb4b988940f658e6bc84a2"
+#define XY_APP_SECRET "329FBDB09AD7E92920F95049DB998E7A"
+#define XY_SN "111128_00_1001128"
 
-#define XY_HOMEPAGE_CH_ID  "bb81c10521b047f2bd231086210537d1"
-#endif 
+#define XY_HOMEPAGE_CH_ID  "3a5415b08cb046c4b276a20f29ea60e4"
 
 PUBLIC void mmixysdk_api_get_appkey(char *appkey)
 {
@@ -53,7 +46,8 @@ PUBLIC void mmixysdk_api_get_ch_id(char *chid)
  */
 PUBLIC int  mmixysdk_api_get_watch_vol()
 {
-	return 0;
+	//return 0;
+	return MMIAPISET_GetMultimVolume();
 }
 
 /*xmly端传vol值给watch端
@@ -64,16 +58,15 @@ PUBLIC void  mmixysdk_api_set_watch_vol(int vol)
 {
 	
 }
-
-uint32 xmly_iot_socket_get_netid(){
-
-	return MMIAPIPDP_GetPublicPdpLinkNetid();
-
-}
-
-PUBLIC BOOL mmixysdk_api_get_save_record_file_flags()
+/*watch端返回netid值给xmly端
+ *
+ *
+ */
+uint32 xmly_iot_socket_get_netid()
 {
-	return FALSE; /*TRUE 保存在D:\\xmly\\xmly_record.pcm，FALSE 不保存*/
-}
 
+
+
+
+}
 

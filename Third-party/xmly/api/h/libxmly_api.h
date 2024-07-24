@@ -86,15 +86,9 @@ reset时清除缓存到本地的数据
 返回	 	  
 */
 void LIBXMLYAPI_ClearCacheData(void);
-
-// 刷新首页
-PUBLIC void LIBXMLYAPI_RefMainWin(void);
 /*----------------------------------------------------------------------------*/
 /*                         Compiler Flag                                      */
 /*----------------------------------------------------------------------------*/
-
-
-
 #ifdef _cplusplus
 	}
 #endif

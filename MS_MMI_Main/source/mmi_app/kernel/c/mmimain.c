@@ -1962,9 +1962,7 @@ void APP_Init(POWER_RESTART_CONDITION_E   restart_condition)
 #ifdef MRAPP_SUPPORT
 	MMIMRAPP_InitSetting();
 #endif
-#ifdef HERO_ENGINE_SUPPORT
-	MMIHEROAPP_InitSetting();
-#endif
+
 #ifdef QBTHEME_SUPPORT
 	MMIAPIQBTHEME_Init();
 #endif
@@ -2084,11 +2082,8 @@ LOCAL void InitMMIModule(void)
 
     MMIAPIALM_InitModule();
 #ifdef XYSDK_SUPPORT
-#ifndef WIN32
 	LIBXMLYAPI_InitModule();
 #endif
-#endif
-
 #ifdef GAME_SUPPORT
     MMIAPIGAME_InitModule();
 #endif
@@ -2310,6 +2305,10 @@ LOCAL void InitMMIModule(void)
     MMISFR_CTCC_InitModule();
     //sfr_set_str(MMISFR_INDEX_SYS_VERSION, "RTOS4.0");
     //sfr_set_str(MMISFR_INDEX_SOFTWARE_NAME, "217");
+#endif
+
+#ifdef SFR_SUPPORT_CMCC
+    MMISFR_CMCC_InitModule();
 #endif
 
 #ifdef ESIM_SUPPORT_HB

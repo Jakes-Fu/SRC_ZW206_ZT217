@@ -192,12 +192,6 @@ extern MMI_APPLICATION_T g_appstore_debug_mode;
 
 #ifdef UAL_AUDIOPLAYER_SUPPORT
 extern MMI_APPLICATION_T s_audiosource_init;
-#ifndef WIN32
-#ifdef XYSDK_SUPPORT
-    extern MMI_APPLICATION_T   g_xysdk_app;
-#endif
-#endif 
-
 #ifdef AUDIOPLAYER_IT_SUPPORT
 extern MMI_APPLICATION_T audioplayer_test;
 #endif
@@ -229,7 +223,9 @@ extern MMI_APPLICATION_T  gHeroTtsApp;
 #ifdef ZDT_APP_SUPPORT
    extern MMI_APPLICATION_T    g_zdt_app;
 #endif
-
+#ifdef XYSDK_SUPPORT
+    extern MMI_APPLICATION_T   g_xysdk_app;
+#endif
 #ifdef ZDT_HTTP_APP_SUPPORT
    extern MMI_APPLICATION_T    g_zdthttp_app;
 #endif

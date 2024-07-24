@@ -190,6 +190,491 @@ LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_1_text_icon =
     0, MMILIST_INVALID_ITEM_INDEX
 };
 
+#ifdef XYSDK_SUPPORT
+
+#if 1
+#define XYSDK_LIST_H			66
+#define XYSDK_VOICE_LIST_H			XYSDK_LIST_H
+#define XYSDK_ALBUM_IMG_W		42
+#define XYSDK_ALBUM_IMG_H		42
+#define XYSDK_IMG_START_X		30
+#define XYSDK_LIST_SPACE		4
+#define XYSDK_LIST_SPACE_H		((XYSDK_LIST_H-XYSDK_ALBUM_IMG_H)/2)
+#define XYSDK_TXT_START_X		(XYSDK_IMG_START_X+XYSDK_ALBUM_IMG_W+XYSDK_LIST_SPACE)
+#define XYSDK_LIST_END			236
+#define XYSDK_TAG_H				16
+#define XYSDK_TAG_W				10
+#define XYSDK_TAG_SPACE_H		((XYSDK_LIST_H-XYSDK_TAG_H)/2)
+#define XYSDK_TAG_END_X			210
+#define XYSDK_LIST_FONT			(SONG_FONT_18)
+#define XYSDK_LIST_FONT_H		(30)
+#define XYSDK_TXT_SPACE_H		((XYSDK_LIST_H-XYSDK_LIST_FONT_H)/2)
+#define XYSDK_TXT_END_X			(XYSDK_TAG_END_X-XYSDK_TAG_W-XYSDK_LIST_SPACE*2)
+
+
+#define XYSDK_ICON_START_X		22
+#define XYSDK_ALBUM_ICON_W		18
+#define XYSDK_ALBUM_ICON_H		18
+#define XYSDK_TAG_L_H			26
+#define XYSDK_TAG_L_W			26
+#define XYSDK_TAG_L_END_X			222
+#define XYSDK_LIST_SPACE_2_H		((XYSDK_LIST_H-XYSDK_ALBUM_ICON_H)/2)
+#define XYSDK_TXT_START_2_X		(XYSDK_ICON_START_X+XYSDK_ALBUM_ICON_W+XYSDK_LIST_SPACE)
+#define XYSDK_TAG_L_SPACE_H		((XYSDK_LIST_H-XYSDK_TAG_L_H)/2)
+#define XYSDK_TXT_L_END_X			(XYSDK_TAG_L_END_X-XYSDK_TAG_L_W-XYSDK_LIST_SPACE*2)
+
+
+#define XYSDK_NUM_ICON_W			39
+#define XYSDK_NUM_START_X			(XYSDK_ICON_START_X+XYSDK_NUM_ICON_W+XYSDK_LIST_SPACE)
+#define XYSDK_LIST_NUM_FONT			(SONG_FONT_14)
+#define XYSDK_PLAY_LIST_OFFSET			(0)
+#define XYSDK_Y_OFFSET  10   //240x280 OFFSET
+
+#else
+
+#define XYSDK_LIST_H			35
+#define XYSDK_VOICE_LIST_H			XYSDK_LIST_H-2
+#define XYSDK_ALBUM_IMG_W		22
+#define XYSDK_ALBUM_IMG_H		22
+#define XYSDK_IMG_START_X		16
+#define XYSDK_LIST_SPACE		4
+#define XYSDK_LIST_SPACE_H		((XYSDK_LIST_H-XYSDK_ALBUM_IMG_H)/2)
+#define XYSDK_TXT_START_X		(XYSDK_IMG_START_X+XYSDK_ALBUM_IMG_W+XYSDK_LIST_SPACE)
+#define XYSDK_LIST_END			125
+#define XYSDK_TAG_H				8
+#define XYSDK_TAG_W				5
+#define XYSDK_TAG_SPACE_H		((XYSDK_LIST_H-XYSDK_TAG_H)/2)
+#define XYSDK_TAG_END_X			111
+#define XYSDK_LIST_FONT			(SONG_FONT_14)
+#define XYSDK_LIST_FONT_H		(14)
+#define XYSDK_TXT_SPACE_H		((XYSDK_LIST_H-XYSDK_LIST_FONT_H)/2)
+#define XYSDK_TXT_END_X			(XYSDK_TAG_END_X-XYSDK_TAG_W-XYSDK_LIST_SPACE*2)
+#define XYSDK_TXT_END_OFFSET	(0)
+
+#define XYSDK_ICON_START_X		12
+#define XYSDK_ALBUM_ICON_W		10
+#define XYSDK_ALBUM_ICON_H		10
+#define XYSDK_TAG_L_H			14
+#define XYSDK_TAG_L_W			14
+#define XYSDK_TAG_L_END_X			118
+#define XYSDK_LIST_SPACE_2_H		((XYSDK_LIST_H-XYSDK_ALBUM_ICON_H)/2)
+#define XYSDK_TXT_START_2_X		(XYSDK_ICON_START_X + XYSDK_ALBUM_ICON_W + XYSDK_LIST_SPACE)
+#define XYSDK_TAG_L_SPACE_H		((XYSDK_LIST_H-XYSDK_TAG_L_H)/2)-2
+#define XYSDK_TXT_L_END_X			(XYSDK_TAG_L_END_X-XYSDK_TAG_L_W-XYSDK_LIST_SPACE*2)
+
+
+#define XYSDK_NUM_ICON_W			20
+#define XYSDK_NUM_START_X			(XYSDK_ICON_START_X+XYSDK_NUM_ICON_W+XYSDK_LIST_SPACE)
+#define XYSDK_LIST_NUM_FONT			(SONG_FONT_12)
+#define XYSDK_PLAY_LIST_OFFSET			(0)
+#define XYSDK_Y_OFFSET  0   //240x280 OFFSET
+
+#endif
+
+//|---------------------------|
+//|     @   text          @   |
+//|---------------------------|
+//GUIITEM_STYLE_ONE_LINE_ICON_TEXT_ICON_XMLY,
+LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_1_icon_text_icon_xmly =
+{
+    XYSDK_LIST_H, XYSDK_LIST_H,
+
+    {
+    	{
+            0,
+            { 0, 0,  XYSDK_LIST_END,  XYSDK_LIST_H}, // normal
+            { 0, 0,  XYSDK_LIST_END ,  XYSDK_LIST_H}, // focus
+            0, 0,
+            0, 0
+        },
+        {
+            GUIITEM_CONTENT_STATE_CHECK,
+            { XYSDK_IMG_START_X+1, XYSDK_LIST_SPACE_H+1,  XYSDK_ALBUM_IMG_W + XYSDK_IMG_START_X,  XYSDK_LIST_H - XYSDK_LIST_SPACE_H}, // normal
+            { XYSDK_IMG_START_X+1, XYSDK_LIST_SPACE_H+1,  XYSDK_ALBUM_IMG_W + XYSDK_IMG_START_X ,  XYSDK_LIST_H - XYSDK_LIST_SPACE_H}, // focus
+            0, 0,
+            0, 0
+        },
+        {
+            GUIITEM_CONTENT_STATE_EFFECT_STR,
+            { XYSDK_TXT_START_X,  XYSDK_TXT_SPACE_H,  XYSDK_TXT_END_X, XYSDK_LIST_H - XYSDK_TXT_SPACE_H },
+            { XYSDK_TXT_START_X,  XYSDK_TXT_SPACE_H,  XYSDK_TXT_END_X, XYSDK_LIST_H - XYSDK_TXT_SPACE_H},
+            XYSDK_LIST_FONT, XYSDK_LIST_FONT,
+            0, 100
+        },
+        {
+            0,
+            { XYSDK_TAG_END_X-XYSDK_TAG_W, XYSDK_TAG_SPACE_H,  XYSDK_TAG_END_X,  XYSDK_LIST_H - XYSDK_TAG_SPACE_H}, // normal
+            { XYSDK_TAG_END_X-XYSDK_TAG_W, XYSDK_TAG_SPACE_H,  XYSDK_TAG_END_X ,  XYSDK_LIST_H - XYSDK_TAG_SPACE_H}, // focus
+            0, 0,
+            0, 0
+        },
+        {0},
+        {0},
+    },
+
+    2, MMILIST_INVALID_ITEM_INDEX
+};
+
+LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_1_icon_text_icon_xmly_head =
+{
+    42, 42,
+
+    {
+    	{
+            0,
+            { 0, 0,  XYSDK_LIST_END,  42}, // normal
+            { 0, 0,  XYSDK_LIST_END ,  42}, // focus
+            0, 0,
+            0, 0
+        },
+        {
+            GUIITEM_CONTENT_STATE_NONE,
+            { XYSDK_IMG_START_X+1, XYSDK_LIST_SPACE_H+1,  XYSDK_ALBUM_IMG_W + XYSDK_IMG_START_X,  42}, // normal
+            { XYSDK_IMG_START_X+1, XYSDK_LIST_SPACE_H+1,  XYSDK_ALBUM_IMG_W + XYSDK_IMG_START_X ,  42}, // focus
+            0, 0,
+            0, 0
+        },
+        {
+            GUIITEM_CONTENT_STATE_NONE,
+            { XYSDK_TXT_START_X,  XYSDK_TXT_SPACE_H,  XYSDK_TXT_END_X, 42},
+            { XYSDK_TXT_START_X,  XYSDK_TXT_SPACE_H,  XYSDK_TXT_END_X, 42},
+            XYSDK_LIST_FONT, XYSDK_LIST_FONT,
+            0, 100
+        },
+        {
+            0,
+            { XYSDK_TAG_END_X-XYSDK_TAG_W, XYSDK_TAG_SPACE_H,  XYSDK_TAG_END_X,  42}, // normal
+            { XYSDK_TAG_END_X-XYSDK_TAG_W, XYSDK_TAG_SPACE_H,  XYSDK_TAG_END_X ,  42}, // focus
+            0, 0,
+            0, 0
+        },
+        {0},
+        {0},
+    },
+
+    2, MMILIST_INVALID_ITEM_INDEX
+};
+
+
+LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_1_icon_text_icon_xmly_bottom =
+{
+    56, 56,
+
+    {
+    	{
+            0,
+            { 0, 0,  XYSDK_LIST_END,  56}, // normal
+            { 0, 0,  XYSDK_LIST_END ,  56}, // focus
+            0, 0,
+            0, 0
+        },
+        {
+            GUIITEM_CONTENT_STATE_NONE,
+            { XYSDK_IMG_START_X+1, XYSDK_LIST_SPACE_H+1,  XYSDK_ALBUM_IMG_W + XYSDK_IMG_START_X,  56 - XYSDK_LIST_SPACE_H}, // normal
+            { XYSDK_IMG_START_X+1, XYSDK_LIST_SPACE_H+1,  XYSDK_ALBUM_IMG_W + XYSDK_IMG_START_X ,  56 - XYSDK_LIST_SPACE_H}, // focus
+            0, 0,
+            0, 0
+        },
+        {
+            GUIITEM_CONTENT_STATE_NONE,
+            { XYSDK_TXT_START_X,  XYSDK_TXT_SPACE_H,  XYSDK_TXT_END_X, 56 - XYSDK_TXT_SPACE_H },
+            { XYSDK_TXT_START_X,  XYSDK_TXT_SPACE_H,  XYSDK_TXT_END_X, 56 - XYSDK_TXT_SPACE_H},
+            XYSDK_LIST_FONT, XYSDK_LIST_FONT,
+            0, 100
+        },
+        {
+            0,
+            { XYSDK_TAG_END_X-XYSDK_TAG_W, XYSDK_TAG_SPACE_H,  XYSDK_TAG_END_X,  56 - XYSDK_TAG_SPACE_H}, // normal
+            { XYSDK_TAG_END_X-XYSDK_TAG_W, XYSDK_TAG_SPACE_H,  XYSDK_TAG_END_X ,  56 - XYSDK_TAG_SPACE_H}, // focus
+            0, 0,
+            0, 0
+        },
+        {0},
+        {0},
+    },
+
+    2, MMILIST_INVALID_ITEM_INDEX
+};
+
+
+//|---------------------------|
+//|        text     text  @   |
+//|---------------------------|
+//GUIITEM_STYLE_ONE_LINE_TEXT_ICON_XMLY,
+LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_1_text_icon_xmly =
+{
+	XYSDK_LIST_H, XYSDK_LIST_H,
+
+	{
+		{
+			0,
+			{ 0, 0,  XYSDK_LIST_END,  XYSDK_LIST_H}, // normal
+			{ 0, 0,  XYSDK_LIST_END ,  XYSDK_LIST_H}, // focus
+			0, 0,
+			0, 0
+		},
+		{
+			0,
+			{ XYSDK_ICON_START_X+1, XYSDK_LIST_SPACE_2_H+XYSDK_PLAY_LIST_OFFSET,  XYSDK_NUM_ICON_W + XYSDK_ICON_START_X,  XYSDK_LIST_H - XYSDK_LIST_SPACE_2_H}, // normal
+			{ XYSDK_ICON_START_X+1, XYSDK_LIST_SPACE_2_H+XYSDK_PLAY_LIST_OFFSET,  XYSDK_NUM_ICON_W + XYSDK_ICON_START_X ,	XYSDK_LIST_H - XYSDK_LIST_SPACE_2_H}, // focus
+			XYSDK_LIST_NUM_FONT, XYSDK_LIST_NUM_FONT,
+			0, 0
+		},
+		{
+			GUIITEM_CONTENT_STATE_EFFECT_STR,
+			{ XYSDK_NUM_START_X,	XYSDK_TXT_SPACE_H,	XYSDK_TXT_L_END_X, XYSDK_LIST_H - XYSDK_TXT_SPACE_H },
+			{ XYSDK_NUM_START_X,	XYSDK_TXT_SPACE_H,	XYSDK_TXT_L_END_X, XYSDK_LIST_H - XYSDK_TXT_SPACE_H},
+			XYSDK_LIST_FONT, XYSDK_LIST_FONT,
+			0, 100
+		},
+		{
+			0,
+			{ XYSDK_TAG_L_END_X-XYSDK_TAG_L_W, XYSDK_TAG_L_SPACE_H,  XYSDK_TAG_L_END_X,  XYSDK_LIST_H - XYSDK_TAG_L_SPACE_H}, // normal
+			{ XYSDK_TAG_L_END_X-XYSDK_TAG_L_W, XYSDK_TAG_L_SPACE_H,  XYSDK_TAG_L_END_X ,  XYSDK_LIST_H - XYSDK_TAG_L_SPACE_H}, // focus
+			0, 0,
+			0, 0
+		},
+		{0},
+		{0},
+	},
+
+	2, MMILIST_INVALID_ITEM_INDEX
+};
+
+
+
+//|---------------------------|
+//|   @  @   text         @   |
+//|---------------------------|
+//GUIITEM_STYLE_ONE_LINE_ICON_ICON_TEXT_ICON_XMLY,
+LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_1_icon_icon_text_icon_xmly =
+{
+    XYSDK_LIST_H, XYSDK_LIST_H,
+
+    {
+    	{
+            0,
+            { 0, 0,  XYSDK_LIST_END,  XYSDK_LIST_H}, // normal
+            { 0, 0,  XYSDK_LIST_END ,  XYSDK_LIST_H}, // focus
+            0, 0,
+            0, 0
+        },
+        {
+            0,
+            { XYSDK_ICON_START_X+1, XYSDK_LIST_SPACE_2_H+1,  XYSDK_ALBUM_ICON_W + XYSDK_ICON_START_X,  XYSDK_LIST_H - XYSDK_LIST_SPACE_2_H}, // normal
+            { XYSDK_ICON_START_X+1, XYSDK_LIST_SPACE_2_H+1,  XYSDK_ALBUM_ICON_W + XYSDK_ICON_START_X ,  XYSDK_LIST_H - XYSDK_LIST_SPACE_2_H}, // focus
+            0, 0,
+            0, 0
+        },
+        {
+            GUIITEM_CONTENT_STATE_EFFECT_STR,
+            { XYSDK_TXT_START_2_X,  XYSDK_TXT_SPACE_H,  XYSDK_TXT_L_END_X, XYSDK_LIST_H - XYSDK_TXT_SPACE_H },
+            { XYSDK_TXT_START_2_X,  XYSDK_TXT_SPACE_H,  XYSDK_TXT_L_END_X, XYSDK_LIST_H - XYSDK_TXT_SPACE_H},
+            XYSDK_LIST_FONT, XYSDK_LIST_FONT,
+            0, 100
+        },
+        {
+            0,
+            { XYSDK_TAG_L_END_X-XYSDK_TAG_L_W, XYSDK_TAG_L_SPACE_H,  XYSDK_TAG_L_END_X,  XYSDK_LIST_H - XYSDK_TAG_L_SPACE_H}, // normal
+            { XYSDK_TAG_L_END_X-XYSDK_TAG_L_W, XYSDK_TAG_L_SPACE_H,  XYSDK_TAG_L_END_X ,  XYSDK_LIST_H - XYSDK_TAG_L_SPACE_H}, // focus
+            0, 0,
+            0, 0
+        },
+        {0},
+        {0},
+    },
+
+    2, MMILIST_INVALID_ITEM_INDEX
+};
+
+//for test icon_icon_text_text
+LOCAL THEMELIST_ITEM_STYLE_T const s_item_xmly_style_text_icon_icon_text_text=
+{
+    200, 200,
+
+    {
+		 {
+            GUIITEM_CONTENT_STATE_NONE,
+            { 11,  20,  240, 20+20+XYSDK_Y_OFFSET },
+            { 11,  20,  240, 20+20+XYSDK_Y_OFFSET},
+            XYSDK_LIST_FONT, XYSDK_LIST_FONT,
+            0, 100
+        },
+        {
+            GUIITEM_CONTENT_STATE_NONE,
+            { 11, 32+20+XYSDK_Y_OFFSET,  114,  136+20+XYSDK_Y_OFFSET}, // normal
+            { 11, 32+20+XYSDK_Y_OFFSET,  114,  136+20+XYSDK_Y_OFFSET}, // focus
+            0, 0,
+            0, 0
+        },
+        {
+            GUIITEM_CONTENT_STATE_NONE,
+            { 11+104+10,  32+20+XYSDK_Y_OFFSET,  229, 136+20+XYSDK_Y_OFFSET},
+            { 11+104+10,  32+20+XYSDK_Y_OFFSET,  229, 136+20+XYSDK_Y_OFFSET},
+            0, 0,
+            0, 0
+        },
+        {
+            GUIITEM_CONTENT_STATE_NONE,
+            { 11,  142+20+XYSDK_Y_OFFSET,  104+11, 160+20+XYSDK_Y_OFFSET+5},
+            { 11,  142+20+XYSDK_Y_OFFSET,  104+11, 160+20+XYSDK_Y_OFFSET+5},
+            XYSDK_LIST_FONT, XYSDK_LIST_FONT,
+            0, 100
+        },
+        {
+            GUIITEM_CONTENT_STATE_NONE,
+            { 11+104+10,  142+20+XYSDK_Y_OFFSET,  218+11, 160+20+XYSDK_Y_OFFSET+5},
+            { 11+104+10,  142+20+XYSDK_Y_OFFSET,  218+11, 160+20+XYSDK_Y_OFFSET+5},
+            XYSDK_LIST_FONT, XYSDK_LIST_FONT,
+            0, 100
+        },
+
+  
+    },
+
+    2, MMILIST_INVALID_ITEM_INDEX
+};
+
+//for test icon_icon_text_text
+LOCAL THEMELIST_ITEM_STYLE_T const s_item_xmly_style_icon_icon_text_text =
+{
+    160, 160,
+
+    {
+    
+        {
+            GUIITEM_CONTENT_STATE_NONE,
+            { 11, 12+XYSDK_Y_OFFSET,  114,  104+12+XYSDK_Y_OFFSET}, // normal
+            { 11, 12+XYSDK_Y_OFFSET,  114,  104+12+XYSDK_Y_OFFSET}, // focus
+            0, 0,
+            0, 0
+        },
+        {
+            GUIITEM_CONTENT_STATE_NONE,
+            { 11+104+10,  12+XYSDK_Y_OFFSET,  229, 104+12+XYSDK_Y_OFFSET},
+            { 11+104+10,  12+XYSDK_Y_OFFSET,  229, 104+12+XYSDK_Y_OFFSET},
+            0, 0,
+            0, 0
+        },
+        {
+            GUIITEM_CONTENT_STATE_NONE,
+            { 11,  104+12+XYSDK_Y_OFFSET,  104+11, 142+12+XYSDK_Y_OFFSET+5},
+            { 11,  104+12+XYSDK_Y_OFFSET,  104+11, 142+12+XYSDK_Y_OFFSET+5},
+            XYSDK_LIST_FONT, XYSDK_LIST_FONT,
+            0, 100
+        },
+         {
+            GUIITEM_CONTENT_STATE_NONE,
+            { 11+104+10,  104+12+XYSDK_Y_OFFSET,  218+11, 142+12+XYSDK_Y_OFFSET+5 },
+            { 11+104+10,  104+12+XYSDK_Y_OFFSET,  218+11, 142+12+XYSDK_Y_OFFSET+5},
+            XYSDK_LIST_FONT, XYSDK_LIST_FONT,
+            0, 100
+        },
+        {0},
+        {0},
+    },
+
+    2, MMILIST_INVALID_ITEM_INDEX
+};
+
+
+//for test icon_icon_text_text
+LOCAL THEMELIST_ITEM_STYLE_T const s_item_xmly_style_icon_icon_icon_text =
+{
+    91, 91,
+
+    {
+    	{
+            0,
+            { 15, 15,  15+16,  15+16}, // normal
+            { 15, 15,  15+16 ,  15+16}, // focus
+            0, 0,
+            0, 0
+        },
+    	{
+            0,
+            { 15+16+5, 16,  15+16+5+192,  16+16}, // normal
+            { 15+16+5, 16,  15+16+5+192 ,  16+16}, // focus
+            0, 0,
+            0, 0
+        },
+    	{
+            0,
+            { 10, 16+16+17,  180,  36+16+16+17}, // normal
+            { 10, 16+16+17,  180 ,  36+16+16+17}, // focus
+            0, 0,
+            0, 0
+        },
+         {
+            GUIITEM_CONTENT_STATE_NONE,
+            { 19,  16+16+17+3,  19+30, 16+16+17+3+30 },
+            { 19,  16+16+17+3,  19+30, 16+16+17+3+30},
+            0, 0,
+            0, 0
+        },
+        {
+            GUIITEM_CONTENT_STATE_NONE,
+            { 187, 45,  187+45,  46+45}, // normal
+            { 187, 45,  187+45,  46+45}, // focus
+            0, 0,
+            0, 0
+        },
+         {
+            GUIITEM_CONTENT_STATE_EFFECT_STR,
+            { 55,  16+16+17+6,  55+110, 30+16+16+17+3},
+            { 55,  16+16+17+6,  55+110, 30+16+16+17+3},
+            SONG_FONT_12, SONG_FONT_12,
+            0, 100
+        },
+    },
+
+    2, MMILIST_INVALID_ITEM_INDEX
+};
+
+// GUIITEM_STYLE_ONE_LINE_ICON_ICON_TEXT_ICON_HISTORY
+
+LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_1_icon_icon_text_icon_history =
+{
+    XYSDK_LIST_H, XYSDK_LIST_H,
+
+    {
+    	{
+            0,
+            { 0, 0,  XYSDK_LIST_END,  XYSDK_LIST_H}, // normal
+            { 0, 0,  XYSDK_LIST_END ,  XYSDK_LIST_H}, // focus
+            0, 0,
+            0, 0
+        },
+        {
+            0,
+            { 8+11+5, (XYSDK_LIST_H-42)/2,  42 + 8+11+5,  XYSDK_LIST_H-(XYSDK_LIST_H-42)/2}, // normal
+            { 8+11+5, (XYSDK_LIST_H-42)/2,  42 + 8+11+5 ,  XYSDK_LIST_H-(XYSDK_LIST_H-42)/2}, // focus
+            0, 0,
+            0, 0
+        },
+        {
+            GUIITEM_CONTENT_STATE_EFFECT_STR,
+            { 42 + 8+11+ 6+5,  XYSDK_TXT_SPACE_H,  XYSDK_TXT_L_END_X+10, XYSDK_LIST_H - XYSDK_TXT_SPACE_H },
+            { 42 + 8+11+ 6+5,  XYSDK_TXT_SPACE_H,  XYSDK_TXT_L_END_X+10, XYSDK_LIST_H - XYSDK_TXT_SPACE_H},
+            XYSDK_LIST_FONT, XYSDK_LIST_FONT,
+            0, 100
+        },
+        {
+            0,
+            { XYSDK_TAG_L_END_X-XYSDK_TAG_L_W, XYSDK_TAG_L_SPACE_H,  XYSDK_TAG_L_END_X,  XYSDK_LIST_H - XYSDK_TAG_L_SPACE_H}, // normal
+            { XYSDK_TAG_L_END_X-XYSDK_TAG_L_W, XYSDK_TAG_L_SPACE_H,  XYSDK_TAG_L_END_X ,  XYSDK_LIST_H - XYSDK_TAG_L_SPACE_H}, // focus
+            0, 0,
+            0, 0
+        },
+        {0},
+        {0},
+    },
+
+    2, MMILIST_INVALID_ITEM_INDEX
+};
+
+
+#endif
 
 #ifndef MMI_THEME_LIST_MINI_SUPPORT
 //|---------------------------|
@@ -440,256 +925,7 @@ LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_1_icon_text =
     1, MMILIST_INVALID_ITEM_INDEX
 };
 
-#ifdef XYSDK_SUPPORT
 
-#if 1
-#define XYSDK_LIST_H			66
-#define XYSDK_ALBUM_IMG_W		42
-#define XYSDK_ALBUM_IMG_H		42
-#define XYSDK_IMG_START_X		30
-#define XYSDK_LIST_SPACE		4
-#define XYSDK_LIST_SPACE_H		((XYSDK_LIST_H-XYSDK_ALBUM_IMG_H)/2)
-#define XYSDK_TXT_START_X		(XYSDK_IMG_START_X+XYSDK_ALBUM_IMG_W+XYSDK_LIST_SPACE)
-#define XYSDK_LIST_END			236
-#define XYSDK_TAG_H				16
-#define XYSDK_TAG_W				10
-#define XYSDK_TAG_SPACE_H		((XYSDK_LIST_H-XYSDK_TAG_H)/2)
-#define XYSDK_TAG_END_X			210
-#define XYSDK_LIST_FONT			(SONG_FONT_18)
-#define XYSDK_LIST_FONT_H		(30)
-#define XYSDK_TXT_SPACE_H		((XYSDK_LIST_H-XYSDK_LIST_FONT_H)/2)
-#define XYSDK_TXT_END_X			(XYSDK_TAG_END_X-XYSDK_TAG_W-XYSDK_LIST_SPACE*2)
-
-
-#define XYSDK_ICON_START_X		22
-#define XYSDK_ALBUM_ICON_W		18
-#define XYSDK_ALBUM_ICON_H		18
-#define XYSDK_TAG_L_H			26
-#define XYSDK_TAG_L_W			26
-#define XYSDK_TAG_L_END_X			222
-#define XYSDK_LIST_SPACE_2_H		((XYSDK_LIST_H-XYSDK_ALBUM_ICON_H)/2) - 6
-#define XYSDK_TXT_START_2_X		(XYSDK_ICON_START_X+XYSDK_ALBUM_ICON_W+XYSDK_LIST_SPACE)
-#define XYSDK_TAG_L_SPACE_H		((XYSDK_LIST_H-XYSDK_TAG_L_H)/2)
-#define XYSDK_TXT_L_END_X			(XYSDK_TAG_L_END_X-XYSDK_TAG_L_W-XYSDK_LIST_SPACE*2)
-
-
-#define XYSDK_NUM_ICON_W			39
-#define XYSDK_NUM_START_X			(XYSDK_ICON_START_X+XYSDK_NUM_ICON_W+XYSDK_LIST_SPACE)
-#define XYSDK_LIST_NUM_FONT			(SONG_FONT_14)
-
-#else
-
-#define XYSDK_LIST_H			35
-#define XYSDK_ALBUM_IMG_W		22
-#define XYSDK_ALBUM_IMG_H		22
-#define XYSDK_IMG_START_X		16
-#define XYSDK_LIST_SPACE		2
-#define XYSDK_LIST_SPACE_H		((XYSDK_LIST_H-XYSDK_ALBUM_IMG_H)/2)
-#define XYSDK_TXT_START_X		(XYSDK_IMG_START_X+XYSDK_ALBUM_IMG_W+XYSDK_LIST_SPACE)
-#define XYSDK_LIST_END			125
-#define XYSDK_TAG_H				8
-#define XYSDK_TAG_W				5
-#define XYSDK_TAG_SPACE_H		((XYSDK_LIST_H-XYSDK_TAG_H)/2)
-#define XYSDK_TAG_END_X			111
-#define XYSDK_LIST_FONT			(SONG_FONT_14)
-#define XYSDK_LIST_FONT_H		(14)
-#define XYSDK_TXT_SPACE_H		((XYSDK_LIST_H-XYSDK_LIST_FONT_H)/2)
-#define XYSDK_TXT_END_X			(XYSDK_TAG_END_X-XYSDK_TAG_W-XYSDK_LIST_SPACE*2)
-
-
-#define XYSDK_ICON_START_X		12
-#define XYSDK_ALBUM_ICON_W		10
-#define XYSDK_ALBUM_ICON_H		10
-#define XYSDK_TAG_L_H			14
-#define XYSDK_TAG_L_W			14
-#define XYSDK_TAG_L_END_X			118
-#define XYSDK_LIST_SPACE_2_H		((XYSDK_LIST_H-XYSDK_ALBUM_ICON_H)/2) - 3
-#define XYSDK_TXT_START_2_X		(XYSDK_ICON_START_X + XYSDK_ALBUM_ICON_W + XYSDK_LIST_SPACE)
-#define XYSDK_TAG_L_SPACE_H		((XYSDK_LIST_H-XYSDK_TAG_L_H)/2)
-#define XYSDK_TXT_L_END_X			(XYSDK_TAG_L_END_X-XYSDK_TAG_L_W-XYSDK_LIST_SPACE*2)
-
-
-#define XYSDK_NUM_ICON_W			30
-#define XYSDK_NUM_START_X			(XYSDK_ICON_START_X+XYSDK_NUM_ICON_W+XYSDK_LIST_SPACE)
-#define XYSDK_LIST_NUM_FONT			(SONG_FONT_8)
-
-#endif
-
-//|---------------------------|
-//|     @   text          @   |
-//|---------------------------|
-//GUIITEM_STYLE_ONE_LINE_ICON_TEXT_ICON_XMLY,
-LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_1_icon_text_icon_xmly =
-{
-    XYSDK_LIST_H, XYSDK_LIST_H,
-
-    {
-    	{
-            0,
-            { 0, 0,  XYSDK_LIST_END,  XYSDK_LIST_H}, // normal
-            { 0, 0,  XYSDK_LIST_END ,  XYSDK_LIST_H}, // focus
-            0, 0,
-            0, 0
-        },
-        {
-            GUIITEM_CONTENT_STATE_CHECK,
-            { XYSDK_IMG_START_X+1, XYSDK_LIST_SPACE_H+1,  XYSDK_ALBUM_IMG_W + XYSDK_IMG_START_X,  XYSDK_LIST_H - XYSDK_LIST_SPACE_H}, // normal
-            { XYSDK_IMG_START_X+1, XYSDK_LIST_SPACE_H+1,  XYSDK_ALBUM_IMG_W + XYSDK_IMG_START_X ,  XYSDK_LIST_H - XYSDK_LIST_SPACE_H}, // focus
-            0, 0,
-            0, 0
-        },
-        {
-            GUIITEM_CONTENT_STATE_EFFECT_STR,
-            { XYSDK_TXT_START_X,  XYSDK_TXT_SPACE_H,  XYSDK_TXT_END_X, XYSDK_LIST_H - XYSDK_TXT_SPACE_H },
-            { XYSDK_TXT_START_X,  XYSDK_TXT_SPACE_H,  XYSDK_TXT_END_X, XYSDK_LIST_H - XYSDK_TXT_SPACE_H},
-            XYSDK_LIST_FONT, XYSDK_LIST_FONT,
-            0, 100
-        },
-        {
-            0,
-            { XYSDK_TAG_END_X-XYSDK_TAG_W, XYSDK_TAG_SPACE_H,  XYSDK_TAG_END_X,  XYSDK_LIST_H - XYSDK_TAG_SPACE_H}, // normal
-            { XYSDK_TAG_END_X-XYSDK_TAG_W, XYSDK_TAG_SPACE_H,  XYSDK_TAG_END_X ,  XYSDK_LIST_H - XYSDK_TAG_SPACE_H}, // focus
-            0, 0,
-            0, 0
-        },
-        {0},
-        {0},
-    },
-
-    2, MMILIST_INVALID_ITEM_INDEX
-};
-
-LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_1_icon_text_icon_xmly2 =
-{
-    XYSDK_LIST_H, XYSDK_LIST_H,
-
-    {
-    	{
-            0,
-            { 0, 0,  XYSDK_LIST_END,  XYSDK_LIST_H}, // normal
-            { 0, 0,  XYSDK_LIST_END ,  XYSDK_LIST_H}, // focus
-            0, 0,
-            0, 0
-        },
-        {
-            GUIITEM_CONTENT_STATE_NONE,
-            { XYSDK_IMG_START_X+1, XYSDK_LIST_SPACE_H+1,  XYSDK_ALBUM_IMG_W + XYSDK_IMG_START_X,  XYSDK_LIST_H - XYSDK_LIST_SPACE_H}, // normal
-            { XYSDK_IMG_START_X+1, XYSDK_LIST_SPACE_H+1,  XYSDK_ALBUM_IMG_W + XYSDK_IMG_START_X ,  XYSDK_LIST_H - XYSDK_LIST_SPACE_H}, // focus
-            0, 0,
-            0, 0
-        },
-        {
-            GUIITEM_CONTENT_STATE_NONE,
-            { XYSDK_TXT_START_X,  XYSDK_TXT_SPACE_H,  XYSDK_TXT_END_X, XYSDK_LIST_H - XYSDK_TXT_SPACE_H },
-            { XYSDK_TXT_START_X,  XYSDK_TXT_SPACE_H,  XYSDK_TXT_END_X, XYSDK_LIST_H - XYSDK_TXT_SPACE_H},
-            XYSDK_LIST_FONT, XYSDK_LIST_FONT,
-            0, 100
-        },
-        {
-            0,
-            { XYSDK_TAG_END_X-XYSDK_TAG_W, XYSDK_TAG_SPACE_H,  XYSDK_TAG_END_X,  XYSDK_LIST_H - XYSDK_TAG_SPACE_H}, // normal
-            { XYSDK_TAG_END_X-XYSDK_TAG_W, XYSDK_TAG_SPACE_H,  XYSDK_TAG_END_X ,  XYSDK_LIST_H - XYSDK_TAG_SPACE_H}, // focus
-            0, 0,
-            0, 0
-        },
-        {0},
-        {0},
-    },
-
-    2, MMILIST_INVALID_ITEM_INDEX
-};
-
-
-//|---------------------------|
-//|        text     text  @   |
-//|---------------------------|
-//GUIITEM_STYLE_ONE_LINE_TEXT_ICON_XMLY,
-LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_1_text_icon_xmly =
-{
-	XYSDK_LIST_H, XYSDK_LIST_H,
-
-	{
-		{
-			0,
-			{ 0, 0,  XYSDK_LIST_END,  XYSDK_LIST_H}, // normal
-			{ 0, 0,  XYSDK_LIST_END ,  XYSDK_LIST_H}, // focus
-			0, 0,
-			0, 0
-		},
-		{
-			0,
-			{ XYSDK_ICON_START_X+1, XYSDK_LIST_SPACE_2_H,  XYSDK_NUM_ICON_W + XYSDK_ICON_START_X,  XYSDK_LIST_H - XYSDK_LIST_SPACE_2_H}, // normal
-			{ XYSDK_ICON_START_X+1, XYSDK_LIST_SPACE_2_H,  XYSDK_NUM_ICON_W + XYSDK_ICON_START_X ,	XYSDK_LIST_H - XYSDK_LIST_SPACE_2_H}, // focus
-			XYSDK_LIST_NUM_FONT, XYSDK_LIST_NUM_FONT,
-			0, 0
-		},
-		{
-			GUIITEM_CONTENT_STATE_EFFECT_STR,
-			{ XYSDK_NUM_START_X,	XYSDK_TXT_SPACE_H,	XYSDK_TXT_L_END_X, XYSDK_LIST_H - XYSDK_TXT_SPACE_H },
-			{ XYSDK_NUM_START_X,	XYSDK_TXT_SPACE_H,	XYSDK_TXT_L_END_X, XYSDK_LIST_H - XYSDK_TXT_SPACE_H},
-			XYSDK_LIST_FONT, XYSDK_LIST_FONT,
-			0, 100
-		},
-		{
-			0,
-			{ XYSDK_TAG_L_END_X-XYSDK_TAG_L_W, XYSDK_TAG_L_SPACE_H,  XYSDK_TAG_L_END_X,  XYSDK_LIST_H - XYSDK_TAG_L_SPACE_H}, // normal
-			{ XYSDK_TAG_L_END_X-XYSDK_TAG_L_W, XYSDK_TAG_L_SPACE_H,  XYSDK_TAG_L_END_X ,  XYSDK_LIST_H - XYSDK_TAG_L_SPACE_H}, // focus
-			0, 0,
-			0, 0
-		},
-		{0},
-		{0},
-	},
-
-	2, MMILIST_INVALID_ITEM_INDEX
-};
-
-
-
-//|---------------------------|
-//|   @  @   text         @   |
-//|---------------------------|
-//GUIITEM_STYLE_ONE_LINE_ICON_ICON_TEXT_ICON_XMLY,
-LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_1_icon_icon_text_icon_xmly =
-{
-    XYSDK_LIST_H, XYSDK_LIST_H,
-
-    {
-    	{
-            0,
-            { 0, 0,  XYSDK_LIST_END,  XYSDK_LIST_H}, // normal
-            { 0, 0,  XYSDK_LIST_END ,  XYSDK_LIST_H}, // focus
-            0, 0,
-            0, 0
-        },
-        {
-            0,
-            { XYSDK_ICON_START_X+1, XYSDK_LIST_SPACE_2_H+1,  XYSDK_ALBUM_ICON_W + XYSDK_ICON_START_X,  XYSDK_LIST_H - XYSDK_LIST_SPACE_2_H}, // normal
-            { XYSDK_ICON_START_X+1, XYSDK_LIST_SPACE_2_H+1,  XYSDK_ALBUM_ICON_W + XYSDK_ICON_START_X ,  XYSDK_LIST_H - XYSDK_LIST_SPACE_2_H}, // focus
-            0, 0,
-            0, 0
-        },
-        {
-            GUIITEM_CONTENT_STATE_EFFECT_STR,
-            { XYSDK_TXT_START_2_X,  XYSDK_TXT_SPACE_H,  XYSDK_TXT_L_END_X, XYSDK_LIST_H - XYSDK_TXT_SPACE_H },
-            { XYSDK_TXT_START_2_X,  XYSDK_TXT_SPACE_H,  XYSDK_TXT_L_END_X, XYSDK_LIST_H - XYSDK_TXT_SPACE_H},
-            XYSDK_LIST_FONT, XYSDK_LIST_FONT,
-            0, 100
-        },
-        {
-            0,
-            { XYSDK_TAG_L_END_X-XYSDK_TAG_L_W, XYSDK_TAG_L_SPACE_H,  XYSDK_TAG_L_END_X,  XYSDK_LIST_H - XYSDK_TAG_L_SPACE_H}, // normal
-            { XYSDK_TAG_L_END_X-XYSDK_TAG_L_W, XYSDK_TAG_L_SPACE_H,  XYSDK_TAG_L_END_X ,  XYSDK_LIST_H - XYSDK_TAG_L_SPACE_H}, // focus
-            0, 0,
-            0, 0
-        },
-        {0},
-        {0},
-    },
-
-    2, MMILIST_INVALID_ITEM_INDEX
-};
-#endif
 
 #ifdef _SW_ZDT_PRODUCT_
 //GUIITEM_STYLE_TWO_LINE_TEXT_AND_TEXT_BIGICON
@@ -6349,9 +6585,14 @@ LOCAL THEMELIST_STYLE_TABLE_T const s_style_table[] =
 #endif
 #ifdef XYSDK_SUPPORT
     {GUIITEM_STYLE_ONE_LINE_ICON_TEXT_ICON_XMLY, &s_item_style_1_icon_text_icon_xmly},
-    {GUIITEM_STYLE_ONE_LINE_ICON_TEXT_ICON_XMLY2, &s_item_style_1_icon_text_icon_xmly2},
+    {GUIITEM_STYLE_ONE_LINE_ICON_TEXT_ICON_XMLY_VOICE_HEAD, &s_item_style_1_icon_text_icon_xmly_head},
+    {GUIITEM_STYLE_ONE_LINE_ICON_TEXT_ICON_XMLY_VOICE_BOTTOM, &s_item_style_1_icon_text_icon_xmly_bottom},
     {GUIITEM_STYLE_ONE_LINE_TEXT_ICON_XMLY, &s_item_style_1_text_icon_xmly},
     {GUIITEM_STYLE_ONE_LINE_ICON_ICON_TEXT_ICON_XMLY, &s_item_style_1_icon_icon_text_icon_xmly},
+    {GUIITEM_STYLE_ONE_LINE_TEXT_ICON_ICON_TEXT_TEXT, &s_item_xmly_style_text_icon_icon_text_text},
+    {GUIITEM_STYLE_ONE_LINE_ICON_ICON_TEXT_TEXT, &s_item_xmly_style_icon_icon_text_text},
+    {GUIITEM_STYLE_ONE_LINE_ICON_ICON_ICON_TEXT, &s_item_xmly_style_icon_icon_icon_text},
+    {GUIITEM_STYLE_ONE_LINE_ICON_ICON_TEXT_ICON_HISTORY, &s_item_style_1_icon_icon_text_icon_history},
 #endif
 
 	{GUIITEM_STYLE_TWO_TEXT_AND_ONE_ICON_MS, &s_item_style_2_text_and_1_icon_ms},

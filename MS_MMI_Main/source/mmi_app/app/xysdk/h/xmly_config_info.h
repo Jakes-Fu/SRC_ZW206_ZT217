@@ -37,6 +37,9 @@ PUBLIC void mmixysdk_api_get_appsecret(char *appsecret);
 
 /*获取SN*/
 PUBLIC void mmixysdk_api_get_sn(char *sn);
+
+/*获取频道ID*/
+PUBLIC void mmixysdk_api_get_ch_id(char *chid);
 /*----------------------------------------------------------------------------*/
 /*                         Compiler Flag                                      */
 /*----------------------------------------------------------------------------*/
