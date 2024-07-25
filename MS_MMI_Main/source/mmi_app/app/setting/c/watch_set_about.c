@@ -62,7 +62,7 @@
 #define WATCH_MODE_MANUF        ZDT_SFR_MANUF
 #define WATCH_MODE_NAME        ZDT_SFR_TYPE
 #define WATCH_HARDWARE_VERSION  ZDT_SFR_HW_VER
-#define WATCH_SOFTWARE_VERSION  ZDT_SFR_SW_VER
+#define WATCH_SOFTWARE_VERSION  ZDT_CTA_SW_VER
 
 #ifdef ZTE_WATCH
 
@@ -178,7 +178,10 @@ LOCAL void Settings_About_OPEN_WINDOW( MMI_WIN_ID_T win_id )
         }
     }
     #endif
-
+    MMIAPICOM_StrcatFromTextIDToUCS2(pDisplayWStr,&displayWStrLen,TXT_STRING_VERSION);
+    MMIAPICOM_StrcatFromSTRINGToUCS2(pDisplayWStr, &displayWStrLen, &newLineStr);//»»ÐÐ
+    MMIAPICOM_StrcatFromStrToUCS2(pDisplayWStr, &displayWStrLen, ZDT_SFR_SW_VER, strlen(ZDT_SFR_SW_VER));
+    MMIAPICOM_StrcatFromSTRINGToUCS2(pDisplayWStr, &displayWStrLen, &newLineStr);//»»ÐÐ		
 		
 		
     // SwVersionInfo(content_text);
@@ -305,7 +308,7 @@ LOCAL void Settings_About_OPEN_WINDOW( MMI_WIN_ID_T win_id )
         }
     }
 #endif		
-		
+   
     // SwVersionInfo(content_text);
     //yangyu add
     //MMI_GetLabelTextByLang(TXT_WATCH_SOFTWARE_VERSION, &title_str);
