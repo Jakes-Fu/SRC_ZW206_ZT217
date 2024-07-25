@@ -1495,10 +1495,6 @@ ifeq ($(strip $(FOTA_SUPPORT)), ABUP)
 3RD_LIBS           +=Third-party/abup/lib/abupfota.a
 endif
 
-ifeq ($(strip $(FOTA_SUPPORT)), CMIOT)
-3RD_LIBS +=Third-party/oneos/ota/cmiot/source/lib/oneos_ota_core.a
-endif
-
 ifeq ($(strip $(LEBAO_MUSIC_SUPPORT)), TRUE)
         ifeq ($(strip $(RELEASE_INFO)), TRUE)
 	3RD_LIBS         +=	Third-party/lebao/release/lebao_217w.a

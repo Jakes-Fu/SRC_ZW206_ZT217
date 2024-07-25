@@ -41,7 +41,7 @@ int nor_flash_read(unsigned int addr, unsigned char *buf, unsigned int size)
 int nor_flash_write(unsigned int addr, unsigned char *buf, unsigned int size)
 {
     unsigned int len = FDL_FlashWriteArea(addr, buf, size);
-    //OS_FLASH_LOG("nor flash write addr[%08x], buf[%08x] size[%08x],ret = %08x\r\n",addr, buf, size, len);
+    OS_FLASH_LOG("nor flash write addr[%08x], buf[%08x] size[%08x],ret = %08x\r\n",addr, buf, size, len);
     if (len ==size)
     {
         return len;
@@ -57,16 +57,16 @@ int nor_flash_erase(unsigned int addr, unsigned int size)
     unsigned int ret = 0;
     unsigned int remain_size = size;
     unsigned int block_size = s_platform_patitiion_config.sect_size;
-    //OS_FLASH_LOG("nor flash erase addr[%08x], size[%08x]\r\n",addr, size);
+    OS_FLASH_LOG("nor flash erase addr[%08x], size[%08x]\r\n",addr, size);
 
     unsigned int offset = addr & (block_size - 1);
     unsigned int aligned_addr = addr  - offset;
-    //OS_FLASH_LOG("aligned_addr[%08x]\r\n", aligned_addr);
+    OS_FLASH_LOG("aligned_addr[%08x]\r\n", aligned_addr);
 
     ret = FDL_FlashErase_Block(aligned_addr, block_size);
     if (ret == 1)
     {
-        //OS_FLASH_LOG("nor flash erase addr ok[%08x], size[%08x]\r\n",aligned_addr, block_size);
+        OS_FLASH_LOG("nor flash erase addr ok[%08x], size[%08x]\r\n",aligned_addr, block_size);
         return 0;
     }
     else
@@ -75,7 +75,7 @@ int nor_flash_erase(unsigned int addr, unsigned int size)
         return -1;
     }
 
-    //OS_FLASH_LOG("nor flash erase addr[%08x], size[%x],ret = %x\r\n",addr, size, ret);
+    OS_FLASH_LOG("nor flash erase addr[%08x], size[%x],ret = %x\r\n",addr, size, ret);
 
     return 0;
 }

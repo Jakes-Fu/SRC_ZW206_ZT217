@@ -317,6 +317,13 @@ endif
 #INDEPENDENT += dsp
 #endif
 
+ifeq ($(strip $(FOTA_SUPPORT)), CMIOT)
+EXPORTLIBS += oneos_cms_core
+EXPORTLIBS += oneos_avc_license
+EXPORTLIBS += oneos_license_service
+EXPORTLIBS += oneos_ota_core
+endif
+
 ifeq ($(strip $(BAIDU_VIDEOCHAT_SUPPORT)), TRUE)
 else
 ifeq ($(strip $(VIDEO_CALL_AGORA_SUPPORT)), TRUE)
@@ -479,7 +486,7 @@ COMPLIBS_DBG   += abup
 endif
 
 ifeq ($(strip $(FOTA_SUPPORT)), CMIOT)
-COMPLIBS_DBG   += oneos oneos_ota_api
+COMPLIBS_DBG += oneos_cms_config  oneos_ota_api oneos
 endif
 
 ifeq ($(strip $(BAIDU_AI_SUPPORT)), TRUE)

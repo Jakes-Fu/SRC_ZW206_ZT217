@@ -21,56 +21,11 @@
  ***********************************************************************************************************************
  */
 #include "os_types.h"
-#include "os_errno.h"
 #include "sys/socket.h"
 #include "netdb.h"
 #include "app_tcp_if.h"
-#include "ssl_api.h"
-#include "os_api.h"
-#include "mmi_module.h"
-#include "mmipdp_export.h"
-#include "IN_Message.h"
 
-typedef struct
-{
-    SIGNAL_VARS
-    // uint32 decrypt_buf;
-    uint32 decrypt_len;
-} os_sock_sig;
-
-typedef struct
-{
-    uint32 app_moduleId;  //Input: reference mmi_res_prj_def.h,
-    int sock_handle;  //Output
-    struct sci_sockaddr sock_addr; //Output
-    // struct sci_sockaddr6 sock_addr6;
-    SSL_HANDLE ssl_handle;//Output
-    BLOCK_ID thread_id;
-    // int simId;   //Input: 0 -sim 1
-    // uint32 net_id;  //Output,Network Interface, come from PDP actived, we can get  IP/IP mask, DNS
-    // BOOLEAN application_send_done;
-    BOOLEAN ssl_handshake_done; //Output:TRUE - TLS handshake has succeeded.
-    // BOOLEAN ServerIsIPv6; //TRUE: ipv6
-    char* recvbuf; //Application layer
-    uint32 recvlen;
-}mmidemo_ssl_recorder_t;
-LOCAL mmidemo_ssl_recorder_t g_mmidemo_ssl_recorder = {0};
-
-// init
-void os_sock_init(void)
-{
-    // SSL_Init();
-    // memset(&g_sock_list, 0, sizeof(os_sock_list_t));
-    memset(&g_mmidemo_ssl_recorder, 0, sizeof(mmidemo_ssl_recorder_t));
-    //MMI has many app module, we just use MMI_MODULE_COMMON for test,
-    //Note, maybe we must create a new app.
-    g_mmidemo_ssl_recorder.app_moduleId = MMI_MODULE_COMMON;
-
-    g_mmidemo_ssl_recorder.sock_handle = -1;
-    g_mmidemo_ssl_recorder.ssl_handle = -1;
-    g_mmidemo_ssl_recorder.ssl_handshake_done = FALSE;
-}
-
+// extern uint32 MMIAPIPDP_GetPublicPdpLinkNetid(void);
 int os_socket(int domain, int type, int protocol)
 {
     int sci_domain = domain;
@@ -81,10 +36,8 @@ int os_socket(int domain, int type, int protocol)
     {
         sci_protocol = 0;
     }
-    os_sock_init();
-    int fd = sci_sock_socket(sci_domain, sci_type, sci_protocol, (TCPIP_NETID_T)cmiot_net_get_netid());
-    g_mmidemo_ssl_recorder.sock_handle = fd;
-    g_mmidemo_ssl_recorder.thread_id = SCI_IdentifyThread();
+
+    int fd = sci_sock_socket(sci_domain, sci_type, sci_protocol, 0);
     SCI_TRACE_LOW("oneos:sci_domain=%d, sci_type=%d, sci_protocol=%d, fd=0x%x", sci_domain, sci_type, sci_protocol, fd);
     return fd;
 }
@@ -93,301 +46,60 @@ int os_closesocket(int fd)
 {
     TCPIP_SOCKET_T sci_so = (TCPIP_SOCKET_T)fd;
     SCI_TRACE_LOW("oneos:os_closesocket fd=0x%x", fd);
-    SSL_HANDLE sslh = g_mmidemo_ssl_recorder.ssl_handle; //os_sock_get_sslhandler(fd);
-    SSL_Close(sslh, SSL_ASYNC);
-    // os_sock_ssldel(fd);
     return sci_sock_socketclose(sci_so);
-}
-
-void sktPostMessage(void* handle, uint32 msg)
-{
-    if(NULL == handle)
-    {
-        SCI_TRACE_LOW("oneos:sktPostMessage parameters fail");
-        return ;
-    }
-    SCI_TRACE_LOW("oneos:sktPostMessage handle=0x%x, msg=%u", (uint32)handle, msg);
-    switch (msg)
-    {
-        case SSL_SEND_MESSAGE_HANDSHAKE_SUCC:  // 握手成功
-            {
-                g_mmidemo_ssl_recorder.ssl_handshake_done = TRUE;
-                //http handle this case according to its state
-                SCI_TRACE_LOW("oneos:sktPostMessage HANDSHAKE_SUCC");
-            }
-            break;
-
-        case SSL_SEND_MESSAGE_FAIL: //发送失败
-            {
-                //http handle this case according to its state
-                SCI_TRACE_LOW("oneos:sktPostMessage SEND_MESSAGE_FAIL");
-            }
-            break;
-
-        case SSL_RECV_MESSAGE_SEND_SUCC: /*up layer has send encrypted data succ*/
-            // SSL_EncryptPasser(SSL_HANDLE ssl_handle, uint8 * data_ptr, uint32 len)
-            SCI_TRACE_LOW("oneos:sktPostMessage RECV_MESSAGE_SEND_SUCC, TLS send ok");
-            break;
-
-        case SSL_RECV_MESSAGE_RECV_SUCC:  //接收成功
-            // SSL_DecryptPasser((HX_SALE_SSL_INSTANCE *)httpmachine_ptr->hSSL, RecvBuf, RecvDateLenn);
-            SCI_TRACE_LOW("oneos:sktPostMessage RECV_MESSAGE_RECV_SUCC");
-            break;
-
-        case SSL_SEND_MESSAGE_CLOSE_BY_SERVER:   //服务器发送关闭
-            {
-                SCI_TRACE_LOW("oneos:sktPostMessage SEND_MESSAGE_CLOSE_BY_SERVER");
-            }
-            break;
-
-        case SSL_SEND_MESSAGE_CANCLED_BY_USER: // 证书出现问题
-            {
-                //http handle this case according to its state
-                SCI_TRACE_LOW("oneos:sktPostMessage SSEND_MESSAGE_CANCLED_BY_USER");
-            }
-            break;
-
-        default:
-            SCI_TRACE_LOW("oneos:sktPostMessage default");
-            break;
-    }
-}
-
-void sktDecryptDataOutput(void* handle, uint8* buf, uint32 len)
-{
-
-    SCI_TRACE_LOW("[oneos: len=%u------------>]%s       %d\n", len, __FUNCTION__,__LINE__);
-    SCI_TRACE_LOW("buf=%s", buf);
-
-    if (g_mmidemo_ssl_recorder.ssl_handshake_done == FALSE)
-    {
-        SCI_TRACE_LOW("[oneos: tls handshaking....]%s     %d\n",__FUNCTION__,__LINE__);
-        return;
-    }
-
-    os_sock_sig *signal_ptr = NULL;
-    signal_ptr = malloc(sizeof(os_sock_sig));
-    if (signal_ptr != NULL)
-    {
-        if (g_mmidemo_ssl_recorder.recvbuf)
-        {
-            signal_ptr->decrypt_len = len > g_mmidemo_ssl_recorder.recvlen ? g_mmidemo_ssl_recorder.recvlen : len;
-            memset(g_mmidemo_ssl_recorder.recvbuf, 0, g_mmidemo_ssl_recorder.recvlen);
-            memcpy(g_mmidemo_ssl_recorder.recvbuf, (void *)buf, signal_ptr->decrypt_len);
-        }
-        signal_ptr->SignalCode = 1;
-        signal_ptr->SignalSize = sizeof(os_sock_sig);
-        signal_ptr->Sender = SCI_IdentifyThread();
-        signal_ptr->Pre = NULL;
-        signal_ptr->Suc = NULL;
-
-        SCI_SendSignal((xSignalHeader)signal_ptr, g_mmidemo_ssl_recorder.thread_id);
-    }
-    else
-    {
-        SCI_TRACE_LOW("oneos:sktDecryptDataOutput malloc fail");
-    }
-
-    // 发送成功，给上层发送消息，释放SSL的资源
-    SSL_AsyncMessageProc(g_mmidemo_ssl_recorder.ssl_handle, SSL_RECV_MESSAGE_RECV_SUCC, len);
-    SCI_TRACE_LOW("[oneos: <------------]%s       %d\n",__FUNCTION__,__LINE__);
-}
-
-int32 sktEncryptDataOutput(void* handle, uint8* buf, uint32 len)
-{
-    int sci_len = 0;
-
-    if (PNULL == handle || PNULL == buf || 0 == len)
-    {
-        SCI_TRACE_LOW("[oneos: input erro]%s      %d\n",__FUNCTION__,__LINE__);
-        return -1;
-    }
-
-    TCPIP_SOCKET_T sci_so = g_mmidemo_ssl_recorder.sock_handle;
-
-    if (sci_so != -1)
-    {
-        sci_len = sci_sock_send(sci_so, (char *)buf, (int)len, 0);
-        SCI_TRACE_LOW("[oneos:callback send data to server, data_len is %d, sendbyte is %d]%s       %d\n",len, sci_len,__FUNCTION__,__LINE__);
-        {
-            // 发送成功，给上层发送消息，释放SSL的资源
-            SSL_AsyncMessageProc(g_mmidemo_ssl_recorder.ssl_handle, SSL_RECV_MESSAGE_SEND_SUCC, sci_len);
-        }
-
-        SCI_TRACE_LOW("oneos:sktEncryptDataOutput sci_so=0x%x send done", (uint32)sci_so);
-    }
-
-    return sci_len;
-}
-void sktShowCertInfo(void* handle)
-{
-    if(NULL == handle)
-    {
-        SCI_TRACE_LOW("sktShowCertInfo parameters fail");
-        return ;
-    }
-    SCI_TRACE_LOW("[oneos:callback debug ------------>]%s       %d\n",__FUNCTION__,__LINE__);
-    if (g_mmidemo_ssl_recorder.ssl_handle > 0)
-    {
-        //Now, we just continue.
-        SSL_UserCnfCert(g_mmidemo_ssl_recorder.ssl_handle, TRUE);
-    }
-}
-
-/*==========================================================
- * Function     : os_skt_sslshake
- * Description : ssl 创建及连接交互
- * Parameter    : s: skt fd
- * Return        : 0:success, -1:fail
- ==========================================================*/
-int os_skt_sslshake(long fd, struct sci_sockaddr sock_addr)
-{
-    SSL_HANDLE ssl_handle = 0;
-    SSL_CALLBACK_T os_skt_cb;
-    char *addr_str = NULL;
-    int sock_port= 0;
-    SSL_RESULT_E  shake_result = 0;
-
-    ssl_handle = SSL_Create((void *)&g_mmidemo_ssl_recorder.app_moduleId, fd, SSL_ASYNC);
-    if(!ssl_handle)
-    {
-        SCI_TRACE_LOW("oneos:os_skt_sslshake ssl create fail");
-        return -1;
-    }
-    g_mmidemo_ssl_recorder.ssl_handle = ssl_handle;
-
-    os_skt_cb.decryptout_cb = sktDecryptDataOutput;
-    os_skt_cb.encryptout_cb = sktEncryptDataOutput;
-    os_skt_cb.postmessage_cb = sktPostMessage;
-    os_skt_cb.showcert_cb = sktShowCertInfo;
-    SSL_AsyncRegCallback(ssl_handle, &os_skt_cb);
-
-    //select ssl protocol
-    SSL_ProtocolChoose(ssl_handle, SSL_PROTOCOLTLS_1_2, SSL_ASYNC);
-
-    addr_str = inet_ntoa(sock_addr.ip_addr);
-    sock_port = sock_addr.port;
-    shake_result= SSL_HandShake(ssl_handle, addr_str, sock_port, SSL_ASYNC);
-
-    SCI_TRACE_LOW("oneos:os_skt_sslshake result =%d", shake_result);
-    void *tmp = malloc(2048);
-    int len =0;
-    while (1)
-    {
-        memset(tmp, 0, 2048);
-        if (g_mmidemo_ssl_recorder.ssl_handshake_done == TRUE)
-        {
-            break;
-        }
-        if (os_select(fd, 1, 0, 0, 100) > 0)
-        {
-            len = sci_sock_recv(fd, tmp, 2048, 0);
-            if (len > 0)
-            {
-                SCI_TRACE_LOW("oneos:os_skt_sslshake len=%d", len);
-                SSL_DecryptPasser(ssl_handle, (uint8 *)tmp, len);
-            }
-        }
-
-        SCI_Sleep(100);
-    }
-
-    free(tmp);
-
-    return shake_result;
 }
 
 int os_connect(int fd, const struct sockaddr *name, socklen_t namelen)
 {
     TCPIP_SOCKET_T sci_so = (TCPIP_SOCKET_T)fd;
-    int ret = -1;
 
     struct sockaddr_in *sa1 =  (struct sockaddr_in *)name;
-    struct sci_sockaddr sci_sock = {0};
+    struct sci_sockaddr sci_sock;
     sci_sock.family = sa1->sin_family;
     sci_sock.port = sa1->sin_port;
     sci_sock.ip_addr = sa1->sin_addr.s_addr;
     SCI_TRACE_LOW("oneos:family=%d, port=%d, addr=%s", sci_sock.family, sci_sock.port, inet_ntoa(sci_sock.ip_addr));
-
-    SCI_MEMSET(&(g_mmidemo_ssl_recorder.sock_addr), 0, sizeof(struct sci_sockaddr));
-    SCI_MEMCPY(&(g_mmidemo_ssl_recorder.sock_addr), &sci_sock, sizeof(sci_sock));
-
-    ret = sci_sock_connect(sci_so, (struct sci_sockaddrext*)&sci_sock, namelen);
-    if (ret == 0)
-    {
-        ret = os_skt_sslshake(sci_so, sci_sock);
-    }
-    return ret;
+    return sci_sock_connect(sci_so, (struct sci_sockaddr*)&sci_sock, namelen);
 }
+int os_sendto(int fd, const void *data, size_t size, int flags, const struct sockaddr *to, socklen_t tolen)
+{
+    TCPIP_SOCKET_T sci_so = (TCPIP_SOCKET_T)fd;
+    char* sci_buf = (char*)data;
+    int sci_len = (int)size;
+    int sci_flag = flags;
+    struct sci_sockaddr* sci_to = (struct sci_sockaddr*)to;
 
+    return sci_sock_sendto(sci_so, sci_buf, sci_len, sci_flag, sci_to);
+}
 int os_send(int fd, const void *data, size_t size, int flags)
 {
-    int sci_len = 0;
+    TCPIP_SOCKET_T sci_so = (TCPIP_SOCKET_T)fd;
     char* sci_buf = (char*)data;
+    int sci_len = (int)size;
     int sci_flag = flags;
-    int sock_error_code;
-    SSL_HANDLE sslh = g_mmidemo_ssl_recorder.ssl_handle;
 
-    if (fd == -1 || data == NULL || size == 0)
-    {
-        SCI_TRACE_LOW("[oneos: input error]%s    %d\n",__FUNCTION__,__LINE__);
-        return -1;
-    }
-
-    SSL_EncryptPasser(sslh, (uint8 *)data, size);
-
-    // no need to wait, just return
-    return size;
+    return sci_sock_send(sci_so, sci_buf, sci_len, sci_flag);
 }
-
-int os_recv(int fd, void *mem, size_t len, int flags)
+int os_recvfrom(int fd, void *mem, size_t len, int flags, struct sockaddr *from, socklen_t *fromlen)
 {
-    int sci_len = -1;
-    int errcode;
     TCPIP_SOCKET_T sci_so = (TCPIP_SOCKET_T)fd;
     char* sci_buf = (char*)mem;
+    int sci_len = (int)len;
     int sci_flag = flags;
-    SCI_TRACE_LOW("[oneos------------>]%s       %d\n",__FUNCTION__,__LINE__);
+    struct sci_sockaddr* sci_from = (struct sci_sockaddr*)from;
 
-    g_mmidemo_ssl_recorder.recvbuf = mem;
-    g_mmidemo_ssl_recorder.recvlen = len;
-
-    sci_len = sci_sock_recv(sci_so, sci_buf, (int)len, sci_flag);
-    if (sci_len <= 0) {
-        errcode = sci_sock_errno(sci_so);
-        SCI_TRACE_LOW("oneos:os_recv fail: code=%d, len=%d\r\n", errcode, sci_len);
-    }
-    else
-    {
-        SCI_TRACE_LOW("oneos:os_recv fd=0x%x sci_len=%d", fd, sci_len);
-        SSL_DecryptPasser(g_mmidemo_ssl_recorder.ssl_handle, (uint8 *)sci_buf, sci_len);
-
-        // wait for semphore or msg that indicate data copyed to mem.
-        os_sock_sig *sig_ptr = SCI_NULL;
-        // os_sock_sig *sig_ptr = (os_sock_sig *)SCI_GetSignal(g_mmidemo_ssl_recorder.thread_id);
-        for (int i = 0; i < 5; i++)
-        {
-            sig_ptr = (os_sock_sig *)SCI_PeekSignal(g_mmidemo_ssl_recorder.thread_id);
-            if (sig_ptr != PNULL)
-            {
-                break;
-            }
-            SCI_Sleep(10);
-        }
-        sci_len = 0;
-        if (sig_ptr != SCI_NULL)
-        {
-            SCI_TRACE_LOW("oneos:os_recv signal=%u, sender=0x%x", sig_ptr->SignalCode, sig_ptr->Sender);
-            if (sig_ptr->SignalCode == 1)
-            {
-                sci_len = sig_ptr->decrypt_len;
-            }
-            free(sig_ptr);
-        }
-    }
-    SCI_TRACE_LOW("[oneos sci_len %d<------------]%s       %d\n", sci_len, __FUNCTION__,__LINE__);
-    return sci_len;
+    return sci_sock_recvfrom(sci_so, sci_buf, sci_len, sci_flag, sci_from);
 }
+int os_recv(int fd, void *mem, size_t len, int flags)
+{
+    TCPIP_SOCKET_T sci_so = (TCPIP_SOCKET_T)fd;
+    char* sci_buf = (char*)mem;
+    int sci_len = (int)len;
+    int sci_flag = flags;
+    // SCI_TRACE_LOW("oneos:os_recv fd=0x%x", fd);
+    return sci_sock_recv(sci_so, sci_buf, sci_len, sci_flag);
+}
+
 /*
 isreadset: 1,need set readset
 iswriteset: 1,need set iswriteset
@@ -402,8 +114,12 @@ int os_select(int fd, os_bool_t isreadset, os_bool_t iswriteset, os_bool_t isexc
     struct sci_fd_set* out = OS_NULL;
     struct sci_fd_set sci_exceptset;
     struct sci_fd_set* ex = OS_NULL;
-
-    long tv = timeout_ms / 100;
+    /*==============================================
+     * for 8910ff platform
+     * set select timeout to 0,
+     * when > 0, "System Timer Thread" occupy cpu to 5%
+     *=============================================*/
+    long tv = 0;
 
     if (isreadset == OS_TRUE)
     {
@@ -427,12 +143,170 @@ int os_select(int fd, os_bool_t isreadset, os_bool_t iswriteset, os_bool_t isexc
 
     return sci_sock_select(in, out, ex, tv);
 }
-int os_setsockopt(int fd, int level, int optname, void *optval, socklen_t optlen)
-{
-    return sci_sock_setsockopt((TCPIP_SOCKET_T)fd, optname, optval);
 
+int os_setsockopt(int fd, int level, int optname, const void *optval, socklen_t optlen)
+{
+    /* support SO_SNDTIMEO only
+    setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, (char *)&interval, sizeof(struct timeval));
+    */
+    if (optname == SO_SNDTIMEO)
+    {
+        int is_block = 0;
+        return sci_sock_setsockopt((TCPIP_SOCKET_T)fd, SO_NONBLOCK, (void *)(&is_block));
+    }
+    else
+    {
+        return OS_PARAM_ERROR;
+    }
 }
-struct hostent *os_gethostbyname(char *name)
+struct hostent *os_gethostbyname(const char *name)
 {
     return sci_gethostbyname(name);
+}
+
+int os_getaddrinfo(const char *node, const char *service, const struct addrinfo *hints, struct addrinfo **res)
+{
+    int ai_family;
+    int port_nr = 0;
+    TCPIP_IPADDR_T addr;
+    unsigned long total_size;
+    unsigned long namelen = 0;
+    struct addrinfo* ai = NULL;
+    struct sockaddr_storage* sa = NULL;
+    struct sockaddr_in* sa4 = NULL;
+    struct sci_hostent* hostent = NULL;
+
+    if (NULL == res)
+    {
+        return EAI_FAIL;
+    }
+
+    *res = NULL;
+    if ((NULL == node) && (NULL == service))
+    {
+        return EAI_NONAME;
+    }
+
+    if (NULL != hints)
+    {
+        ai_family = hints->ai_family;
+        // SCI_TRACE_LOW("oneos:ai_family=%d", ai_family);
+        if (ai_family != AF_UNSPEC && ai_family != AF_INET)
+        {
+            return EAI_FAMILY;
+        }
+    }
+
+
+    if (service != NULL)
+    {
+        /* service name specified: convert to port number */
+        port_nr = atoi(service);
+        // SCI_TRACE_LOW("oneos:port_nr=%d", port_nr);
+        if ((port_nr <= 0) || (port_nr > 0xffff))
+        {
+            return EAI_SERVICE;
+        }
+    }
+
+    if (node != NULL)
+    {
+        /* service location specified, try to resolve */
+        if ((hints != NULL) && (hints->ai_flags & AI_NUMERICHOST))
+        {
+            /* no DNS lookup, just parse for an address string */
+            if (!inet_aton(node, &addr))
+            {
+                return EAI_NONAME;
+            }
+
+            if (AF_INET == ai_family)
+            {
+                return EAI_NONAME;
+            }
+        }
+        else
+        {
+            // SCI_TRACE_LOW("oneos:call sci_gethostbyname...");
+            hostent = sci_gethostbyname(node);
+            if (NULL == hostent)
+            {
+                return EAI_FAIL;
+            }
+            addr = (*((struct in_addr *)(hostent->h_addr))).s_addr;
+        }
+    }
+    else
+    {
+        return EAI_NONAME;
+    }
+
+    // SCI_TRACE_LOW("oneos:end call sci_gethostbyname...");
+    total_size = sizeof(struct addrinfo) + sizeof(struct sockaddr_storage);
+    if (node != NULL)
+    {
+        namelen = strlen(node);
+        if (namelen > MAX_DNS_LEN)
+        {
+            /* invalid name length */
+            // SCI_TRACE_LOW("oneos:invalid name length");
+            return EAI_FAIL;
+        }
+        SCI_ASSERT(total_size + namelen + 1 > total_size);
+        total_size += namelen + 1;
+    }
+
+    SCI_ASSERT(total_size <= sizeof(struct addrinfo) + sizeof(struct sockaddr_storage) + MAX_DNS_LEN + 1);
+    ai = SCI_CALLOC(1, total_size);
+    if (NULL == ai)
+    {
+        // SCI_TRACE_LOW("oneos:ai calloc failed...");
+        return EAI_MEMORY;
+    }
+
+    /* cast through void* to get rid of alignment warnings */
+    sa = (struct sockaddr_storage *)(void *)((unsigned char *)ai + sizeof(struct addrinfo));
+    sa4 = (struct sockaddr_in *) sa;
+    /* set up sockaddr */
+
+    sa4->sin_addr.s_addr = addr;
+    // SCI_TRACE_LOW("oneos:addr=%s", inet_ntoa(sa4->sin_addr.s_addr));
+    //sa4->sin_addr = *((struct in_addr *)(hostent->h_addr));//addr;
+    sa4->sin_family = AF_INET;
+    sa4->sin_port   = htons((unsigned short)port_nr);
+    ai->ai_family   = AF_INET;
+
+        /* set up addrinfo */
+    if (hints != NULL)
+    {
+        /* copy socktype & protocol from hints if specified */
+        ai->ai_socktype = hints->ai_socktype;
+        ai->ai_protocol = hints->ai_protocol;
+    }
+    if (node != NULL)
+    {
+        /* copy nodename to canonname if specified */
+        ai->ai_canonname = ((char *) ai + sizeof(struct addrinfo) + sizeof(struct sockaddr_storage));
+        memcpy(ai->ai_canonname, node, namelen);
+        ai->ai_canonname[namelen] = 0;
+    }
+    ai->ai_addrlen = sizeof(struct sockaddr_storage);
+    ai->ai_addr = (struct sockaddr *) sa;
+    ai->ai_next = NULL;
+
+    *res = ai;
+
+    // SCI_TRACE_LOW("oneos:end sci_sock_getaddrinfo...");
+    return 0;
+}
+
+void os_freeaddrinfo(struct addrinfo *ai)
+{
+    struct addrinfo *next = NULL;
+    while (ai != NULL)
+    {
+        next = ai->ai_next;
+        free(ai);
+        ai = next;
+    }
 }

@@ -40,23 +40,6 @@ void *os_malloc(os_size_t size)
 }
 /**
  ***********************************************************************************************************************
- * @brief           This function frees the memory space pointed to by 'ptr', which allocated by os_malloc(), or
- *                  os_realloc() or os_calloc() or os_aligned_malloc().
- *
- * @param[in]       ptr             The pointer to memory space.
- *
- * @return          None.
- ***********************************************************************************************************************
- */
-void os_free(void *ptr)
-{
-    OS_ASSERT(ptr != OS_NULL);
-    SCI_FREE(ptr);
-}
-
-#if 0
-/**
- ***********************************************************************************************************************
  * @brief           This function changes the size of the memory block pointed to by 'ptr' to 'newsize' bytes. If size
  *                  is equal to 0, it works in the same way as os_free(). If 'ptr' is OS_NULL, it works in the same way
  *                  as os_malloc().
@@ -69,7 +52,7 @@ void os_free(void *ptr)
  */
 void *os_realloc(void *ptr, os_size_t size)
 {
-    OS_ASSERT(ptr != OS_NULL);
+    OS_ASSERT(ptr);
     return SCI_REALLOC(ptr, size);
 }
 
@@ -88,5 +71,19 @@ void *os_calloc(os_size_t count, os_size_t size)
 {
     return SCI_CALLOC(count, size);
 }
-#endif
 
+/**
+ ***********************************************************************************************************************
+ * @brief           This function frees the memory space pointed to by 'ptr', which allocated by os_malloc(), or
+ *                  os_realloc() or os_calloc() or os_aligned_malloc().
+ *
+ * @param[in]       ptr             The pointer to memory space.
+ *
+ * @return          None.
+ ***********************************************************************************************************************
+ */
+void os_free(void *ptr)
+{
+    OS_ASSERT(ptr);
+    SCI_FREE(ptr);
+}

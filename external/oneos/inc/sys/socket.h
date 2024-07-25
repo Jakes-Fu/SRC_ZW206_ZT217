@@ -26,7 +26,6 @@
 #include "netdb.h"
 #include "os_types.h"
 
-void os_sock_init(void);
 int os_socket(int domain, int type, int protocol);
 int os_closesocket(int fd);
 int os_connect(int fd, const struct sockaddr *name, socklen_t namelen);
@@ -35,9 +34,8 @@ int os_send(int fd, const void *data, size_t size, int flags);
 int os_recvfrom(int fd, void *mem, size_t len, int flags, struct sockaddr *from, socklen_t *fromlen);
 int os_recv(int fd, void *mem, size_t len, int flags);
 int os_select(int fd, os_bool_t isreadset, os_bool_t iswriteset, os_bool_t isexceptset, int timeout_ms);
-int os_setsockopt(int fd, int level, int optname, void *optval, socklen_t optlen);
-struct hostent *os_gethostbyname(char *name);
-// int os_getaddrinfo( const char *node, const char *service, const struct addrinfo *hints, struct addrinfo **res);
-// void os_freeaddrinfo(struct addrinfo *ai);
-// int os_bind(int so, const struct sockaddr *name, socklen_t namelen);
+int os_setsockopt(int fd, int level, int optname, const void *optval, socklen_t optlen);
+struct hostent *os_gethostbyname(const char *name);
+int os_getaddrinfo( const char *node, const char *service, const struct addrinfo *hints, struct addrinfo **res);
+void os_freeaddrinfo(struct addrinfo *ai);
 #endif

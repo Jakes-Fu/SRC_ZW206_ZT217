@@ -15,7 +15,7 @@ endif
 #Local Dir inc
 MINCPATH += external/oneos/inc \
             external/oneos/inc/kernel \
-            external/oneos/inc/sys \
+            external/oneos/inc/socket \
             external/oneos/inc/fal    \
             chip_drv/export/inc \
             chip_drv/export/inc/outdated \
@@ -42,9 +42,7 @@ MINCPATH += external/oneos/inc \
             MS_MMI_Main/source/resource \
             MS_MMI_Main/source/mmi_gui/include \
             MS_MMI_Main/source/mmi_ctrl/include \
-            MS_MMI_Main/source/mmi_service/export/inc \
-            Third-party/oneos \
-            Third-party/oneos/ota/cmiot/source/inc
+            MS_MMI_Main/source/mmi_service/export/inc
 
 MINCPATH += build/$(PROJECT)_builddir/tmp
 MINCPATH += $(MMI_DIR)/source/mmi_app/app/otapush/h
@@ -60,14 +58,14 @@ ifneq ($(strip $(WIFI_SUPPORT)), NONE)
 endif
 
 #Local Dir src
-MSRCPATH = external/oneos/src/kernel \
-           external/oneos/src/fal \
-		   external/oneos/src
+MSRCPATH = external/oneos/src/socket \
+           external/oneos/src/kernel \
+           external/oneos/src/fal
 
 
 #SOURCES = oneos_socket.c   oneos_fs_posix.c
 
 # SOURCES = oneos_socket.c   oneos_fs_posix.c \
 #           oneos_clock.c oneos_event.c oneos_msg.c \
-# 		  oneos_mutex.c oneos_sem.c oneos_task.c oneos_timer.c os_sem.c os_mutex.c os_clock.c
-SOURCES = os_assert.c os_memory.c os_task.c os_util.c  ring_buff.c socket.c os_fal_part.c cmiot_net.c cmiot_fota_process.c
+# 		  oneos_mutex.c oneos_sem.c oneos_task.c oneos_timer.c
+SOURCES = os_assert.c os_clock.c os_memory.c os_mutex.c os_sem.c os_task.c os_util.c  ring_buff.c socket.c fal_part.c

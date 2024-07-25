@@ -523,9 +523,6 @@ LOCAL void FOTA_FlashInit(void)
 
 	rprintf ("before FDL_FlashSPIInit!\n");
 	FDL_FlashSPIInit(cs);
-    
-    extern void initialize_nv_status (NOR_FLASH_CONFIG_PTR ptr,uint32 base_address);
-    initialize_nv_status (pSpiFlashSpec[SPIFLASH_CS0]->spiflash_cfg, FLASH_START_ADRESS);
 }
 
 LOCAL void FDL_FlashSPIInit(int cs)

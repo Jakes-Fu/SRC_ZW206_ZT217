@@ -8,7 +8,7 @@ CMIOT 升级包打包说明
 1.添加了文件 oneos_config.h.txt，它和oneos_config.h一样的，
   是为了规避.h文件被加密打包失败。
 
-2.每次编译时，须修改oneos_config.h和oneos_config.h.txt中的版本号CMIOT_FIRMWARE_VERSION "1.0"，
+2.每次编译时，须修改 oneos_config.h 和 oneos_config.h.txt 中的版本号 CMIOT_FIRMWARE_VERSION "1.0"，
   正式版本依次递增。
 
 3.打包建议使用pack_cmd_user_2.bat

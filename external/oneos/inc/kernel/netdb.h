@@ -1,9 +1,5 @@
 #ifndef __NETDB_H__
 #define __NETDB_H__
-#include <oneos_config.h>
-#if defined(NET_USING_MOLINK)
-#include "mo_socket.h"
-#else
 #include <stddef.h>
 
 #define AF_INET         2
@@ -98,22 +94,6 @@ struct in_addr
     in_addr_t s_addr;
 };
 
-#ifdef IPVERSION_SUPPORT_V4_V6
-struct hostent
-{
-    char*           h_name;         /* Official name of host. */
-    char**          h_aliases;      /* Alias list. */
-    int             h_addrtype;     /* Host address type. */
-    int             h_length;       /* Length of address. */
-    int             h_cntv4;        /* count of v4 address.  */
-    int             h_cntv6;        /* count of v6 address.  */
-    char**          h_addr_list;    /* List of addresses from name server. */
-    char**          h_addr6_list;   /* List of addresses from name server.  */
-	int             h_cntsrv;
-    char**          h_srv_list;
-    #define h_addr  h_addr_list[0] /* Address, for backward compatibility. */
-};
-#else
 struct hostent
 {
     char  *h_name;            /* Official name of the host. */
@@ -125,7 +105,6 @@ struct hostent
                               /* (in network byte order) for the host,terminated by a null pointer */
 #define h_addr h_addr_list[0] /* for backward compatibility */
 };
-#endif
 
 struct sockaddr
 {
@@ -164,13 +143,10 @@ struct sockaddr_storage
     unsigned int s2_data2[3];
 };
 
-#ifndef _TIMEVAL_DEFINED
-#define _TIMEVAL_DEFINED
 struct timeval {
     long    tv_sec;         /* seconds */
     long    tv_usec;        /* and microseconds */
 };
-#endif
 
 #if 0// defined(OS_USING_POSIX) && defined(OS_USING_VFS)
 
@@ -204,16 +180,11 @@ struct timeval {
 // } _types_fd_set;
 
 // #define fd_set _types_fd_set
-#define fd_set sci_fd_set
 
 // #define   FD_SET(n, p)    ((p)->fds_bits[(n)/NFDBITS] |= (1L << ((n) % NFDBITS)))
 // #define   FD_CLR(n, p)    ((p)->fds_bits[(n)/NFDBITS] &= ~(1L << ((n) % NFDBITS)))
 // #define   FD_ISSET(n, p)  ((p)->fds_bits[(n)/NFDBITS] & (1L << ((n) % NFDBITS)))
 // #define   FD_ZERO(p)       memset((void*)(p), 0, sizeof(*(p)))
-#define   FD_ZERO(p)       SCI_FD_ZERO((p))
-#define   FD_ISSET(n, p)   SCI_FD_ISSET((n), (p))
 
 #define PP_HTONS(x) ((((x)&0x00ffUL) << 8) | (((x)&0xff00UL) >> 8))
-
-#endif
 #endif
