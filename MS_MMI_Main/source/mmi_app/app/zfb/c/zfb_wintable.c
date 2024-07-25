@@ -656,7 +656,9 @@ LOCAL BOOLEAN  ZFB_Obtain_Show_2VM_QR(void)
     {
         SCI_MEMCPY(ewm_str,g_zfb_alipay_obtain_code,g_zfb_alipay_obtain_code_len);
     }
+#ifndef WIN32
     side = qr_encode(QR_LEVEL_Q, 0, ewm_str, g_zfb_alipay_obtain_code_len, bitdata);
+#endif
     #if 0
         ZFB_Obtain_2VM_BmpShow(bitdata,side);
     #else
@@ -1012,7 +1014,9 @@ LOCAL BOOLEAN  ZFB_Pay_Show_2VM_QR(void)
     {
         SCI_MEMCPY(ewm_str,g_zfb_alipay_pay_code,g_zfb_alipay_pay_code_len);
     }
+#ifndef WIN32
     side = qr_encode(QR_LEVEL_Q, 0, ewm_str, g_zfb_alipay_pay_code_len, bitdata);
+#endif
     #if 0
         ZFB_Pay_2VM_BmpShow(bitdata,side);
     #else
@@ -1104,12 +1108,16 @@ LOCAL BOOLEAN  ZFB_Pay_Show_BarCode_QR(void)
     if((g_zfb_alipay_pay_code_len%2) == 0)
     {
         room_lv = 2;
+        #ifndef WIN32
         side = code128C_encode(ewm_str, g_zfb_alipay_pay_code_len, bitdata);
+        #endif
     }
     else
     {
         room_lv = 1;
+        #ifndef WIN32
         side = code128B_encode(ewm_str, g_zfb_alipay_pay_code_len, bitdata);
+        #endif
     }
     disp_pix = side*11+1;
 #if 0
@@ -1824,7 +1832,9 @@ LOCAL BOOLEAN  ZFB_Bind_Show_2VM_QR(void)
     {
         SCI_MEMCPY(ewm_str,g_zfb_alipay_bind_code,g_zfb_alipay_bind_code_len);
     }
+    #ifndef WIN32
     side = qr_encode(QR_LEVEL_L, 0, ewm_str, g_zfb_alipay_bind_code_len, bitdata);
+    #endif
     if(side > ZFB_BIND_DISP_WIDTH)
     {
         if(side < MMI_MAINSCREEN_WIDTH)
@@ -2219,8 +2229,9 @@ LOCAL BOOLEAN  ZFB_Setting_Show_2VM_QR(void)
     uint8_t bitdata[QR_MAX_BITDATA] = {0};
     int side = 0;
     uint16 ewm_len = strlen(ewm_str);
-    
+#ifndef WIN32
     side = qr_encode(QR_LEVEL_Q, 0, ewm_str, ewm_len, bitdata);
+#endif
     #if 0
         ZFB_Setting_2VM_BmpShow(bitdata,side);
     #else

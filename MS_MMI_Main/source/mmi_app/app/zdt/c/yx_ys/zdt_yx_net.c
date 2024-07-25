@@ -3640,8 +3640,10 @@ int YX_Net_Receive_FIND(YX_APP_T *pMe)
 {
     ZDT_LOG("YX_Net_Receive_FIND");
     YX_Net_TCPRespond(g_zdt_phone_imei,"FIND",4);
+#ifndef WIN32
 #ifdef XYSDK_SUPPORT
     LIBXMLYAPI_AppExit();
+#endif
 #endif
     ZMTApp_CloseRecordAndPlayer();
     //if(pMe->m_zdt_is_in_call == 0)
@@ -6193,8 +6195,10 @@ int32 YX_Net_Receive_DOWNVCWW(YX_APP_T *pMe,uint8 * pContent,uint16 ContentLen)
 #ifdef BAIRUI_VIDEOCHAT_SUPPORT //佰锐视频通话
     ZDT_WatchVideoChatLogin(videoCallInfo.mUseIdStr, videoCallInfo.appUserIdStr , FALSE);//yangyu add test
 #endif
+#ifndef WIN32
 #ifdef XYSDK_SUPPORT
     LIBXMLYAPI_AppExit();
+#endif
 #endif
     ZMTApp_CloseRecordAndPlayer();
     if(Video_Call_Device_Idle_Check()) //在打电话上课禁用直接回复挂断

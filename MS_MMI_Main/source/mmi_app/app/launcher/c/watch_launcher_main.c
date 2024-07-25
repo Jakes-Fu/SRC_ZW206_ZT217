@@ -206,8 +206,10 @@ const APP_LIST_ITEM_T  g_app_list_info[] =
 #ifdef LEBAO_MUSIC_SUPPORT
     MENU_MUSIC,//咪咕音乐
 #endif
+#ifndef WIN32
 #if defined(XYSDK_SUPPORT)|| defined(XYSDK_SRC_SUPPORT)
     MENU_XMLY,//喜马拉雅
+#endif
 #endif
 #ifdef MAINMENU_STYLE_SUPPORT
     MENU_STYLE,//主菜单风格切换

@@ -67,7 +67,7 @@
 #include "libxmly_api.h"
 #endif
 
-#ifdef ZDT_VIDEOCHAT_SUPPORT
+#ifdef VIDEO_CALL_AGORA_SUPPORT
 #include "video_call.h"
 #endif
 
