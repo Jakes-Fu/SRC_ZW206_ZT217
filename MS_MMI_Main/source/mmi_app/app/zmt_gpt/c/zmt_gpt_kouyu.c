@@ -66,6 +66,9 @@ LOCAL int gpt_kouyu_player_volume = 0;
 LOCAL void ZmtGptKouYuTalk_RecordSuccess(MMI_WIN_ID_T win_id);
 LOCAL void ZmtGptKouYuTalk_DispalyRecord(MMI_WIN_ID_T win_id, int record_type);
 LOCAL void ZmtGptKouYuTalk_ShowFormList(MMI_WIN_ID_T win_id);
+LOCAL void ZmtGptKouYuTalk_StopRecordIndentifyTimer(void);
+LOCAL void ZmtGptKouYuTalk_StopRecordHandle(void);
+LOCAL void ZmtGptKouYuTalk_StopRecordTimer(void);
 
 LOCAL void ZmtGptKouYuTalk_ReleaseTalkInfo(void)
 {
@@ -679,6 +682,25 @@ LOCAL void ZmtGptKouYuTalk_NotifyRecordCallback(RECORD_SRV_HANDLE record_srv_han
     }
 }
 
+LOCAL void ZmtGptKouYuTalk_StopRecordTimer(void)
+{
+    if(gpt_kouyu_record_timer_id != 0)
+    {
+        MMK_StopTimer(gpt_kouyu_record_timer_id);
+        gpt_kouyu_record_timer_id = 0;
+    }
+}
+
+LOCAL void ZmtGptKouYuTalk_StopRecordHandle(void)
+{
+    if (PNULL != gpt_kouyu_record_handle)
+    {
+        MMIRECORDSRV_StopRecord(gpt_kouyu_record_handle);
+        MMIRECORDSRV_FreeRecordHandle(gpt_kouyu_record_handle);
+        gpt_kouyu_record_handle = 0;
+    }
+}
+
 LOCAL void ZmtGptKouYuTalk_StartRecord(MMI_WIN_ID_T win_id)
 {
     MMI_STRING_T  call_name_str = {0};
@@ -691,13 +713,7 @@ LOCAL void ZmtGptKouYuTalk_StartRecord(MMI_WIN_ID_T win_id)
         return;
     }
 
-    if (PNULL != gpt_kouyu_record_handle)
-    {
-        MMIRECORDSRV_StopRecord(gpt_kouyu_record_handle);
-        MMIRECORDSRV_FreeRecordHandle(gpt_kouyu_record_handle);
-        gpt_kouyu_record_handle = 0;
-    }
-
+    ZmtGptKouYuTalk_StopRecordHandle();
     ZmtGptKouYuTalk_StopAmrData();
     gpt_kouyu_record_handle = MMIRECORDSRV_RequestRecordHandle(ZmtGptKouYuTalk_NotifyRecordCallback);
     if (PNULL == gpt_kouyu_record_handle)
@@ -740,19 +756,9 @@ LOCAL void ZmtGptKouYuTalk_StartRecord(MMI_WIN_ID_T win_id)
 
 LOCAL void ZmtGptKouYuTalk_StopRecord(MMI_WIN_ID_T win_id, BOOLEAN is_send)
 {
-    if (PNULL != gpt_kouyu_record_handle)
-    {
-        MMIRECORDSRV_StopRecord(gpt_kouyu_record_handle);
-        MMIRECORDSRV_FreeRecordHandle(gpt_kouyu_record_handle);
-        gpt_kouyu_record_handle = 0;
-    }else{
-        is_send = FALSE;
-    }
-    if(gpt_kouyu_record_timer_id != 0)
-    {
-        MMK_StopTimer(gpt_kouyu_record_timer_id);
-        gpt_kouyu_record_timer_id = 0;
-    }
+    ZmtGptKouYuTalk_StopRecordHandle();
+    ZmtGptKouYuTalk_StopRecordTimer();
+    gpt_kouyu_record_times = 0;
     
     if(is_send){
         uint8 * data_buf = NULL;
@@ -850,12 +856,20 @@ LOCAL void ZmtGptKouYuTalk_RightIndentifyClick(MMI_WIN_ID_T win_id)
     }
 }
 
+LOCAL void ZmtGptKouYuTalk_StopRecordIndentifyTimer(void)
+{
+    if(gpt_kouyu_record_identify_timer_id != 0)
+    {
+        MMK_StopTimer(gpt_kouyu_record_identify_timer_id);
+        gpt_kouyu_record_identify_timer_id = 0;
+    }
+}
+
 LOCAL void ZmtGptKouYuTalk_RecordIndentifyTimerCallback(uint8 timer_id, uint32 param)
 {
     if(timer_id == gpt_kouyu_record_identify_timer_id)
     {
-        MMK_StopTimer(gpt_kouyu_record_identify_timer_id);
-        gpt_kouyu_record_identify_timer_id = 0;
+        ZmtGptKouYuTalk_StopRecordIndentifyTimer();
         gpt_kouyu_record_type = GPT_RECORD_TYPE_NONE;
         if(MMK_IsFocusWin(ZMT_GPT_KOUYU_TALK_WIN_ID)){
             ZmtGptKouYuTalk_DispalyRecord(ZMT_GPT_KOUYU_TALK_WIN_ID, gpt_kouyu_record_type);
@@ -865,10 +879,7 @@ LOCAL void ZmtGptKouYuTalk_RecordIndentifyTimerCallback(uint8 timer_id, uint32 p
 
 LOCAL void ZmtGptKouYuTalk_StartRecordIndentifyTimer(void)
 {
-    if(gpt_kouyu_record_identify_timer_id){
-        MMK_StopTimer(gpt_kouyu_record_identify_timer_id);
-        gpt_kouyu_record_identify_timer_id = 0;
-    }
+    ZmtGptKouYuTalk_StopRecordIndentifyTimer();
     gpt_kouyu_record_identify_timer_id = MMK_CreateTimerCallback(2000, ZmtGptKouYuTalk_RecordIndentifyTimerCallback, PNULL, FALSE);
 }
 
@@ -1372,29 +1383,11 @@ LOCAL void ZmtGptKouYuTalk_OPEN_WINDOW(MMI_WIN_ID_T win_id)
 LOCAL void ZmtGptKouYuTalk_CLOSE_WINDOW(void)
 {
     ZmtGptKouYuTalk_ReleaseTalkInfo();
-    gpt_kouyu_talk_size = 0;
     ZmtGptKouYuTalk_StopAmrData();
-    if (PNULL != gpt_kouyu_record_handle)
-    {
-        MMIRECORDSRV_StopRecord(gpt_kouyu_record_handle);
-        MMIRECORDSRV_FreeRecordHandle(gpt_kouyu_record_handle);
-        gpt_kouyu_record_handle = 0;
-    }
-    if(gpt_kouyu_player_handle)
-    {
-        MMISRVAUD_Stop(gpt_kouyu_player_handle);
-        MMISRVMGR_Free(gpt_kouyu_player_handle);
-        gpt_kouyu_player_handle = NULL;
-    }
-    if(gpt_kouyu_record_timer_id != 0)
-    {
-        MMK_StopTimer(gpt_kouyu_record_timer_id);
-        gpt_kouyu_record_timer_id = 0;
-    }
-    if(gpt_kouyu_record_identify_timer_id){
-        MMK_StopTimer(gpt_kouyu_record_identify_timer_id);
-        gpt_kouyu_record_identify_timer_id = 0;
-    }
+    ZmtGptKouYuTalk_StopRecordHandle();
+    ZmtGptKouYuTalk_StopRecordTimer();
+    ZmtGptKouYuTalk_StopRecordIndentifyTimer();
+    gpt_kouyu_talk_size = 0;
     zmt_gpt_talk_status = 0;
     gpt_kouyu_record_type = GPT_RECORD_TYPE_NONE;
     gpt_kouyu_record_times = 0;
@@ -1507,10 +1500,12 @@ LOCAL MMI_RESULT_E HandleZmtGptKouYuTalkWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_I
             break;
         case MSG_TIMER:
             {
-                gpt_kouyu_record_times += 200;
-                ZmtGptKouYuTalk_DispalyRecord(win_id, 1);
-                if(gpt_kouyu_record_times >= 10 * 1000){
-                    ZmtGptKouYuTalk_StopRecord(win_id, TRUE);
+                if(MMK_IsFocusWin(win_id)){
+                    gpt_kouyu_record_times += 200;
+                    ZmtGptKouYuTalk_DispalyRecord(win_id, 1);
+                    if(gpt_kouyu_record_times >= 10 * 1000){
+                        ZmtGptKouYuTalk_StopRecord(win_id, TRUE);
+                    }
                 }
             }
             break;            
@@ -1867,11 +1862,10 @@ PUBLIC void MMIZMT_CreateZmtGptKouYuTopicWin(void)
 
 PUBLIC void ZMTGpt_CloseKouyuRecordAndPlayer(void)
 {
-    if (gpt_kouyu_record_handle != 0){
-        MMIRECORDSRV_StopRecord(gpt_kouyu_record_handle);
-        MMIRECORDSRV_FreeRecordHandle(gpt_kouyu_record_handle);
-        gpt_kouyu_record_handle = 0;
-    }
     ZmtGptKouYuTalk_StopAmrData();
+    ZmtGptKouYuTalk_StopRecordHandle();
+    ZmtGptKouYuTalk_StopRecordTimer();
+    ZmtGptKouYuTalk_StopRecordIndentifyTimer();
+    gpt_kouyu_record_type = GPT_RECORD_TYPE_NONE; 
 }
 

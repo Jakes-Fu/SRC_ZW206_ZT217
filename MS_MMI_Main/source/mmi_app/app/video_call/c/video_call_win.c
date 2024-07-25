@@ -1684,7 +1684,7 @@ PUBLIC uint8 Video_Call_Incoming(VIDEO_CALL_INFO video_call_info)
     MMIDUERAPP_Exit();// 打断小度
 #endif
 #endif
-
+    ZMTApp_CloseRecordAndPlayer();
     WatchGallery_Exit();//退出相册 特别是GUIICONLIST_LOAD_ALL方式加载时占用内存很多
 
     if(!VideoChat_IsInCall())

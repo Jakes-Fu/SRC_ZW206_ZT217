@@ -958,6 +958,7 @@ LOCAL void CC_OpenWatchMtCallWin(void)
     addData = (MMICC_DISPINFO_T *)SCI_ALLOC_APPZ(sizeof(MMICC_DISPINFO_T));
     SCI_ASSERT(addData != NULL);
 
+    ZMTApp_CloseRecordAndPlayer();
     //协议规定不能同时存在两个MT,如果之前有MO,MO没有接通时会把MO挂断，接通了不会提示MT
     if (MMK_IsOpenWin(WATCHCC_MOCALLING_WIN_ID))
     {

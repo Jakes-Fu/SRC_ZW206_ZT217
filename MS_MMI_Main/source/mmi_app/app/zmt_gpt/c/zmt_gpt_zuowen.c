@@ -62,6 +62,9 @@ LOCAL uint8 gpt_zuowen_cur_idx = 0;
 LOCAL void ZmtGptZuoWen_RecordSuccess(MMI_WIN_ID_T win_id);
 LOCAL void ZmtGptZuoWen_DispalyRecord(MMI_WIN_ID_T win_id, ZMT_GPT_RECORD_TYPE_E record_type);
 LOCAL void ZmtGptZuoWen_ShowFormList(MMI_WIN_ID_T win_id);
+LOCAL void ZmtGptZuoWen_StopRecordIndentifyTimer(void);
+LOCAL void ZmtGptZuoWen_StopRecordHandle(void);
+LOCAL void ZmtGptZuoWen_StopRecordTimer(void);
 
 LOCAL void ZmtGptZuoWen_ReleaseTalkInfo(void)
 {
@@ -497,21 +500,29 @@ LOCAL void ZmtGptZuoWen_NotifyRecordCallback(RECORD_SRV_HANDLE record_srv_handle
     }
 }
 
-LOCAL void ZmtGptZuoWen_StopRecord(MMI_WIN_ID_T win_id, BOOLEAN is_send)
+LOCAL void ZmtGptZuoWen_StopRecordHandle(void)
 {
     if (PNULL != gpt_zuowen_record_handle)
     {
         MMIRECORDSRV_StopRecord(gpt_zuowen_record_handle);
         MMIRECORDSRV_FreeRecordHandle(gpt_zuowen_record_handle);
         gpt_zuowen_record_handle = 0;
-    }else{
-        is_send = FALSE;
     }
+}
+
+LOCAL void ZmtGptZuoWen_StopRecordTimer(void)
+{
     if(gpt_zuowen_record_timer_id != 0)
     {
         MMK_StopTimer(gpt_zuowen_record_timer_id);
         gpt_zuowen_record_timer_id = 0;
     }
+}
+
+LOCAL void ZmtGptZuoWen_StopRecord(MMI_WIN_ID_T win_id, BOOLEAN is_send)
+{
+    ZmtGptZuoWen_StopRecordHandle();
+    ZmtGptZuoWen_StopRecordTimer();
     gpt_zuowen_record_times = 0;
     
     if(is_send){
@@ -550,7 +561,9 @@ LOCAL void ZmtGptZuoWen_StopRecord(MMI_WIN_ID_T win_id, BOOLEAN is_send)
     #endif
         gpt_zuowen_record_type = GPT_RECORD_TYPE_NONE; 
     }
-    MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL); 
+    if(MMK_IsFocusWin(win_id)){
+        MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
+    }
 }
 
 LOCAL void ZmtGptZuoWen_StartRecord(MMI_WIN_ID_T win_id)
@@ -565,13 +578,7 @@ LOCAL void ZmtGptZuoWen_StartRecord(MMI_WIN_ID_T win_id)
         return;
     }
 
-    if (PNULL != gpt_zuowen_record_handle)
-    {
-        MMIRECORDSRV_StopRecord(gpt_zuowen_record_handle);
-        MMIRECORDSRV_FreeRecordHandle(gpt_zuowen_record_handle);
-        gpt_zuowen_record_handle = 0;
-    }
-
+    ZmtGptZuoWen_StopRecordHandle();
     gpt_zuowen_record_handle = MMIRECORDSRV_RequestRecordHandle(ZmtGptZuoWen_NotifyRecordCallback);
     if (PNULL == gpt_zuowen_record_handle)
     {
@@ -662,12 +669,20 @@ LOCAL void ZmtGptZuoWen_RightIndentifyClick(MMI_WIN_ID_T win_id)
     }
 }
 
+LOCAL void ZmtGptZuoWen_StopRecordIndentifyTimer(void)
+{
+    if(gpt_zuowen_record_identify_timer_id != 0)
+    {
+        MMK_StopTimer(gpt_zuowen_record_identify_timer_id);
+        gpt_zuowen_record_identify_timer_id = 0;
+    }
+}
+
 LOCAL void ZmtGptZuoWen_RecordIndentifyTimerCallback(uint8 timer_id, uint32 param)
 {
     if(timer_id == gpt_zuowen_record_identify_timer_id)
     {
-        MMK_StopTimer(gpt_zuowen_record_identify_timer_id);
-        gpt_zuowen_record_identify_timer_id = 0;
+        ZmtGptZuoWen_StopRecordIndentifyTimer();
         gpt_zuowen_record_type = GPT_RECORD_TYPE_NONE;
         if(MMK_IsFocusWin(ZMT_GPT_ZUOWEN_WIN_ID)){
             ZmtGptZuoWen_DispalyRecord(ZMT_GPT_ZUOWEN_WIN_ID, gpt_zuowen_record_type);
@@ -677,10 +692,7 @@ LOCAL void ZmtGptZuoWen_RecordIndentifyTimerCallback(uint8 timer_id, uint32 para
 
 LOCAL void ZmtGptZuoWen_StartRecordIndentifyTimer(void)
 {
-    if(gpt_zuowen_record_identify_timer_id){
-        MMK_StopTimer(gpt_zuowen_record_identify_timer_id);
-        gpt_zuowen_record_identify_timer_id = 0;
-    }
+    ZmtGptZuoWen_StopRecordIndentifyTimer();
     gpt_zuowen_record_identify_timer_id = MMK_CreateTimerCallback(2000, ZmtGptZuoWen_RecordIndentifyTimerCallback, PNULL, FALSE);
 }
 
@@ -1175,22 +1187,10 @@ LOCAL void ZmtGptZuoWen_OPEN_WINDOW(MMI_WIN_ID_T win_id)
 LOCAL void ZmtGptZuoWen_CLOSE_WINDOW(void)
 {
     ZmtGptZuoWen_ReleaseTalkInfo();
+    ZmtGptZuoWen_StopRecordHandle();
+    ZmtGptZuoWen_StopRecordTimer();
+    ZmtGptZuoWen_StopRecordIndentifyTimer();
     gpt_zuowen_talk_size = 0;
-    if (PNULL != gpt_zuowen_record_handle)
-    {
-        MMIRECORDSRV_StopRecord(gpt_zuowen_record_handle);
-        MMIRECORDSRV_FreeRecordHandle(gpt_zuowen_record_handle);
-        gpt_zuowen_record_handle = 0;
-    }
-    if(gpt_zuowen_record_timer_id != 0)
-    {
-        MMK_StopTimer(gpt_zuowen_record_timer_id);
-        gpt_zuowen_record_timer_id = 0;
-    }
-    if(gpt_zuowen_record_identify_timer_id){
-        MMK_StopTimer(gpt_zuowen_record_identify_timer_id);
-        gpt_zuowen_record_identify_timer_id = 0;
-    }
     zmt_gpt_zuowen_status = 0;
     gpt_zuowen_record_type = 0;
     gpt_zuowen_record_times = 0;
@@ -1278,10 +1278,12 @@ LOCAL MMI_RESULT_E HandleZmtGptZuoWenWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
             break;
         case MSG_TIMER:
             {
-                gpt_zuowen_record_times += 200;
-                ZmtGptZuoWen_DispalyRecord(win_id, 1);
-                if(gpt_zuowen_record_times >= 10 * 1000){
-                    ZmtGptZuoWen_StopRecord(win_id, TRUE);
+                if(MMK_IsFocusWin(win_id)){
+                    gpt_zuowen_record_times += 200;
+                    ZmtGptZuoWen_DispalyRecord(win_id, 1);
+                    if(gpt_zuowen_record_times >= 10 * 1000){
+                        ZmtGptZuoWen_StopRecord(win_id, TRUE);
+                    }
                 }
             }
             break;  
@@ -1323,10 +1325,10 @@ PUBLIC void MMIZMT_CreateZmtGptZuoWenWin(void)
 
 PUBLIC void ZMTGpt_CloseZuoWenRecord(void)
 {
-    if (PNULL != gpt_zuowen_record_handle){
-        MMIRECORDSRV_StopRecord(gpt_zuowen_record_handle);
-        MMIRECORDSRV_FreeRecordHandle(gpt_zuowen_record_handle);
-        gpt_zuowen_record_handle = 0;
-    }
+    ZmtGptZuoWen_StopRecordHandle();
+    ZmtGptZuoWen_StopRecordTimer();
+    ZmtGptZuoWen_StopRecordIndentifyTimer();
+    gpt_zuowen_record_type = GPT_RECORD_TYPE_NONE;
+    SCI_TRACE_LOW("%s: end", __FUNCTION__);
 }
 
