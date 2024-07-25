@@ -322,7 +322,15 @@ PUBLIC void Word_WriteUnmasterChapterWord(uint16 book_id, uint16 chap_id, char *
     out = cJSON_PrintUnformatted(root);
     cJSON_Delete(root);
 #ifndef WIN32
-    if(zmt_tfcard_exist() && zmt_tfcard_get_free_kb() > 100 * 1024){
+    if(!zmt_tfcard_exist()){
+    #ifdef LISTENING_PRATICE_SUPPORT
+        MMI_CreateListeningTipWin(PALYER_PLAY_NO_TFCARD_TIP);
+    #endif
+    }else if(zmt_tfcard_get_free_kb() < 100 * 1024){
+    #ifdef LISTENING_PRATICE_SUPPORT
+        MMI_CreateListeningTipWin(PALYER_PLAY_NO_SPACE_TIP);
+    #endif
+    }else{
         if(zmt_file_exist(file_path)){
             zmt_file_delete(file_path);
         }
@@ -1139,8 +1147,15 @@ PUBLIC void Word_SaveDeleteNewWord(uint16 book_id, uint16 chap_id, char * chap_n
     }
     cJSON_AddItemToObject(root, "word", word);
 #ifndef WIN32
-    if(zmt_tfcard_exist() && zmt_tfcard_get_free_kb() > 100 * 1024)
-    {
+    if(!zmt_tfcard_exist()){
+    #ifdef LISTENING_PRATICE_SUPPORT
+        MMI_CreateListeningTipWin(PALYER_PLAY_NO_TFCARD_TIP);
+    #endif
+    }else if(zmt_tfcard_get_free_kb() < 100 * 1024){
+    #ifdef LISTENING_PRATICE_SUPPORT
+        MMI_CreateListeningTipWin(PALYER_PLAY_NO_SPACE_TIP);
+    #endif
+    }else{
         if(zmt_file_exist(file_path)){
             zmt_file_delete(file_path);
         }

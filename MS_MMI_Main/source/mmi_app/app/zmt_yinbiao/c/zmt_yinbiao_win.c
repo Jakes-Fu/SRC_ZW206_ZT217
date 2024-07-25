@@ -250,7 +250,7 @@ LOCAL BOOLEAN Yinbiao_PlayMp3DataCallback(MMISRV_HANDLE_T handle, MMISRVMGR_NOTI
             {
                 case MMISRVAUD_REPORT_END:  
                     {
-                        if(MMK_IsOpenWin(ZMT_YINBIAO_READ_WIN_ID)){
+                        if(MMK_IsFocusWin(ZMT_YINBIAO_READ_WIN_ID)){
                             Yinbiao_CreateIntervalTimer();
                         }
                     }
@@ -393,7 +393,9 @@ LOCAL void Yinbiao_PlayAudioMp3Error(int error_id)
     if(yinbiao_read_info.is_circulate)
     {
         yinbiao_read_info.is_play = TRUE;
-        YinbiaoReadWin_NextCallback();
+        if(MMK_IsFocusWin(ZMT_YINBIAO_READ_WIN_ID) || MMK_IsFocusWin(ZMT_YINBIAO_TABLE_TIP_WIN_ID)){
+            YinbiaoReadWin_NextCallback();
+        }
     }
     if(MMK_IsFocusWin(ZMT_YINBIAO_TABLE_TIP_WIN_ID)){
         YinbiaoTableTipWin_UpdateButton(yinbiao_table_play_status);

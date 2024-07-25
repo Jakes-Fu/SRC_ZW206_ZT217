@@ -351,7 +351,15 @@ PUBLIC void Hanzi_WriteUnmasterHanzi(uint16 grade_id, uint16 chap_id, uint8 writ
     cJSON_Delete(root);
     //SCI_TRACE_LOW("%s: out = %s", __FUNCTION__, out);
 #ifndef WIN32
-    if(zmt_tfcard_exist() && zmt_tfcard_get_free_kb() > 100 * 1024){
+    if(!zmt_tfcard_exist()){
+    #ifdef LISTENING_PRATICE_SUPPORT
+        MMI_CreateListeningTipWin(PALYER_PLAY_NO_TFCARD_TIP);
+    #endif
+    }else if(zmt_tfcard_get_free_kb() < 100 * 1024){
+    #ifdef LISTENING_PRATICE_SUPPORT
+        MMI_CreateListeningTipWin(PALYER_PLAY_NO_SPACE_TIP);
+    #endif
+    }else{
         if(zmt_file_exist(file_path)){
             zmt_file_delete(file_path);
         }
@@ -1267,8 +1275,15 @@ PUBLIC void Hanzi_SaveDeleteNewWord(uint16 grade_id, uint16 chap_id)
     cJSON_AddItemToObject(root, "hanzis", hanzis);
     
 #ifndef WIN32
-    if(zmt_tfcard_exist() && zmt_tfcard_get_free_kb() > 100 * 1024)
-    {
+    if(!zmt_tfcard_exist()){
+    #ifdef LISTENING_PRATICE_SUPPORT
+        MMI_CreateListeningTipWin(PALYER_PLAY_NO_TFCARD_TIP);
+    #endif
+    }else if(zmt_tfcard_get_free_kb() < 100 * 1024){
+    #ifdef LISTENING_PRATICE_SUPPORT
+        MMI_CreateListeningTipWin(PALYER_PLAY_NO_SPACE_TIP);
+    #endif
+    }else{
         if(zmt_file_exist(file_path)){
             zmt_file_delete(file_path);
         }
