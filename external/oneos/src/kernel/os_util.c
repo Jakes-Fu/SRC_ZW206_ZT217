@@ -42,5 +42,5 @@ void os_kprintf(const char *fmt, ...)
     vsnprintf(buffer, sizeof(buffer), fmt, ap);
     va_end(ap);
 
-    SCI_TRACE_LOW("%s", buffer);
+    SCI_TRACE_LOW(buffer);
 }

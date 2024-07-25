@@ -20,33 +20,24 @@ extern "C" {
 
 /* app0 */
 #define OTA_APP0_PART_ADDR             CMIOT_FOTA_ADDRESS1
-#define OTA_APP0_PART_SIZE             (0 * EXTERN_FLASH_SECTOR_SIZE)
+#define OTA_APP0_PART_SIZE             (62 * EXTERN_FLASH_SECTOR_SIZE)
 
 /* app1 */
 #define OTA_APP1_PART_ADDR             CMIOT_FOTA_ADDRESS2
-#define OTA_APP1_PART_SIZE             (0 * EXTERN_FLASH_SECTOR_SIZE)
+#define OTA_APP1_PART_SIZE             (8 * EXTERN_FLASH_SECTOR_SIZE)
 
 /* app2 */
 #define OTA_APP2_PART_ADDR             CMIOT_FOTA_ADDRESS3
-#define OTA_APP2_PART_SIZE             (0 * EXTERN_FLASH_SECTOR_SIZE)
+#define OTA_APP2_PART_SIZE             (48 * EXTERN_FLASH_SECTOR_SIZE)
 
 /* app3 */
 #define OTA_APP3_PART_ADDR             CMIOT_FOTA_ADDRESS4
-#define OTA_APP3_PART_SIZE             (0 * EXTERN_FLASH_SECTOR_SIZE)
-
-/* app4 */
-#define OTA_APP4_PART_ADDR             CMIOT_FOTA_ADDRESS5
-#define OTA_APP4_PART_SIZE             (0 * EXTERN_FLASH_SECTOR_SIZE)
-
-/* app5 */
-#define OTA_APP5_PART_ADDR             CMIOT_FOTA_ADDRESS6
-#define OTA_APP5_PART_SIZE             (0 * EXTERN_FLASH_SECTOR_SIZE)
+#define OTA_APP3_PART_SIZE             (93 * EXTERN_FLASH_SECTOR_SIZE)
 
 
 /* download */
-/*defined @fdl_bootloader\nor_fdl\src\fdl_main.c: FOTA_PACKAGE_LOGIC_ADDRESS*/
-#define OTA_DL_PART_ADDR               0x8000000f
-#define OTA_DL_PART_SIZE               (0 * EXTERN_FLASH_SECTOR_SIZE)
+#define OTA_DL_PART_ADDR               ((unsigned int)0x605f0000)
+#define OTA_DL_PART_SIZE               (16 * EXTERN_FLASH_SECTOR_SIZE)
 
 /* extern_app */
 //#define OTA_EX_APP_PART_ADDR           ((unsigned int)0x00000000)

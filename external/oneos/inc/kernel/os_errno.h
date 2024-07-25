@@ -11,7 +11,7 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  *
- * @file        os_errno.h
+ * @file        oneos_errno.h
  *
  * @brief       Error code macro definition.
  *
@@ -28,7 +28,7 @@ extern "C" {
 #endif
 
 #define OS_EOK           0      /* There is no error. */
-#define OS_ERROR        -1      /* A generic error happens. */
+// #define OS_ERROR        -1      /* A generic error happens. */
 #define OS_ETIMEOUT     -2      /* Timed out. */
 #define OS_EFULL        -3      /* The resource is full. */
 #define OS_EEMPTY       -4      /* The resource is empty. */
@@ -40,7 +40,6 @@ extern "C" {
 #define OS_EINVAL       -10     /* Invalid argument. */
 #define OS_ENODEV       -11     /* No such device */
 #define OS_EPERM        -12     /* Operation not permitted */
-#define OS_PDP_ACTIVATED -13    // PDP already activated
 
 #ifdef __cplusplus
 }

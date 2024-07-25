@@ -26,7 +26,7 @@
  */
 
 #include <os_types.h>
-// #include <os_stddef.h>
+#include <os_stddef.h>
 #include <os_assert.h>
 #include <os_memory.h>
 #include <string.h>
@@ -38,9 +38,6 @@ typedef enum
     RB_RING_BUFF_FULL,
     RB_RING_BUFF_HALF_FULL,     /* Half full is neither full nor empty */
 }rb_ring_buff_state_t;
-
-/* Return the down number of aligned at specified width. OS_ALIGN_DOWN(13, 4) would return 12. */
-#define OS_ALIGN_DOWN(size, align) ((size) & ~((align)-1))
 
 static rb_ring_buff_state_t rb_ring_buff_state(rb_ring_buff_t *rb)
 {

@@ -1,46 +1,36 @@
 @title make package
 @echo off
 
-::#####################################################################################################
-::set target project name
-set proj=UWS6121E_WC_1H00_USER
-::#####################################################################################################
+set version=%1
 
-set build_dir=%proj%_builddir
-set stone_img=UWS6121E_%proj%_stone.img
-set stone_bin=UWS6121E_%proj%_stone.img.bin
-
-echo %build_dir%
-
-for /f "eol=/ tokens=3" %%i in ('findstr CMIOT_FIRMWARE_VERSION oneos_config.h.txt') do (set version=%%i)
 
 if "%version%" == "" (
-    echo ***version is empty***
-    echo check oneos_config.h CMIOT_FIRMWARE_VERSION
-    goto EOF
+	echo ***version is empty***
+	echo usage  : pack_cmd.bat [version]
+	echo example: pack_cmd.bat 1.0.0
+	goto EOF
 ) else (
-    echo package source: %version%
+	echo package source: %version%
 )
 
 if exist %version% (
-    echo "package source folder %version% exist"
+	echo "package source folder %version% exist"
 ) else (
-    md %version%
+	md %version%
 )
 
 ::copy new files
-copy ..\..\build\%build_dir%\img\* .\%version%
-copy ..\..\make\perl_script\UWS6121E.xml .\%version%\UWS6121E.xml.bin
+copy ..\..\build\UWS6121E_WC_1H00_NoGNSS_builddir\img\* .\%version%
 
 ::rename image files
 cd .\%version%
-if exist %stone_bin% (
-    del %stone_bin%
-    echo clear old %stone_bin%
+if exist UWS6121E_UWS6121E_WC_1H00_NoGNSS_stone.img.bin (
+    del UWS6121E_UWS6121E_WC_1H00_NoGNSS_stone.img.bin
+    echo clear old UWS6121E_UWS6121E_WC_1H00_NoGNSS_stone.img.bin
 ) else (
-    echo %stone_bin% 
+    echo UWS6121E_UWS6121E_WC_1H00_NoGNSS_stone.img.bin 
 )
-copy %stone_img% %stone_bin%
+copy UWS6121E_UWS6121E_WC_1H00_NoGNSS_stone.img UWS6121E_UWS6121E_WC_1H00_NoGNSS_stone.img.bin
 cd ..
 
 ::generate package
@@ -48,10 +38,10 @@ set "WinRAR=C:\Program Files\WinRAR\WinRAR.exe"
 set "Zip=C:\Program Files\7-Zip\7z.exe"
 
 if exist "%WinRAR%" (
-    call ota\cmiot\source\pack\cmiot_pack.bat "%WinRAR%" oneos_config.h.txt %version%
+    call ota\cmiot\pack\cmiot_pack.bat "%WinRAR%" oneos_config.h.txt %version%
 ) else (
     if exist "%Zip%" (
-        call ota\cmiot\source\pack\cmiot_pack.bat "%Zip%" oneos_config.h.txt .\%version%\
+        ota\cmiot\pack\cmiot_pack.bat "%Zip%" oneos_config.h.txt .\%version%\
     ) else (
         echo "zip tool not found"
     )

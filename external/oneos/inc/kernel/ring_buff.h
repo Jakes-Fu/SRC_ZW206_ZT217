@@ -26,6 +26,7 @@
 #define __RING_BUFF_H__
 
 #include "os_types.h"
+#include "os_stddef.h"
 
 #ifdef __cplusplus
 extern "C" {

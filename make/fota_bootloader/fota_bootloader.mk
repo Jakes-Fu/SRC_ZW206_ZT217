@@ -241,13 +241,10 @@ ifeq ($(strip $(FOTA_SUPPORT)), CMIOT)
     SRCPATH  += external/oneos/src/flash \
                 Third-party/oneos/bootloader
     SOURCES  += os_ota_main.c \
-                os_flash.c \
-                nvmerge.c \
-                fota_update_fixnv.c \
-                os_nv_update.c
+                os_flash.c
 
 	ifeq ($(CMIOT_FOTA_USE_LIBARAY), TRUE)
-		CMIOTFOTALIBS = Third-party/oneos/bootloader/lib/libcmiot_ota.a
+        CMIOTFOTALIBS =Third-party/oneos/bootloader/libcmiot_ota.a
 	else
         MCFLAG_OPT	+= -DEXTERNAL_COMPILATION_LIB
 		MCFLAG_OPT	+= -DCMIOT_ALGORITHM_LUCKPAND

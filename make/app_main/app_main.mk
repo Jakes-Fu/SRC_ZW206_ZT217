@@ -1734,7 +1734,6 @@ SOURCES += zdt_dropdown_win.c
 
 ifeq ($(strip $(FOTA_SUPPORT)), CMIOT)
 MINCPATH += Third-party/oneos/ota/cmiot/inc
-MINCPATH += Third-party/oneos/ota/cmiot/source/inc
 SOURCES += zdt_wintable_fota.c
 endif
 
