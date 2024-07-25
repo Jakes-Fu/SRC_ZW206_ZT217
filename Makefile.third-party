@@ -1381,7 +1381,7 @@ ifeq ($(strip $(XYSDK_SUPPORT)), TRUE)
         ifeq ($(strip $(MAINLCD_DEV_SIZE_240X284)), TRUE)
             3RD_LIBS += Third-party/xmly/lib/xmly_240X284_USER.a
         else ifeq ($(strip $(MAINLCD_DEV_SIZE)), 240X320)
-            3RD_LIBS += Third-party/xmly/lib/xmly_240X284_USER.a
+            3RD_LIBS += Third-party/xmly/lib/xmly_240X320_USER.a
 	
         else
 	    ifeq ($(strip $(MAINLCD_DEV_SIZE)), 240X240)
@@ -1392,7 +1392,7 @@ ifeq ($(strip $(XYSDK_SUPPORT)), TRUE)
         ifeq ($(strip $(MAINLCD_DEV_SIZE_240X284)), TRUE)
             3RD_LIBS += Third-party/xmly/lib/xmly_240X284_DEBUG.a
 	else ifeq ($(strip $(MAINLCD_DEV_SIZE)), 240X320)
-            3RD_LIBS += Third-party/xmly/lib/xmly_240X284_DEBUG.a    
+            3RD_LIBS += Third-party/xmly/lib/xmly_240X320_DEBUG.a    
         else
             ifeq ($(strip $(MAINLCD_DEV_SIZE)), 240X240)
                 3RD_LIBS += Third-party/xmly/lib/xmly_240X240_DEBUG.a

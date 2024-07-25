@@ -62,11 +62,10 @@ PUBLIC void  mmixysdk_api_set_watch_vol(int vol)
  *
  *
  */
-uint32 xmly_iot_socket_get_netid()
-{
+uint32 xmly_iot_socket_get_netid(){
 
-
-
+	return MMIAPIPDP_GetPublicPdpLinkNetid();
 
 }
+
 

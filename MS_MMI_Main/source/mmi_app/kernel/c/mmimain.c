@@ -2710,11 +2710,7 @@ THREAD_ENTRY(P_APP)
 
 #ifndef WIN32
 	/* Register app task to soft watchdog monitor */
-#ifdef ZDT_APP_SUPPORT
-	watchdog_ptr = SWDG_RegTask("APP", 240000);
-#else
 	watchdog_ptr = SWDG_RegTask("APP", 180000);
-#endif
 	SCI_ASSERT(SCI_NULL != watchdog_ptr);	 /*assert verified*/
 #ifdef WRE_SUPPORT
     MMIWRE_SetWatchDogPtr((void *)watchdog_ptr);

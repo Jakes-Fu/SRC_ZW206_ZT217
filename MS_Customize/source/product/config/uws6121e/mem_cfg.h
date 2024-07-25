@@ -266,7 +266,7 @@ region                   start address      size(Byte)
 *************** ONLY  FLASH A PARTITION (16MB) End***************
 ***************************************************************/
 
-#define  UMEM_SECTOR_NUM            20
+#define  UMEM_SECTOR_NUM            22
 //when PRELOAD_SUPPORT is true and preload img to UMEM PARTITION. 
 //keep the "IMG_SIZE"(in \make\preload_app\preload_app.mk) matching with the UDISK_SIZE 
 #ifdef  UMEM_SUPPORT
@@ -318,7 +318,7 @@ region                   start address      size(Byte)
 #define CP_SIZE                      (CP_SECTOR_NUM*FLASH_SECTOR_SIZE)
 #define CP_BASE_ADDR                 (IMS_TOGGEL_CFG_ADDR-CP_SIZE)
 
-#define MMI_RES_SECTOR_NUM          52 //60 43 /*FOTA_SUPPORT_CMIOT*/
+#define MMI_RES_SECTOR_NUM          53
 #define MMI_RESOURCE_SIZE           (MMI_RES_SECTOR_NUM*FLASH_SECTOR_SIZE)
 #define MMI_RES_BASE_ADDR           (CP_BASE_ADDR - MMI_RESOURCE_SIZE)
 

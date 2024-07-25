@@ -84,16 +84,17 @@ ifneq ($(strip $(DRM_SUPPORT)),)
     endif
 endif
 
+ifeq ($(strip $(XYSDK_SUPPORT)), TRUE)
+MINCPATH += $(MMI_DIR)/source/mmi_app/app/xysdk/h
+MINCPATH += Third-party/xmly/api/h
+endif
+
 ifeq ($(strip $(GAME_SUPPORT)),TRUE)
 MINCPATH += $(MMI_DIR)/source/mmi_app/app/game/game_boxman/h
 MINCPATH += $(MMI_DIR)/source/mmi_app/app/game/game_snake/h
 MINCPATH += $(MMI_DIR)/source/mmi_app/app/game/game_quintet/h
 MINCPATH += $(MMI_DIR)/source/mmi_app/app/game/game_link/h
 MINCPATH += $(MMI_DIR)/source/mmi_app/app/game/game_manager/h
-endif
-ifeq ($(strip $(XYSDK_SUPPORT)), TRUE)
-MINCPATH += $(MMI_DIR)/source/mmi_app/app/xysdk/h
-MINCPATH += Third-party/xmly/api/h
 endif
 MINCPATH += $(MMI_DIR)/source/mmi_app/app/screensaver/h
 MINCPATH += $(MMI_DIR)/source/mmi_app/app/keylock/h
@@ -490,6 +491,12 @@ ifneq ($(strip $(DRM_SUPPORT)),)
     MSRCPATH += $(MMI_DIR)/source/mmi_app/app/drm/c
     endif
 endif
+
+ifeq ($(strip $(XYSDK_SUPPORT)), TRUE)
+MSRCPATH += $(MMI_DIR)/source/mmi_app/app/xysdk/c
+endif
+
+
 ifeq ($(strip $(GAME_SUPPORT)),TRUE)
 MSRCPATH += $(MMI_DIR)/source/mmi_app/app/game/game_boxman/c
 MSRCPATH += $(MMI_DIR)/source/mmi_app/app/game/game_snake/c
@@ -875,6 +882,9 @@ ifneq ($(strip $(DRM_SUPPORT)),)
     endif
 endif
 
+ifeq ($(strip $(XYSDK_SUPPORT)), TRUE)
+SOURCES	 += xmly_config_info.c 
+endif
 
 ifeq ($(strip $(KING_MOVIE_SUPPORT)), ALL)
 MINCPATH  +=  MS_Ref/source/video_security/export
@@ -2522,16 +2532,23 @@ endif
 
 
 ifeq ($(strip $(LEBAO_MUSIC_SUPPORT)), TRUE)
-	MINCPATH += $(MMI_DIR)/source/mmi_app/app/lebao/applib/base/inc
-	MINCPATH += $(MMI_DIR)/source/mmi_app/app/lebao/applib/base/src/simulator
-	MINCPATH += $(MMI_DIR)/source/mmi_app/app/lebao/applib/v2/inc
-	MINCPATH += $(MMI_DIR)/source/mmi_app/app/lebao/h
-	MINCPATH += $(MMI_DIR)/source/mmi_app/app/lebao/music
-	MINCPATH += $(MMI_DIR)/source/mmi_app/app/lebao/music/ctrl
-	MINCPATH += $(MMI_DIR)/source/mmi_app/app/lebao/music/view
-	MSRCPATH += $(MMI_DIR)/source/mmi_app/app/lebao/music/view
-	SOURCES += lebao_wintable.c lebao_app.c lebao_win_base.c
-endif
+  MINCPATH += $(MMI_DIR)/source/mmi_app/app/lebao/applib/base/inc
+  MINCPATH += $(MMI_DIR)/source/mmi_app/app/lebao/applib/port/inc
+  MSRCPATH += $(MMI_DIR)/source/mmi_app/app/lebao/applib/port/src
+  MINCPATH += $(MMI_DIR)/source/mmi_app/app/lebao/applib/lebao/inc
+  MINCPATH += $(MMI_DIR)/source/mmi_app/app/lebao/h
+  MINCPATH += $(MMI_DIR)/source/mmi_app/app/lebao/music
+  MSRCPATH += $(MMI_DIR)/source/mmi_app/app/lebao/music
+  MINCPATH += $(MMI_DIR)/source/mmi_app/app/lebao/music/ctrl
+  MINCPATH += $(MMI_DIR)/source/mmi_app/app/lebao/music/view
+  MSRCPATH += $(MMI_DIR)/source/mmi_app/app/lebao/music/view
+
+  SOURCES += bmp_file.c helper_file.c helper_mem.c helper_qrcode.c helper_stamp.c \
+  			helper_thread.c http_socket.c qrcodegen.c helper_rsa.c \
+  			helper_b64.c helper_mp3.c http_client.c link_list.c sds.c \
+  			lebao.c lebao_network.c lebao_ringset.c lebao_audio_dev.c \
+  			lebao_wintable.c lebao_base.c lebao_style.c
+  endif
 
 ifeq ($(strip $(VIDEO_CALL_AGORA_SUPPORT)), TRUE)
 MINCPATH += Third-party/agora_rtc_sdk/include
