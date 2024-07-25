@@ -1642,6 +1642,7 @@ RES_ADD_STRING(TXT_SET_LONGMODE_OFF_TIPS, "Exit Long Range Mode")
 RES_ADD_STRING(TXT_SET_LONGMODE_TITLE, "Long Range Mode")
 RES_ADD_STRING(TEXT_DEVICE_INFO, "Device information")
 RES_ADD_STRING(TEXT_CERTIFICATION_MARK, "Certification mark")
+RES_ADD_STRING(TXT_STRING_VERSION, "Firmware version")
 
 //2015-7-9 tangting add display strings
 

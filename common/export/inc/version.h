@@ -32,6 +32,20 @@
 
 
 #ifdef _SW_ZDT_PRODUCT_
+
+#ifdef ZT217_LISENNING_PAD
+#define ZDT_SFR_MANUF 			"LT"
+#define ZDT_SFR_TYPE 			"LT-01"//"ZW35" //app 视频画面用这个名称判断240X284
+//软件版本号
+#define ZDT_SFR_SW_VER 			"LT-T01V1.0.1B01.0"//"ZTE_ZW35V1.0.0B17.0"//"ZW206_K1_RDA_240X284_V01"
+//自注册编码
+#define ZDT_SFR_MODEL 			"NM-ESC-A"
+//硬件版本号
+//软件版本号
+#define ZDT_CTA_SW_VER 			"ZT217_LT-T01V1.0.1"//"ZTE_ZW35V1.0.0B17.0"//"ZW206_K1_RDA_240X284_V01"
+#define ZDT_SFR_HW_VER 			"ZT217_MB_V1.0.1" // UWS6121E
+#else
+
 #ifdef ZTE_WATCH
 //型号ZW206--ZW35-K1 -EW2302
 //型号ZW202--ZW22-K1 ENTRY-EW2303
@@ -72,7 +86,7 @@
 #define ZDT_SFR_HW_VER 			"ZT217_MB_V1.0.1" 
 
 #endif
-
+#endif
 #define ZDT_FOTA_VER 			ZDT_SFR_SW_VER // "K1 Entry 1.0"
 
 #define ZDT_PlatOS 			"RTOS"
@@ -81,9 +95,10 @@
 #define ZDT_PlatROM 			"16M"
 #define ZDT_PlatCPU 			"500MHz"
 
-#define ZDT_CMCC_APP_KEY "M100001047"//"M100001039"
-#define ZDT_CMCC_AES_KEY "04145Mk2u4KxlZ4qIADB9l0iR3118VLJ"//"39UT82ajn2pYEh3007A73S5bgR203X53"
+#define ZDT_CMCC_APP_KEY "M100000514"//"M100001039"
+#define ZDT_CMCC_AES_KEY "To7Z21d3f205HpQ92d26p51dmwZ9Jl66"//"39UT82ajn2pYEh3007A73S5bgR203X53"
 #define ZDT_CMCC_AES_KEYLEN (32)
+
 #endif
 
 typedef enum
