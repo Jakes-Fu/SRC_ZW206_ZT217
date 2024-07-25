@@ -377,16 +377,16 @@ PUBLIC MMI_RESULT_E Gallery_Pic_HandleMsg(
         break;
 #endif
         case MSG_APP_LEFT:
-        case MSG_APP_RIGHT:
         {
-             /*if(!Gallery_Main_IsDisplayOsd())
-             {
-                 Gallery_Main_SetDisplayOsd(win_id,TRUE);
-                 Gallery_Pic_SetBtnVisible(win_id,TRUE,TRUE);
-             }*/
+            Gallery_PreFilePreview(win_id);
         }
         break;
-        case MSG_APP_CANCEL:
+        case MSG_APP_RIGHT:
+        {
+             Gallery_NextFilePreview(win_id);
+        }
+        break;
+        case MSG_KEYUP_CANCEL:
         case MSG_KEYUP_RED:
         {
             
@@ -403,6 +403,8 @@ PUBLIC MMI_RESULT_E Gallery_Pic_HandleMsg(
             }
         }
         break;
+
+        case MSG_KEYDOWN_CANCEL:
         case MSG_KEYDOWN_RED:
             break;
         case MSG_TP_PRESS_UP:

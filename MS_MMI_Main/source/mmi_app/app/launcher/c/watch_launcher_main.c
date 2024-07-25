@@ -1369,6 +1369,8 @@ PUBLIC void WatchOpen_Panel_SelectWin()
 
 PUBLIC void ZMTApp_CloseRecordAndPlayer(void)
 {
+    SCI_TRACE_LOW("%s: start", __FUNCTION__);
+    MMIZDT_StopChatTimerAndAudio();
 #ifdef LISTENING_PRATICE_SUPPORT
     ZMTListening_CloseListeningPlayer();
 #endif

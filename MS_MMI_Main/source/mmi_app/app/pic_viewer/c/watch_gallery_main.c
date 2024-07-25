@@ -647,16 +647,21 @@ LOCAL void Gallery_DisplayFilePreview(MMI_WIN_ID_T win_id, uint32 file_index)
     TRACE_APP_GALLERY("gallery cur file type is %d,cur file index is %d",file_type,file_index);
 }
 
+LOCAL void Gallery_OpenFilePreview(MMI_WIN_ID_T win_id, uint16 file_index)
+{
+    Gallery_DisplayFilePreview(win_id,file_index);
+}
+
 PUBLIC void Gallery_NextFilePreview(MMI_WIN_ID_T win_id)
 {
-    uint16 file_nume     = 0;
+    uint16 file_num     = 0;
     uint16 cur_file_index= s_gallery_cur_panel_info.file_index;
     if(MMIGALLERY_FILE_TYPE_VIDEO==Gallery_GetCurPreviewFileType())
     {
         Gallery_Vp_StopPlayAndClearDis();
     }
-    file_nume = Gallery_GetAllFileNum();
-    if(file_nume==cur_file_index+1)
+    file_num = Gallery_GetAllFileNum();
+    if(file_num==cur_file_index+1)
     {
        cur_file_index=0;//当前是最后一个文件则显示第一个文件,循环显示
        Gallery_DisplayFilePreview(win_id,cur_file_index);
@@ -669,24 +674,24 @@ PUBLIC void Gallery_NextFilePreview(MMI_WIN_ID_T win_id)
     s_gallery_cur_panel_info.file_index=cur_file_index;
 }
 
-LOCAL void Gallery_PreFilePreview(MMI_WIN_ID_T win_id)
+PUBLIC void Gallery_PreFilePreview(MMI_WIN_ID_T win_id)
 {
-    uint16 file_nume      = 0;
+    uint16 file_num      = 0;
     uint16 cur_file_index = s_gallery_cur_panel_info.file_index;
     if(MMIGALLERY_FILE_TYPE_VIDEO==Gallery_GetCurPreviewFileType())
     {
         Gallery_Vp_StopPlayAndClearDis();
     }
-    file_nume = Gallery_GetAllFileNum();
+    file_num = Gallery_GetAllFileNum();
     if(0==cur_file_index)
     {
-        //cur_file_index = file_nume-1;//当前是第一个文件则显示最后一个文件
+        cur_file_index = file_num-1;//当前是第一个文件则显示最后一个文件
         Gallery_DisplayFilePreview(win_id,cur_file_index);
     }
     else
     {
-        Gallery_DisplayFilePreview(win_id,cur_file_index);
-        //cur_file_index = cur_file_index-1;
+        Gallery_DisplayFilePreview(win_id,cur_file_index-1);
+        cur_file_index = cur_file_index-1;
     }
     s_gallery_cur_panel_info.file_index=cur_file_index;
 }
@@ -1507,8 +1512,8 @@ LOCAL void CreatePicListCtrl(
     boder_type.type     = GUI_BORDER_SOLID;
     GUIICONLIST_SetItemBorderStyle(ctrl_id, FALSE, &boder_type);
 	/*edit by fys 09/26 */
-    boder_type.width    = 0;
-	boder_type.color    = MMI_BLACK_COLOR;
+    boder_type.width    = 1;
+    boder_type.color    = MMI_WHITE_COLOR;
     GUIICONLIST_SetItemBorderStyle(ctrl_id, TRUE, &boder_type);
 #ifdef MMI_GUI_STYLE_MINISCREEN
     /*MINI UI 需求:不显示list_title*/
@@ -1843,7 +1848,7 @@ LOCAL MMI_RESULT_E HandleGalleryMainWinMsg(
 #endif
         }
         break;
-        case MSG_APP_DOWN:
+        /*case MSG_APP_DOWN:
         {
              Gallery_NextFilePreview(win_id);
         }
@@ -1852,7 +1857,7 @@ LOCAL MMI_RESULT_E HandleGalleryMainWinMsg(
         {
              Gallery_PreFilePreview(win_id);
         }
-        break;
+        break;*/
 #ifdef TOUCH_PANEL_SUPPORT
         case MSG_TP_PRESS_UP:
         {
@@ -2005,7 +2010,9 @@ LOCAL MMI_RESULT_E HandleGalleryMainWinMsg(
     case MSG_CTL_ICONLIST_APPEND_ICON:
         AppendPicIconListIcon(*(uint16 *)param, ctrl_id);
         break;
+    case MSG_CTL_OK:
     case MSG_CTL_PENOK:
+    case MSG_CTL_MIDSK:
         if(PNULL != param)
         {   
             uint16  marked_num = 0;
@@ -2056,7 +2063,7 @@ LOCAL MMI_RESULT_E HandleGalleryMainWinMsg(
                 case MMIPICVIEW_LIST_CTRL_ID:
                     cur_index = GUIICONLIST_GetCurIconIndex(ctrl_id);
                      s_gallery_cur_panel_info.file_index=cur_index;
-                    Gallery_PreFilePreview(win_id);
+                    Gallery_OpenFilePreview(win_id, cur_index);
                     break;
 
             }
@@ -2076,6 +2083,7 @@ LOCAL MMI_RESULT_E HandleGalleryMainWinMsg(
 			GalleryPicList_TitleShow(win_id);
         }
         break;
+        case MSG_KEYDOWN_RED:
         case MSG_KEYDOWN_CANCEL:
             break;
         case MSG_KEYUP_RED:

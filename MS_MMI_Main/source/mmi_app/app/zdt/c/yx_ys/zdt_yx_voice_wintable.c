@@ -987,6 +987,13 @@ LOCAL void MMIZDT_StopPlayAnimTimer()
 
 }
 
+//add by fys 07/24,use to stop chat record/audio/play anim timer
+PUBLIC void MMIZDT_StopChatTimerAndAudio(void)
+{
+    MMIZDT_StopPlayAnimTimer();
+    MMIZDT_TinyChatRecordStop();
+}
+
 LOCAL void MMIZDT_SetPlayAudioIcon(uint8 anim_idx)
 {
     CTRLLIST_ITEM_T *pre_item_ptr = PNULL;
