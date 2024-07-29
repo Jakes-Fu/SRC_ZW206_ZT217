@@ -650,7 +650,7 @@ LOCAL MMI_RESULT_E HandleZDT_SosMainWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
                     }
                 }
 		    }
-		    break;
+		    break;  
 	    case MSG_CTL_CANCEL:
 	    case MSG_APP_CANCEL:
 		    MMK_CloseWin(win_id);
@@ -5072,11 +5072,14 @@ PUBLIC void MMIZDT_OpenClassModeWin()
 {
    if(MMK_GetFocusWinId() != MMIZDT_CLASSMODE_WIN_ID)
    {
-        #ifdef CAMERA_SUPPORT
+ #ifdef  XYSDK_SUPPORT
+	   LIBXMLYAPI_AppExit();
+#endif
+#ifdef CAMERA_SUPPORT
             #if defined(VIDEO_CALL_AGORA_IN_CAMERA_SCREEN_INCOMMING_ERR)
             External_CloseDCApplet();// ÍË³öCAMER CLOSE
-            #endif
-        #endif
+#endif
+#endif
         MMK_CreateWin((uint32*)MMIZDT_CLASSMODE_WIN_TAB,PNULL);
    }
 }
