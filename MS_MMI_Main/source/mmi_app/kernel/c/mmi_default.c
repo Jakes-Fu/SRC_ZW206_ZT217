@@ -3139,7 +3139,10 @@ PUBLIC void MMK_HandlePublicKey(
         break;
 #endif
 #endif
-
+	 case MSG_KEYDOWN_SHORTCUT:
+     case MSG_KEYDOWN_3:
+		 MMIZDT_OpenSosWin();
+		 break;
     case MSG_KEYLONG_RED:
         {
 #ifdef MMI_PDA_SUPPORT
