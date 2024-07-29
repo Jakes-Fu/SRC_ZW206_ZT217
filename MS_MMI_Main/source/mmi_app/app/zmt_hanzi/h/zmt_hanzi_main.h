@@ -121,7 +121,7 @@ PUBLIC void MMI_CreateHanziChapterWin(void);
 PUBLIC void MMI_CreateHanziDetailWin(void);
 PUBLIC void MMI_CreateHanziListenWin(void);
 PUBLIC MMI_RESULT_E MMI_CloseHanziDetailWin(void);
-PUBLIC void MMIZMT_CloseHanziPlayer(void);
+PUBLIC void ZMTHanzi_CloseHanziPlayer(void);
 
 PUBLIC void Hanzi_ReleaseBookInfo(void);
 PUBLIC void Hanzi_ParseBookInfo(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id);

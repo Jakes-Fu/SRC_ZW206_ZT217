@@ -53,11 +53,16 @@ int pinyin_request_idx = 0;
 BOOLEAN pinyin_request_now = FALSE;
 PINYIN_READ_INFO_T pinyin_read_info = {0};
 
+LOCAL GUI_RECT_T pinyin_table_rect = {0};
+LOCAL GUI_RECT_T pinyin_circulate_rect = {0};
+LOCAL GUI_RECT_T pinyin_signle_rect = {0};
 LOCAL MMISRV_HANDLE_T pinyin_player_handle = PNULL;
 LOCAL uint8 pinyin_player_timer_id = 0;
 LOCAL MMI_CTRL_ID_T pinyin_cur_select_id = ZMT_PINYIN_BUTTON_1_CTRL_ID;
 LOCAL int8 pinyin_table_play_status = 0;
 LOCAL int pinyin_player_voulme = 0;
+LOCAL int pinyin_click_btn = 0;
+LOCAL int pinyin_table_click_idx = 0;
 
 LOCAL void Pinyin_StopMp3Data(void);
 LOCAL void Pinyin_PlayMp3Data(uint8 idx, char * text);
@@ -704,7 +709,11 @@ LOCAL void PinyinTableWin_DisplayTableList(MMI_WIN_ID_T win_id)
             }
 
             item_data.item_content[0].item_data_type = GUIITEM_DATA_IMAGE_ID;
+            if(pinyin_table_click_idx == list_idx){
+                item_data.item_content[0].item_data.image_id = IMG_PINYIN_TABLE_ITEM_SEL_BG;
+            }else{
             item_data.item_content[0].item_data.image_id = IMG_PINYIN_TABLE_ITEM_BG;
+            }
 
             memset(text_str, 0, 20);
             size = strlen(pinyin_info_text[idx][list_idx].text);
@@ -736,6 +745,41 @@ LOCAL void PinyinTableWin_FULL_PAINT(MMI_WIN_ID_T win_id)
     Pinyin_DrawWinTitle(win_id, 0, text_string, title_rect, DP_FONT_24);
 
     PinyinTableWin_DisplayTableList(win_id);
+}
+LOCAL void PinyinTableWin_KeyLeftRight(MMI_WIN_ID_T win_id, BOOLEAN is_left)
+{
+    uint8 idx = MMK_GetWinAddDataPtr(win_id);
+    uint8 num = pinyin_info_num[idx].num;
+    if(is_left)
+    {
+        if(pinyin_table_click_idx == 0){
+            pinyin_table_click_idx = num - 1;
+        }else{
+            pinyin_table_click_idx--;
+        }
+    }
+    else
+    {
+        if(pinyin_table_click_idx == num - 1){
+            pinyin_table_click_idx = 0;
+        }else{
+            pinyin_table_click_idx++;
+        }
+    }
+    MMK_SendMsg(win_id,MSG_FULL_PAINT, PNULL);
+    if(pinyin_table_click_idx > 11){
+        MMK_SendMsg(win_id,MSG_APP_DOWN, PNULL);
+    }else{
+        MMK_SendMsg(win_id,MSG_APP_UP, PNULL);
+    }
+}
+LOCAL void PinyinTableWin_APP_OK(MMI_WIN_ID_T win_id)
+{
+    uint8 idx = MMK_GetWinAddDataPtr(win_id);
+    uint8 num = pinyin_info_num[idx].num;
+    if(pinyin_table_click_idx >= 0 && pinyin_table_click_idx < num){
+        MMI_CreatePinyinTableTipWin(pinyin_table_click_idx);
+    }
 }
 
 LOCAL void PinyinTableWin_CTL_PENOK(MMI_WIN_ID_T win_id, DPARAM param)
@@ -782,9 +826,23 @@ LOCAL MMI_RESULT_E HandlePinyinTableWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
                 pinyin_player_voulme = ZmtApp_VolumeChange(pinyin_player_handle, FALSE, pinyin_player_voulme);
             }
             break;
+        case MSG_APP_LEFT:
+            {
+                PinyinTableWin_KeyLeftRight(win_id, TRUE);
+            }
+            break;
+        case MSG_APP_RIGHT:
+            {
+                PinyinTableWin_KeyLeftRight(win_id, FALSE);
+            }
+            break;
+        case MSG_CTL_MIDSK:
         case MSG_APP_WEB:
         case MSG_APP_OK:
-        case MSG_CTL_MIDSK:
+            {
+                PinyinTableWin_APP_OK(win_id);
+            }
+            break;
         case MSG_CTL_OK:
         case MSG_CTL_PENOK:
             { 
@@ -801,7 +859,7 @@ LOCAL MMI_RESULT_E HandlePinyinTableWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
             break;
         case MSG_CLOSE_WINDOW:
             {
-                
+                pinyin_table_click_idx = 0;
             }
             break;
         default:
@@ -840,14 +898,11 @@ PUBLIC void MMI_CreatePinyinTableWin(uint8 idx)
 LOCAL void PinyinReadWin_UpdateTopButton(BOOLEAN is_circulate, BOOLEAN is_single)
 {
     GUI_LCD_DEV_INFO lcd_dev_info = {GUI_MAIN_LCD_ID,GUI_BLOCK_MAIN};
-    GUI_RECT_T single_rect = pinyin_list_rect;
+    GUI_RECT_T single_rect = pinyin_circulate_rect;
     GUI_RECT_T fill_rect = {0};
     GUI_BG_T bg = {0};
     bg.bg_type = GUI_BG_IMG;
     
-    single_rect.bottom = single_rect.top + PINYIN_LINE_HIGHT;
-    single_rect.left = MMI_MAINSCREEN_WIDTH - PINYIN_LINE_WIDTH;
-    single_rect.right = MMI_MAINSCREEN_WIDTH;
 
     fill_rect.top = single_rect.top;
     fill_rect.bottom = single_rect.bottom;
@@ -988,6 +1043,60 @@ LOCAL void PinyinReadWin_NextCallback(void)
     }
 }
 
+LOCAL void PinyinReadWin_KeyAppOk(MMI_WIN_ID_T win_id)
+{
+    if(pinyin_request_status <= 0){
+        return;
+    }
+    switch(pinyin_click_btn)
+    {
+        case 0:
+            {
+                PinyinReadWin_PlayCallback();
+            }
+            break;
+        case 1:
+            {
+                PinyinReadWin_TableCallback();
+            }
+            break;
+        case 2:
+            {
+                PinyinReadWin_CirculateCallback();
+            }
+            break;
+        case 3:
+            {
+                PinyinReadWin_SingleCallback();
+            }
+            break;
+        default:
+            break;
+    }
+}
+LOCAL void PinyinReadWin_KeyUpDown(MMI_WIN_ID_T win_id, BOOLEAN is_up)
+{
+    if(pinyin_request_status <= 0){
+        return;
+    }
+    if(is_up)
+    {
+        if(pinyin_click_btn == 0){
+            pinyin_click_btn = 3;
+        }else{
+            pinyin_click_btn--;
+        }
+    }
+    else
+    {
+        if(pinyin_click_btn == 3){
+            pinyin_click_btn = 0;
+        }else{
+            pinyin_click_btn++;
+        }
+    }
+    MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
+}
 LOCAL void PinyinReadWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
 {
     GUI_RECT_T table_rect = pinyin_title_rect;
@@ -997,19 +1106,21 @@ LOCAL void PinyinReadWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
     GUI_BG_T bg = {0};
     bg.bg_type = GUI_BG_IMG;
 
-    single_rect.top += 1;
-    single_rect.bottom = single_rect.top + 1.5*PINYIN_LINE_HIGHT;
-    single_rect.left = 0;
+    single_rect.top += 3;
+    single_rect.bottom = single_rect.top + 1.5*PINYIN_LINE_HIGHT - 3;
+    single_rect.left = 10;
     single_rect.right = 2*PINYIN_LINE_WIDTH;
     Pinyin_InitButton(ZMT_PINYIN_READ_CIRCULATE_CTRL_ID, single_rect, NULL, ALIGN_HVMIDDLE, FALSE, PinyinReadWin_CirculateCallback);
     bg.img_id = IMG_PINYIN_CIRCULATE_DEF;
     GUIBUTTON_SetBg(ZMT_PINYIN_READ_CIRCULATE_CTRL_ID, &bg);
+    pinyin_circulate_rect = single_rect;
     
     single_rect.left = MMI_MAINSCREEN_WIDTH - 2*PINYIN_LINE_WIDTH;
-    single_rect.right = MMI_MAINSCREEN_WIDTH;
+    single_rect.right = MMI_MAINSCREEN_WIDTH - 10;
     Pinyin_InitButton(ZMT_PINYIN_READ_SINGLE_CTRL_ID, single_rect, NULL, ALIGN_HVMIDDLE, FALSE, PinyinReadWin_SingleCallback);
     bg.img_id = IMG_PINYIN_SINGLE_DEF;
     GUIBUTTON_SetBg(ZMT_PINYIN_READ_SINGLE_CTRL_ID, &bg);
+    pinyin_signle_rect = single_rect;
 
     button_rect.top = button_rect.bottom - 2*PINYIN_LINE_HIGHT + 5;
     button_rect.bottom = MMI_MAINSCREEN_HEIGHT;
@@ -1034,11 +1145,14 @@ LOCAL void PinyinReadWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
     GUIBUTTON_SetRect(ZMT_PINYIN_READ_YINBIAO_CTRL_ID, &yinbiao_rect);
     GUIBUTTON_SetVisible(ZMT_PINYIN_READ_YINBIAO_CTRL_ID, FALSE, FALSE);
     
-    table_rect.left = MMI_MAINSCREEN_WIDTH - PINYIN_LINE_WIDTH;
+    table_rect.left = MMI_MAINSCREEN_WIDTH - PINYIN_LINE_WIDTH - 10;
+    table_rect.right = MMI_MAINSCREEN_WIDTH -10;
     GUIBUTTON_SetRect(ZMT_PINYIN_READ_TABLE_CTRL_ID, &table_rect);
     GUIBUTTON_SetCallBackFunc(ZMT_PINYIN_READ_TABLE_CTRL_ID, PinyinReadWin_TableCallback);
     GUIBUTTON_SetVisible(ZMT_PINYIN_READ_TABLE_CTRL_ID, FALSE, FALSE);
+    pinyin_table_rect = table_rect;
 
+    pinyin_click_btn = 0;
     pinyin_player_voulme = MMIAPISET_GetMultimVolume();
     Pinyin_RequestAudioPath();
 }
@@ -1075,6 +1189,35 @@ LOCAL void PinyinReadWin_DisplayPinyinTie(MMI_WIN_ID_T win_id)
         text_state,
         GUISTR_TEXT_DIR_AUTO
         );
+}
+LOCAL void PinyinReadWin_DrawBtnBorder(MMI_WIN_ID_T win_id)
+{
+    GUI_LCD_DEV_INFO lcd_dev_info = {GUI_MAIN_LCD_ID,GUI_BLOCK_MAIN};
+    GUI_RECT_T border_rect = {0};
+    if(pinyin_click_btn < 1){
+        return;
+    }
+    switch(pinyin_click_btn)
+    {
+        case 1:
+            {
+                border_rect = pinyin_table_rect;
+            }
+            break;
+        case 2:
+            {
+                border_rect = pinyin_circulate_rect;
+            }
+            break;
+        case 3:
+            {
+                border_rect = pinyin_signle_rect;
+            }
+            break;
+        default:
+            break;
+    }
+    LCD_DrawRoundedRect(&lcd_dev_info, border_rect, border_rect, MMI_WHITE_COLOR);
 }
 
 LOCAL void PinyinReadWin_FULL_PAINT(MMI_WIN_ID_T win_id)
@@ -1135,6 +1278,7 @@ LOCAL void PinyinReadWin_FULL_PAINT(MMI_WIN_ID_T win_id)
     GUIBUTTON_SetVisible(ZMT_PINYIN_READ_TABLE_CTRL_ID, TRUE, TRUE);
     
     PinyinReadWin_DisplayPinyinTie(win_id);
+    PinyinReadWin_DrawBtnBorder(win_id);
 }
 
 LOCAL void PinyinReadWin_CLOSE_WINDOW(void)
@@ -1143,6 +1287,7 @@ LOCAL void PinyinReadWin_CLOSE_WINDOW(void)
     Pinyin_StopMp3Data();
     Pinyin_StopIntervalTimer();
     Pinyin_ReleaseAudioPath();
+    pinyin_click_btn = 0;
     pinyin_request_status = 0;
     pinyin_request_now = FALSE;
 }
@@ -1181,13 +1326,23 @@ LOCAL MMI_RESULT_E HandlePinyinReadWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E m
         case MSG_CTL_OK:
         case MSG_CTL_PENOK:
             { 
-                PinyinReadWin_PlayCallback();
+                PinyinReadWin_KeyAppOk(win_id);
             }
             break;
         case MSG_KEYDOWN_BACKWARD:
         case MSG_KEYDOWN_FORWARD:
             {
                 PinyinReadWin_SingleCallback();
+            }
+            break;
+        case MSG_APP_UP:
+            {
+                PinyinReadWin_KeyUpDown(win_id, TRUE);
+            }
+            break;
+        case MSG_APP_DOWN:
+            {
+                PinyinReadWin_KeyUpDown(win_id, FALSE);
             }
             break;
         case MSG_APP_LEFT:

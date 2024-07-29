@@ -65,11 +65,16 @@ int yinbiao_request_idx = 0;
 BOOLEAN yinbiao_request_now = FALSE;
 YINBIAO_READ_INFO_T yinbiao_read_info = {0};
 
+LOCAL GUI_RECT_T yinbiao_table_rect = {0};
+LOCAL GUI_RECT_T yinbiao_circulate_rect = {0};
+LOCAL GUI_RECT_T yinbiao_signle_rect = {0};
 LOCAL MMISRV_HANDLE_T yinbiao_player_handle = PNULL;
 LOCAL uint8 yinbiao_player_timer_id = 0;
 LOCAL MMI_CTRL_ID_T yinbiao_cur_select_id = ZMT_YINBIAO_BUTTON_1_CTRL_ID;
 LOCAL int8 yinbiao_table_play_status = 0;
 LOCAL int yinbiao_player_voulme = 0;
+LOCAL int yinbiao_click_btn = 0;
+LOCAL int yinbiao_table_click_idx = 0;
 
 LOCAL void Yinbiao_StopMp3Data(void);
 LOCAL void Yinbiao_PlayMp3Data(uint8 idx, char * text);
@@ -713,7 +718,11 @@ LOCAL void YinbiaoTableWin_DisplayTableList(MMI_WIN_ID_T win_id)
             }
 
             item_data.item_content[0].item_data_type = GUIITEM_DATA_IMAGE_ID;
+            if(yinbiao_table_click_idx == list_idx){
+                item_data.item_content[0].item_data.image_id = IMG_YINBIAO_TABLE_ITEM_SEL_BG;
+            }else{
             item_data.item_content[0].item_data.image_id = IMG_YINBIAO_TABLE_ITEM_BG;
+            }
 
             memset(text_str, 0, 20);
             memset(text, 0, 20);
@@ -747,6 +756,41 @@ LOCAL void YinbiaoTableWin_FULL_PAINT(MMI_WIN_ID_T win_id)
     Yinbiao_DrawWinTitle(win_id, 0, text_string, title_rect, DP_FONT_24);
 
     YinbiaoTableWin_DisplayTableList(win_id);
+}
+LOCAL void YinbiaoTableWin_KeyLeftRight(MMI_WIN_ID_T win_id, BOOLEAN is_left)
+{
+    uint8 idx = MMK_GetWinAddDataPtr(win_id);
+    uint8 num = yinbiao_info_num[idx].num;
+    if(is_left)
+    {
+        if(yinbiao_table_click_idx == 0){
+            yinbiao_table_click_idx = num - 1;
+        }else{
+            yinbiao_table_click_idx--;
+        }
+    }
+    else
+    {
+        if(yinbiao_table_click_idx == num - 1){
+            yinbiao_table_click_idx = 0;
+        }else{
+            yinbiao_table_click_idx++;
+        }
+    }
+    MMK_SendMsg(win_id,MSG_FULL_PAINT, PNULL);
+    if(yinbiao_table_click_idx > 11){
+        MMK_SendMsg(win_id,MSG_APP_DOWN, PNULL);
+    }else{
+        MMK_SendMsg(win_id,MSG_APP_UP, PNULL);
+    }
+}
+LOCAL void YinbiaoTableWin_APP_OK(MMI_WIN_ID_T win_id)
+{
+    uint8 idx = MMK_GetWinAddDataPtr(win_id);
+    uint8 num = yinbiao_info_num[idx].num;
+    if(yinbiao_table_click_idx >= 0 && yinbiao_table_click_idx < num){
+        MMI_CreateYinbiaoTableTipWin(yinbiao_table_click_idx);
+    }
 }
 
 LOCAL void YinbiaoTableWin_CTL_PENOK(MMI_WIN_ID_T win_id, DPARAM param)
@@ -793,9 +837,23 @@ LOCAL MMI_RESULT_E HandleYinbiaoTableWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
                 yinbiao_player_voulme = ZmtApp_VolumeChange(yinbiao_player_handle, FALSE, yinbiao_player_voulme);
             }
             break;
+        case MSG_APP_LEFT:
+            {
+                YinbiaoTableWin_KeyLeftRight(win_id, TRUE);
+            }
+            break;
+        case MSG_APP_RIGHT:
+            {
+                YinbiaoTableWin_KeyLeftRight(win_id, FALSE);
+            }
+            break;
+        case MSG_CTL_MIDSK:
         case MSG_APP_WEB:
         case MSG_APP_OK:
-        case MSG_CTL_MIDSK:
+            {
+                YinbiaoTableWin_APP_OK(win_id);
+            }
+            break;
         case MSG_CTL_OK:
         case MSG_CTL_PENOK:
             { 
@@ -812,7 +870,7 @@ LOCAL MMI_RESULT_E HandleYinbiaoTableWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
             break;
         case MSG_CLOSE_WINDOW:
             {
-                
+                yinbiao_table_click_idx = 0;
             }
             break;
         default:
@@ -851,14 +909,10 @@ PUBLIC void MMI_CreateYinbiaoTableWin(uint8 idx)
 LOCAL void YinbiaoReadWin_UpdateTopButton(BOOLEAN is_circulate, BOOLEAN is_single)
 {
     GUI_LCD_DEV_INFO lcd_dev_info = {GUI_MAIN_LCD_ID,GUI_BLOCK_MAIN};
-    GUI_RECT_T single_rect = yinbiao_list_rect;
+    GUI_RECT_T single_rect = yinbiao_circulate_rect;
     GUI_RECT_T fill_rect = {0};
     GUI_BG_T bg = {0};
     bg.bg_type = GUI_BG_IMG;
-    
-    single_rect.bottom = single_rect.top + YINBIAO_LINE_HIGHT;
-    single_rect.left = MMI_MAINSCREEN_WIDTH - YINBIAO_LINE_WIDTH;
-    single_rect.right = MMI_MAINSCREEN_WIDTH;
 
     fill_rect.top = single_rect.top;
     fill_rect.bottom = single_rect.bottom;
@@ -1001,6 +1055,60 @@ LOCAL void YinbiaoReadWin_NextCallback(void)
     }
 }
 
+LOCAL void YinbiaoReadWin_KeyAppOk(MMI_WIN_ID_T win_id)
+{
+    if(yinbiao_request_status <= 0){
+        return;
+    }
+    switch(yinbiao_click_btn)
+    {
+        case 0:
+            {
+                YinbiaoReadWin_PlayCallback();
+            }
+            break;
+        case 1:
+            {
+                YinbiaoReadWin_TableCallback();
+            }
+            break;
+        case 2:
+            {
+                YinbiaoReadWin_CirculateCallback();
+            }
+            break;
+        case 3:
+            {
+                YinbiaoReadWin_SingleCallback();
+            }
+            break;
+        default:
+            break;
+    }
+}
+LOCAL void YinbiaoReadWin_KeyUpDown(MMI_WIN_ID_T win_id, BOOLEAN is_up)
+{
+    if(yinbiao_request_status <= 0){
+        return;
+    }
+    if(is_up)
+    {
+        if(yinbiao_click_btn == 0){
+            yinbiao_click_btn = 3;
+        }else{
+            yinbiao_click_btn--;
+        }
+    }
+    else
+    {
+        if(yinbiao_click_btn == 3){
+            yinbiao_click_btn = 0;
+        }else{
+            yinbiao_click_btn++;
+        }
+    }
+    MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
+}
 LOCAL void YinbiaoReadWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
 {
     GUI_RECT_T table_rect = yinbiao_title_rect;
@@ -1010,19 +1118,21 @@ LOCAL void YinbiaoReadWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
     GUI_BG_T bg = {0};
     bg.bg_type = GUI_BG_IMG;
 
-    single_rect.top += 1;
-    single_rect.bottom = single_rect.top + 1.5*YINBIAO_LINE_HIGHT;
-    single_rect.left = 0;
+    single_rect.top += 3;
+    single_rect.bottom = single_rect.top + 1.5*YINBIAO_LINE_HIGHT - 3;
+    single_rect.left = 10;
     single_rect.right = 2*YINBIAO_LINE_WIDTH;
     Yinbiao_InitButton(ZMT_YINBIAO_READ_CIRCULATE_CTRL_ID, single_rect, NULL, ALIGN_HVMIDDLE, FALSE, YinbiaoReadWin_CirculateCallback);
     bg.img_id = IMG_YINBIAO_CIRCULATE_DEF;
     GUIBUTTON_SetBg(ZMT_YINBIAO_READ_CIRCULATE_CTRL_ID, &bg);
+    yinbiao_circulate_rect = single_rect;
     
     single_rect.left = MMI_MAINSCREEN_WIDTH - 2*YINBIAO_LINE_WIDTH;
-    single_rect.right = MMI_MAINSCREEN_WIDTH;
+    single_rect.right = MMI_MAINSCREEN_WIDTH - 10;
     Yinbiao_InitButton(ZMT_YINBIAO_READ_SINGLE_CTRL_ID, single_rect, NULL, ALIGN_HVMIDDLE, FALSE, YinbiaoReadWin_SingleCallback);
     bg.img_id = IMG_YINBIAO_SINGLE_DEF;
     GUIBUTTON_SetBg(ZMT_YINBIAO_READ_SINGLE_CTRL_ID, &bg);
+    yinbiao_signle_rect = single_rect;
 
     button_rect.top = button_rect.bottom - 2*YINBIAO_LINE_HIGHT + 5;
     button_rect.bottom = MMI_MAINSCREEN_HEIGHT;
@@ -1048,11 +1158,14 @@ LOCAL void YinbiaoReadWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
     GUIBUTTON_SetRect(ZMT_YINBIAO_READ_YINBIAO_CTRL_ID, &yinbiao_rect);
     GUIBUTTON_SetVisible(ZMT_YINBIAO_READ_YINBIAO_CTRL_ID, FALSE, FALSE);
 
-    table_rect.left = MMI_MAINSCREEN_WIDTH - YINBIAO_LINE_WIDTH;
+    table_rect.left = MMI_MAINSCREEN_WIDTH - YINBIAO_LINE_WIDTH - 10;
+    table_rect.right = MMI_MAINSCREEN_WIDTH -10;
     GUIBUTTON_SetRect(ZMT_YINBIAO_READ_TABLE_CTRL_ID, &table_rect);
     GUIBUTTON_SetCallBackFunc(ZMT_YINBIAO_READ_TABLE_CTRL_ID, YinbiaoReadWin_TableCallback);
     GUIBUTTON_SetVisible(ZMT_YINBIAO_READ_TABLE_CTRL_ID, FALSE, FALSE);
+    yinbiao_table_rect = table_rect;
 
+    yinbiao_click_btn = 0;
     yinbiao_player_voulme = MMIAPISET_GetMultimVolume();
     Yinbiao_RequestAudioPath();
 }
@@ -1092,6 +1205,35 @@ LOCAL void YinbiaoReadWin_DisplayYinbiaoTie(MMI_WIN_ID_T win_id)
         GUISTR_TEXT_DIR_AUTO
         );
 
+}
+LOCAL void YinbiaoReadWin_DrawBtnBorder(MMI_WIN_ID_T win_id)
+{
+    GUI_LCD_DEV_INFO lcd_dev_info = {GUI_MAIN_LCD_ID,GUI_BLOCK_MAIN};
+    GUI_RECT_T border_rect = {0};
+    if(yinbiao_click_btn < 1){
+        return;
+    }
+    switch(yinbiao_click_btn)
+    {
+        case 1:
+            {
+                border_rect = yinbiao_table_rect;
+            }
+            break;
+        case 2:
+            {
+                border_rect = yinbiao_circulate_rect;
+            }
+            break;
+        case 3:
+            {
+                border_rect = yinbiao_signle_rect;
+            }
+            break;
+        default:
+            break;
+    }
+    LCD_DrawRoundedRect(&lcd_dev_info, border_rect, border_rect, MMI_WHITE_COLOR);
 }
 
 LOCAL void YinbiaoReadWin_FULL_PAINT(MMI_WIN_ID_T win_id)
@@ -1153,6 +1295,7 @@ LOCAL void YinbiaoReadWin_FULL_PAINT(MMI_WIN_ID_T win_id)
     GUIBUTTON_SetVisible(ZMT_YINBIAO_READ_TABLE_CTRL_ID, TRUE, TRUE);
     
     YinbiaoReadWin_DisplayYinbiaoTie(win_id);
+    YinbiaoReadWin_DrawBtnBorder(win_id);
 }
 
 LOCAL void YinbiaoReadWin_CLOSE_WINDOW(void)
@@ -1161,6 +1304,7 @@ LOCAL void YinbiaoReadWin_CLOSE_WINDOW(void)
     Yinbiao_StopMp3Data();
     Yinbiao_StopIntervalTimer();
     Yinbiao_ReleaseAudioPath();
+    yinbiao_click_btn = 0;
     yinbiao_request_status = 0;
     yinbiao_request_now = FALSE;
 }
@@ -1199,7 +1343,17 @@ LOCAL MMI_RESULT_E HandleYinbiaoReadWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
         case MSG_CTL_OK:
         case MSG_CTL_PENOK:
             { 
-                YinbiaoReadWin_PlayCallback();
+                YinbiaoReadWin_KeyAppOk(win_id);
+            }
+            break;
+        case MSG_APP_UP:
+            {
+                YinbiaoReadWin_KeyUpDown(win_id, TRUE);
+            }
+            break;
+        case MSG_APP_DOWN:
+            {
+                YinbiaoReadWin_KeyUpDown(win_id, FALSE);
             }
             break;
         case MSG_KEYDOWN_BACKWARD:
