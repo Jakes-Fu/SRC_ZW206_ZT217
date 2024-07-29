@@ -589,6 +589,9 @@ PUBLIC MMI_RESULT_E MMIAPISD_HandleSDPlugWaiting (
         /* end */
 #endif
         ZMTHandle_UdsikPlugCloseFoucsWindow();
+		#ifdef  XYSDK_SUPPORT
+	   LIBXMLYAPI_AppExit();
+#endif
 		//show msg
         MMIPUB_OpenAlertWinByTextId(
             PNULL,
