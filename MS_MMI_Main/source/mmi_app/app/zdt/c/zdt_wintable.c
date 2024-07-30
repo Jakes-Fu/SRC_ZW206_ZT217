@@ -4296,7 +4296,7 @@ LOCAL void Draw_In_Class_Tip(MMI_WIN_ID_T win_id,GUI_LCD_DEV_INFO lcd_dev_info)
     GUIRES_DisplayImg(PNULL,&in_class_icon_rect,PNULL,win_id,IMAGE_ZDT_IN_CLASS_ICON,&lcd_dev_info);
     MMI_GetLabelTextByLang(TXT_IN_CLASS,&text_str);
     text_style.align = ALIGN_HVMIDDLE;
-    text_style.font = SONG_FONT_22;
+    text_style.font = DP_FONT_22;
     text_style.font_color = GUI_RGB2RGB565(254,48,42);
     GUISTR_DrawTextToLCDInRect(&lcd_dev_info,&in_class_text_rect,&in_class_text_rect,&text_str,&text_style,GUISTR_STATE_ALIGN,GUISTR_TEXT_DIR_AUTO); 
 }
@@ -5099,8 +5099,8 @@ LOCAL void DrawClassModeTime(MMI_WIN_ID_T win_id)
     GUI_LCD_DEV_INFO  lcd_dev_info = { GUI_MAIN_LCD_ID, GUI_BLOCK_MAIN };
     SCI_TIME_T time = {0};
     GUI_POINT_T point = {0};
-    const uint16 img_width = 30;
-    const uint16 img_height = 30;
+    const uint16 img_width = DP2PX_VALUE(30);
+    const uint16 img_height = DP2PX_VALUE(30);
     const uint16 blank_gap  = 0;
     const uint16 x_move = img_width + blank_gap;
     const uint16 start_x  = (MMI_MAINSCREEN_WIDTH - (x_move)*5)/2 - 1;
