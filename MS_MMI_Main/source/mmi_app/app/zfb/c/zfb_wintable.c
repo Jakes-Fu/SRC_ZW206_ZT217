@@ -610,15 +610,15 @@ static BOOLEAN ZFB_DisplayBmpBuf(uint16 ox, uint16 oy,double scale,uint8* input,
 #if 1
 //21 的倍数
 #if MMI_MAINSCREEN_WIDTH == 240
-#define ZFB_OBTAIN_DISP_X      33
-#define ZFB_OBTAIN_DISP_Y	    33
+#define ZFB_OBTAIN_DISP_X     DP2PX_VALUE(33)
+#define ZFB_OBTAIN_DISP_Y	    DP2PX_VALUE(33)
 #define ZFB_OBTAIN_DISP_WIDTH  	174
-#define ZFB_OBTAIN_DISP_HEIGHT	174
+#define ZFB_OBTAIN_DISP_HEIGHT	DP2PX_VALUE(174)
 #else
 #define ZFB_OBTAIN_DISP_X      22
-#define ZFB_OBTAIN_DISP_Y	    22
-#define ZFB_OBTAIN_DISP_WIDTH	      84
-#define ZFB_OBTAIN_DISP_HEIGHT	84
+#define ZFB_OBTAIN_DISP_Y	    DP2PX_VALUE(22)
+#define ZFB_OBTAIN_DISP_WIDTH	      DP2PX_VALUE(84)
+#define ZFB_OBTAIN_DISP_HEIGHT	DP2PX_VALUE(84)
 #endif
 
 uint16 g_cur_zfb_obtain_display_status= 0;
@@ -778,9 +778,9 @@ LOCAL BOOLEAN  ZFB_Obtain_Show_Net(void)
     text_style.region_num = 0;
     text_style.region_ptr = PNULL;		
     text_display_rect.left = 0;
-    text_display_rect.top = 80;
+    text_display_rect.top = DP2PX_VALUE(80);
     text_display_rect.right=MMI_MAINSCREEN_WIDTH-1;
-    text_display_rect.bottom=160;
+    text_display_rect.bottom=DP2PX_VALUE(160);
 	
     GUISTR_GetStringInfo(&text_style, &sn_string, str_state, &text_info);
     GUISTR_DrawTextToLCDInRect( 
@@ -969,14 +969,14 @@ PUBLIC void MMIZFB_OpenObtainWin(void)
 //21 的倍数
 #if MMI_MAINSCREEN_WIDTH == 240
 #define ZFB_PAY_DISP_X      45
-#define ZFB_PAY_DISP_Y	    45
+#define ZFB_PAY_DISP_Y	    DP2PX_VALUE(45)
 #define ZFB_PAY_DISP_WIDTH  	147
-#define ZFB_PAY_DISP_HEIGHT	147
+#define ZFB_PAY_DISP_HEIGHT	DP2PX_VALUE(147)
 #else
 #define ZFB_PAY_DISP_X      22
-#define ZFB_PAY_DISP_Y	    22
+#define ZFB_PAY_DISP_Y	    DP2PX_VALUE(22)
 #define ZFB_PAY_DISP_WIDTH	      84
-#define ZFB_PAY_DISP_HEIGHT	84
+#define ZFB_PAY_DISP_HEIGHT	DP2PX_VALUE(84)
 #endif
 
 uint16 g_cur_zfb_pay_display_status= 0;
@@ -1248,9 +1248,9 @@ LOCAL BOOLEAN  ZFB_Pay_Show_Fail_Result(void)
     text_style.font_color = MMI_DARK_RED_COLOR;
     text_style.font = SONG_FONT_24;
     text_display_rect.left = 0;
-    text_display_rect.top = 80;
+    text_display_rect.top = DP2PX_VALUE(80);
     text_display_rect.right=MMI_MAINSCREEN_WIDTH-1;
-    text_display_rect.bottom=160;
+    text_display_rect.bottom=DP2PX_VALUE(160);
 
     GUISTR_GetStringInfo(&text_style, &sn_string, str_state, &text_info);
     GUISTR_DrawTextToLCDInRect( 
@@ -1802,9 +1802,9 @@ PUBLIC void MMIZFB_OpenPayWin(void)
 
 #if 1
 //33的倍 数
-#if MMI_MAINSCREEN_HEIGHT == 284
+#if MMI_MAINSCREEN_HEIGHT == 284 ||  MMI_MAINSCREEN_HEIGHT==320
 #define ZFB_BIND_DISP_X	37
-#define ZFB_BIND_DISP_Y	(37+23)
+#define ZFB_BIND_DISP_Y	DP2PX_VALUE(37+23)
 #define ZFB_BIND_DISP_WIDTH	165
 #define ZFB_BIND_DISP_HEIGHT    165
 #elif MMI_MAINSCREEN_HEIGHT == 240
@@ -1813,10 +1813,10 @@ PUBLIC void MMIZFB_OpenPayWin(void)
 #define ZFB_BIND_DISP_WIDTH	165
 #define ZFB_BIND_DISP_HEIGHT	165
 #else
-#define ZFB_BIND_DISP_X  31
-#define ZFB_BIND_DISP_Y	  31
-#define ZFB_BIND_DISP_WIDTH	66
-#define ZFB_BIND_DISP_HEIGHT    66
+#define ZFB_BIND_DISP_X  DP2PX_VALUE(31)
+#define ZFB_BIND_DISP_Y	  DP2PX_VALUE(31)
+#define ZFB_BIND_DISP_WIDTH	DP2PX_VALUE(66)
+#define ZFB_BIND_DISP_HEIGHT    DP2PX_VALUE(66)
 #endif
 uint16 g_cur_zfb_bind_display_status= 0;
 uint16 g_cur_zfb_bind_display_over_status= 0;
@@ -1933,7 +1933,7 @@ LOCAL BOOLEAN  ZFB_Bind_Show_Start(void)
     text_display_rect.left = 0;
     text_display_rect.top = 80;
     text_display_rect.right=MMI_MAINSCREEN_WIDTH-1;
-    text_display_rect.bottom=160;
+    text_display_rect.bottom=DP2PX_VALUE(160);
 	
     GUISTR_GetStringInfo(&text_style, &sn_string, str_state, &text_info);
     GUISTR_DrawTextToLCDInRect( 
@@ -1979,7 +1979,7 @@ LOCAL BOOLEAN  ZFB_Bind_Show_Over(uint16 status)
     text_display_rect.left = 0;
     text_display_rect.top = 80;
     text_display_rect.right=MMI_MAINSCREEN_WIDTH-1;
-    text_display_rect.bottom=160;	
+    text_display_rect.bottom=DP2PX_VALUE(160);	
 	
     GUISTR_GetStringInfo(&text_style, &sn_string, str_state, &text_info);
     GUISTR_DrawTextToLCDInRect( 
@@ -2344,9 +2344,9 @@ LOCAL BOOLEAN  ZFB_Setting_Show_Net(void)
     text_style.region_num = 0;
     text_style.region_ptr = PNULL;		
     text_display_rect.left = 0;
-    text_display_rect.top = 128;
+    text_display_rect.top = DP2PX_VALUE(128)+15;
     text_display_rect.right=MMI_MAINSCREEN_WIDTH-1;
-    text_display_rect.bottom=148;
+    text_display_rect.bottom=DP2PX_VALUE(148)+15;
 	
     GUISTR_GetStringInfo(&text_style, &sn_string, str_state, &text_info);
     GUISTR_DrawTextToLCDInRect( 
@@ -2366,9 +2366,9 @@ LOCAL BOOLEAN  ZFB_Setting_Show_Net(void)
         text_style.font_color = MMI_DARK_RED_COLOR;
         text_style.font = SONG_FONT_20;
         text_display_rect.left = 0;
-        text_display_rect.top = 149;
+        text_display_rect.top = DP2PX_VALUE(149)+15;
         text_display_rect.right=MMI_MAINSCREEN_WIDTH-1;
-        text_display_rect.bottom=169;
+        text_display_rect.bottom=DP2PX_VALUE(169)+15;
         GUISTR_GetStringInfo(&text_style, &sn_string, str_state, &text_info);
         GUISTR_DrawTextToLCDInRect( 
                                                 MMITHEME_GetDefaultLcdDev(),
