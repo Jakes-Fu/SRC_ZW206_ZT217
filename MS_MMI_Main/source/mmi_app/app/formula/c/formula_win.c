@@ -887,7 +887,8 @@ LOCAL MMI_RESULT_E HandleFormulaWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_
             }
             break;
         case MSG_KEYDOWN_CANCEL:
-            break;
+		case MSG_KEYDOWN_RED:
+			break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
@@ -1054,7 +1055,8 @@ LOCAL MMI_RESULT_E HandleFormulaTableTipWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_
             }
             break;
         case MSG_KEYDOWN_CANCEL:
-            break;
+		case MSG_KEYDOWN_RED:
+			break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             MMK_CloseWin(win_id);
@@ -1450,7 +1452,8 @@ LOCAL MMI_RESULT_E HandleFormulaTableWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
             }
             break; 
         case MSG_KEYDOWN_CANCEL:
-            break;
+		case MSG_KEYDOWN_RED:
+			break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
@@ -1602,7 +1605,8 @@ LOCAL MMI_RESULT_E HandleFormulaMnemonicWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_I
             }
             break;
         case MSG_KEYDOWN_CANCEL:
-            break;
+		case MSG_KEYDOWN_RED:
+			break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
