@@ -549,7 +549,8 @@ LOCAL MMI_RESULT_E HandleHanziWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_id
             }
             break;
         case MSG_KEYDOWN_CANCEL:
-            break;
+		case MSG_KEYDOWN_RED:
+			break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
@@ -931,7 +932,8 @@ LOCAL MMI_RESULT_E HandleHanziChapterWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
             }
             break;
         case MSG_KEYDOWN_CANCEL:
-            break;
+		case MSG_KEYDOWN_RED:
+			break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
@@ -1772,7 +1774,8 @@ LOCAL MMI_RESULT_E HandleHanziDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
             }
             break;
         case MSG_KEYDOWN_CANCEL:
-            break;
+		case MSG_KEYDOWN_RED:
+			break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
@@ -1934,7 +1937,8 @@ LOCAL MMI_RESULT_E HandleHanziListenInfoWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_I
             }
             break;
         case MSG_KEYDOWN_CANCEL:
-            break;
+		case MSG_KEYDOWN_RED:
+			break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
@@ -2274,7 +2278,8 @@ LOCAL MMI_RESULT_E HandleHanziListenSetWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID
             }
             break;
         case MSG_KEYDOWN_CANCEL:
-            break;
+		case MSG_KEYDOWN_RED:
+			break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
@@ -2682,7 +2687,8 @@ LOCAL MMI_RESULT_E HandleHanziListenWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
             }
             break;
         case MSG_KEYDOWN_CANCEL:
-            break;
+		case MSG_KEYDOWN_RED:
+			break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {

@@ -400,7 +400,8 @@ LOCAL void ListeningLocalAudioWin_DisplayLocalAudioList(MMI_WIN_ID_T win_id, MMI
 				item_data.item_content[1].item_data.image_id = ZMT_LISTEN_UNSELECT;
 			}
 			else
-			{
+			{
+
 				item_data.item_content[1].item_data.image_id = ZMT_LISTEN_SELECT;
 			}
 		}
@@ -595,8 +596,9 @@ LOCAL MMI_RESULT_E HandleListeningLocalAudioWinMsg(
 				point.y = MMK_GET_TP_Y(param);
 			}
 			break;
-		case MSG_KEYDOWN_CANCEL:
-		    break;
+		 case MSG_KEYDOWN_CANCEL:
+		case MSG_KEYDOWN_RED:
+			break;
 		case MSG_KEYUP_RED:
 		case MSG_KEYUP_CANCEL:
 			{
@@ -846,7 +848,8 @@ PUBLIC void ListeningLocalWin_DisplayLocalAlbumList(MMI_WIN_ID_T win_id, MMI_CTR
 				item_data.item_content[2].item_data.image_id = ZMT_LISTEN_UNSELECT;
 			}
 			else
-			{
+			{
+
 				item_data.item_content[2].item_data.image_id = ZMT_LISTEN_SELECT;
 			}
 		}
@@ -1012,8 +1015,9 @@ LOCAL MMI_RESULT_E HandleListeningLocalWinMsg(
 				point.y = MMK_GET_TP_Y(param);
 			}
 			break;
-		case MSG_KEYDOWN_CANCEL:
-		    break;
+		 case MSG_KEYDOWN_CANCEL:
+		case MSG_KEYDOWN_RED:
+			break;
 		case MSG_KEYUP_RED:
 		case MSG_KEYUP_CANCEL:
 			{

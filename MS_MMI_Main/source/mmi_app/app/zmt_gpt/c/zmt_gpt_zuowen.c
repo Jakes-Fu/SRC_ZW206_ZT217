@@ -338,7 +338,8 @@ PUBLIC void ZmtGptZuoWen_RecAiTextResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv
                 gpt_zuowen_record_text = NULL;
             }
             gpt_zuowen_record_type = GPT_RECORD_TYPE_TXT_FAIL;
-        }
+        }
+
     }
     else
     {
@@ -1288,7 +1289,8 @@ LOCAL MMI_RESULT_E HandleZmtGptZuoWenWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
             }
             break;  
         case MSG_KEYDOWN_CANCEL:
-            break;
+		case MSG_KEYDOWN_RED:
+			break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {

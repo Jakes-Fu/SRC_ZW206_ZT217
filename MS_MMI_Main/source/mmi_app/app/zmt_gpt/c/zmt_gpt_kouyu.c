@@ -1230,7 +1230,8 @@ LOCAL void ZmtGptKouYuTalk_FULL_PAINT(MMI_WIN_ID_T win_id)
     text_string.wstr_ptr = text_str;
     text_string.wstr_len = MMIAPICOM_Wstrlen(text_str);
     ZmtGpt_DisplayTitle(win_id, text_string, zmt_gpt_title_rect, DP_FONT_24);
-
+
+
     if(zmt_gpt_talk_status < 3)
     {
         MMI_IMAGE_ID_T img_id = 0;
@@ -1450,8 +1451,9 @@ LOCAL MMI_RESULT_E HandleZmtGptKouYuTalkWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_I
                 ZmtGptKouYuTalk_KEYDOWN_UP_DOWN(win_id, FALSE);
             }
             break;
-        case MSG_KEYDOWN_CANCEL:
-            break;
+         case MSG_KEYDOWN_CANCEL:
+		case MSG_KEYDOWN_RED:
+			break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
@@ -1823,7 +1825,8 @@ LOCAL MMI_RESULT_E HandleZmtGptKouYuTopicWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_
             }
             break;
         case MSG_KEYDOWN_CANCEL:
-            break;
+		case MSG_KEYDOWN_RED:
+			break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {

@@ -403,8 +403,9 @@ LOCAL MMI_RESULT_E HandleClassReadSetWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
                 
             }
             break;
-        case MSG_KEYDOWN_CANCEL:
-            break;
+         case MSG_KEYDOWN_CANCEL:
+		case MSG_KEYDOWN_RED:
+			break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
@@ -1197,6 +1198,9 @@ LOCAL MMI_RESULT_E HandleClassReadWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E ms
                 ClassReadWin_KEYDOWN_VOL(win_id, FALSE);
             }
             break;
+		case MSG_KEYDOWN_CANCEL:
+		case MSG_KEYDOWN_RED:
+			break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
@@ -1370,6 +1374,9 @@ LOCAL MMI_RESULT_E HandleClassSectionWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
                 ClassSectionWin_CTL_PENOK(win_id);
             }
             break;
+		case MSG_KEYDOWN_CANCEL:
+		case MSG_KEYDOWN_RED:
+			break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
@@ -1511,6 +1518,9 @@ LOCAL MMI_RESULT_E HandleClassBookWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E ms
                 ClassBookWin_CTL_PENOK(win_id);
             }
             break;
+		case MSG_KEYDOWN_CANCEL:
+		case MSG_KEYDOWN_RED:
+			break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
@@ -1637,6 +1647,9 @@ LOCAL MMI_RESULT_E HandleClassGradeWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E m
                 ClassGradeWin_CTL_PENOK(win_id);
             }
             break;
+		case MSG_KEYDOWN_CANCEL:
+		case MSG_KEYDOWN_RED:
+			break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
@@ -1761,6 +1774,9 @@ LOCAL MMI_RESULT_E HandleClassMainWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E ms
                 ClassMainWin_CTL_PENOK(win_id);
             }
             break;
+		case MSG_KEYDOWN_CANCEL:
+		case MSG_KEYDOWN_RED:
+			break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {

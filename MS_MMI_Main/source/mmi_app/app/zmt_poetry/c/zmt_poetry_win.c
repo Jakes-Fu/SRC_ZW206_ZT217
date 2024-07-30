@@ -1312,8 +1312,9 @@ LOCAL MMI_RESULT_E HandlePoetryWinMsg(
                     }
                 }
                 break;
-		case MSG_KEYDOWN_CANCEL:
-		    break;
+        case MSG_KEYDOWN_CANCEL:
+		case MSG_KEYDOWN_RED:
+			break;
 		case MSG_KEYUP_RED:
 		case MSG_KEYUP_CANCEL:
                 {
@@ -1686,7 +1687,8 @@ LOCAL MMI_RESULT_E HandlePoetryItemWinMsg(
             }
             break;
         case MSG_KEYDOWN_CANCEL:
-            break;
+		case MSG_KEYDOWN_RED:
+			break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
@@ -2248,8 +2250,9 @@ LOCAL MMI_RESULT_E HandlePoetryDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
                 poetry_player_volume = ZmtApp_VolumeChange(poetry_player_handle, FALSE, poetry_player_volume);
             }
             break;
-	case MSG_KEYDOWN_CANCEL:
-            break;
+        case MSG_KEYDOWN_CANCEL:
+		case MSG_KEYDOWN_RED:
+			break;
 	case MSG_KEYUP_RED:
 	case MSG_KEYUP_CANCEL:
             {

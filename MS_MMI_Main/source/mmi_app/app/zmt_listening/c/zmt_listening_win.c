@@ -352,8 +352,9 @@ LOCAL MMI_RESULT_E HandleListeningAudioWinMsg(
 				}
 			}
 			break;
-		case MSG_KEYDOWN_CANCEL:
-                    break;
+		 case MSG_KEYDOWN_CANCEL:
+		case MSG_KEYDOWN_RED:
+			break;
 		case MSG_KEYUP_RED:
 		case MSG_KEYUP_CANCEL:
 			{
@@ -737,8 +738,9 @@ LOCAL MMI_RESULT_E HandleListeningWinMsg(
 				point.y = MMK_GET_TP_Y(param);
 			}
 			break;
-		case MSG_KEYDOWN_CANCEL:
-		    break;
+		 case MSG_KEYDOWN_CANCEL:
+		case MSG_KEYDOWN_RED:
+			break;
 		case MSG_KEYUP_RED:
 		case MSG_KEYUP_CANCEL:
 			{
@@ -848,11 +850,13 @@ LOCAL MMI_RESULT_E HandleListeningTipWinMsg(
 					MMIRES_GetText(ZMT_TXT_NO_NEXT, win_id, &text_string);
 				}
 				else if(type == PALYER_PLAY_DOWNLOADING_TIP)
-				{
+				{
+
 					MMIRES_GetText(ZMT_TXT_DOWNLOAD_WAITTING, win_id, &text_string);
 				}
 				else if(type == PALYER_PLAY_DOWNLOAD_FAIL_TIP)
-				{
+				{
+
 					MMIRES_GetText(ZMT_TXT_DOWNLOAD_FAIL, win_id, &text_string);
 				}
 				else if(type == PALYER_PLAY_NO_TFCARD_TIP)

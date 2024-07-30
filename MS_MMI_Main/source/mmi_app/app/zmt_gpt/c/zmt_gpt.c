@@ -525,8 +525,9 @@ LOCAL MMI_RESULT_E HandleZmtGptWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_i
                 ZmtGpt_CTL_PENOK(win_id);
             }
             break;
-        case MSG_KEYDOWN_CANCEL:
-            break;
+         case MSG_KEYDOWN_CANCEL:
+		case MSG_KEYDOWN_RED:
+			break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {

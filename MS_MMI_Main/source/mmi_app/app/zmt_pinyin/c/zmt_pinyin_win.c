@@ -584,7 +584,8 @@ LOCAL MMI_RESULT_E HandlePinyinTableTipWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_I
             }
             break;
         case MSG_KEYDOWN_CANCEL:
-            break;
+		case MSG_KEYDOWN_RED:
+			break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             MMK_CloseWin(win_id);
@@ -850,7 +851,8 @@ LOCAL MMI_RESULT_E HandlePinyinTableWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
             }
             break;
         case MSG_KEYDOWN_CANCEL:
-            break;
+		case MSG_KEYDOWN_RED:
+			break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
@@ -1356,7 +1358,8 @@ LOCAL MMI_RESULT_E HandlePinyinReadWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E m
             }
             break;
         case MSG_KEYDOWN_CANCEL:
-            break;
+		case MSG_KEYDOWN_RED:
+			break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
@@ -1615,7 +1618,8 @@ LOCAL MMI_RESULT_E HandlePinyinMainWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E m
             }
             break;
         case MSG_KEYDOWN_CANCEL:
-            break;
+		case MSG_KEYDOWN_RED:
+			break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {

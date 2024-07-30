@@ -706,7 +706,9 @@ LOCAL MMI_RESULT_E  HandleZDT_TinyChatEmojiWinMsg(MMI_WIN_ID_T win_id, MMI_MESSA
                 MMK_CloseWin(win_id);
             }
             break;
-        case MSG_KEYDOWN_RED:    
+       case MSG_KEYDOWN_CANCEL:
+		case MSG_KEYDOWN_RED:
+			break;    
 		case MSG_LOSE_FOCUS:
             break;
         case MSG_KEYUP_RED:        
@@ -1985,8 +1987,8 @@ LOCAL MMI_RESULT_E  HandleZDT_TinyChatWinMsg(
     case MSG_APP_CANCEL:
             MMK_CloseWin(win_id);
         break;
-    case MSG_KEYDOWN_RED:
-        break;
+	case MSG_KEYDOWN_RED:
+			break;
 
     case MSG_CLOSE_WINDOW:
         ReleaseRecordPanelPaintLayer();
@@ -2730,8 +2732,8 @@ PUBLIC MMI_RESULT_E  HandleZDT_ChatGroupWinMsg(
             
         case MSG_LOSE_FOCUS:
         case MSG_CLOSE_WINDOW:
-        case MSG_KEYDOWN_RED:
-            break;
+		case MSG_KEYDOWN_RED:
+			break;
 
         case MSG_KEYUP_RED:
         case MSG_CTL_CANCEL:
@@ -2913,6 +2915,9 @@ LOCAL MMI_RESULT_E  HandleZDT_FindFriendWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_
         case MSG_FULL_PAINT: 
 
             break;
+		// case MSG_KEYDOWN_CANCEL:
+		case MSG_KEYDOWN_RED:
+			break;
         case MSG_KEYUP_RED:       
         case MSG_CTL_CANCEL:
         case MSG_APP_CANCEL:
@@ -3316,11 +3321,11 @@ LOCAL MMI_RESULT_E  HandleZDT_FriendPPWinMsg(
 #ifdef ZDT_GSENSOR_SUPPORT
                 s_friend_pp_status = 3;
                 g_friendPP_shakecount = 0;
-               /* s_friend_pp_status = 0;
+                s_friend_pp_status = 0;
                 SCI_MEMSET(g_pp_wstr_pp_name,0,sizeof(g_pp_wstr_pp_name));
                 SCI_MEMSET(g_pp_wstr_pp_num,0,sizeof(g_pp_wstr_pp_num));
                 YX_Net_Friend_Start(&g_yx_app);
-                ZdtTalk_BackLight(TRUE);*/
+                ZdtTalk_BackLight(TRUE);
                 ZdtTalk_BackLight(FALSE);
                 gsensor_x =0;
                 gsensor_y = 0;
@@ -3335,7 +3340,7 @@ LOCAL MMI_RESULT_E  HandleZDT_FriendPPWinMsg(
                 SCI_TRACE_LOW("HandleZDT_FriendPPWinMsg:gsensor_x=%d,gsensor_y=%d,gsensor_z=%d",gsensor_x,gsensor_y,gsensor_z);
 #endif
                 MMIZDT_FriendPPWin_TimeStart(200, MMIZDT_FriendPPWin_GSENSOR_HandleTimer);
-                //MMIZDT_FriendPPWin_GSENSOR_Start();
+                MMIZDT_FriendPPWin_GSENSOR_Start();
 #else
             s_friend_pp_status = 0;
             ZdtTalk_BackLight(FALSE);
@@ -3351,7 +3356,7 @@ LOCAL MMI_RESULT_E  HandleZDT_FriendPPWinMsg(
             GUI_FillRect(&lcd_dev_info, bg_rect, MMI_BLACK_COLOR);
             if(s_friend_pp_status == 0)
             {
-                //ËÑË÷ÖÐ
+            //    //ËÑË÷ÖÐ
             #ifdef ZTE_WATCH
                 GUI_POINT_T point = {FIND_FRIEND_SHAKE_FINDING_IMG_X, FIND_FRIEND_SHAKE_FINDING_IMG_Y};
                 GUIRES_DisplayImg(&point,PNULL,PNULL,win_id,friend_finding,&lcd_dev_info);              
@@ -3432,9 +3437,9 @@ LOCAL MMI_RESULT_E  HandleZDT_FriendPPWinMsg(
 			point.y = MMK_GET_TP_Y(param);
             if(s_friend_pp_status == 2 && (point.x > 5 && point.x < 235)&&(point.y >= 160 &&  point.y < 235))
             {
-                /* s_friend_pp_status = 0;
+                 s_friend_pp_status = 0;
                 YX_Net_Friend_Start(&g_yx_app);
-                MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);*/
+                MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
                 s_friend_pp_status = 3;
 #ifdef ZDT_GSENSOR_SUPPORT
                 MMIZDT_FriendPPWin_GSENSOR_Start();
@@ -3479,8 +3484,12 @@ LOCAL MMI_RESULT_E  HandleZDT_FriendPPWinMsg(
     	break;
 
 
+	case MSG_KEYDOWN_RED:
+	case MSG_KEYDOWN_CANCEL:
+			break;
+	case MSG_KEYUP_RED:
 	case MSG_CTL_CANCEL:
-	case MSG_APP_CANCEL:
+	case MSG_KEYUP_CANCEL:
 		MMK_CloseWin(win_id);
 		break;
 

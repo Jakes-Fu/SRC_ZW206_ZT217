@@ -591,7 +591,8 @@ LOCAL MMI_RESULT_E HandleYinbiaoTableTipWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_
             }
             break;
         case MSG_KEYDOWN_CANCEL:
-            break;
+		case MSG_KEYDOWN_RED:
+			break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             MMK_CloseWin(win_id);
@@ -861,7 +862,8 @@ LOCAL MMI_RESULT_E HandleYinbiaoTableWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
             }
             break;
         case MSG_KEYDOWN_CANCEL:
-            break;
+		case MSG_KEYDOWN_RED:
+			break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
@@ -1373,7 +1375,8 @@ LOCAL MMI_RESULT_E HandleYinbiaoReadWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
             }
             break;
         case MSG_KEYDOWN_CANCEL:
-            break;
+		case MSG_KEYDOWN_RED:
+			break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
@@ -1630,6 +1633,9 @@ LOCAL MMI_RESULT_E HandleYinbiaoMainWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
                 YinbiaoMainWin_CTL_PENOK(win_id, param);
             }
             break;
+        case MSG_KEYDOWN_CANCEL:
+		case MSG_KEYDOWN_RED:
+			break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {

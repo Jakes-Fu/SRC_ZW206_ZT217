@@ -636,7 +636,8 @@ LOCAL void ListeningPlayer_ButtonPreCallback(void)
 		}
 	}
 	else
-	{
+	{
+
 		if(player_info->audio_index == 0) 
 		{
 			player_play_info.play_status = 1;
@@ -1231,7 +1232,8 @@ LOCAL MMI_RESULT_E HandleListeningPlayerWinMsg(
 			break;
 #endif
 		case MSG_KEYDOWN_CANCEL:
-                    break;
+		case MSG_KEYDOWN_RED:
+			break;
 		case MSG_KEYUP_RED:
 		case MSG_KEYUP_CANCEL:
 			{
@@ -1603,7 +1605,8 @@ LOCAL MMI_RESULT_E HandleListeningPlayerLrcWinMsg(
 		       }
 		       break;
 		case MSG_KEYDOWN_CANCEL:
-                    break;
+		case MSG_KEYDOWN_RED:
+			break;
 		case MSG_KEYUP_RED:
 		case MSG_KEYUP_CANCEL:
 			{

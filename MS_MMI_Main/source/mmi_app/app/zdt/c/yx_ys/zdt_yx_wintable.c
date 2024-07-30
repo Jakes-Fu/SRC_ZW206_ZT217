@@ -3007,8 +3007,9 @@ LOCAL MMI_RESULT_E  HandleZDT_PBWinMsg(
         break;
 #endif //TOUCH_PANEL_SUPPORT //IGNORE9527
 
-    case MSG_KEYDOWN_RED:
-        break;
+  
+		case MSG_KEYDOWN_RED:
+			break;
         
     case MSG_KEYUP_RED:
             MMK_CloseWin(win_id);
@@ -3018,7 +3019,7 @@ LOCAL MMI_RESULT_E  HandleZDT_PBWinMsg(
             MMIZDT_PB_Call_Start(4+(m_yx_whitelist_curpage-1)*4);
         break;
         
-    case MSG_KEYDOWN_CANCEL:
+   case MSG_KEYDOWN_CANCEL:
             MMK_CloseWin(win_id);
         break;
         
