@@ -102,8 +102,8 @@ LOCAL GUI_RECT_T correct_wrong_img_rect = {MATCH_COUNT_BLANK_START, 5*MATCH_COUN
 LOCAL GUI_RECT_T show_formula_rect = {MATCH_COUNT_TEXT_START,2*MATCH_COUNT_LINE_HIGHT,MMI_MAINSCREEN_WIDTH-MATCH_COUNT_TEXT_START,4*MATCH_COUNT_LINE_HIGHT};
 LOCAL GUI_RECT_T show_tip_rect = {MATCH_COUNT_BLANK_START,4*MATCH_COUNT_LINE_HIGHT,MMI_MAINSCREEN_WIDTH-MATCH_COUNT_BLANK_START,6*MATCH_COUNT_LINE_HIGHT};//µ¯¿òÌáÊ¾
 
-LOCAL GUI_RECT_T math_count_back_rect = {9, 9.8*MATCH_COUNT_LINE_HIGHT, 115, 11.8*MATCH_COUNT_LINE_HIGHT};
-LOCAL GUI_RECT_T math_count_again_rect = {125, 9.8*MATCH_COUNT_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-9, 11.8*MATCH_COUNT_LINE_HIGHT};
+LOCAL GUI_RECT_T math_count_again_rect = {9, 9.8*MATCH_COUNT_LINE_HIGHT, 115, 11.8*MATCH_COUNT_LINE_HIGHT};
+LOCAL GUI_RECT_T math_count_back_rect = {125, 9.8*MATCH_COUNT_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-9, 11.8*MATCH_COUNT_LINE_HIGHT};
 
 LOCAL GUI_RECT_T math_count_keyboard_rect[MATCH_COUNT_KEYBOARD_NUM] = {0};
 LOCAL uint8 is_can_click=0;
@@ -1051,7 +1051,7 @@ LOCAL void CountingWin_KeyNumUp(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E msg_id)
     GUI_POINT_T point = {0};
     GUI_LCD_DEV_INFO lcd_dev_info = {GUI_MAIN_LCD_ID, GUI_BLOCK_MAIN};
     int click_num = 0;
-    if(msg_id != MSG_KEYUP_0 && msg_id != MSG_APP_OK){
+    if(msg_id != MSG_KEYUP_0){
         click_num = msg_id - MSG_KEYUP_1;
         if(click_num > 2 && click_num < 7){
             click_num += 1;
@@ -1061,12 +1061,19 @@ LOCAL void CountingWin_KeyNumUp(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E msg_id)
     }else{
         if(msg_id == MSG_KEYUP_0){
             click_num = 3;
-        }else if(msg_id == MSG_APP_OK){
-            click_num = 11;
         }
     }
     click_num += 1;
     CountingWin_TP_PRESS_UP(win_id, point, TRUE, click_num);
+}
+LOCAL void CountingWin_KeyNumOkReduce(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E msg_id)
+{
+    GUI_POINT_T point = {0};
+    if(msg_id == MSG_APP_HASH){
+        CountingWin_TP_PRESS_UP(win_id, point, TRUE, 8);
+    }else{
+        CountingWin_TP_PRESS_UP(win_id, point, TRUE, 12);
+    }
 }
 
 LOCAL void CountingWin_TP_PRESS_DOWN(MMI_WIN_ID_T win_id, GUI_POINT_T point)
@@ -1164,9 +1171,15 @@ LOCAL MMI_RESULT_E HandleCountingWinMsg(
         case MSG_KEYUP_7:
         case MSG_KEYUP_8:
         case MSG_KEYUP_9:
-        case MSG_APP_OK:
             {
                 CountingWin_KeyNumUp(win_id, msg_id);
+            }
+            break;
+        case MSG_APP_HASH:
+        case MSG_APP_OK:
+        case MSG_APP_WEB:
+            {
+                CountingWin_KeyNumOkReduce(win_id, msg_id);
             }
             break;
         case MSG_KEYDOWN_CANCEL:
@@ -1344,22 +1357,7 @@ LOCAL MMI_RESULT_E HandleScoreWinMsg(
                 ScoreWin_FULL_PAINT(win_id);
             }
             break;
-        /*case MSG_TP_PRESS_UP:
-            {
-                GUI_POINT_T point = {0};
-                point.x = MMK_GET_TP_X(param);
-                point.y = MMK_GET_TP_Y(param);
-                if(GUI_PointIsInRect(point, math_count_back_rect))
-                {
-                    MMK_CloseWin(win_id);
-                }
-                else if(GUI_PointIsInRect(point, math_count_again_rect))
-                {
-                    MMIZMT_CreateCountingWin();
-                    MMK_CloseWin(win_id);
-                }
-            }
-            break;*/
+        case MSG_APP_WEB:
         case MSG_APP_OK:
             {
                 MMIZMT_CreateCountingWin();
@@ -2018,7 +2016,9 @@ LOCAL MMI_RESULT_E HandleMathCountWinMsg(
                 MathCountWin_KeyUpLeftDownRight(win_id, msg_id);
             }
             break;
+        case MSG_APP_WEB:
         case MSG_APP_OK:
+        case MSG_CTL_PENOK:
             {
                 MathCount_ActionChallenge();
             }

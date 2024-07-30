@@ -569,12 +569,14 @@ LOCAL MMI_RESULT_E HandleYinbiaoTableTipWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_
                 YinbiaoTableTipWin_FULL_PAINT(win_id);
             }
             break;
+        case MSG_APP_UP:
         case MSG_KEYDOWN_UPSIDE:
         case MSG_KEYDOWN_VOL_UP:
             {
                 yinbiao_player_voulme = ZmtApp_VolumeChange(yinbiao_player_handle, TRUE, yinbiao_player_voulme);
             }
             break;
+        case MSG_APP_DOWN:
         case MSG_KEYDOWN_DOWNSIDE:
         case MSG_KEYDOWN_VOL_DOWN:
             {
@@ -851,11 +853,11 @@ LOCAL MMI_RESULT_E HandleYinbiaoTableWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
         case MSG_CTL_MIDSK:
         case MSG_APP_WEB:
         case MSG_APP_OK:
+        case MSG_CTL_OK:
             {
                 YinbiaoTableWin_APP_OK(win_id);
             }
             break;
-        case MSG_CTL_OK:
         case MSG_CTL_PENOK:
             { 
                 YinbiaoTableWin_CTL_PENOK(win_id, param);

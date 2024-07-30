@@ -40,6 +40,7 @@
 
 #define WORD_WIN_BG_COLOR GUI_RGB2RGB565(80, 162, 254)
 #define WORD_TITLE_BG_COLOR GUI_RGB2RGB565(108, 181, 255)
+#define WORD_BUTTON_BG_COLOR GUI_RGB2RGB565(255, 154, 0)
 
 #define word_msg_tips_rect {WORD_CARD_LINE_WIDTH, 3*WORD_CARD_LINE_HIGHT, MMI_MAINSCREEN_WIDTH - WORD_CARD_LINE_WIDTH, 7*WORD_CARD_LINE_HIGHT}
 #define word_msg_tips_left_rect {1.2*WORD_CARD_LINE_WIDTH, 5.5*WORD_CARD_LINE_HIGHT, 2.7*WORD_CARD_LINE_WIDTH, 6.5*WORD_CARD_LINE_HIGHT}
@@ -295,7 +296,7 @@ LOCAL void WordPopupWin_FULL_PAINT(MMI_WIN_ID_T win_id)
 
     border.color = WORD_WIN_BG_COLOR;
     GUI_DisplayBorder(tip_left_rect,tip_left_rect,&border,&lcd_dev_info);
-    MMI_GetLabelTextByLang(WORD_FALSE,&str_left);
+    MMI_GetLabelTextByLang(WORD_TRUE,&str_left);
     GUISTR_DrawTextToLCDInRect(
         (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
         &tip_left_rect,
@@ -307,7 +308,7 @@ LOCAL void WordPopupWin_FULL_PAINT(MMI_WIN_ID_T win_id)
     );
 
     GUI_DisplayBorder(tips_right_rect,tips_right_rect,&border,&lcd_dev_info);
-    MMI_GetLabelTextByLang(WORD_TRUE,&str_right);
+    MMI_GetLabelTextByLang(WORD_FALSE,&str_right);
     GUISTR_DrawTextToLCDInRect(
         (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
         &tips_right_rect,
@@ -323,11 +324,11 @@ LOCAL void WordPopupWin_TP_PRESS_UP(MMI_WIN_ID_T win_id, GUI_POINT_T point)
 {
     GUI_RECT_T tip_left_rect = word_msg_tips_left_rect;
     GUI_RECT_T tips_right_rect = word_msg_tips_right_rect;
-    if(GUI_PointIsInRect(point, tip_left_rect))
+    if(GUI_PointIsInRect(point, tips_right_rect))
     {
         MMK_CloseWin(win_id);
     }
-    else if(GUI_PointIsInRect(point, tips_right_rect))
+    else if(GUI_PointIsInRect(point, tip_left_rect))
     {
         MMK_CloseWin(win_id);
         if(word_learn_info != NULL)
@@ -401,6 +402,7 @@ LOCAL MMI_RESULT_E HandleWordPopupWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E m
                 WordPopupWin_FULL_PAINT(win_id);
             }
             break;
+        case MSG_APP_OK:
         case MSG_APP_WEB:
         case MSG_CTL_OK:
         case MSG_CTL_PENOK:
@@ -1006,6 +1008,7 @@ LOCAL MMI_RESULT_E HandleWordChapterWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
                 WordChapterWin_FULL_PAINT(win_id);
             }
             break;
+        case MSG_APP_HASH:
         case MSG_KEYDOWN_UPSIDE:
         case MSG_KEYDOWN_VOL_UP:
         case MSG_KEYDOWN_DOWNSIDE:
@@ -1018,12 +1021,12 @@ LOCAL MMI_RESULT_E HandleWordChapterWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
                 }
             }
             break; 
-        case MSG_KEYUP_LEFT:
+        case MSG_APP_LEFT:
             {
                 WordChapter_OpenNormalWord();
             }
             break;
-        case MSG_KEYUP_RIGHT:
+        case MSG_APP_RIGHT:
             {
                 WordChapter_OpenNewWord();
             }
@@ -1263,7 +1266,7 @@ PUBLIC void WordDetail_PlayPinyinAudio(void)
             WordDetail_PlayPinyinAudio();
         }else{
             if(word_chapter_info[word_book_info.cur_chapter_idx]->detail[word_detail_cur_idx]->audio_uri != NULL){
-                SCI_TRACE_LOW("%s: [%d]audio_uri = %s", __FUNCTION__, word_detail_cur_idx, word_chapter_info[word_book_info.cur_chapter_idx]->detail[word_detail_cur_idx]->audio_uri);    
+                //SCI_TRACE_LOW("%s: [%d]audio_uri = %s", __FUNCTION__, word_detail_cur_idx, word_chapter_info[word_book_info.cur_chapter_idx]->detail[word_detail_cur_idx]->audio_uri);    
                 MMIZDT_HTTP_AppSend(TRUE, word_chapter_info[word_book_info.cur_chapter_idx]->detail[word_detail_cur_idx]->audio_uri, PNULL, 0, 1000, 0, 0, 6000, 0, 0, Word_ParseMp3Response);
             }
         }
@@ -1858,16 +1861,17 @@ LOCAL MMI_RESULT_E HandleWordDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E m
                 main_tp_down_y = MMK_GET_TP_Y(param);
             }
             break;
-        case MSG_KEYUP_LEFT:
+        case MSG_APP_LEFT:
             {
                 WordDetail_KeyLeft();
             }
             break;
-        case MSG_KEYUP_RIGHT:
+        case MSG_APP_RIGHT:
             {
                 WordDetail_KeyRight();
             }
             break;
+        case MSG_APP_OK:
         case MSG_APP_WEB:
             {
                 if(is_open_new_word && word_detail_cur_idx < word_detail_count){
@@ -1885,7 +1889,8 @@ LOCAL MMI_RESULT_E HandleWordDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E m
         case MSG_APP_7:
         case MSG_APP_8:
         case MSG_APP_9:
-        case MSG_APP_OK:
+        case MSG_APP_HASH:
+        case MSG_APP_STAR:
             {
                 WordDetail_PlayPinyinAudio();
             }
@@ -2069,9 +2074,31 @@ LOCAL MMI_RESULT_E HandleWordListenInfoWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID
                 main_tp_down_y = MMK_GET_TP_Y(param);
             }
             break;
-         case MSG_KEYDOWN_CANCEL:
-		case MSG_KEYDOWN_RED:
-			break;
+        case MSG_APP_OK:
+        case MSG_APP_WEB:
+            {
+                MMK_CloseWin(win_id);
+            }
+            break;
+        case MSG_APP_0:
+        case MSG_APP_1:
+        case MSG_APP_2:
+        case MSG_APP_3:
+        case MSG_APP_4:
+        case MSG_APP_5:
+        case MSG_APP_6:
+        case MSG_APP_7:
+        case MSG_APP_8:
+        case MSG_APP_9:
+        case MSG_APP_HASH:
+        case MSG_APP_STAR:
+            {
+                WordDetail_PlayPinyinAudio();
+            }
+            break;
+        case MSG_KEYDOWN_RED:
+        case MSG_KEYDOWN_CANCEL:
+            break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
@@ -2287,7 +2314,7 @@ LOCAL void WordListenSetWin_FULL_PAINT(MMI_WIN_ID_T win_id)
 
     text_style.font = DP_FONT_20;
     GUIRES_DisplayImg(PNULL, &left_rect, PNULL, win_id, FORMULA_BOTTOM_BG_IMG, &lcd_dev_info);
-    MMIRES_GetText(WORD_FALSE, win_id, &text_string);
+    MMIRES_GetText(WORD_TRUE, win_id, &text_string);
     text_style.font_color = WORD_WIN_BG_COLOR;
     GUISTR_DrawTextToLCDInRect(
         (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
@@ -2300,7 +2327,7 @@ LOCAL void WordListenSetWin_FULL_PAINT(MMI_WIN_ID_T win_id)
     );
 
     GUIRES_DisplayImg(PNULL, &right_rect, PNULL, win_id, FORMULA_BOTTOM_BG_IMG, &lcd_dev_info);
-    MMIRES_GetText(WORD_TRUE, win_id, &text_string);
+    MMIRES_GetText(WORD_FALSE, win_id, &text_string);
     text_style.font_color = WORD_WIN_BG_COLOR;
     GUISTR_DrawTextToLCDInRect(
         (const GUI_LCD_DEV_INFO *)&lcd_dev_info,
@@ -2344,11 +2371,11 @@ LOCAL void WordListenSetWin_TP_PRESS_UP(MMI_WIN_ID_T win_id, GUI_POINT_T point)
 {
     GUI_RECT_T left_rect = word_left_button_rect;
     GUI_RECT_T right_rect = word_right_button_rect;
-    if(GUI_PointIsInRect(point, left_rect))
+    if(GUI_PointIsInRect(point, right_rect))
     {
         MMK_CloseWin(win_id);
     }
-    else if(GUI_PointIsInRect(point, right_rect))
+    else if(GUI_PointIsInRect(point, left_rect))
     {
         word_listen_info.style = word_listen_set[0];
         word_listen_info.interval = word_listen_set[1];
@@ -2361,7 +2388,7 @@ LOCAL void WordListenSetWin_TP_PRESS_UP(MMI_WIN_ID_T win_id, GUI_POINT_T point)
 
 LOCAL void WordListenSetWin_KeyLeftRight(MMI_WIN_ID_T win_id, BOOLEAN is_left)
 {
-    if(!is_left){
+    if(is_left){
         word_listen_info.style = word_listen_set[0];
         word_listen_info.interval = word_listen_set[1];
         word_listen_info.repeat = word_listen_set[2];
@@ -2397,6 +2424,7 @@ LOCAL MMI_RESULT_E HandleWordListenSetWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_
                 }
             }
             break;
+        case MSG_APP_OK:
         case MSG_APP_LEFT:
             {
                 WordListenSetWin_KeyLeftRight(win_id, TRUE);
@@ -2806,9 +2834,15 @@ LOCAL MMI_RESULT_E HandleWordListenWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E m
                 word_player_volume = ZmtApp_VolumeChange(word_player_handle, FALSE, word_player_volume);
             }
             break;
-        case MSG_APP_OK:
+        case MSG_APP_HASH:
+        case MSG_APP_STAR:
             {
                 WordListenWin_SetClickFunc();
+            }
+            break;
+        case MSG_APP_OK:
+            {
+                WordListenWin_ImgClickFunc();
             }
             break;
         case MSG_APP_WEB:

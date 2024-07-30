@@ -6258,15 +6258,22 @@ LOCAL THEMELIST_ITEM_STYLE_T const s_item_style_formula_item_list_ms =
 {
     ZMT_LIST_ITEM_HIGHT, ZMT_LIST_ITEM_HIGHT,
     {
-        //text
+        //bg
         {
             0,
-            {10, 0, MMI_MAINSCREEN_WIDTH/2, ZMT_LIST_ITEM_HIGHT},
-            {10, 0, MMI_MAINSCREEN_WIDTH/2, ZMT_LIST_ITEM_HIGHT},
+            {0, 0, MMI_MAINSCREEN_WIDTH/2, ZMT_LIST_ITEM_HIGHT},
+            {0, 0, MMI_MAINSCREEN_WIDTH/2, ZMT_LIST_ITEM_HIGHT},
+            0, 0,
+            0, 0
+        },
+        //text
+        {
+            GUIITEM_CONTENT_STATE_TEXT_M_ALIGN,
+            {0, 0, MMI_MAINSCREEN_WIDTH/2, ZMT_LIST_ITEM_HIGHT},
+            {0, 0, MMI_MAINSCREEN_WIDTH/2, ZMT_LIST_ITEM_HIGHT},
             SONG_FONT_20, SONG_FONT_20,
             0, 0
         }, 
-        {0},
         {0},
         {0},
         {0},

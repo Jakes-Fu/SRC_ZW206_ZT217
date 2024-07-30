@@ -440,6 +440,13 @@ LOCAL void FormulaWin_PlayAudio(void)
         }
     }
 }
+LOCAL void FormulaWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
+{
+    formula_request_status = 0;
+    Formula_RequestTextInfo();
+    formula_player_volume = MMIAPISET_GetMultimVolume();
+    memset(&formula_play_info, 0, sizeof(FORMULA_PLAY_INFO_T));
+}
 LOCAL void FormulaWin_ShowMultiText(MMI_WIN_ID_T win_id)
 {
     GUI_LCD_DEV_INFO lcd_dev_info = {GUI_MAIN_LCD_ID,GUI_BLOCK_MAIN};
@@ -816,10 +823,10 @@ LOCAL void FormulaWin_CLOSE_WINDOW(void)
 {
     memset(&formula_play_info, 0, sizeof(FORMULA_PLAY_INFO_T));
     formula_request_status = 0;
+    formula_click_btn = 0;
     Formula_StopTipsTimer();
     FormulaWin_StopRing();
     Formula_ReleaseTextInfo();
-	formula_click_btn = 0;
 }
 
 LOCAL MMI_RESULT_E HandleFormulaWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_id, DPARAM param)
@@ -830,9 +837,7 @@ LOCAL MMI_RESULT_E HandleFormulaWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_
     {
         case MSG_OPEN_WINDOW:
             {
-				Formula_RequestTextInfo();
-                formula_player_volume = MMIAPISET_GetMultimVolume();
-                memset(&formula_play_info, 0, sizeof(FORMULA_PLAY_INFO_T));
+                FormulaWin_OPEN_WINDOW(win_id);
             }
             break;
         case MSG_FULL_PAINT:
@@ -1033,12 +1038,14 @@ LOCAL MMI_RESULT_E HandleFormulaTableTipWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_
                 FormulaTableTipWin_FULL_PAINT(win_id);
             }
             break;
+        case MSG_APP_UP:
         case MSG_KEYDOWN_UPSIDE:
         case MSG_KEYDOWN_VOL_UP:
             {
                 formula_player_volume = ZmtApp_VolumeChange(formula_player_handle, TRUE, formula_player_volume);
             }
             break;
+        case MSG_APP_DOWN:
         case MSG_KEYDOWN_DOWNSIDE:
         case MSG_KEYDOWN_VOL_DOWN:
             {
@@ -1417,12 +1424,12 @@ LOCAL MMI_RESULT_E HandleFormulaTableWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
             break;
         case MSG_APP_OK:
         case MSG_CTL_MIDSK:
+        case MSG_APP_WEB:
+        case MSG_CTL_OK:
             {
                 FormulaTableWin_APP_OK(win_id);
             }
             break;
-        case MSG_APP_WEB:
-        case MSG_CTL_OK:
         case MSG_CTL_PENOK:
             {
                 FormulaTableWin_CTL_PENOK(win_id, param);

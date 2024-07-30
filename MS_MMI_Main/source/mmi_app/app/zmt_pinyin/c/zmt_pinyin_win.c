@@ -562,12 +562,14 @@ LOCAL MMI_RESULT_E HandlePinyinTableTipWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_I
                 PinyinTableTipWin_FULL_PAINT(win_id);
             }
             break;
+        case MSG_APP_UP:
         case MSG_KEYDOWN_UPSIDE:
         case MSG_KEYDOWN_VOL_UP:
             {
                 pinyin_player_voulme = ZmtApp_VolumeChange(pinyin_player_handle, TRUE, pinyin_player_voulme);
             }
             break;
+        case MSG_APP_DOWN:
         case MSG_KEYDOWN_DOWNSIDE:
         case MSG_KEYDOWN_VOL_DOWN:
             {
@@ -840,11 +842,11 @@ LOCAL MMI_RESULT_E HandlePinyinTableWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
         case MSG_CTL_MIDSK:
         case MSG_APP_WEB:
         case MSG_APP_OK:
+        case MSG_CTL_OK:
             {
                 PinyinTableWin_APP_OK(win_id);
             }
             break;
-        case MSG_CTL_OK:
         case MSG_CTL_PENOK:
             { 
                 PinyinTableWin_CTL_PENOK(win_id, param);
