@@ -572,7 +572,7 @@ SOURCES	 += zmt_pinyin_mdu_def.h
 SRCPATH += $(MMI_DIR)/source/mmi_app/app/zmt_pinyin/h
 endif
  
- ifeq ($(strip $(ZMT_YINBIAO_SUPPORT)), TRUE)
+ifeq ($(strip $(ZMT_YINBIAO_SUPPORT)), TRUE)
 SOURCES	 += zmt_yinbiao_mdu_def.h
 SRCPATH += $(MMI_DIR)/source/mmi_app/app/zmt_yinbiao/h
 endif
