@@ -7859,7 +7859,7 @@ LOCAL MMI_RESULT_E Watch_HandleCameraWinMsg(
             }
             break;
         }
-        case MSG_APP_LEFT:
+        /*case MSG_APP_LEFT:
         {
             TRACE_APP_CAMERA("[MMIDC]: Watch_HandleCameraWinMsg  MSG_APP_LEFT");
             if (s_is_chip_test)
@@ -7892,7 +7892,7 @@ LOCAL MMI_RESULT_E Watch_HandleCameraWinMsg(
                 }
             }
             break;
-        }
+        }*/
 #ifdef ADULT_WATCH_SUPPORT
         case MSG_APP_RED:
         {
