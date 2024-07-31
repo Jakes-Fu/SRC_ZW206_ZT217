@@ -3396,6 +3396,15 @@ PUBLIC void YX_CheckClassSilentOnOff()
     ZDT_LOG("YX_CheckClassSilentOnOff");
     if(YX_IsInClassSilentTime())
     {
+#ifndef WIN32    
+    #ifdef LEBAO_MUSIC_SUPPORT
+        lebao_exit();
+    #endif
+    #ifdef XYSDK_SUPPORT
+            LIBXMLYAPI_AppExit();
+    #endif
+#endif    
+        ZMTApp_CloseRecordAndPlayer();
         MMIAPIENVSET_ActiveMode(MMIENVSET_SILENT_MODE);
         //MMIZDT_CheckOpenClassModeWin();
         MMIZDT_OpenClassModeWin();

@@ -1835,7 +1835,10 @@ PUBLIC void MMI_CreateClassMainWin(void)
 
 PUBLIC void ZMTClass_CloseClassPlayer(void)
 {
-    Class_StopPlayMp3Data();
-    class_cur_info.is_play = FALSE;
+    if(class_cur_info.is_play){
+        ClassReadWin_ButtonPlayCallback();
+    }else{
+        Class_StopPlayMp3Data();
+    }
 }
 

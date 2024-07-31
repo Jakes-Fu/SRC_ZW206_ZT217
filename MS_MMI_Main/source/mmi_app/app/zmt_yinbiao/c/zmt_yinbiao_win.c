@@ -1709,9 +1709,11 @@ PUBLIC void MMI_CreateYinbiaoMainWin(void)
 
 PUBLIC void ZMTYinbiao_ClosePlayerHandle(void)
 {
+    if(yinbiao_read_info.is_play){
+        YinbiaoReadWin_PlayCallback();
+    }
     Yinbiao_StopIntervalTimer();
     Yinbiao_StopMp3Data();
-    yinbiao_read_info.is_play = FALSE;
     yinbiao_table_play_status = 0;
 }
 

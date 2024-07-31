@@ -175,6 +175,11 @@ PUBLIC void Listening_StopPlayMp3(void)
         MMISRVMGR_Free(listening_player_handle);
         listening_player_handle = PNULL;
     }
+    if(0 != listening_play_timer_id)
+    {
+        MMK_StopTimer(listening_play_timer_id);
+        listening_play_timer_id = 0;
+    }
     listening_play_times = 0;
 }
 
@@ -1656,7 +1661,10 @@ PUBLIC void MMI_CreateListeningPlayerLrcWin(LISTENING_PLAYER_INFO * player_info)
 
 PUBLIC void ZMTListening_CloseListeningPlayer(void)
 {
-    Listening_StopPlayMp3();
     player_play_info.play_status = 0;
+    Listening_StopPlayMp3();
+    if(MMK_IsFocusWin(LISTENING_PLAYER_WIN_ID)){
+        MMK_SendMsg(LISTENING_PLAYER_WIN_ID, MSG_FULL_PAINT, PNULL);
+    }
 }
 

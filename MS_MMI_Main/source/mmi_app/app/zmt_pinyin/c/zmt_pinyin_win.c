@@ -1692,9 +1692,12 @@ PUBLIC void MMI_CreatePinyinMainWin(void)
 
 PUBLIC void ZMTPinyin_ClosePlayerHandle(void)
 {
-    Pinyin_StopIntervalTimer();
-    Pinyin_StopMp3Data();
-    pinyin_read_info.is_play = FALSE;
+    if(pinyin_read_info.is_play){
+        PinyinReadWin_PlayCallback();
+    }else{
+        Pinyin_StopIntervalTimer();
+        Pinyin_StopMp3Data();
+    }
     pinyin_table_play_status = 0;
 }
 
