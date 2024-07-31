@@ -268,10 +268,10 @@ LOCAL MMI_RESULT_E HandleListeningAudioWinMsg(
 		case MSG_CTL_OK:
 		case MSG_CTL_PENOK:
 			{
+                            uint16 index = GUILIST_GetCurItemIndex(ctrl_id);
                             if(listening_load_win <= 0){
                                 break;
                             }
-				uint16 index = GUILIST_GetCurItemIndex(ctrl_id);
 				SCI_TRACE_LOW("%s: index = %d, download = %d", __FUNCTION__, index, listening_download_audio);
 				if(Listening_IsMp3FileExist(index, album_info))
 				{
