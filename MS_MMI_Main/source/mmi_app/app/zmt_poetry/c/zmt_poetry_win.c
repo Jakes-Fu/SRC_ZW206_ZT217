@@ -332,21 +332,7 @@ LOCAL void Poetry_ParsePlayAudio(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint3
         if(poetry_detail_infos->id != NULL){
             strcpy(poem_id, poetry_detail_infos->id);
             sprintf(file_path,"E:/Poetry/Poetry_offline/%s/%s_%d.mp3",poem_id,poem_id,audio_download_progress);
-            if(!zmt_tfcard_exist())
-            {
-			#ifdef LISTENING_PRATICE_SUPPORT
-                MMI_CreateListeningTipWin(PALYER_PLAY_NO_TFCARD_TIP);
-			#endif
-                return;
-            }
-            else if(zmt_tfcard_get_free_kb() < 100 * 1024)
-            {
-			#ifdef LISTENING_PRATICE_SUPPORT
-                MMI_CreateListeningTipWin(PALYER_PLAY_NO_SPACE_TIP);
-			#endif
-                return;
-            }
-            else
+            if(zmt_tfcard_exist() && zmt_tfcard_get_free_kb() > 100 * 1024)
             {
                 zmt_file_data_write(pRcv, Rcv_len, file_path);
             }
@@ -401,8 +387,20 @@ LOCAL void Poetry_StartPlayAudio(void)
             }else{
                 return;
             }
-            audio_download_now = TRUE;
-            MMIZDT_HTTP_AppSend(TRUE, url, PNULL, 0, 1000, 0, 0, 3000, 0, 0, Poetry_ParsePlayAudio);
+            if(ZMTApp_GetSimIsExist()){
+                if(!zmt_tfcard_exist()){
+                #ifdef LISTENING_PRATICE_SUPPORT
+                    MMI_CreateListeningTipWin(PALYER_PLAY_NO_TFCARD_TIP);
+                #endif
+                }else{
+                    audio_download_now = TRUE;
+                    MMIZDT_HTTP_AppSend(TRUE, url, PNULL, 0, 1000, 0, 0, 3000, 0, 0, Poetry_ParsePlayAudio);
+                }
+            }else{
+            #ifdef LISTENING_PRATICE_SUPPORT
+                MMI_CreateListeningTipWin(PALYER_PLAY_NO_SIM_TIP);
+            #endif
+            }
         }
     }
 }
@@ -417,21 +415,7 @@ LOCAL void Poetry_parseDownloadAudio(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,u
         if(poetry_detail_infos != NULL && poetry_detail_infos->id != NULL){
             strcpy(poem_id, poetry_detail_infos->id);
             sprintf(file_path,"E:/Poetry/Poetry_offline/%s/%s_%d.mp3",poem_id,poem_id,audio_download_progress);
-            if(!zmt_tfcard_exist())
-            {
-			#ifdef LISTENING_PRATICE_SUPPORT
-                MMI_CreateListeningTipWin(PALYER_PLAY_NO_TFCARD_TIP);
-			#endif
-                return;
-            }
-            else if(zmt_tfcard_get_free_kb() < 100 * 1024)
-            {
-			#ifdef LISTENING_PRATICE_SUPPORT
-                MMI_CreateListeningTipWin(PALYER_PLAY_NO_SPACE_TIP);
-			#endif
-                return;
-            }
-            else
+            if(zmt_tfcard_exist() && zmt_tfcard_get_free_kb() > 100 * 1024)
             {
                 zmt_file_data_write(pRcv, Rcv_len, file_path);
                 if(audio_download_progress == 0 || !audio_play_now){
@@ -502,15 +486,25 @@ LOCAL void Poetry_StartDownloadAudio(void)
                     sprintf(url,"https://%s",poetry_detail_infos->sen_audio[audio_download_progress-1]->audio);
                 }
             }else{
-                //audio_play_progress = 0;
-                //startPlayAudio();
                 audio_download_now = FALSE;
                 SCI_TRACE_LOW("%s: online download audio end", __FUNCTION__);
                 return;
             }
-            //SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
-            audio_download_now = TRUE;
-            MMIZDT_HTTP_AppSend(TRUE, url, PNULL, 0, 1000, 0, 0, 3000, 0, 0, Poetry_parseDownloadAudio);
+            if(ZMTApp_GetSimIsExist()){
+                //SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
+                if(!zmt_tfcard_exist()){
+                #ifdef LISTENING_PRATICE_SUPPORT
+                    MMI_CreateListeningTipWin(PALYER_PLAY_NO_TFCARD_TIP);
+                #endif
+                }else{
+                    audio_download_now = TRUE;
+                    MMIZDT_HTTP_AppSend(TRUE, url, PNULL, 0, 1000, 0, 0, 3000, 0, 0, Poetry_parseDownloadAudio);
+                }
+            }else{
+            #ifdef LISTENING_PRATICE_SUPPORT
+                MMI_CreateListeningTipWin(PALYER_PLAY_NO_SIM_TIP);
+            #endif
+            }
         }
     }
 }
@@ -2128,6 +2122,7 @@ LOCAL void PoetryDetailWin_HanldeTpUp(MMI_WIN_ID_T win_id, GUI_POINT_T point)
 LOCAL void PoetryDetailWin_KeyOk(MMI_WIN_ID_T win_id)
 {
     GUI_POINT_T point = {0};
+    SCI_TRACE_LOW("%s: detail_get_status = %d", __FUNCTION__, detail_get_status);
     if(detail_get_status != 1){
         return;
     }
@@ -2260,9 +2255,10 @@ LOCAL MMI_RESULT_E HandlePoetryDetailWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
                 }
             }
             break;
-        case MSG_KEYUP_WEB:
-        case MSG_APP_WEB:
         case MSG_APP_OK:
+        case MSG_CTL_MIDSK:
+        case MSG_APP_WEB:
+        case MSG_CTL_OK:
         case MSG_CTL_PENOK:
             {
                 PoetryDetailWin_KeyOk(win_id);
@@ -2390,5 +2386,6 @@ PUBLIC BOOLEAN MMI_IsPoetryDetailWinOpen(void)
 PUBLIC void ZMTPoetry_ClosePoetryPlayer(void)
 {
     Poetry_StopPlayMp3();
+    audio_play_now = FALSE;
 }
 
