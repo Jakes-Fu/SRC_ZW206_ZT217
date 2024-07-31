@@ -147,11 +147,16 @@ PUBLIC void Yinbiao_RequestAudioPath(void)
     char * data_buf = "{\"baseUrl\":\"http://8.130.95.8:8866/file/english/IPA/\"}";
     Yinbiao_ParseAudioPath(1, data_buf, strlen(data_buf), 0);
 #else
-    query_str = makeBaseQueryUrlString(YINBIAO_APP_ID, YINBIAO_APP_SECRET);
-    sprintf(url, YINBIAO_AUDIO_BASE_URL_PATH, query_str);
-    SCI_FREE(query_str);
-    //SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
-    MMIZDT_HTTP_AppSend(TRUE, YINBIAO_BASE_URL_HEADER_PATH, url, strlen(url), 1000, 0, 0, 0, 0, 0, Yinbiao_ParseAudioPath);
+    if(!ZMTApp_GetSimIsExist()){
+        char * data_buf = "{\"baseUrl\":\"http://8.130.95.8:8866/file/english/IPA/\"}";
+        Yinbiao_ParseAudioPath(1, data_buf, strlen(data_buf), 0);
+    }else{
+        query_str = makeBaseQueryUrlString(YINBIAO_APP_ID, YINBIAO_APP_SECRET);
+        sprintf(url, YINBIAO_AUDIO_BASE_URL_PATH, query_str);
+        SCI_FREE(query_str);
+        //SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
+        MMIZDT_HTTP_AppSend(TRUE, YINBIAO_BASE_URL_HEADER_PATH, url, strlen(url), 1000, 0, 0, 0, 0, 0, Yinbiao_ParseAudioPath);
+    }
 #endif
 }
 

@@ -494,14 +494,20 @@ PUBLIC void Word_requestBookInfo(void)
     }
     else
     {
-        char url[200] = {0};
-        char * query_str = NULL;
-        query_str = makeBaseQueryUrlString(WORD_BOOK_APP_ID, WORD_BOOK_APP_SECRET);
-        sprintf(url, WORD_BOOK_PUBLISH_PATH, query_str);
-        SCI_FREE(query_str);
-        SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
-        word_is_load_local = FALSE;
-        MMIZDT_HTTP_AppSend(TRUE, WORD_BOOK_HEADR_PATH, url, strlen(url), 1000, 0, 0, 0, 0, 0, Word_ParseBookInfo);
+        if(ZMTApp_GetSimIsExist()){
+            char url[200] = {0};
+            char * query_str = NULL;
+            query_str = makeBaseQueryUrlString(WORD_BOOK_APP_ID, WORD_BOOK_APP_SECRET);
+            sprintf(url, WORD_BOOK_PUBLISH_PATH, query_str);
+            SCI_FREE(query_str);
+            SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
+            word_is_load_local = FALSE;
+            MMIZDT_HTTP_AppSend(TRUE, WORD_BOOK_HEADR_PATH, url, strlen(url), 1000, 0, 0, 0, 0, 0, Word_ParseBookInfo);
+        }else{
+        #ifdef LISTENING_PRATICE_SUPPORT
+            MMI_CreateListeningTipWin(PALYER_PLAY_NO_SIM_TIP);
+        #endif
+        }
     }
 }
 
@@ -812,13 +818,19 @@ PUBLIC void Word_requestChapterDetailInfo(uint16 book_id)
     }
     else
     {
-        char url[200] = {0};
-        char * query_str = makeBaseQueryUrlString(WORD_BOOK_APP_ID, WORD_BOOK_APP_SECRET);
-        sprintf(url,WORD_BOOK_ID_PATH,book_id, query_str);
-        SCI_FREE(query_str);
-        SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
-        word_is_load_local = FALSE;
-        MMIZDT_HTTP_AppSend(TRUE, WORD_BOOK_HEADR_PATH, url, strlen(url), 1000, 0, 0, 0, 0, 0, Word_ParseChapterInfo);
+        if(ZMTApp_GetSimIsExist()){
+            char url[200] = {0};
+            char * query_str = makeBaseQueryUrlString(WORD_BOOK_APP_ID, WORD_BOOK_APP_SECRET);
+            sprintf(url,WORD_BOOK_ID_PATH,book_id, query_str);
+            SCI_FREE(query_str);
+            SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
+            word_is_load_local = FALSE;
+            MMIZDT_HTTP_AppSend(TRUE, WORD_BOOK_HEADR_PATH, url, strlen(url), 1000, 0, 0, 0, 0, 0, Word_ParseChapterInfo);
+        }else{
+        #ifdef LISTENING_PRATICE_SUPPORT
+            MMI_CreateListeningTipWin(PALYER_PLAY_NO_SIM_TIP);
+        #endif
+        }
     }
 }
 

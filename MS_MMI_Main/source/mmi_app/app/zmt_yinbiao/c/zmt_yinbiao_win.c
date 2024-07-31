@@ -991,6 +991,9 @@ LOCAL void YinbiaoReadWin_CirculateCallback(void)
 
 LOCAL void YinbiaoReadWin_SingleCallback(void)
 {
+    if(yinbiao_request_status <= 0){
+        return;
+    }
     if(yinbiao_read_info.is_single){
         yinbiao_read_info.is_single = FALSE;
     }else{
@@ -1002,6 +1005,9 @@ LOCAL void YinbiaoReadWin_SingleCallback(void)
 
 LOCAL void YinbiaoReadWin_PlayCallback(void)
 {
+    if(yinbiao_request_status <= 0){
+        return;
+    }
     SCI_TRACE_LOW("%s: yinbiao_read_info.cur_read_idx = %d", __FUNCTION__, yinbiao_read_info.cur_read_idx);
     if(yinbiao_read_info.is_play){
         yinbiao_read_info.is_play = FALSE;
@@ -1020,6 +1026,9 @@ LOCAL void YinbiaoReadWin_PlayCallback(void)
 LOCAL void YinbiaoReadWin_PreCallback(void)
 {
     uint8 idx = MMK_GetWinAddDataPtr(ZMT_YINBIAO_READ_WIN_ID);
+    if(yinbiao_request_status <= 0){
+        return;
+    }
     Yinbiao_StopMp3Data();
     Yinbiao_StopIntervalTimer();
     if(yinbiao_read_info.cur_read_idx > 0)
@@ -1041,6 +1050,9 @@ LOCAL void YinbiaoReadWin_PreCallback(void)
 LOCAL void YinbiaoReadWin_NextCallback(void)
 {
     uint8 idx = MMK_GetWinAddDataPtr(ZMT_YINBIAO_READ_WIN_ID);
+    if(yinbiao_request_status <= 0){
+        return;
+    }
     Yinbiao_StopMp3Data();
     Yinbiao_StopIntervalTimer();
     if(yinbiao_read_info.cur_read_idx + 1 < yinbiao_info_num[idx].num)
@@ -1169,6 +1181,7 @@ LOCAL void YinbiaoReadWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
     GUIBUTTON_SetVisible(ZMT_YINBIAO_READ_TABLE_CTRL_ID, FALSE, FALSE);
     yinbiao_table_rect = table_rect;
 
+    yinbiao_request_status = 0;
     yinbiao_click_btn = 0;
     yinbiao_player_voulme = MMIAPISET_GetMultimVolume();
     Yinbiao_RequestAudioPath();

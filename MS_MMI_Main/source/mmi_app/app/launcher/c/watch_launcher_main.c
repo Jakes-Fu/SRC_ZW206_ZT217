@@ -1369,6 +1369,14 @@ PUBLIC void WatchOpen_Panel_SelectWin()
 }
 #endif
 
+PUBLIC BOOLEAN ZMTApp_GetSimIsExist(void)
+{
+    MN_DUAL_SYS_E dual_sys = MN_DUAL_SYS_1;
+    BOOLEAN is_exist = FALSE;
+    is_exist = MMIAPIPHONE_IsSimOk(dual_sys);
+    return is_exist;
+}
+
 PUBLIC void ZMTApp_CloseRecordAndPlayer(void)
 {
     SCI_TRACE_LOW("%s: start", __FUNCTION__);

@@ -143,11 +143,16 @@ PUBLIC void Pinyin_RequestAudioPath(void)
     char * data_buf = "{\"baseUrl\":\"http://8.130.95.8:8866/file/pinyin/\"}";
     Pinyin_ParseAudioPath(1, data_buf, strlen(data_buf), 0);
 #else
-    query_str = makeBaseQueryUrlString(PINYIN_APP_ID, PINYIN_APP_SECRET);
-    sprintf(url, PINYIN_AUDIO_BASE_URL_PATH, query_str);
-    SCI_FREE(query_str);
-    //SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
-    MMIZDT_HTTP_AppSend(TRUE, PINYIN_BASE_URL_HEADER_PATH, url, strlen(url), 1000, 0, 0, 0, 0, 0, Pinyin_ParseAudioPath);
+    if(!ZMTApp_GetSimIsExist()){
+        char * data_buf = "{\"baseUrl\":\"http://8.130.95.8:8866/file/pinyin/\"}";
+        Pinyin_ParseAudioPath(1, data_buf, strlen(data_buf), 0);
+    }else{
+        query_str = makeBaseQueryUrlString(PINYIN_APP_ID, PINYIN_APP_SECRET);
+        sprintf(url, PINYIN_AUDIO_BASE_URL_PATH, query_str);
+        SCI_FREE(query_str);
+        //SCI_TRACE_LOW("%s: url = %s", __FUNCTION__, url);
+        MMIZDT_HTTP_AppSend(TRUE, PINYIN_BASE_URL_HEADER_PATH, url, strlen(url), 1000, 0, 0, 0, 0, 0, Pinyin_ParseAudioPath);
+    }
 #endif
 }
 

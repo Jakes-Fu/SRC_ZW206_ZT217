@@ -301,23 +301,23 @@ extern PUBLIC uint8 Video_Call_Incoming_Test();
 #endif
 
 #ifdef FORMULA_SUPPORT
-#define MENU_MNEMONICS {19, 1, mnemonics_text, res_app_ic_mnemonics, bright_purple_bg, MMI_CreateMathMnemonicWin} 
+#define MENU_MNEMONICS {19, 0, mnemonics_text, res_app_ic_mnemonics, bright_purple_bg, MMI_CreateMathMnemonicWin} 
 #endif
 
 #ifdef LISTENING_PRATICE_SUPPORT
-#define MENU_LISTEN {20, 1, listen_text, res_app_ic_listen, light_cyan_bg, MMI_CreateListeningLocalWin} 
+#define MENU_LISTEN {20, 0, listen_text, res_app_ic_listen, light_cyan_bg, MMI_CreateListeningLocalWin} 
 #endif
 
 #ifdef WORD_CARD_SUPPORT
-#define MENU_LEARN_WORD {21, 1, learn_word_text, res_app_ic_learn_word, light_blue_bg, MMI_CreateWordWin} 
+#define MENU_LEARN_WORD {21, 0, learn_word_text, res_app_ic_learn_word, light_blue_bg, MMI_CreateWordWin} 
 #endif
 
 #ifdef POETRY_LISTEN_SUPPORT
-#define MENU_POETRY {22, 1, poetry_text, res_app_ic_poetry, bright_yellow_bg, MMI_CreatePoetryWin} 
+#define MENU_POETRY {22, 0, poetry_text, res_app_ic_poetry, bright_yellow_bg, MMI_CreatePoetryWin} 
 #endif
 
 #ifdef HANZI_CARD_SUPPORT
-#define MENU_HANZI {23, 1, hanzi_text, res_app_ic_hanzi, cherry_bg, MMI_CreateHanziWin}
+#define MENU_HANZI {23, 0, hanzi_text, res_app_ic_hanzi, cherry_bg, MMI_CreateHanziWin}
 #endif
 
 #ifdef ZMT_GPT_SUPPORT
@@ -333,11 +333,11 @@ extern PUBLIC uint8 Video_Call_Incoming_Test();
 #endif
 
 #ifdef ZMT_PINYIN_SUPPORT
-#define MENU_PINYIN {27, 1, pinyin_text, res_app_ic_pinyin, bright_yellow_bg, MMI_CreatePinyinMainWin} 
+#define MENU_PINYIN {27, 0, pinyin_text, res_app_ic_pinyin, bright_yellow_bg, MMI_CreatePinyinMainWin} 
 #endif
 
 #ifdef ZMT_YINBIAO_SUPPORT
-#define MENU_YINBIAO {28, 1, yinbiao_text, res_app_ic_yinbiao, bright_purple_bg, MMI_CreateYinbiaoMainWin} 
+#define MENU_YINBIAO {28, 0, yinbiao_text, res_app_ic_yinbiao, bright_purple_bg, MMI_CreateYinbiaoMainWin} 
 #endif
 //*******²Ëµ¥***************//
 

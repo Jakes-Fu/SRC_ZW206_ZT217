@@ -514,10 +514,12 @@ LOCAL void HanziWin_FULL_PAINT(MMI_WIN_ID_T win_id)
 
 LOCAL void HanziWin_CTL_PENOK(MMI_WIN_ID_T win_id)
 {
-    uint16 cur_idx = GUILIST_GetCurItemIndex(MMI_ZMT_HANZI_MAIN_LIST_CTRL_ID);
-    hanzi_book_info.cur_book_idx = cur_idx;
-    SCI_TRACE_LOW("%s: hanzi_book_info.cur_book_idx = %d", __FUNCTION__, hanzi_book_info.cur_book_idx);
-    MMI_CreateHanziChapterWin();
+    if(hanzi_book_count > 0){
+        uint16 cur_idx = GUILIST_GetCurItemIndex(MMI_ZMT_HANZI_MAIN_LIST_CTRL_ID);
+        hanzi_book_info.cur_book_idx = cur_idx;
+        SCI_TRACE_LOW("%s: hanzi_book_info.cur_book_idx = %d", __FUNCTION__, hanzi_book_info.cur_book_idx);
+        MMI_CreateHanziChapterWin();
+    }
 }
 
 LOCAL void HanziWin_CLOSE_WINDOW(void)
@@ -681,15 +683,19 @@ LOCAL MMI_RESULT_E Hanzi_clickDisAutoPlay()
 
 LOCAL void Hanzi_OpenNormalHanzi(void)
 {
-    is_open_new_hanzi = FALSE;
-    MMI_CreateHanziDetailWin();
+    if(hanzi_chapter_count > 0){
+        is_open_new_hanzi = FALSE;
+        MMI_CreateHanziDetailWin();
+    }
 }
 
 LOCAL void Hanzi_OpenNewHanzi(void)
 {
-    is_open_new_hanzi = TRUE;
-    cur_new_hanzi_page_idx = 0;
-    MMI_CreateHanziDetailWin();
+    if(hanzi_chapter_count > 0){
+        is_open_new_hanzi = TRUE;
+        cur_new_hanzi_page_idx = 0;
+        MMI_CreateHanziDetailWin();
+    }
 }
 
 LOCAL void Hanzi_DisplayChapterList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
@@ -850,35 +856,33 @@ LOCAL void HanziChapterWin_CTL_PENOK(MMI_WIN_ID_T win_id)
     uint8 m = 0;
     BOOLEAN is_get = FALSE;
     if(hanzi_chapter_count > 0){
-    uint16 cur_idx = GUILIST_GetCurItemIndex(MMI_ZMT_HANZI_CHAPTER_LIST_CTRL_ID);
-    SCI_TRACE_LOW("%s: cur_idx = %d", __FUNCTION__, cur_idx);
-    if(cur_idx == hanzi_book_info.cur_chapter_idx)
-    {
-        is_open_new_hanzi = FALSE;
-        Hanzi_OpenNormalHanzi();
-    }
-    else
-    {
-        hanzi_book_info.cur_chapter_idx = cur_idx;
-        hanzi_book_info.cur_section_idx = 0;
-        hanzi_book_info.cur_section_children_idx = 0;
-        for(i = 0;i < hanzi_chapter_count;i++){
-            for(j = 0;j < hanzi_chapter_children_count[i];j++){
-                if(m == cur_idx){
-                    hanzi_book_info.cur_section_idx = i;
-                    hanzi_book_info.cur_section_children_idx = j;
-                    is_get = TRUE;
+        uint16 cur_idx = GUILIST_GetCurItemIndex(MMI_ZMT_HANZI_CHAPTER_LIST_CTRL_ID);
+        SCI_TRACE_LOW("%s: cur_idx = %d", __FUNCTION__, cur_idx);
+        if(cur_idx == hanzi_book_info.cur_chapter_idx)
+        {
+            is_open_new_hanzi = FALSE;
+            Hanzi_OpenNormalHanzi();
+        }
+        else
+        {
+            hanzi_book_info.cur_chapter_idx = cur_idx;
+            hanzi_book_info.cur_section_idx = 0;
+            hanzi_book_info.cur_section_children_idx = 0;
+            for(i = 0;i < hanzi_chapter_count;i++){
+                for(j = 0;j < hanzi_chapter_children_count[i];j++){
+                    if(m == cur_idx){
+                        hanzi_book_info.cur_section_idx = i;
+                        hanzi_book_info.cur_section_children_idx = j;
+                        is_get = TRUE;
+                        break;
+                    }
+                    m++;
+                }
+                if(is_get){
                     break;
                 }
-                m++;
             }
-            if(is_get){
-                break;
-            }
-        }
-        //SCI_TRACE_LOW("%s: cur_section_idx = %d, cur_section_children_idx = %d", 
-        //    __FUNCTION__, hanzi_book_info.cur_section_idx, hanzi_book_info.cur_section_children_idx);
-        MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
+            MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
         }
     }
 }
@@ -1266,6 +1270,9 @@ LOCAL void HanziDetail_DeleteNewHanzi(void)
 
 LOCAL void HanziDetail_KeyLeft(void)
 {
+    if(hanzi_detail_count <= 0){
+        return;
+    }
     if(is_open_new_hanzi){
         int idx = cur_new_hanzi_page_idx * HANZI_CHAPTER_WORD_MAX + hanzi_detail_cur_idx;
         if(idx < hanzi_detail_count){
@@ -1283,6 +1290,9 @@ LOCAL void HanziDetail_KeyLeft(void)
 }
 LOCAL void HanziDetail_KeyRight(void)
 {
+    if(hanzi_detail_count <= 0){
+        return;
+    }
     if(is_open_new_hanzi){
         int idx = cur_new_hanzi_page_idx * HANZI_CHAPTER_WORD_MAX + hanzi_detail_cur_idx;
         if(idx < hanzi_detail_count){

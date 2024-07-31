@@ -659,6 +659,24 @@ LOCAL void WordMainWin_FULL_PAINT(MMI_WIN_ID_T win_id)
     }
 }
 
+LOCAL void WordMainWin_CTL_PENOK(MMI_WIN_ID_T win_id)
+{
+    if(word_publish_count > 0){
+        uint16 cur_idx = GUILIST_GetCurItemIndex(MMI_ZMT_WORD_MAIN_LIST_CTRL_ID);
+        word_book_info.cur_publish_idx = cur_idx;
+        MMI_CreateWordBookWin();
+    }
+}
+
+LOCAL void WordMainWin_CLOSE_WINDOW(void)
+{
+    memset(&word_listen_info, 0, sizeof(WORD_LISTEN_INFO_T));
+    memset(&word_book_info, 0, sizeof(WORD_BOOK_INFO_T));
+    Word_ReleaseBookInfo();
+    Word_ReleaseLearnInfo();
+    word_publish_count = 0;
+}
+
 LOCAL MMI_RESULT_E HandleWordMainWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_id, DPARAM param)
 {
     MMI_RESULT_E recode = MMI_RESULT_TRUE;
@@ -691,18 +709,12 @@ LOCAL MMI_RESULT_E HandleWordMainWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg
         case MSG_CTL_OK:
         case MSG_CTL_PENOK:
             { 
-                uint16 cur_idx = GUILIST_GetCurItemIndex(MMI_ZMT_WORD_MAIN_LIST_CTRL_ID);
-                word_book_info.cur_publish_idx = cur_idx;
-                MMI_CreateWordBookWin();
+                WordMainWin_CTL_PENOK(win_id);
             }
             break;
         case MSG_CLOSE_WINDOW:
             {
-                memset(&word_listen_info, 0, sizeof(WORD_LISTEN_INFO_T));
-                memset(&word_book_info, 0, sizeof(WORD_BOOK_INFO_T));
-                Word_ReleaseBookInfo();
-                Word_ReleaseLearnInfo();
-                word_publish_count = 0;
+                WordMainWin_CLOSE_WINDOW();
             }
             break;
          default:
@@ -817,14 +829,18 @@ LOCAL MMI_RESULT_E WordChapter_clickDisAutoPlay()
 
 LOCAL void WordChapter_OpenNormalWord(void)
 {
-    is_open_new_word = FALSE;
-    MMI_CreateWordDetailWin();
+    if(word_chapter_count > 0){
+        is_open_new_word = FALSE;
+        MMI_CreateWordDetailWin();
+    }
 }
 
 LOCAL void WordChapter_OpenNewWord(void)
 {
-    is_open_new_word = TRUE;
-    MMI_CreateWordDetailWin();
+    if(word_chapter_count > 0){
+        is_open_new_word = TRUE;
+        MMI_CreateWordDetailWin();
+    }
 }
 
 LOCAL void WordChapter_DisplayChapterList(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T ctrl_id)
@@ -969,14 +985,14 @@ LOCAL void WordChapterWin_FULL_PAINT(MMI_WIN_ID_T win_id)
 LOCAL void WordChapterWin_CTL_PENOK(MMI_WIN_ID_T win_id, DPARAM param)
 {
     if(word_chapter_count >0){
-    uint16 cur_idx = GUILIST_GetCurItemIndex(MMI_ZMT_WORD_CHAPTER_LIST_CTRL_ID);
-    if(cur_idx == word_book_info.cur_chapter_idx){
-        is_open_new_word = FALSE;
-        MMI_CreateWordDetailWin();
-    }else{
-        word_book_info.cur_chapter_idx = cur_idx;
-        MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
-    }
+        uint16 cur_idx = GUILIST_GetCurItemIndex(MMI_ZMT_WORD_CHAPTER_LIST_CTRL_ID);
+        if(cur_idx == word_book_info.cur_chapter_idx){
+            is_open_new_word = FALSE;
+            MMI_CreateWordDetailWin();
+        }else{
+            word_book_info.cur_chapter_idx = cur_idx;
+            MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
+        }
     }
 }
 LOCAL void WordChapterWin_CLOSE_WINDOW(MMI_WIN_ID_T win_id)
@@ -1371,6 +1387,9 @@ LOCAL void WordDetail_DeleteNewWord(void)
 }
 LOCAL void WordDetail_KeyLeft(void)
 {
+    if(word_detail_count <= 0){
+        return;
+    }
     if(is_open_new_word){
         if(word_detail_cur_idx < word_detail_count){
             WordDetail_LeftDetail();
@@ -1387,6 +1406,9 @@ LOCAL void WordDetail_KeyLeft(void)
 }
 LOCAL void WordDetail_KeyRight(void)
 {
+    if(word_detail_count <= 0){
+        return;
+    }
     if(is_open_new_word){
         if(word_detail_cur_idx < word_detail_count){
             WordDetail_RightDetail();

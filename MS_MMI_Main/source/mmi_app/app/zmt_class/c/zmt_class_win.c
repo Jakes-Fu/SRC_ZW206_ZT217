@@ -774,6 +774,9 @@ LOCAL void ClassReadWin_UpdateButtonBgWin(BOOLEAN is_play, BOOLEAN is_single)
 
 LOCAL void ClassReadWin_ButtonSingleCallback(void)
 {
+    if(class_read_count <= 0){
+        return;
+    }
 #ifdef WIN32
     Class_StopWin32TestTimer();
 #endif
@@ -797,6 +800,9 @@ LOCAL void ClassReadWin_ButtonSingleCallback(void)
 
 LOCAL void ClassReadWin_ButtonPlayCallback(void)
 {
+    if(class_read_count <= 0){
+        return;
+    }
 #ifdef WIN32
     Class_StopWin32TestTimer();
 #endif
@@ -1048,32 +1054,34 @@ PUBLIC void ClassReadWin_FULL_PAINT(MMI_WIN_ID_T win_id)
 
 LOCAL void ClassReadWin_CTL_PENOK(MMI_WIN_ID_T win_id, DPARAM param)
 {
-    int8 cur_idx = 0;
-    MMI_CTRL_ID_T ctrl_id = ((MMI_NOTIFY_T *)param)->src_id;
-    MMI_CTRL_ID_T last_ctrl_id = class_cur_info.cur_ctrl_id;
-    cur_idx = ctrl_id - ZMT_CLASS_READ_FORM_TEXT_CTRL_ID;
-    if(cur_idx < 0){
-        cur_idx = class_cur_info.cur_idx;
-    }
-    if(cur_idx == class_cur_info.cur_idx){
-        ctrl_id = cur_idx + ZMT_CLASS_READ_FORM_TEXT_CTRL_ID;
-        if(class_cur_info.is_single){
-            ClassReadWin_ButtonSingleCallback();
-        }else{
-            ClassReadWin_ButtonPlayCallback();
+    if(class_read_count > 0){
+        int8 cur_idx = 0;
+        MMI_CTRL_ID_T ctrl_id = ((MMI_NOTIFY_T *)param)->src_id;
+        MMI_CTRL_ID_T last_ctrl_id = class_cur_info.cur_ctrl_id;
+        cur_idx = ctrl_id - ZMT_CLASS_READ_FORM_TEXT_CTRL_ID;
+        if(cur_idx < 0){
+            cur_idx = class_cur_info.cur_idx;
         }
-        if(cur_idx > 0){
-            Class_SetActiveTextFont(last_ctrl_id, ctrl_id);
+        if(cur_idx == class_cur_info.cur_idx){
+            ctrl_id = cur_idx + ZMT_CLASS_READ_FORM_TEXT_CTRL_ID;
+            if(class_cur_info.is_single){
+                ClassReadWin_ButtonSingleCallback();
+            }else{
+                ClassReadWin_ButtonPlayCallback();
+            }
+            if(cur_idx > 0){
+                Class_SetActiveTextFont(last_ctrl_id, ctrl_id);
+            }
+            return;
         }
-        return;
+        Class_StopPlayMp3Data();
+        class_cur_info.cur_ctrl_id = ctrl_id;
+        class_cur_info.cur_idx = cur_idx;
+        class_cur_info.is_play = FALSE;
+        class_cur_info.is_single = FALSE;
+        ClassReadWin_UpdateButtonBgWin(FALSE, FALSE);
+        Class_SetActiveTextFont(last_ctrl_id, class_cur_info.cur_ctrl_id);
     }
-    Class_StopPlayMp3Data();
-    class_cur_info.cur_ctrl_id = ctrl_id;
-    class_cur_info.cur_idx = cur_idx;
-    class_cur_info.is_play = FALSE;
-    class_cur_info.is_single = FALSE;
-    ClassReadWin_UpdateButtonBgWin(FALSE, FALSE);
-    Class_SetActiveTextFont(last_ctrl_id, class_cur_info.cur_ctrl_id);
 }
 
 LOCAL void ClassReadWin_VOL_TimerCallback(uint8 timer_id, uint32 param)
@@ -1340,15 +1348,17 @@ LOCAL void ClassSectionWin_FULL_PAINT(MMI_WIN_ID_T win_id)
 
 LOCAL void ClassSectionWin_CTL_PENOK(MMI_WIN_ID_T win_id)
 {
-    uint16 cur_idx = GUILIST_GetCurItemIndex(ZMT_CLASS_SECTION_LIST_CTRL_ID);
-    if(cur_idx == class_sync_info.section_idx)
-    {
-        MMI_CreateClassReadWin();
-    }
-    else
-    {
-        class_sync_info.section_idx = cur_idx;
-        MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
+    if(class_section_count > 0){
+        uint16 cur_idx = GUILIST_GetCurItemIndex(ZMT_CLASS_SECTION_LIST_CTRL_ID);
+        if(cur_idx == class_sync_info.section_idx)
+        {
+            MMI_CreateClassReadWin();
+        }
+        else
+        {
+            class_sync_info.section_idx = cur_idx;
+            MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
+        }
     }
 }
 
@@ -1492,9 +1502,11 @@ LOCAL void ClassBookWin_FULL_PAINT(MMI_WIN_ID_T win_id)
 
 LOCAL void ClassBookWin_CTL_PENOK(MMI_WIN_ID_T win_id)
 {
-    uint16 cur_idx = GUILIST_GetCurItemIndex(ZMT_CLASS_BOOK_LIST_CTRL_ID);
-    class_sync_info.book_idx = cur_idx;
-    MMI_CreateClassSectionWin();
+    if(class_book_count > 0){
+        uint16 cur_idx = GUILIST_GetCurItemIndex(ZMT_CLASS_BOOK_LIST_CTRL_ID);
+        class_sync_info.book_idx = cur_idx;
+        MMI_CreateClassSectionWin();
+    }
 }
 
 LOCAL MMI_RESULT_E HandleClassBookWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_id, DPARAM param)

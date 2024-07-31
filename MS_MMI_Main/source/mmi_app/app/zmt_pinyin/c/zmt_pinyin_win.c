@@ -981,6 +981,9 @@ LOCAL void PinyinReadWin_CirculateCallback(void)
 
 LOCAL void PinyinReadWin_SingleCallback(void)
 {
+    if(pinyin_request_status <= 0){
+        return;
+    }
     if(pinyin_read_info.is_single){
         pinyin_read_info.is_single = FALSE;
     }else{
@@ -992,6 +995,9 @@ LOCAL void PinyinReadWin_SingleCallback(void)
 
 LOCAL void PinyinReadWin_PlayCallback(void)
 {
+    if(pinyin_request_status <= 0){
+        return;
+    }
     SCI_TRACE_LOW("%s: pinyin_read_info.cur_read_idx = %d", __FUNCTION__, pinyin_read_info.cur_read_idx);
     if(pinyin_read_info.is_play){
         pinyin_read_info.is_play = FALSE;
@@ -1008,6 +1014,9 @@ LOCAL void PinyinReadWin_PlayCallback(void)
 LOCAL void PinyinReadWin_PreCallback(void)
 {
     uint8 idx = MMK_GetWinAddDataPtr(ZMT_PINYIN_READ_WIN_ID);
+    if(pinyin_request_status <= 0){
+        return;
+    }
     Pinyin_StopMp3Data();
     Pinyin_StopIntervalTimer();
     if(pinyin_read_info.cur_read_idx > 0)
@@ -1029,6 +1038,9 @@ LOCAL void PinyinReadWin_PreCallback(void)
 LOCAL void PinyinReadWin_NextCallback(void)
 {
     uint8 idx = MMK_GetWinAddDataPtr(ZMT_PINYIN_READ_WIN_ID);
+    if(pinyin_request_status <= 0){
+        return;
+    }
     Pinyin_StopMp3Data();
     Pinyin_StopIntervalTimer();
     if(pinyin_read_info.cur_read_idx + 1 < pinyin_info_num[idx].num)
@@ -1155,7 +1167,8 @@ LOCAL void PinyinReadWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
     GUIBUTTON_SetCallBackFunc(ZMT_PINYIN_READ_TABLE_CTRL_ID, PinyinReadWin_TableCallback);
     GUIBUTTON_SetVisible(ZMT_PINYIN_READ_TABLE_CTRL_ID, FALSE, FALSE);
     pinyin_table_rect = table_rect;
-
+    
+    pinyin_request_status = 0;
     pinyin_click_btn = 0;
     pinyin_player_voulme = MMIAPISET_GetMultimVolume();
     Pinyin_RequestAudioPath();

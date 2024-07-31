@@ -268,6 +268,9 @@ LOCAL MMI_RESULT_E HandleListeningAudioWinMsg(
 		case MSG_CTL_OK:
 		case MSG_CTL_PENOK:
 			{
+                            if(listening_load_win <= 0){
+                                break;
+                            }
 				uint16 index = GUILIST_GetCurItemIndex(ctrl_id);
 				SCI_TRACE_LOW("%s: index = %d, download = %d", __FUNCTION__, index, listening_download_audio);
 				if(Listening_IsMp3FileExist(index, album_info))
@@ -725,10 +728,12 @@ LOCAL MMI_RESULT_E HandleListeningWinMsg(
 		case MSG_CTL_OK:
 		case MSG_CTL_PENOK:
 			{
-				uint16 index = GUILIST_GetCurItemIndex(ctrl_id);
-				SCI_TRACE_LOW("%s: index = %d", __FUNCTION__, index);
-				MMI_CreateListeningAudioWin(index);
-				Listening_RequestAudioListInfo(module_info->item_info[index].album_id);
+				if(listening_load_win > 0){
+        				uint16 index = GUILIST_GetCurItemIndex(ctrl_id);
+        				SCI_TRACE_LOW("%s: index = %d", __FUNCTION__, index);
+        				MMI_CreateListeningAudioWin(index);
+        				Listening_RequestAudioListInfo(module_info->item_info[index].album_id);
+				}
 			}
 			break;
 		case MSG_TP_PRESS_UP:
@@ -862,6 +867,10 @@ LOCAL MMI_RESULT_E HandleListeningTipWinMsg(
 				else if(type == PALYER_PLAY_NO_TFCARD_TIP)
 				{
 					MMIRES_GetText(ZMT_TXT_TF_NO_EXIST, win_id, &text_string);
+				}
+				else if(type == PALYER_PLAY_NO_SIM_TIP)
+				{
+					MMIRES_GetText(ZMT_TXT_TF_NO_SIM, win_id, &text_string);
 				}
 				GUISTR_DrawTextToLCDInRect(
 					(const GUI_LCD_DEV_INFO *)&lcd_dev_info,

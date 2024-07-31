@@ -164,10 +164,15 @@ LOCAL void Formula_RequestTextInfo(void)
     char * data_buf = "{\"baseUrl\":\"http://8.130.95.8:8866/file/formulas/\"}";
     Formula_ParseTextInfo(1, data_buf, strlen(data_buf), 0);
 #else
-    query_str = makeBaseQueryUrlString(FORMULA_APP_ID, FORMULA_APP_SECRET);
-    sprintf(url, FORMULA_BASE_TEXT_PATH, query_str);
-    SCI_FREE(query_str);
-    MMIZDT_HTTP_AppSend(TRUE, FORMULA_HEADER_PATH, url, strlen(url), 1000, 0, 0, 0, 0, 0, Formula_ParseTextInfo);
+    if(!ZMTApp_GetSimIsExist()){
+        char * data_buf = "{\"baseUrl\":\"http://8.130.95.8:8866/file/formulas/\"}";
+        Formula_ParseTextInfo(1, data_buf, strlen(data_buf), 0);
+    }else{
+        query_str = makeBaseQueryUrlString(FORMULA_APP_ID, FORMULA_APP_SECRET);
+        sprintf(url, FORMULA_BASE_TEXT_PATH, query_str);
+        SCI_FREE(query_str);
+        MMIZDT_HTTP_AppSend(TRUE, FORMULA_HEADER_PATH, url, strlen(url), 1000, 0, 0, 0, 0, 0, Formula_ParseTextInfo);
+    }
 #endif
 }
 LOCAL void Formula_StopTipsTimer(void)
