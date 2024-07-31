@@ -3109,7 +3109,8 @@ LOCAL MMI_RESULT_E  HandleZDT_NewPbWinMsg(
             //不画分割线
             GUILIST_SetListState( ctrl_id, GUILIST_STATE_SPLIT_LINE, FALSE );
             //不画高亮条
-            GUILIST_SetListState( ctrl_id, GUILIST_STATE_NEED_HIGHTBAR, FALSE );
+            GUILIST_SetListState( ctrl_id, GUILIST_STATE_NEED_HIGHTBAR, FALSE);
+            GUILIST_SetListHighlightImage(ctrl_id, image_watch_list_highlight_bg);
             ret = GUILIST_SetMaxItem(ctrl_id, YX_DB_WHITE_MAX_SUM, FALSE);
             //GUILIST_SetRect(MMK_ConvertIdToHandle(ctrl_id), &rect);
             MMK_SetAtvCtrl(win_id,ctrl_id);

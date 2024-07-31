@@ -2795,7 +2795,9 @@ LOCAL void ListDrawItem(
         if(item_ptr->item.style_id == GUIITEM_STYLE_1ICON_1STR_1LINE_BIG_LAYOUT1||
             GUIITEM_STYLE_1STR_1LINE_BIG_LAYOUT1 == item_ptr->item.style_id||
             GUIITEM_STYLE_1STR_1LINE_RADIO_BIG_LAYOUT1 == item_ptr->item.style_id||
-            GUIITEM_STYLE_2STR_1ICON_2LINE_LAYOUT1 == item_ptr->item.style_id)
+            GUIITEM_STYLE_2STR_1ICON_2LINE_LAYOUT1 == item_ptr->item.style_id ||
+            GUIITEM_STYLE_1ICON_2STR_1LINE_LAYOUT == item_ptr->item.style_id ||
+            GUIITEM_STYLE_2STR_2LINE_LAYOUT1 == item_ptr->item.style_id )
         {
             item_bg = WATCHTHEME_GetListItemBgEx();
         }

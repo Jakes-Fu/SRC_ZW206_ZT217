@@ -2554,7 +2554,8 @@ LOCAL void Create_Chat_Contact_List_Listbox(MMI_WIN_ID_T win_id, MMI_CTRL_ID_T c
     GUILIST_CreateListBox(win_id, 0, ctrl_id, &list_init);
     GUILIST_SetListState( ctrl_id, GUILIST_STATE_SPLIT_LINE, FALSE );
     //≤ªª≠∏ﬂ¡¡Ãı
-    GUILIST_SetListState( ctrl_id, GUILIST_STATE_NEED_HIGHTBAR, FALSE );
+    GUILIST_SetListState( ctrl_id, GUILIST_STATE_NEED_HIGHTBAR, FALSE);
+    GUILIST_SetListHighlightImage(ctrl_id, image_watch_list_highlight_bg);
     GUILIST_SetRect(ctrl_id, &rect);
     MMK_SetAtvCtrl(win_id,ctrl_id);
 }
