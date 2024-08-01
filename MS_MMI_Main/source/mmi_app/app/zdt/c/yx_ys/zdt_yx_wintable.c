@@ -922,7 +922,8 @@ LOCAL MMI_RESULT_E  HandleZDT_2VMWinMsg(
                 uint16 large = 20;
                 SCI_MEMSET(ewm_str, 0, 200*sizeof(char));
             #ifdef ZTE_WATCH
-                sprintf(ewm_str,APP_DOWNLOAD_URL,WATCHCOM_GetDeviceModel(),g_zdt_phone_imei_1);
+                //sprintf(ewm_str,APP_DOWNLOAD_URL,WATCHCOM_GetDeviceModel(),g_zdt_phone_imei_1);
+				sprintf(ewm_str,APP_DOWNLOAD_URL,yx_DB_Set_Rec.app_domain,g_zdt_phone_imei_1);
             #else
                 sprintf(ewm_str,APP_DOWNLOAD_URL,yx_DB_Set_Rec.app_domain,g_zdt_phone_imei_1);
             #endif

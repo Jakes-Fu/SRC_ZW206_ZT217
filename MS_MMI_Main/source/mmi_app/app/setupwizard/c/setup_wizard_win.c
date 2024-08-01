@@ -15,7 +15,8 @@
 #include "watch_launcher_main.h"
 
 #ifdef ZTE_WATCH
-#define APP_DOWNLOAD_URL "http://ausp.nubia.com/care/?ln=cn&type=%s&imei=%s"
+//#define APP_DOWNLOAD_URL "http://ausp.nubia.com/care/?ln=cn&type=%s&imei=%s"
+#define APP_DOWNLOAD_URL "http://%s:8080/app/newIndex.html?imei=%s"
 #else
 #define APP_DOWNLOAD_URL "http://%s:8080/app/newIndex.html?imei=%s"
 #endif
