@@ -85,8 +85,13 @@ PUBLIC MMI_RESULT_E  HandleZDT_ChatGroupWinMsg(
                                             MMI_MESSAGE_ID_E    msg_id, 
                                             DPARAM                param
                                             );
-
-
+#ifdef LEBAO_MUSIC_SUPPORT //¿÷±¶“Ù¿÷
+PUBLIC MMI_RESULT_E HandleLauncherLebaoWinMsg(
+                                      MMI_WIN_ID_T        win_id,        //IN:
+                                      MMI_MESSAGE_ID_E    msg_id,        //IN:
+                                      DPARAM            param        //IN:
+                                      );
+#endif
 //PUBLIC MMI_RESULT_E HandleLauncher_ChatContactListWinMsg( MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E msg_id, DPARAM param);// wuxx del it because new CODE. WUXX_MODIFY_DEL_TMP_20231118
 
 //¡Â…˘
@@ -284,7 +289,7 @@ extern PUBLIC uint8 Video_Call_Incoming_Test();
 #define MENU_ALIPAY  {18, 1, alipay_text, res_app_ic_alipay, light_blue_bg, MMIZFB_OpenMainWin} //÷ß∏∂±¶
 #endif
 #ifdef TULING_AI_SUPPORT
-#define MENU_AI_CHAT   {0, 1, ai_assistant_text, res_app_ic_ai_chat, bright_yellow_bg, MMIAPIMENU_EnterAiChat}//Õº¡ÈAI
+#define MENU_AI_CHAT   {0, 1, ai_assistant_text, res_app_ic_assistant, bright_yellow_bg, MMIAPIMENU_EnterAiChat}//Õº¡ÈAI
 #endif
 #ifdef BAIDU_AI_SUPPORT
 #define MENU_XIAODU   {17, 1, xiaodu_text, res_app_ic_xiaodu, bright_yellow_bg, MMIAPIMENU_EnterAiChat}//–°∂»

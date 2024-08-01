@@ -5080,6 +5080,9 @@ PUBLIC void MMIZDT_OpenClassModeWin()
             External_CloseDCApplet();// ÍË³öCAMER CLOSE
 #endif
 #endif
+#ifdef TULING_AI_SUPPORT
+	MMIAI_CloseChatWin();
+#endif
         MMK_CreateWin((uint32*)MMIZDT_CLASSMODE_WIN_TAB,PNULL);
    }
 }
@@ -5654,18 +5657,18 @@ LOCAL MMI_RESULT_E  HandleZDT_TestTpWinMsg(
 }
 #endif
 
-#ifdef BAIDU_AI_SUPPORT
-#include "lightduer_log.h"
-#include "duerapp_homepage.h"
-PUBLIC void MMIAPIMENU_EnterAiChat(void)
-{
-#ifndef WIN32
-    extern int duer_set_device_name(const char *device_name);
-    duer_set_device_name("ZTE"); 
-    MMIDUERAPP_CreateWinEnter();
-#endif
-}
-#endif
+//#ifdef BAIDU_AI_SUPPORT
+//#include "lightduer_log.h"
+//#include "duerapp_homepage.h"
+//PUBLIC void MMIAPIMENU_EnterAiChat(void)
+//{
+//#ifndef WIN32
+//    extern int duer_set_device_name(const char *device_name);
+//    duer_set_device_name("ZTE"); 
+//    MMIDUERAPP_CreateWinEnter();
+//#endif
+//}
+//#endif
 
 #endif
 
