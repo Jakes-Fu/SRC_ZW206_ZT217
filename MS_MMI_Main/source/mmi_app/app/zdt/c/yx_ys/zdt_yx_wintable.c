@@ -1462,7 +1462,7 @@ LOCAL MMI_RESULT_E  HandleZDT_Watch2VMSelectWinMsg(
     }
 
         break;        
-     case MSG_TP_PRESS_DOWN:
+    case MSG_TP_PRESS_DOWN:
     {
         GUI_POINT_T   point = {0};
         point.x = MMK_GET_TP_X(param);
@@ -1540,7 +1540,6 @@ PUBLIC void MMIZDT_OpenManualWin()
 
 
 //zhou √Î±Ì
-
 PUBLIC void MMI_OpenStopwWin()
 {
 #ifdef STOPWATCH_SUPPORT
@@ -1563,6 +1562,7 @@ WINDOW_TABLE( MMIZDT_WATCH_2VM_WIN_TAB ) =
 
 PUBLIC void MMIZDT_Open2VMWin(void)
 {
+    qrcode_page_index = 1;
     MMK_CreateWin((uint32*)MMIZDT_WATCH_2VM_WIN_TAB,PNULL);
 }
 
