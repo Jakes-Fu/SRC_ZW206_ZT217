@@ -78,7 +78,8 @@ LOCAL void Show_Download_Qrcode()
     char qrcode_str[200] = {0};
     GUI_RECT_T qrcode_rect = SETUP_WIZARD_QRCODE_RECT;
     #ifdef ZTE_WATCH
-    sprintf(qrcode_str,APP_DOWNLOAD_URL,WATCHCOM_GetDeviceModel(),g_zdt_phone_imei_1);
+    //sprintf(qrcode_str,APP_DOWNLOAD_URL,WATCHCOM_GetDeviceModel(),g_zdt_phone_imei_1);
+    sprintf(qrcode_str,APP_DOWNLOAD_URL,yx_DB_Set_Rec.app_domain,g_zdt_phone_imei_1);
     #else
     sprintf(qrcode_str,APP_DOWNLOAD_URL,yx_DB_Set_Rec.app_domain,g_zdt_phone_imei_1);
     #endif
