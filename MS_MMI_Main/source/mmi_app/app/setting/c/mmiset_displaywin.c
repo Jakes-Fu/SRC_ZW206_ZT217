@@ -2736,6 +2736,7 @@ LOCAL MMI_RESULT_E HandleCallVolumeSetWindow(
     case MSG_KEYDOWN_OK:
     case MSG_APP_WEB:
         setVolume(win_id, cur_call_volume_img_id, COMM_VOL);
+		 ual_tele_call_set_call_volume(cur_call_volume_img_id);
         break;
     case MSG_CTL_MIDSK:
     case MSG_CTL_OK:
@@ -2747,6 +2748,7 @@ LOCAL MMI_RESULT_E HandleCallVolumeSetWindow(
         if(MMISET_ZTE_WATCH_SETOK_BTN_CTRL_ID == ((MMI_NOTIFY_T*)param)->src_id)//reset button被选中
         {
             setVolume(win_id, cur_call_volume_img_id, COMM_VOL);
+			 ual_tele_call_set_call_volume(cur_call_volume_img_id);
         }
 #else
         if(MMISET_COMMON_L_BTN_CTRL_ID == ((MMI_NOTIFY_T*)param)->src_id)//reset button被选中
@@ -2829,11 +2831,12 @@ LOCAL MMI_RESULT_E HandleCallVolumeSetWindow(
 
             if (GUI_PointIsInRect(down_point, prgtouchrect))
             {
+
                 //uint8 percent = (point.x - rect.left)*100/(rect.right-rect.left);
                 progress_down_flag = 1;
                 cur_item_index =  ROUND((float)(volume_item_total) * (down_point.x - progressrect.left)/(progressrect.right-progressrect.left)); //0 is not in total num, eg total=100, progressbar display 0~100
                 updateVolumeProgress(win_id, cur_item_index, cur_call_volume_img_id,COMM_VOL);
-            }
+		     }
         }
         break;
         

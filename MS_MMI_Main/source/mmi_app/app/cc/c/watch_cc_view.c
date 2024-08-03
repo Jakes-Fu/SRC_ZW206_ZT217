@@ -922,7 +922,11 @@ LOCAL void  CC_OpenWatchMoCallWin(void)//into calling win edit fys
     }
 
     MMICC_GetWantCallNumStr(telNum, &telNumLen);
-
+#ifdef LEBAO_MUSIC_SUPPORT
+		StopLebaoApp();
+		// or
+		// lebao_stop_playing();
+#endif
 #ifdef _SW_ZDT_PRODUCT_
     dispInfo.incall_portrait = ZDT_PB_GetDispInfoContent((uint8 *)telNum, telNumLen, &dispWchar, FALSE);
 #else
@@ -954,6 +958,11 @@ LOCAL void CC_OpenWatchMtCallWin(void)
     MMICC_DISPINFO_T        *addData = NULL;
 #ifdef BLUETOOTH_SUPPORT
     MMI_STRING_T            btMsg = {0};
+#endif
+#ifdef LEBAO_MUSIC_SUPPORT
+		StopLebaoApp();
+		// or
+		// lebao_stop_playing();
 #endif
     addData = (MMICC_DISPINFO_T *)SCI_ALLOC_APPZ(sizeof(MMICC_DISPINFO_T));
     SCI_ASSERT(addData != NULL);
@@ -1836,7 +1845,9 @@ LOCAL MMI_RESULT_E   HandleCcMoCallQueryWinMsg(
         case MSG_APP_OK:
         {
             WatchCC_MoCallQueryWin_Exit();
-            break;
+          MMICC_StopRecordInCall();
+        WatchCC_EndedAndSaved_NoteWin_Enter();
+			break;
         }
         case MSG_APP_CANCEL:
         case MSG_CTL_CANCEL:
@@ -1990,9 +2001,11 @@ LOCAL MMI_RESULT_E   HandleCcMoCallingWinMsg(
 #endif
             break;
         }
+		case MSG_KEYUP_CANCEL:
         case MSG_APP_OK:
         {
             MMK_CloseWin(win_id);
+			MMICC_ReleaseCurrentCallReq(MN_CAUSE_USER_BUSY);
             break;
         }
 		case MSG_TP_PRESS_UP:
@@ -2141,10 +2154,35 @@ LOCAL MMI_RESULT_E   HandleCcVoiceCallConnectedWinMsg(
             }
         #ifdef ZTE_WATCH
             ual_tele_call_set_call_volume(last_call_volume);//音量调节只有单次有效
-            MMIZDT_CheckCallVolumeWin();//如果在音量调节界面则关闭该界面
+          //  MMIZDT_OpenCallVolumeWin();//MMIZDT_CheckCallVolumeWin();//如果在音量调节界面则关闭该界面
+			MMIZDT_CheckCallVolumeWin();
+			//MMIZDT_OpenCallVolumeWin();
         #endif
             break;
         }
+
+		case MSG_KEYDOWN_UPSIDE:
+        case MSG_KEYDOWN_VOL_UP:
+			{
+           if(last_call_volume<9)
+		   {
+		   last_call_volume++;
+		   }else{
+		   last_call_volume=9;
+		   }
+		   ual_tele_call_set_call_volume(last_call_volume);}//音量调节只有单次有效
+            break;
+
+        case MSG_KEYDOWN_DOWNSIDE:
+        case MSG_KEYDOWN_VOL_DOWN:
+		{	if(last_call_volume>1)
+		   {
+		   last_call_volume--;
+		   }else{
+		   last_call_volume=1;
+		   }
+            ual_tele_call_set_call_volume(last_call_volume);//音量调节只有单次有效
+		} break;
         case MSG_FULL_PAINT:
         {
 #ifndef ZTE_WATCH
@@ -2186,8 +2224,8 @@ LOCAL MMI_RESULT_E   HandleCcVoiceCallConnectedWinMsg(
 			}
 			else if(GUI_PointIsInRect(point,volume_state_rect))
 			{
-                //MMIZDT_OpenCallVolumeWin();
-                MMIAPISET_CallVolumeWin();
+           //   MMIZDT_OpenCallVolumeWin();
+             MMIAPISET_CallVolumeWin();
 			}
 		#endif
 			break;
@@ -2210,7 +2248,7 @@ LOCAL MMI_RESULT_E   HandleCcVoiceCallConnectedWinMsg(
             }
             break;
         }
-        case MSG_APP_OK:
+       
         case MSG_CTL_OK:
         {
 #ifndef ZTE_WATCH
@@ -2219,7 +2257,9 @@ LOCAL MMI_RESULT_E   HandleCcVoiceCallConnectedWinMsg(
 #endif
 #endif
             break;
-        }
+        } 
+		case MSG_APP_OK:
+		case MSG_KEYUP_CANCEL:
         case MSG_BT_CANCEL_CALL:
         case MSG_APP_CANCEL:
         case MSG_CTL_CANCEL:
@@ -2441,7 +2481,7 @@ LOCAL MMI_RESULT_E   HandleCcMtCallingWinMsg(
             //拨出情况调解音量
             if (CC_CALLING_STATE == MMICC_GetCurrentCallStatus())
             {
-                //OpenVolumePanel(win_id, msg_id);
+              //  OpenVolumePanel(win_id, msg_id);
             }
             else if(CC_INCOMING_CALL_STATE == MMICC_GetCurrentCallStatus())
             {
