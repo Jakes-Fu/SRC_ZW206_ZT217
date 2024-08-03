@@ -1623,15 +1623,15 @@ LOCAL void DrawMoCallingWin(MMICC_DISPINFO_T *contact_info)
 
     if(NULL != contact_info)
     {
-    #ifdef ZTE_WATCH
-    	uint8 cur_volume = MMIAPISET_GetCallVolume();
-    	// ÏÔÊ¾¾²Òô×´Ì¬
-    	if(cur_volume == 0){
-    		GUIRES_DisplayImg(PNULL, &volume_state_rect, PNULL, winId, IAMGE_CALLING_VOLUME_NONE, &devInfo);
-    	}else{
-    		GUIRES_DisplayImg(PNULL, &volume_state_rect, PNULL, winId, IAMGE_CALLING_VOLUME_MAX, &devInfo);
-		}
-	#endif
+ //   #ifdef ZTE_WATCH
+ //   	uint8 cur_volume = MMIAPISET_GetCallVolume();
+ //   	// ÏÔÊ¾¾²Òô×´Ì¬
+ //   	if(cur_volume == 0){
+ //   		GUIRES_DisplayImg(PNULL, &volume_state_rect, PNULL, winId, IAMGE_CALLING_VOLUME_NONE, &devInfo);
+ //   	}else{
+ //   		GUIRES_DisplayImg(PNULL, &volume_state_rect, PNULL, winId, IAMGE_CALLING_VOLUME_MAX, &devInfo);
+	//	}
+	//#endif
         // ÏÔÊ¾Í·ÏñºÍÃû³Æ
         dispStr.wstr_ptr = &(contact_info->disp_name_buf);
 		dispStr.wstr_len= contact_info->disp_name_len;
@@ -1674,7 +1674,7 @@ LOCAL void DrawVoiceCallConnectedWin(MMICC_DISPINFO_T *contact_info)
 
     if(NULL != contact_info)
     {
-    #ifdef ZTE_WATCH
+    #ifdef   ZTE_WATCH
     	uint8 cur_volume = MMIAPISET_GetCallVolume();
     	// ÏÔÊ¾¾²Òô×´Ì¬
     	if(cur_volume == WATCH_CC_VOLUME_MIN){
@@ -1964,10 +1964,11 @@ LOCAL MMI_RESULT_E   HandleCcMoCallingWinMsg(
                                           )
 {
     MMI_RESULT_E                result = MMI_RESULT_TRUE;
+	 LOCAL uint8	cur_ring_volume_img_id=0;
     MMICC_DISPINFO_T *pInfo = (MMICC_DISPINFO_T *)MMK_GetWinAddDataPtr(win_id);
 
     TRACE_APP_CALLCTRL("enter cc calling win, msg_id = 0x%x",msg_id);
-
+	//cur_ring_volume_img_id = MMIAPISET_GetCallVolume();
     switch(msg_id)
     {
         case MSG_OPEN_WINDOW:
@@ -2024,15 +2025,16 @@ LOCAL MMI_RESULT_E   HandleCcMoCallingWinMsg(
 			else if((point.x > volume_state_rect.left && point.x < volume_state_rect.right) && 
 				(point.y > volume_state_rect.top && point.y < volume_state_rect.bottom))
 			{
-				//uint8 cur_volume = MMIAPISET_GetCallVolume();
-				uint8 cc_cur_volume = MMIAPICC_GetCallVolume();
-				if(cc_cur_volume == MMISRVAUD_VOLUME_LEVEL_MAX){
-					//MMIAPISET_SetCallVolume(call_current_volume);
-					MMIAPICC_SetCallVolume(MMISRVAUD_VOLUME_LEVEL_0);
 				}else{
-					//MMIAPISET_SetCallVolume(0);
-					MMIAPICC_SetCallVolume(MMISRVAUD_VOLUME_LEVEL_MAX);
-				}
+				////uint8 cur_volume = MMIAPISET_GetCallVolume();
+				//uint8 cc_cur_volume = MMIAPICC_GetCallVolume();
+				//if(cc_cur_volume == MMISRVAUD_VOLUME_LEVEL_MAX){
+				//	//MMIAPISET_SetCallVolume(call_current_volume);
+				//	MMIAPICC_SetCallVolume(MMISRVAUD_VOLUME_LEVEL_0);
+				//}else{
+				//	//MMIAPISET_SetCallVolume(0);
+				//	MMIAPICC_SetCallVolume(MMISRVAUD_VOLUME_LEVEL_MAX);
+				//}
 				MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
 			}
 			#endif
@@ -2324,7 +2326,6 @@ LOCAL MMI_RESULT_E   HandleCcMtCallingWinMsg(
     GUI_RECT_T                  vaildRect = WATCH_SMS_REJECT_TP_VAILD_RECT;
     LOCAL BOOLEAN               needPlayRing = FALSE;
     LOCAL uint32                callRingTimes = 0;
-
     switch(msg_id)
     {
         case MSG_OPEN_WINDOW:
@@ -2478,7 +2479,7 @@ LOCAL MMI_RESULT_E   HandleCcMtCallingWinMsg(
         }
         case MSG_APP_DOWN:
         {
-            //²¦³öÇé¿öµ÷½âÒôÁ¿
+            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿?
             if (CC_CALLING_STATE == MMICC_GetCurrentCallStatus())
             {
               //  OpenVolumePanel(win_id, msg_id);
