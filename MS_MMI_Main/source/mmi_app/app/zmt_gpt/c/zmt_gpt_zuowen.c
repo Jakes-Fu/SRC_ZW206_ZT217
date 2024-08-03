@@ -386,10 +386,10 @@ PUBLIC void ZmtGptZuoWen_RecvSelfResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_
             memset(gpt_zuowen_talk_info[gpt_zuowen_talk_size], 0, sizeof(gpt_talk_info_t));
             gpt_zuowen_talk_info[gpt_zuowen_talk_size]->is_user = FALSE;
 
-            gpt_zuowen_talk_info[gpt_zuowen_talk_size]->str = SCI_ALLOC_APPZ(strlen(data->valuestring)+1);
-            memset(gpt_zuowen_talk_info[gpt_zuowen_talk_size]->str, 0, strlen(data->valuestring)+1);
+            gpt_zuowen_talk_info[gpt_zuowen_talk_size]->str = SCI_ALLOC_APPZ(strlen(data->valuestring)+10);
+            memset(gpt_zuowen_talk_info[gpt_zuowen_talk_size]->str, 0, strlen(data->valuestring)+10);
             SCI_MEMCPY(gpt_zuowen_talk_info[gpt_zuowen_talk_size]->str, data->valuestring, strlen(data->valuestring));
-
+            strcat(gpt_zuowen_talk_info[gpt_zuowen_talk_size]->str, "\n\n\n");
             gpt_zuowen_talk_size++;
             gpt_zuowen_talk_info[gpt_zuowen_talk_size] = NULL;
 
@@ -1001,7 +1001,7 @@ LOCAL void ZmtGptZuoWen_ShowFormList(MMI_WIN_ID_T win_id)
         if(line_num == 1){
             width = GUI_CalculateStringPiexlNum(text_string.wstr_ptr, text_string.wstr_len, font_size, 0) + 50;
         }else{
-            width = zmt_gpt_list_rect.right - ZMT_GPT_LINE_WIDTH;
+            width = zmt_gpt_list_rect.right - 0.5*ZMT_GPT_LINE_WIDTH;
         }
         //SCI_TRACE_LOW("%s: width = %d", __FUNCTION__, width);
         text_ctrl_id = ZMT_GPT_FORM_TEXT_1_CTRL_ID + i;

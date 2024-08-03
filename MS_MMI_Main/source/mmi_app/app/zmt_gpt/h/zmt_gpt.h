@@ -32,6 +32,7 @@
 #define ZMT_GPT_RECORD_FILE_L L"D:\\zmt_gpt_record.pcm"
 #define ZMT_GPT_RECORD_SELF_FILE_C "D:\\zmt_gpt_record.amr"
 #define ZMT_GPT_RECORD_SELF_FILE_L L"D:\\zmt_gpt_record.amr"
+#define ZMT_GPT_KOUYU_AUDIO_PATH "E:\\zmt_gpt\\kouyu_%d.wav"
 
 #define ZMT_GPT_LINE_WIDTH MMI_MAINSCREEN_WIDTH/6
 #define ZMT_GPT_LINE_HIGHT MMI_MAINSCREEN_HEIGHT/10

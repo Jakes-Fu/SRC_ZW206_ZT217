@@ -40,7 +40,7 @@
 extern GUI_RECT_T zmt_gpt_win_rect;//´°¿Ú
 extern GUI_RECT_T zmt_gpt_title_rect;//¶¥²¿
 extern GUI_RECT_T zmt_gpt_list_rect;
-GUI_RECT_T zmt_gpt_record_rect = {ZMT_GPT_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT - 2.2*ZMT_GPT_LINE_HIGHT, MMI_MAINSCREEN_WIDTH - ZMT_GPT_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT - 0.2*ZMT_GPT_LINE_HIGHT};
+GUI_RECT_T zmt_gpt_record_rect = {ZMT_GPT_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT - 2*ZMT_GPT_LINE_HIGHT, MMI_MAINSCREEN_WIDTH - ZMT_GPT_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT - 0.2*ZMT_GPT_LINE_HIGHT};
 GUI_RECT_T zmt_gpt_judge_record_rect = {0.5*ZMT_GPT_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT - 2.2*ZMT_GPT_LINE_HIGHT, MMI_MAINSCREEN_WIDTH - 0.5*ZMT_GPT_LINE_WIDTH, MMI_MAINSCREEN_HEIGHT - 0.2*ZMT_GPT_LINE_HIGHT};
 GUI_RECT_T zmt_gpt_record_left_rect = {0.5*ZMT_GPT_LINE_WIDTH + 10, MMI_MAINSCREEN_HEIGHT - 1.2*ZMT_GPT_LINE_HIGHT - 5, 1.5*ZMT_GPT_LINE_WIDTH + 10, MMI_MAINSCREEN_HEIGHT - 0.2*ZMT_GPT_LINE_HIGHT - 5};
 GUI_RECT_T zmt_gpt_record_right_rect = {MMI_MAINSCREEN_WIDTH - 1.5*ZMT_GPT_LINE_WIDTH - 10, MMI_MAINSCREEN_HEIGHT - 1.2*ZMT_GPT_LINE_HIGHT - 5, MMI_MAINSCREEN_WIDTH - 0.5*ZMT_GPT_LINE_WIDTH - 10, MMI_MAINSCREEN_HEIGHT - 0.2*ZMT_GPT_LINE_HIGHT - 5};
@@ -96,6 +96,7 @@ LOCAL void ZmtGptKouYuTalk_DeleteFrontTwoMsg(void)
     uint8 i = 0;
     uint16 size = 0;
     gpt_talk_info_t * talk_info[GPT_KOUYU_TALK_MAX_SIZE];
+    char file_path[30] = {0};
 
     for(i = 2;i < GPT_KOUYU_TALK_MAX_SIZE;i++)
     {
@@ -113,6 +114,14 @@ LOCAL void ZmtGptKouYuTalk_DeleteFrontTwoMsg(void)
             SCI_MEMCPY(talk_info[index]->audio_data, gpt_kouyu_talk_info[i]->audio_data, size);
             talk_info[index]->audio_len = gpt_kouyu_talk_info[i]->audio_len;
             index++;
+        }
+    }
+    for(i = 0;i < 2;i++)
+    {
+        memset(file_path, 0, 30);
+        sprintf(file_path, ZMT_GPT_KOUYU_AUDIO_PATH, i);
+        if(zmt_file_exist(file_path)){
+            zmt_file_delete(file_path);
         }
     }
     SCI_TRACE_LOW("%s: index = %d", __FUNCTION__, index);
@@ -167,6 +176,12 @@ LOCAL BOOLEAN ZmtGptKouYuTalk_PlayAmrDataNotify(MMISRV_HANDLE_T handle, MMISRVMG
                 case MMISRVAUD_REPORT_END:  
                     {
                         SCI_TRACE_LOW("%s player end", __FUNCTION__);
+                        if(gpt_kouyu_player_handle)
+                        {
+                            MMISRVAUD_Stop(gpt_kouyu_player_handle);
+                            MMISRVMGR_Free(gpt_kouyu_player_handle);
+                            gpt_kouyu_player_handle = NULL;
+                        }
                     }
                     break;
                 default:
@@ -190,7 +205,7 @@ LOCAL void ZmtGptKouYuTalk_PlayAmrData(uint8 *data,uint32 data_len)
         gpt_kouyu_player_handle = NULL;
     }
 
-    req.is_auto_free = TRUE;
+    req.is_auto_free = FALSE;
     req.notify = ZmtGptKouYuTalk_PlayAmrDataNotify;
     req.pri = MMISRVAUD_PRI_NORMAL;
 
@@ -244,11 +259,15 @@ PUBLIC void ZmtGptKouYuTalk_RecTxtToVoiceResultCb(BOOLEAN is_ok,uint8 * pRcv,uin
     {
         if(MMK_IsOpenWin(ZMT_GPT_KOUYU_TALK_WIN_ID))
         {
+            if(zmt_tfcard_exist() && zmt_tfcard_get_free_kb() > 100*1024){
+                char file_path[30] = {0};
+                sprintf(file_path, ZMT_GPT_KOUYU_AUDIO_PATH, gpt_kouyu_cur_idx);
+                if(zmt_file_exist(file_path)){
+                    zmt_file_delete(file_path);
+                }
+                zmt_file_data_write(pRcv, Rcv_len, file_path);
+            }
             ZmtGptKouYuTalk_PlayAmrData(pRcv, Rcv_len);
-            gpt_kouyu_talk_info[gpt_kouyu_cur_idx]->audio_data = SCI_ALLOC_APPZ(Rcv_len);
-            memset(gpt_kouyu_talk_info[gpt_kouyu_cur_idx]->audio_data, 0, Rcv_len);
-            strcpy(gpt_kouyu_talk_info[gpt_kouyu_cur_idx]->audio_data, pRcv);
-            gpt_kouyu_talk_info[gpt_kouyu_cur_idx]->audio_len = Rcv_len;
         }
     }
     else
@@ -561,11 +580,11 @@ PUBLIC void ZmtGptKouYuTalk_RecvSelfResultCb(BOOLEAN is_ok,uint8 * pRcv,uint32 R
                 memset(gpt_kouyu_talk_info[gpt_kouyu_talk_size], 0, sizeof(gpt_talk_info_t));
                 gpt_kouyu_talk_info[gpt_kouyu_talk_size]->is_user = FALSE;
 				
-                gpt_kouyu_talk_info[gpt_kouyu_talk_size]->str = SCI_ALLOC_APPZ(strlen(reply->valuestring)+1);
-                memset(gpt_kouyu_talk_info[gpt_kouyu_talk_size]->str, 0, strlen(reply->valuestring)+1);
+                gpt_kouyu_talk_info[gpt_kouyu_talk_size]->str = SCI_ALLOC_APPZ(strlen(reply->valuestring)+10);
+                memset(gpt_kouyu_talk_info[gpt_kouyu_talk_size]->str, 0, strlen(reply->valuestring)+10);
                 //strcpy(gpt_kouyu_talk_info[gpt_kouyu_talk_size]->str, "Hello! What's your");
                 strcpy(gpt_kouyu_talk_info[gpt_kouyu_talk_size]->str, reply->valuestring);
-
+                strcat(gpt_kouyu_talk_info[gpt_kouyu_talk_size]->str, "\n\n\n");
                 gpt_kouyu_talk_size++;
                 gpt_kouyu_talk_info[gpt_kouyu_talk_size] = NULL;
 
@@ -1186,7 +1205,7 @@ LOCAL void ZmtGptKouYuTalk_ShowFormList(MMI_WIN_ID_T win_id)
         if(line_num == 1){
             width = GUI_CalculateStringPiexlNum(text_string.wstr_ptr, text_string.wstr_len, font_size, 0) + 30;
         }else{
-            width = zmt_gpt_list_rect.right - ZMT_GPT_LINE_WIDTH;
+            width = zmt_gpt_list_rect.right - 0.5*ZMT_GPT_LINE_WIDTH;
         }
         //SCI_TRACE_LOW("%s: width = %d", __FUNCTION__, width);
         text_ctrl_id = ZMT_GPT_FORM_TEXT_1_CTRL_ID + i;
@@ -1297,13 +1316,15 @@ LOCAL void ZmtGptKouYuTalk_CTL_PENOK(MMI_WIN_ID_T win_id, DPARAM param)
         return;
     }
     if(gpt_kouyu_cur_idx == cur_idx){
-        if(gpt_kouyu_player_handle){
-            return;
-        }
         if( gpt_kouyu_talk_info[cur_idx] != NULL && gpt_kouyu_talk_info[cur_idx]->str != NULL)
         {
-            if(gpt_kouyu_talk_info[cur_idx]->audio_len > 0){
-                ZmtGptKouYuTalk_PlayAmrData(gpt_kouyu_talk_info[cur_idx]->audio_data, gpt_kouyu_talk_info[cur_idx]->audio_len);
+            char file_path[30] = {0};
+            char * data_buf = NULL;
+            uint32 data_size = 0;
+            sprintf(file_path, ZMT_GPT_KOUYU_AUDIO_PATH, cur_idx);
+            if(zmt_file_exist(file_path)){
+                data_buf = zmt_file_data_read(file_path, &data_size);
+                ZmtGptKouYuTalk_PlayAmrData(data_buf, data_size);
             }else{
                 ZmtGpt_SendString(NULL, gpt_kouyu_talk_info[cur_idx]->str);
             }
