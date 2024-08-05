@@ -107,6 +107,7 @@ typedef enum
     WORD_LISTEN_NOW,
     WORD_LISTEN_PAUSE,
     WORD_LISTEN_INFO,
+    WORD_LISTEN_END,
 }WORD_LISTEN_STAUS_TYPE_E;
 
 typedef struct
@@ -118,7 +119,6 @@ typedef struct
     uint8 listen_idx;
 }WORD_LISTEN_INFO_T;
 
-PUBLIC void MMI_CreateWordTipsWin(void);
 PUBLIC void MMI_CreateWordWin(void);
 PUBLIC void MMI_CreateWordChapterWin(void);
 PUBLIC void MMI_CreateWordDetailWin(void);

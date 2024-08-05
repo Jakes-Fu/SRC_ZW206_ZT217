@@ -104,6 +104,7 @@ typedef enum
     HANZI_LISTEN_NOW,
     HANZI_LISTEN_PAUSE,
     HANZI_LISTEN_INFO,
+    HANZI_LISTEN_END,
 }HANZI_LISTEN_STAUS_TYPE_E;
 
 typedef struct
@@ -115,7 +116,6 @@ typedef struct
     uint8 listen_idx;
 }HANZI_LISTEN_INFO_T;
 
-PUBLIC void MMI_CreateHanziTipsWin(void);
 PUBLIC void MMI_CreateHanziWin(void);
 PUBLIC void MMI_CreateHanziChapterWin(void);
 PUBLIC void MMI_CreateHanziDetailWin(void);
