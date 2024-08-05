@@ -33,10 +33,10 @@ typedef struct sha256_ctx_t
 	uint8_t buf[SHA256_BLOCKLEN]; // message block buffer
 } SHA256_CTX;
 
-PBKDF2_SHA256_DEF void sha256_init(SHA256_CTX *ctx);
-PBKDF2_SHA256_DEF void sha256_update(SHA256_CTX *ctx, const uint8_t *m, uint32_t mlen);
+PBKDF2_SHA256_DEF void pbkdf2_sha256_init(SHA256_CTX *ctx);
+PBKDF2_SHA256_DEF void pbkdf2_sha256_update(SHA256_CTX *ctx, const uint8_t *m, uint32_t mlen);
 // resets state: calls sha256_init
-PBKDF2_SHA256_DEF void sha256_final(SHA256_CTX *ctx, uint8_t *md);
+PBKDF2_SHA256_DEF void pbkdf2_sha256_final(SHA256_CTX *ctx, uint8_t *md);
 
 typedef struct hmac_sha256_ctx_t
 {
@@ -46,10 +46,10 @@ typedef struct hmac_sha256_ctx_t
 	SHA256_CTX sha;
 } HMAC_SHA256_CTX;
 
-PBKDF2_SHA256_DEF void hmac_sha256_init(HMAC_SHA256_CTX *hmac, const uint8_t *key, uint32_t keylen);
-PBKDF2_SHA256_DEF void hmac_sha256_update(HMAC_SHA256_CTX *hmac, const uint8_t *m, uint32_t mlen);
+PBKDF2_SHA256_DEF void pbkdf2_hmac_sha256_init(HMAC_SHA256_CTX *hmac, const uint8_t *key, uint32_t keylen);
+PBKDF2_SHA256_DEF void pbkdf2_hmac_sha256_update(HMAC_SHA256_CTX *hmac, const uint8_t *m, uint32_t mlen);
 // resets state to hmac_sha256_init
-PBKDF2_SHA256_DEF void hmac_sha256_final(HMAC_SHA256_CTX *hmac, uint8_t *md);
+PBKDF2_SHA256_DEF void pbkdf2_hmac_sha256_final(HMAC_SHA256_CTX *hmac, uint8_t *md);
 
 PBKDF2_SHA256_DEF void pbkdf2_sha256(HMAC_SHA256_CTX *ctx,
 	const uint8_t *key, uint32_t keylen, const uint8_t *salt, uint32_t saltlen, uint32_t rounds,
@@ -91,7 +91,7 @@ static const uint32_t K[64] =
 	0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
 };
 
-static void sha256_transform(SHA256_CTX *s, const uint8_t *buf)
+static void pbkdf2_sha256_transform(SHA256_CTX *s, const uint8_t *buf)
 {
 	uint32_t t1, t2, a, b, c, d, e, f, g, h, m[64];
 	uint32_t i, j;
@@ -136,7 +136,7 @@ static void sha256_transform(SHA256_CTX *s, const uint8_t *buf)
 	s->h[7] += h;
 }
 
-PBKDF2_SHA256_DEF void sha256_init(SHA256_CTX *s)
+PBKDF2_SHA256_DEF void pbkdf2_sha256_init(SHA256_CTX *s)
 {
 	s->len = 0;
 
@@ -150,7 +150,7 @@ PBKDF2_SHA256_DEF void sha256_init(SHA256_CTX *s)
 	s->h[7] = 0x5be0cd19;
 }
 
-PBKDF2_SHA256_DEF void sha256_final(SHA256_CTX *s, uint8_t *md)
+PBKDF2_SHA256_DEF void pbkdf2_sha256_final(SHA256_CTX *s, uint8_t *md)
 {
 	uint32_t r = s->len % SHA256_BLOCKLEN;
 	uint32_t i = 0;
@@ -161,7 +161,7 @@ PBKDF2_SHA256_DEF void sha256_final(SHA256_CTX *s, uint8_t *md)
 	{
 		os_memset(s->buf + r, 0, SHA256_BLOCKLEN - r);
 		r = 0;
-		sha256_transform(s, s->buf);
+		pbkdf2_sha256_transform(s, s->buf);
 	}
 	os_memset(s->buf + r, 0, 56 - r);
 	s->len *= 8;
@@ -173,7 +173,7 @@ PBKDF2_SHA256_DEF void sha256_final(SHA256_CTX *s, uint8_t *md)
 	s->buf[61] = (uint8_t)(s->len >> 16);
 	s->buf[62] = (uint8_t)(s->len >> 8);
 	s->buf[63] = (uint8_t)(s->len);
-	sha256_transform(s, s->buf);
+	pbkdf2_sha256_transform(s, s->buf);
 
 	for (i = 0; i < SHA256_DIGESTINT; i++)
 	{
@@ -182,10 +182,10 @@ PBKDF2_SHA256_DEF void sha256_final(SHA256_CTX *s, uint8_t *md)
 		md[4 * i + 2] = s->h[i] >> 8;
 		md[4 * i + 3] = s->h[i];
 	}
-	sha256_init(s);
+	pbkdf2_sha256_init(s);
 }
 
-PBKDF2_SHA256_DEF void sha256_update(SHA256_CTX *s, const uint8_t *m, uint32_t len)
+PBKDF2_SHA256_DEF void pbkdf2_sha256_update(SHA256_CTX *s, const uint8_t *m, uint32_t len)
 {
 	const uint8_t *p = m;
 	uint32_t r = s->len % SHA256_BLOCKLEN;
@@ -201,11 +201,11 @@ PBKDF2_SHA256_DEF void sha256_update(SHA256_CTX *s, const uint8_t *m, uint32_t l
 		os_memcpy(s->buf + r, p, SHA256_BLOCKLEN - r);
 		len -= SHA256_BLOCKLEN - r;
 		p += SHA256_BLOCKLEN - r;
-		sha256_transform(s, s->buf);
+		pbkdf2_sha256_transform(s, s->buf);
 	}
 	for (; len >= SHA256_BLOCKLEN; len -= SHA256_BLOCKLEN, p += SHA256_BLOCKLEN)
 	{
-		sha256_transform(s, p);
+		pbkdf2_sha256_transform(s, p);
 	}
 	os_memcpy(s->buf, p, len);
 }
@@ -213,7 +213,7 @@ PBKDF2_SHA256_DEF void sha256_update(SHA256_CTX *s, const uint8_t *m, uint32_t l
 #define INNER_PAD '\x36'
 #define OUTER_PAD '\x5c'
 
-PBKDF2_SHA256_DEF void hmac_sha256_init(HMAC_SHA256_CTX *hmac, const uint8_t *key, uint32_t keylen)
+PBKDF2_SHA256_DEF void pbkdf2_hmac_sha256_init(HMAC_SHA256_CTX *hmac, const uint8_t *key, uint32_t keylen)
 {
 	SHA256_CTX *sha = &hmac->sha;
 	uint32_t i;
@@ -225,9 +225,9 @@ PBKDF2_SHA256_DEF void hmac_sha256_init(HMAC_SHA256_CTX *hmac, const uint8_t *ke
 	}
 	else
 	{
-		sha256_init(sha);
-		sha256_update(sha, key, keylen);
-		sha256_final(sha, hmac->buf);
+		pbkdf2_sha256_init(sha);
+		pbkdf2_sha256_update(sha, key, keylen);
+		pbkdf2_sha256_final(sha, hmac->buf);
 		os_memset(hmac->buf + SHA256_DIGESTLEN, '\0', SHA256_BLOCKLEN - SHA256_DIGESTLEN);
 	}
 
@@ -236,8 +236,8 @@ PBKDF2_SHA256_DEF void hmac_sha256_init(HMAC_SHA256_CTX *hmac, const uint8_t *ke
 		hmac->buf[i] = hmac->buf[i] ^ OUTER_PAD;
 	}
 
-	sha256_init(sha);
-	sha256_update(sha, hmac->buf, SHA256_BLOCKLEN);
+	pbkdf2_sha256_init(sha);
+	pbkdf2_sha256_update(sha, hmac->buf, SHA256_BLOCKLEN);
 	// copy outer state
 	os_memcpy(hmac->h_outer, sha->h, SHA256_DIGESTLEN);
 
@@ -246,35 +246,35 @@ PBKDF2_SHA256_DEF void hmac_sha256_init(HMAC_SHA256_CTX *hmac, const uint8_t *ke
 		hmac->buf[i] = (hmac->buf[i] ^ OUTER_PAD) ^ INNER_PAD;
 	}
 
-	sha256_init(sha);
-	sha256_update(sha, hmac->buf, SHA256_BLOCKLEN);
+	pbkdf2_sha256_init(sha);
+	pbkdf2_sha256_update(sha, hmac->buf, SHA256_BLOCKLEN);
 	// copy inner state
 	os_memcpy(hmac->h_inner, sha->h, SHA256_DIGESTLEN);
 }
 
-PBKDF2_SHA256_DEF void hmac_sha256_update(HMAC_SHA256_CTX *hmac, const uint8_t *m, uint32_t mlen)
+PBKDF2_SHA256_DEF void pbkdf2_hmac_sha256_update(HMAC_SHA256_CTX *hmac, const uint8_t *m, uint32_t mlen)
 {
-	sha256_update(&hmac->sha, m, mlen);
+	pbkdf2_sha256_update(&hmac->sha, m, mlen);
 }
 
-PBKDF2_SHA256_DEF void hmac_sha256_final(HMAC_SHA256_CTX *hmac, uint8_t *md)
+PBKDF2_SHA256_DEF void pbkdf2_hmac_sha256_final(HMAC_SHA256_CTX *hmac, uint8_t *md)
 {
 	SHA256_CTX *sha = &hmac->sha;
-	sha256_final(sha, md);
+	pbkdf2_sha256_final(sha, md);
 
 	// reset sha to outer state
 	os_memcpy(sha->h, hmac->h_outer, SHA256_DIGESTLEN);
 	sha->len = SHA256_BLOCKLEN;
 
-	sha256_update(sha, md, SHA256_DIGESTLEN);
-	sha256_final(sha, md); // md = D(outer || D(inner || msg))
+	pbkdf2_sha256_update(sha, md, SHA256_DIGESTLEN);
+	pbkdf2_sha256_final(sha, md); // md = D(outer || D(inner || msg))
 
 	// reset sha to inner state -> reset hmac
 	os_memcpy(sha->h, hmac->h_inner, SHA256_DIGESTLEN);
 	sha->len = SHA256_BLOCKLEN;
 }
 
-PBKDF2_SHA256_DEF void pbkdf2_sha256(HMAC_SHA256_CTX *hmac,
+PBKDF2_SHA256_DEF void pbkdf2_pbkdf2_sha256(HMAC_SHA256_CTX *hmac,
 	const uint8_t *key, uint32_t keylen, const uint8_t *salt, uint32_t saltlen, uint32_t rounds,
 	uint8_t *dk, uint32_t dklen)
 {
@@ -282,7 +282,7 @@ PBKDF2_SHA256_DEF void pbkdf2_sha256(HMAC_SHA256_CTX *hmac,
 	uint32_t l = dklen / hlen + ((dklen % hlen) ? 1 : 0);
 	uint32_t r = dklen - (l - 1) * hlen;
 
-	hmac_sha256_init(hmac, key, keylen);
+	pbkdf2_hmac_sha256_init(hmac, key, keylen);
 
 	{
 		uint8_t *U = hmac->buf;
@@ -298,14 +298,14 @@ PBKDF2_SHA256_DEF void pbkdf2_sha256(HMAC_SHA256_CTX *hmac,
 			count[1] = (i >> 16) & 0xFF;
 			count[2] = (i >> 8) & 0xFF;
 			count[3] = (i) & 0xFF;
-			hmac_sha256_update(hmac, salt, saltlen);
-			hmac_sha256_update(hmac, count, 4);
-			hmac_sha256_final(hmac, U);
+			pbkdf2_hmac_sha256_update(hmac, salt, saltlen);
+			pbkdf2_hmac_sha256_update(hmac, count, 4);
+			pbkdf2_hmac_sha256_final(hmac, U);
 			os_memcpy(T, U, len);
 			for (j = 1; j < rounds; j++)
 			{
-				hmac_sha256_update(hmac, U, hlen);
-				hmac_sha256_final(hmac, U);
+				pbkdf2_hmac_sha256_update(hmac, U, hlen);
+				pbkdf2_hmac_sha256_final(hmac, U);
 				for (k = 0; k < len; k++)
 				{
 					T[k] ^= U[k];

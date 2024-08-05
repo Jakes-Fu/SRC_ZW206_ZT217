@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2003 Apple Computer, Inc. All rights reserved.
  *
  * @APPLE_LICENSE_HEADER_START@
@@ -84,7 +84,16 @@
 #ifndef _JWT_BASE64_H_
 #define _JWT_BASE64_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 int jwt_Base64encode(char *coded_dst, const char *plain_src, int len_plain_src);
 int jwt_Base64decode(char *plain_dst, const char *coded_src);
+int jwt_Base64decode2(char* plain_dst, const char* coded_src, const int len_coded_src);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _JWT_BASE64_H_ */

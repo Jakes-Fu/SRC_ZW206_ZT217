@@ -165,7 +165,8 @@ typedef enum
 typedef struct
 {
     GUI_BOTH_RECT_T     both_rect;  /*!<横竖屏区域*/
-    GUILABEL_ALIGN_E    align;      /*!<排列方式*/
+    GUILABEL_ALIGN_E          align;          //align
+	GUILABEL_ALIGN_E	      original_align; //original alignment
 } GUILABEL_INIT_DATA_T;
 
 enum

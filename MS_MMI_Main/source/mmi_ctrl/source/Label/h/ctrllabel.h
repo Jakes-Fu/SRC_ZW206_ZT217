@@ -45,7 +45,8 @@ typedef struct
 {
     CTRLBASE_INIT_PARAM_T       base_ctrl_param;
 
-    GUILABEL_ALIGN_E            align;      /*!<排列方式*/
+    	GUILABEL_ALIGN_E          align;          //align
+	GUILABEL_ALIGN_E	      original_align; //original alignment
 } CTRLLABEL_INIT_PARAM_T;
 
 
@@ -67,9 +68,9 @@ typedef struct _label_obj_tag
     BOOLEAN                     is_bit_map;
     GUILABEL_IMAGE_TYPE_E       img_type;
     GUILABEL_DATA_IMAGE_U       img_data;
-    GUILABEL_ALIGN_E            align;              //align
-
-    GUI_RECT_T                  tp_rect;            //only receive tp msg
+	GUILABEL_ALIGN_E          align;          //align
+	GUILABEL_ALIGN_E	      original_align; //original alignment
+    GUI_RECT_T                  tp_rect;            //only receive tp msg	
 
     uint16                      region_num;         //region num
     GUIFONT_REGION_STYLE_T      *region_ptr;        //region
@@ -80,6 +81,7 @@ typedef struct _label_obj_tag
     
     MMI_HANDLE_T                win_handle;         //window handle
     TEXT_DIRECTION_SET_E        text_position;      //有图标时文本位置例如在图标 左边、右边、底部 默认右边
+	
 } CTRLLABEL_OBJ_T;
 
 // label class for public or protected method

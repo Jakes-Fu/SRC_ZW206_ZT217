@@ -2541,13 +2541,12 @@ ifeq ($(strip $(LEBAO_MUSIC_SUPPORT)), TRUE)
   MINCPATH += $(MMI_DIR)/source/mmi_app/app/lebao/music/ctrl
   MINCPATH += $(MMI_DIR)/source/mmi_app/app/lebao/music/view
   MSRCPATH += $(MMI_DIR)/source/mmi_app/app/lebao/music/view
-
-  SOURCES += bmp_file.c helper_file.c helper_mem.c helper_qrcode.c helper_stamp.c \
-  			helper_thread.c http_socket.c qrcodegen.c helper_rsa.c \
-  			helper_b64.c helper_mp3.c http_client.c link_list.c sds.c \
-  			lebao.c lebao_network.c lebao_ringset.c lebao_audio_dev.c \
-  			lebao_wintable.c lebao_base.c lebao_style.c
-  endif
+ SOURCES += bmp_file.c helper_file.c helper_mem.c helper_qrcode.c helper_stamp.c 
+ SOURCES +=	helper_thread.c http_socket.c qrcodegen.c helper_rsa.c 
+# SOURCES +=helper_b64.c helper_mp3.c http_client.c link_list.c sds.c 
+ SOURCES +=lebao.c lebao_network.c lebao_ringset.c lebao_audio_dev.c 
+ SOURCES +=lebao_wintable.c lebao_base.c lebao_style.c
+endif
 
 ifeq ($(strip $(VIDEO_CALL_AGORA_SUPPORT)), TRUE)
 MINCPATH += Third-party/agora_rtc_sdk/include

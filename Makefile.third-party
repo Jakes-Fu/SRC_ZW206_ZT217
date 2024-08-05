@@ -1496,12 +1496,8 @@ ifeq ($(strip $(FOTA_SUPPORT)), ABUP)
 endif
 
 ifeq ($(strip $(LEBAO_MUSIC_SUPPORT)), TRUE)
-        ifeq ($(strip $(RELEASE_INFO)), TRUE)
-	3RD_LIBS         +=	Third-party/lebao/release/lebao_217w.a
-        else
-	3RD_LIBS         +=	Third-party/lebao/lebao_217w.a
-	endif
-endif
+  	3RD_LIBS         +=	Third-party/lebao/lebao_217w.a
+  endif
 
 
 #ifeq ($(strip $(VIDEO_CALL_AGORA_SUPPORT)), TRUE)

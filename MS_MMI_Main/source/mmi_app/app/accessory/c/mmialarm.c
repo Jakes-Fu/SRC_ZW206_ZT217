@@ -7885,6 +7885,11 @@ LOCAL void OpenAlarmAliveWin(
               //                             res_aw_alarm_ic_close,
               //                             softkey,
               //                             HandleEventAliveWinMsg);
+#ifdef LEBAO_MUSIC_SUPPORT
+		StopLebaoApp();
+		// or
+		// lebao_stop_playing();
+#endif
               ZMTApp_CloseRecordAndPlayer();
               MMI_Alarm_CreateAliveWin();
          }
@@ -7932,6 +7937,7 @@ LOCAL void OpenAlarmAliveWin(
         }
     }
 #endif
+
     else
     {
 #if defined(SCH_ASSISTANT_WIDGET) && defined(MMI_GRID_IDLE_SUPPORT)

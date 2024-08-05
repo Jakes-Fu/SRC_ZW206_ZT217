@@ -1,4 +1,4 @@
-//author: Justin, for watch version
+﻿//author: Justin, for watch version
 
 #ifndef __HELPER_MP3_H
 #define __HELPER_MP3_H
@@ -23,6 +23,7 @@ typedef enum
 	STATUS_MP3_FAILED,
 	STATUS_MP3_STOP,
 	STATUS_MP3_URI_UPDATE,
+    STATUS_MP3_OUT_OF_DATA,
 } http_mp3_status_t;
 
 typedef struct
@@ -57,18 +58,23 @@ typedef struct
 } http_mp3_data_t;
 
 int helper_mp3_id3_length(const char* data, const int mp3_bytes);
-int helpe_mp3_decode_frame_info(const char* data, const int mp3_bytes, helper_mp3_frame_info_t* info);
+int helper_mp3_decode_frame_info(const char* data, const int mp3_bytes, helper_mp3_frame_info_t* info);
+int helper_mp3_first_frame_size(const char* data, const int data_bytes, int* frameSize);
 
 http_mp3_data_t* http_mp3_open_stream_uri(const char* uri, MP3_STREAM_STATUS_CALLBACK_T cb);
-http_mp3_data_t* http_mp3_open_stream_id(const char* id, sds(*get_uri_cb)(void* id), MP3_STREAM_STATUS_CALLBACK_T cb);
-http_mp3_data_t* http_mp3_open_stream(const char* uri, const char* id, sds(*update_uri_cb)(void* id), MP3_STREAM_STATUS_CALLBACK_T cb);
+http_mp3_data_t* http_mp3_open_stream_id(const char* id, int(*get_uri_cb)(void* id, sds* url), MP3_STREAM_STATUS_CALLBACK_T cb);
+http_mp3_data_t* http_mp3_open_stream(const char* uri, const char* id, int(*update_uri_cb)(void* id, sds* url), MP3_STREAM_STATUS_CALLBACK_T cb);
 int http_mp3_stream_get_data(http_mp3_data_t* mp3, unsigned char *data, unsigned int size);
+int http_mp3_stream_get_frames(http_mp3_data_t* mp3, unsigned char* data, unsigned int size);
 int http_mp3_close_stream(http_mp3_data_t* mp3);
 int http_mp3_stream_is_running(http_mp3_data_t* mp3);
 
 int http_mp3_manager_init(OS_DATA_CALLBACK delayFreeCallback);
 int http_mp3_manager_exit(void);
 void http_mp3_manager_free(void* data);
+void http_mp3_manager_close_all_stream(void);
+void http_mp3_manager_set_max_stream(const unsigned int num);
+void http_mp3_manager_set_delay_cb(OS_DATA_CALLBACK delayFreeCallback);
 
 #ifdef __cplusplus
 } /* extern "C" */

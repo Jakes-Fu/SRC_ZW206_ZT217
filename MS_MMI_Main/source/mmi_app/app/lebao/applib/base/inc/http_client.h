@@ -1,4 +1,4 @@
-//author: Justin, for watch version
+﻿//author: Justin, for watch version
 
 #ifndef __HTTP_CLIENT_H
 #define __HTTP_CLIENT_H
@@ -56,6 +56,10 @@ typedef struct http_t {
 	int maxFileSize;
 	int maxBufferSize;
 	int chunkSize;
+
+	// reuse
+	int reentry;
+	int pending;
 } http_t;
 
 http_t* http_client_get(const char* uri);
@@ -95,6 +99,7 @@ void http_client_dns_cache_init(void);
 void http_client_dns_cache_free(void);
 int  http_get_dns_cache(const char* host, unsigned int* ip);
 void http_add_dns_cache(const char* host, const unsigned int ip);
+void http_remove_dns_cache(const char* host);
 
 #ifdef __cplusplus
 }

@@ -1314,6 +1314,7 @@ LOCAL void Video_Call_Accept_And_Hangup(GUI_POINT_T tp_up, MMI_WIN_ID_T win_id)
     VIDEO_CALL_INFO *video_call_info = NULL;
     if (GUI_PointIsInRect(tp_up, accept_rect)) //接听
     {
+
         if(MMIZDT_ShouldStayInChargingWin()) //充电中不允许接听 提示断开充电线
         {
             Video_Call_Show_Toast(TXT_VIDEO_CALL_REMOVE_CABLE);
@@ -1683,6 +1684,11 @@ PUBLIC uint8 Video_Call_Incoming(VIDEO_CALL_INFO video_call_info)
 #ifndef WIN32
     MMIDUERAPP_Exit();// 打断小度
 #endif
+	#ifdef LEBAO_MUSIC_SUPPORT
+		StopLebaoApp();
+		// or
+		// lebao_stop_playing();
+	#endif
 #endif
     ZMTApp_CloseRecordAndPlayer();
     WatchGallery_Exit();//退出相册 特别是GUIICONLIST_LOAD_ALL方式加载时占用内存很多

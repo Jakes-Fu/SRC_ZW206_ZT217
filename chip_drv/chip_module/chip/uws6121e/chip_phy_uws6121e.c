@@ -2012,12 +2012,7 @@ PUBLIC void PMU_Init()
     ANA_REG_OR(ANA_SWRST_CTRL1, BIT_8); //Software reset LDO_MEM_PD enable when global reset valid
 
     LDO_TurnOnLDO(LDO_LDO_SPIMEM);
-#ifdef ZDT_VIBRATE_SUPPORT
-    ////LDO_TurnOnLDO(LDO_LDO_IO33);// wuxx del it . vibration then power on.
-    LDO_TurnOffLDO(LDO_LDO_IO33); // wuxx   添加了关机下载时,有一台也震动
-#else
-    LDO_TurnOnLDO(LDO_LDO_IO33);
-#endif
+    LDO_TurnOffLDO(LDO_LDO_IO33);
     LDO_TurnOnLDO(LDO_LDO_ANA);
 
     //LDO low power mode enable in deep sleep mode

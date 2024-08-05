@@ -491,6 +491,7 @@ LOCAL void LabelCtrlPackInitParam (
     base_ctrl_param_ptr->both_rect = label_init_ptr->both_rect;
 
     label_param_ptr->align = label_init_ptr->align;
+		
 }
 
 /*****************************************************************************/
@@ -507,9 +508,10 @@ LOCAL BOOLEAN LabelCtrlConstruct (
     BOOLEAN             result = TRUE;
     CTRLLABEL_OBJ_T     *label_ctrl_ptr = (CTRLLABEL_OBJ_T*) base_ctrl_ptr;
 
-    //set align
-    label_ctrl_ptr->align        = label_param_ptr->align;
-
+   
+	//set align
+	label_ctrl_ptr->align        = label_param_ptr->align;
+	label_ctrl_ptr->original_align = label_param_ptr->align;
     //set win handle
     label_ctrl_ptr->win_handle = MMK_GetWinHandleByCtrl (base_ctrl_ptr->handle);
 
@@ -1255,10 +1257,13 @@ LOCAL void LabelDrawString (
             else if(TRUE == label_ctrl_ptr->is_ellipsis_ex)
             {
                 str_state = str_state | GUISTR_STATE_ELLIPSIS_EX;
+			
              }
             else
             {
-                str_state = str_state | GUISTR_STATE_ELLIPSIS;
+
+               str_state = str_state | GUISTR_STATE_ELLIPSIS;
+				label_ctrl_ptr->align = label_ctrl_ptr->original_align;	// 恢复原来的对齐方式	
             }
 
             if (GUILABEL_ALIGN_LEFT == label_ctrl_ptr->align)

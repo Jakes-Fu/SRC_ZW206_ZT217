@@ -19,7 +19,6 @@
 #include "guistring.h"
 #include "ui_layer.h"
 #include "graphics_draw.h"
-
 #include "watch_slidepage.h"
 #include "watch_launcher_main.h"
 
@@ -206,10 +205,8 @@ const APP_LIST_ITEM_T  g_app_list_info[] =
 #ifdef LEBAO_MUSIC_SUPPORT
     MENU_MUSIC,//咪咕音乐
 #endif
-#ifndef WIN32
 #if defined(XYSDK_SUPPORT)|| defined(XYSDK_SRC_SUPPORT)
     MENU_XMLY,//喜马拉雅
-#endif
 #endif
 #ifdef MAINMENU_STYLE_SUPPORT
     MENU_STYLE,//主菜单风格切换
@@ -626,6 +623,7 @@ PUBLIC MMI_RESULT_E WatchLAUNCHER_HandleCommonWinMsg(
                 WatchSLIDEAGE_SetCurrentPageIndex(0);
             }
             break;
+	
         case MSG_KEYDOWN_UPSIDE:
         case MSG_KEYDOWN_VOL_UP:
             MMIAPISET_RingToneVolumeWin();
@@ -1379,8 +1377,6 @@ PUBLIC BOOLEAN ZMTApp_GetSimIsExist(void)
 
 PUBLIC void ZMTApp_CloseRecordAndPlayer(void)
 {
-    SCI_TRACE_LOW("%s: start", __FUNCTION__);
-    MMIZDT_StopChatTimerAndAudio();
 #ifdef LISTENING_PRATICE_SUPPORT
     ZMTListening_CloseListeningPlayer();
 #endif
