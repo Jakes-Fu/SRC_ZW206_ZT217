@@ -6143,6 +6143,31 @@ LOCAL THEMELIST_ITEM_STYLE_T const zmt_unit_list_item =
         {0},
     },
 };
+//GUIITEM_SYTLE_ZMT_LISTEN_SET_MS,
+LOCAL THEMELIST_ITEM_STYLE_T const zmt_listen_set_list_item =
+{
+    2.5*ZMT_LIST_LINE_HIGHT, 2.5*ZMT_LIST_LINE_HIGHT,
+    {
+        {
+            0,
+            { 5, 0,  MMI_MAINSCREEN_WIDTH, 1.5*ZMT_LIST_LINE_HIGHT },       /* 2 */
+            { 5, 0,  MMI_MAINSCREEN_WIDTH, 1.5*ZMT_LIST_LINE_HIGHT },       /* 2 */
+            SONG_FONT_24, SONG_FONT_24,
+            0, 100
+        },
+        {
+            0,
+            { 5, 1.5*ZMT_LIST_LINE_HIGHT, MMI_MAINSCREEN_WIDTH, 2.5*ZMT_LIST_LINE_HIGHT},     /* 2 */
+            { 5, 1.5*ZMT_LIST_LINE_HIGHT, MMI_MAINSCREEN_WIDTH, 2.5*ZMT_LIST_LINE_HIGHT},     /* 2 */
+            SONG_FONT_20, SONG_FONT_20,
+            0, 100
+        },
+        {0},
+        {0},
+        {0},
+        {0},
+    },
+};
 #endif
 
 #if defined(ZMT_GPT_SUPPORT) || defined(ZMT_DIAL_STORE_SUPPORT)
@@ -6682,6 +6707,7 @@ LOCAL THEMELIST_STYLE_TABLE_T const s_style_table[] =
     {GUIITEM_SYTLE_ZMT_PUBLISH_LIST_MS, &zmt_publish_list_item},
     {GUIITEM_SYTLE_ZMT_BOOK_LIST_MS, &zmt_book_list_item},
     {GUIITEM_SYTLE_ZMT_UNIT_LIST_MS, &zmt_unit_list_item},
+	{GUIITEM_SYTLE_ZMT_LISTEN_SET_MS, &zmt_listen_set_list_item},
 #endif
 #if defined(ZMT_GPT_SUPPORT) || defined(ZMT_DIAL_STORE_SUPPORT)
     {GUIITEM_SYTLE_ZMT_HANZI_TEXT_MS, &zmt_hanzi_text_list},
@@ -6744,6 +6770,7 @@ const GUI_COLOR_T s_item_content_color[MMITHEME_COLOR_MAX] =
     AUDULT_RED_COLOR,
 #endif
     GUI_RGB2RGB565(80, 162, 254),
+    GUI_RGB2RGB565(255, 255, 255),
     /*lint -e572*//*lint -e778*/
 };
 
