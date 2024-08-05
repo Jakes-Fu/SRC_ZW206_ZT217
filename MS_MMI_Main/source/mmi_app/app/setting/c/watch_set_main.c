@@ -652,14 +652,28 @@ LOCAL MMI_RESULT_E HandleSelectTimeFormatWindow( MMI_WIN_ID_T win_id, MMI_MESSAG
     case MSG_CTL_OK:
     case MSG_APP_OK:
     case MSG_APP_WEB:
-    case MSG_CTL_MIDSK:
-       if(MMISET_TIME_FORMAT_SAVE_BTN_CTRL_ID == ((MMI_NOTIFY_T*)param)->src_id)//reset button被选中
+    case MSG_CTL_MIDSK:{
+		  MMI_NOTIFY_T *notify = (MMI_NOTIFY_T*)param;
+			if(MMISET_TIME_FORMAT_SELECT_CTRL_ID == notify->src_id)
+            {
+                //选择中后再按OK键 记得在close window 调用 MMIAPI_ItemSelectedState(FALSE)
+		
+                if(MMIAPI_CheckOkKeyAndItemSelected(MMISET_TIME_FORMAT_SELECT_CTRL_ID,notify))
+                {
+				
+               uint16 curIdx = GUILIST_GetCurItemIndex( list_ctrl_id );           
+            MMIAPISET_SetTimeDisplayType(curIdx);
+            MMK_CloseWin(win_id);
+                
+				}
+			}else if(MMISET_TIME_FORMAT_SAVE_BTN_CTRL_ID == ((MMI_NOTIFY_T*)param)->src_id)//reset button被选中
         {
             uint16 curIdx = GUILIST_GetCurItemIndex( list_ctrl_id );
            
             MMIAPISET_SetTimeDisplayType(curIdx);
             MMK_CloseWin(win_id);
         }
+					   }
         break;
     case MSG_CTL_CANCEL:
     case MSG_APP_CANCEL:
@@ -669,6 +683,7 @@ LOCAL MMI_RESULT_E HandleSelectTimeFormatWindow( MMI_WIN_ID_T win_id, MMI_MESSAG
         }
     case MSG_CLOSE_WINDOW:
         {
+			MMIAPI_ItemSelectedState(FALSE);
             break;
         }
         case MSG_KEYDOWN_RED:

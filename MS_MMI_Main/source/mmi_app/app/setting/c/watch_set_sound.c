@@ -368,6 +368,14 @@ PUBLIC void Settings_PreviewRing( uint16 ring_id, MMISET_ALL_RING_TYPE_E ring_ty
 //================================================================================/
 //================== settings->sound->call ring select win =======================/
 //================================================================================/
+LOCAL void CallRingSet(MMI_WIN_ID_T win_id,MN_DUAL_SYS_E   dualSys)
+{
+	       uint16 curIdx = GUILIST_GetCurItemIndex( MMISET_CALL_RING_SELECT_LIST_CTRL_ID );
+			uint16 ringId = curIdx + 1;
+			Settings_StopPreviewRing();
+			MMIAPIENVSET_SetFixedCallRingId( dualSys, ringId, MMIAPIENVSET_GetActiveModeId() );
+			MMK_CloseWin(win_id);
+}
 LOCAL MMI_RESULT_E HandleCallRingSelWindow( MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E msg_id, DPARAM param )
 {
     MMI_RESULT_E    recode =  MMI_RESULT_TRUE;
@@ -450,13 +458,19 @@ LOCAL MMI_RESULT_E HandleCallRingSelWindow( MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_
        case MSG_APP_WEB:
        case MSG_CTL_MIDSK:
         {
-		if(MMISET_ZTE_WATCH_SETOK_BTN_CTRL_ID ==((MMI_NOTIFY_T*)param)->src_id)
+    MMI_NOTIFY_T *notify = (MMI_NOTIFY_T*)param;
+			if(MMISET_CALL_RING_SELECT_LIST_CTRL_ID == notify->src_id)
+            {
+                //选择中后再按OK键 记得在close window 调用 MMIAPI_ItemSelectedState(FALSE)
+		
+                if(MMIAPI_CheckOkKeyAndItemSelected(MMISET_CALL_RING_SELECT_LIST_CTRL_ID,notify))
+                {
+				
+                 CallRingSet(win_id,dualSys);
+                
+				}}else if(MMISET_ZTE_WATCH_SETOK_BTN_CTRL_ID ==notify->src_id)
 		{
-			uint16 curIdx = GUILIST_GetCurItemIndex( MMISET_CALL_RING_SELECT_LIST_CTRL_ID );
-			uint16 ringId = curIdx + 1;
-			Settings_StopPreviewRing();
-			MMIAPIENVSET_SetFixedCallRingId( dualSys, ringId, MMIAPIENVSET_GetActiveModeId() );
-			MMK_CloseWin(win_id);
+			CallRingSet(win_id,dualSys);
 		}
             break;
         }
@@ -473,6 +487,7 @@ LOCAL MMI_RESULT_E HandleCallRingSelWindow( MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_
             break;
         case MSG_CLOSE_WINDOW:
         {
+			MMIAPI_ItemSelectedState(FALSE);
             Settings_StopPreviewRing();
             break;
         }

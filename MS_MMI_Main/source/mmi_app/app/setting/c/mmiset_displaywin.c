@@ -3597,6 +3597,33 @@ LOCAL MMI_RESULT_E HandleResetOrCleanDataWaitWinW217(
 
     return recode;
 }
+LOCAL void PowerRestartSet(   MMI_WIN_ID_T    win_id)
+{
+	 if(g_reboot_screen_show_style == REBOOT_STYLE_PWROFF_ONLY)
+            //MMIAPIPHONE_PowerOff(); //关机
+                MMIPHONE_PowerOff();
+            else if(g_reboot_screen_show_style == REBOOT_STYLE_RESTART_ONLY)
+                MMIAPIPHONE_PowerReset(); //重启
+            else if(g_reboot_screen_show_style == REBOOT_STYLE_RESTORE_ONLY)
+            {
+                //MMISET_CleanUserData();
+                //MMISET_ResetFactorySetting();
+                //MMK_CloseWin(win_id);
+#if 1
+                MMI_STRING_T    wait_text = {0};
+                MMI_GetLabelTextByLang (STR_NOTE_WAITING, &wait_text);
+                MMIPUB_OpenWaitWin (1, &wait_text, PNULL, PNULL, MMISET_RESET_FACTORY_WAITING_WIN_ID,
+                        COMMON_IMAGE_NULL, ANIM_PUBWIN_WAIT, WIN_ONE_LEVEL,
+                        MMIPUB_SOFTKEY_NONE, HandleResetOrCleanDataWaitWinW217);
+
+                MMK_PostMsg(win_id/*MMISET_SET_POWER_RESTART_WIN_ID*/, MSG_SET_CLEAN_DATE_IND, PNULL,PNULL);
+#endif				
+				//ZdtWatch_Factory_RESTORE_Start(MMIZDT_WATCH_FACTORY_WIN_ID);
+				//ZdtWatch_Factory_RESTORE_Start(win_id);
+            }
+        }
+
+
 LOCAL MMI_RESULT_E HandlePowerRestartSelectWindow(
 	                                    MMI_WIN_ID_T    win_id, 
                                            MMI_MESSAGE_ID_E   msg_id, 
@@ -3720,39 +3747,15 @@ LOCAL MMI_RESULT_E HandlePowerRestartSelectWindow(
         }
         break;	
 	case MSG_CTL_MIDSK:
-	case MSG_KEYDOWN_OK:
+//	case MSG_KEYDOWN_OK:
 	case MSG_CTL_OK:
 	case MSG_APP_WEB:
 #if defined( TOUCH_PANEL_SUPPORT)||defined(ZDT_TOUCHPANEL_TYPE_MULTITP) //IGNORE9527
 	case MSG_CTL_PENOK:
 #endif //TOUCH_PANEL_SUPPORT //IGNORE9527
 	    //MMIAPIPHONE_PowerReset(); //开机
-        if(MMISET_BRIGHTNESS_L_BTN_CTRL_ID == ((MMI_NOTIFY_T*)param)->src_id)//reset button被选中
-        {
-            if(g_reboot_screen_show_style == REBOOT_STYLE_PWROFF_ONLY)
-            //MMIAPIPHONE_PowerOff(); //关机
-                MMIPHONE_PowerOff();
-            else if(g_reboot_screen_show_style == REBOOT_STYLE_RESTART_ONLY)
-                MMIAPIPHONE_PowerReset(); //重启
-            else if(g_reboot_screen_show_style == REBOOT_STYLE_RESTORE_ONLY)
-            {
-                //MMISET_CleanUserData();
-                //MMISET_ResetFactorySetting();
-                //MMK_CloseWin(win_id);
-#if 1
-                MMI_STRING_T    wait_text = {0};
-                MMI_GetLabelTextByLang (STR_NOTE_WAITING, &wait_text);
-                MMIPUB_OpenWaitWin (1, &wait_text, PNULL, PNULL, MMISET_RESET_FACTORY_WAITING_WIN_ID,
-                        COMMON_IMAGE_NULL, ANIM_PUBWIN_WAIT, WIN_ONE_LEVEL,
-                        MMIPUB_SOFTKEY_NONE, HandleResetOrCleanDataWaitWinW217);
-
-                MMK_PostMsg(win_id/*MMISET_SET_POWER_RESTART_WIN_ID*/, MSG_SET_CLEAN_DATE_IND, PNULL,PNULL);
-#endif				
-				//ZdtWatch_Factory_RESTORE_Start(MMIZDT_WATCH_FACTORY_WIN_ID);
-				//ZdtWatch_Factory_RESTORE_Start(win_id);
-            }
-        }
-        else if(MMISET_BRIGHTNESS_R_BTN_CTRL_ID == ((MMI_NOTIFY_T*)param)->src_id)//play button被选中
+		PowerRestartSet(win_id);
+      if(MMISET_BRIGHTNESS_R_BTN_CTRL_ID == ((MMI_NOTIFY_T*)param)->src_id)//play button被选中
         {
             MMK_CloseWin(win_id); //取消
         }
@@ -3772,11 +3775,15 @@ LOCAL MMI_RESULT_E HandlePowerRestartSelectWindow(
             }
         }*/
         break;
-		 
-	case MSG_CTL_CANCEL:
 	case MSG_APP_CANCEL:
+	case MSG_CTL_CANCEL:
 	    MMK_CloseWin(win_id);
 	    break;
+		case MSG_KEYDOWN_OK:
+		{
+		PowerRestartSet(win_id);
+        }
+		break;
     case MSG_KEYDOWN_RED:
         break;
     case MSG_KEYUP_RED:
