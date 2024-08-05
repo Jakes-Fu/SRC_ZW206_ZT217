@@ -5,7 +5,6 @@
 ******************************************************************************/
 #include "std_header.h"
 #include <stdlib.h>
-#include "cjson.h"
 #include "sci_api.h"
 #include "dal_time.h"
 #include "guibutton.h"
@@ -42,7 +41,7 @@ wchar test_yinbiao[8] = {0x02E9,0x02E7,0x02E5,0xE6,0x030d,0x03b7,0x0254 };
 #define yinbiao_win_rect {0, 0, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT}
 #define yinbiao_title_rect {0, 0, MMI_MAINSCREEN_WIDTH, YINBIAO_LINE_HIGHT}
 #define yinbiao_list_rect {0, YINBIAO_LINE_HIGHT, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT-5}
-#define yinbiao_yinbiao_rect {10, 2.5*YINBIAO_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-10, 8*YINBIAO_LINE_HIGHT}
+#define yinbiao_yinbiao_rect {5, 2.5*YINBIAO_LINE_HIGHT, MMI_MAINSCREEN_WIDTH-5, 8*YINBIAO_LINE_HIGHT}
 #define yinbiao_msg_rect {YINBIAO_LINE_WIDTH, 3*YINBIAO_LINE_HIGHT, MMI_MAINSCREEN_WIDTH - YINBIAO_LINE_WIDTH, 7*YINBIAO_LINE_HIGHT}
 #define yinbiao_msg_tips_left_rect {1.2*YINBIAO_LINE_WIDTH, 5.5*YINBIAO_LINE_HIGHT, 2.7*YINBIAO_LINE_WIDTH, 7*YINBIAO_LINE_HIGHT}
 #define yinbiao_msg_tips_right_rect {3.3*YINBIAO_LINE_WIDTH, 5.5*YINBIAO_LINE_HIGHT, 4.8*YINBIAO_LINE_WIDTH, 7*YINBIAO_LINE_HIGHT}
@@ -68,6 +67,7 @@ YINBIAO_READ_INFO_T yinbiao_read_info = {0};
 LOCAL GUI_RECT_T yinbiao_table_rect = {0};
 LOCAL GUI_RECT_T yinbiao_circulate_rect = {0};
 LOCAL GUI_RECT_T yinbiao_signle_rect = {0};
+
 LOCAL MMISRV_HANDLE_T yinbiao_player_handle = PNULL;
 LOCAL uint8 yinbiao_player_timer_id = 0;
 LOCAL MMI_CTRL_ID_T yinbiao_cur_select_id = ZMT_YINBIAO_BUTTON_1_CTRL_ID;
@@ -399,13 +399,13 @@ LOCAL void Yinbiao_PlayAudioMp3Error(int error_id)
     {
         yinbiao_read_info.is_play = TRUE;
         if(MMK_IsFocusWin(ZMT_YINBIAO_READ_WIN_ID) || MMK_IsFocusWin(ZMT_YINBIAO_TABLE_TIP_WIN_ID)){
-            YinbiaoReadWin_NextCallback();
+        YinbiaoReadWin_NextCallback();
         }
     }
     if(MMK_IsFocusWin(ZMT_YINBIAO_TABLE_TIP_WIN_ID)){
         YinbiaoTableTipWin_UpdateButton(yinbiao_table_play_status);
     }else{
-        YinbiaoReadWin_UpdateButtonBgWin(yinbiao_read_info.is_play);
+    YinbiaoReadWin_UpdateButtonBgWin(yinbiao_read_info.is_play);
     }
 }
 
@@ -540,7 +540,7 @@ LOCAL void YinbiaoTableTipWin_FULL_PAINT(MMI_WIN_ID_T win_id)
         GUI_UTF8ToWstr(text_wchar, 20, text, size);
         text_string.wstr_ptr = text_wchar;
         text_string.wstr_len = MMIAPICOM_Wstrlen(text_wchar);
-        text_style.font = DP_FONT_28;
+        text_style.font = SONG_FONT_36;
         YinbiaoTableTipWin_UpdateButton(yinbiao_table_play_status);
     }
     GUISTR_DrawTextToLCDInRect(
@@ -593,8 +593,8 @@ LOCAL MMI_RESULT_E HandleYinbiaoTableTipWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_
             }
             break;
         case MSG_KEYDOWN_CANCEL:
-		case MSG_KEYDOWN_RED:
-			break;
+        case MSG_KEYDOWN_RED:
+            break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             MMK_CloseWin(win_id);
@@ -669,12 +669,13 @@ LOCAL void YinbiaoTableWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
     {
         list_ctrl_id = ZMT_YINBIAO_TABLE_FORM_LEFT_CTRL_ID + i;
         GUILIST_SetListState(list_ctrl_id, GUILIST_STATE_SPLIT_LINE, FALSE);
+        GUILIST_SetListState(list_ctrl_id, GUILIST_STATE_EFFECT_STR,TRUE);
         GUILIST_SetNeedHiLightBar(list_ctrl_id,FALSE);
         GUILIST_SetMaxItem(list_ctrl_id, 11, FALSE);
         GUILIST_SetNeedPrgbarBlock(list_ctrl_id,FALSE);
         GUILIST_SetUserBg(list_ctrl_id,TRUE);
         GUILIST_SetBgColor(list_ctrl_id,YINBIAO_WIN_BG_COLOR);
-        GUILIST_SetTextFont(list_ctrl_id, DP_FONT_24, YINBIAO_WIN_BG_COLOR);
+        GUILIST_SetTextFont(list_ctrl_id, DP_FONT_28, YINBIAO_WIN_BG_COLOR);
         GUILIST_PermitBorder(list_ctrl_id, FALSE);
         GUILIST_SetSlideState(list_ctrl_id, FALSE);
         list_ctrl_height.type = GUIFORM_CHILD_HEIGHT_FIXED;
@@ -724,7 +725,7 @@ LOCAL void YinbiaoTableWin_DisplayTableList(MMI_WIN_ID_T win_id)
             if(yinbiao_table_click_idx == list_idx){
                 item_data.item_content[0].item_data.image_id = IMG_YINBIAO_TABLE_ITEM_SEL_BG;
             }else{
-            item_data.item_content[0].item_data.image_id = IMG_YINBIAO_TABLE_ITEM_BG;
+                item_data.item_content[0].item_data.image_id = IMG_YINBIAO_TABLE_ITEM_BG;
             }
 
             memset(text_str, 0, 20);
@@ -734,6 +735,8 @@ LOCAL void YinbiaoTableWin_DisplayTableList(MMI_WIN_ID_T win_id)
             GUI_UTF8ToWstr(text_str, 20, text, size);
             text_string.wstr_ptr = text_str;
             text_string.wstr_len = MMIAPICOM_Wstrlen(text_str);
+            item_data.item_content[1].is_default =TRUE;
+            item_data.item_content[1].font_color_id = MMITHEME_COLOR_LIGHT_BLUE;
             item_data.item_content[1].item_data_type = GUIITEM_DATA_TEXT_BUFFER;
             item_data.item_content[1].item_data.text_buffer = text_string;
 
@@ -760,6 +763,7 @@ LOCAL void YinbiaoTableWin_FULL_PAINT(MMI_WIN_ID_T win_id)
 
     YinbiaoTableWin_DisplayTableList(win_id);
 }
+
 LOCAL void YinbiaoTableWin_KeyLeftRight(MMI_WIN_ID_T win_id, BOOLEAN is_left)
 {
     uint8 idx = MMK_GetWinAddDataPtr(win_id);
@@ -787,6 +791,7 @@ LOCAL void YinbiaoTableWin_KeyLeftRight(MMI_WIN_ID_T win_id, BOOLEAN is_left)
         MMK_SendMsg(win_id,MSG_APP_UP, PNULL);
     }
 }
+
 LOCAL void YinbiaoTableWin_APP_OK(MMI_WIN_ID_T win_id)
 {
     uint8 idx = MMK_GetWinAddDataPtr(win_id);
@@ -850,22 +855,17 @@ LOCAL MMI_RESULT_E HandleYinbiaoTableWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
                 YinbiaoTableWin_KeyLeftRight(win_id, FALSE);
             }
             break;
+        case MSG_CTL_OK:
+        case MSG_CTL_PENOK:
         case MSG_CTL_MIDSK:
         case MSG_APP_WEB:
         case MSG_APP_OK:
-        case MSG_CTL_OK:
             {
                 YinbiaoTableWin_APP_OK(win_id);
             }
-            break;
-        case MSG_CTL_PENOK:
-            { 
-                YinbiaoTableWin_CTL_PENOK(win_id, param);
-            }
-            break;
         case MSG_KEYDOWN_CANCEL:
-		case MSG_KEYDOWN_RED:
-			break;
+        case MSG_KEYDOWN_RED:
+            break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
@@ -1102,6 +1102,7 @@ LOCAL void YinbiaoReadWin_KeyAppOk(MMI_WIN_ID_T win_id)
             break;
     }
 }
+
 LOCAL void YinbiaoReadWin_KeyUpDown(MMI_WIN_ID_T win_id, BOOLEAN is_up)
 {
     if(yinbiao_request_status <= 0){
@@ -1125,6 +1126,7 @@ LOCAL void YinbiaoReadWin_KeyUpDown(MMI_WIN_ID_T win_id, BOOLEAN is_up)
     }
     MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
 }
+
 LOCAL void YinbiaoReadWin_OPEN_WINDOW(MMI_WIN_ID_T win_id)
 {
     GUI_RECT_T table_rect = yinbiao_title_rect;
@@ -1201,7 +1203,7 @@ LOCAL void YinbiaoReadWin_DisplayYinbiaoTie(MMI_WIN_ID_T win_id)
     uint8 idx = MMK_GetWinAddDataPtr(win_id);
 
     text_style.align = ALIGN_HVMIDDLE;
-    text_style.font = DP_FONT_28;
+    text_style.font = SONG_FONT_60;
     text_style.font_color = MMI_WHITE_COLOR;
     
     LCD_FillRoundedRect(&lcd_dev_info, yinbiao_rect, yinbiao_rect, YINBIAO_TITLE_BG_COLOR);
@@ -1223,6 +1225,7 @@ LOCAL void YinbiaoReadWin_DisplayYinbiaoTie(MMI_WIN_ID_T win_id)
         );
 
 }
+
 LOCAL void YinbiaoReadWin_DrawBtnBorder(MMI_WIN_ID_T win_id)
 {
     GUI_LCD_DEV_INFO lcd_dev_info = {GUI_MAIN_LCD_ID,GUI_BLOCK_MAIN};
@@ -1312,6 +1315,7 @@ LOCAL void YinbiaoReadWin_FULL_PAINT(MMI_WIN_ID_T win_id)
     GUIBUTTON_SetVisible(ZMT_YINBIAO_READ_TABLE_CTRL_ID, TRUE, TRUE);
     
     YinbiaoReadWin_DisplayYinbiaoTie(win_id);
+
     YinbiaoReadWin_DrawBtnBorder(win_id);
 }
 
@@ -1390,8 +1394,8 @@ LOCAL MMI_RESULT_E HandleYinbiaoReadWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
             }
             break;
         case MSG_KEYDOWN_CANCEL:
-		case MSG_KEYDOWN_RED:
-			break;
+        case MSG_KEYDOWN_RED:
+            break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
@@ -1649,8 +1653,8 @@ LOCAL MMI_RESULT_E HandleYinbiaoMainWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E 
             }
             break;
         case MSG_KEYDOWN_CANCEL:
-		case MSG_KEYDOWN_RED:
-			break;
+        case MSG_KEYDOWN_RED:
+            break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
@@ -1716,4 +1720,3 @@ PUBLIC void ZMTYinbiao_ClosePlayerHandle(void)
     Yinbiao_StopMp3Data();
     yinbiao_table_play_status = 0;
 }
-
