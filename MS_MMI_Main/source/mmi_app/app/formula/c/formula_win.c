@@ -248,7 +248,8 @@ LOCAL BOOLEAN FormulaWin_PlayRingCallback(MMISRV_HANDLE_T handle, MMISRVMGR_NOTI
                                 if(MMK_IsFocusWin(FORMULA_WIN_ID)){
                                     MMK_SendMsg(FORMULA_WIN_ID, MSG_FULL_PAINT, PNULL);
                                 }
-                                MMI_CreateFormulaTableWin();
+                                formula_click_btn = 0;
+                                //MMI_CreateFormulaTableWin();
                             }else{
                                 formula_play_info.play_idx++;
                             #if FORMULA_AUDIO_USE_OFF_DATA != 0
@@ -492,7 +493,7 @@ LOCAL void FormulaWin_FULL_PAINT(MMI_WIN_ID_T win_id, GUI_LCD_DEV_INFO lcd_dev_i
     GUI_FillRect(&lcd_dev_info, formula_title_rect, GUI_RGB2RGB565(108, 181, 255));
 
     text_style.align = ALIGN_HVMIDDLE;
-    text_style.font = DP_FONT_22;
+    text_style.font = DP_FONT_24;
     text_style.font_color = MMI_WHITE_COLOR;
 
     MMIRES_GetText(TXT_FORMULA_TITLE, win_id, &text_string);
@@ -734,6 +735,7 @@ LOCAL void FormulaWin_HANDLE_UP(MMI_WIN_ID_T win_id, GUI_POINT_T point)
     {
         formula_play_info.play_status = FORMULA_ACTION_NONE;
         formula_play_info.play_idx = 0;
+        formula_click_btn = 0;
         FormulaWin_StopRing();
         MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
     }
@@ -898,8 +900,8 @@ LOCAL MMI_RESULT_E HandleFormulaWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E msg_
             }
             break;
         case MSG_KEYDOWN_CANCEL:
-		case MSG_KEYDOWN_RED:
-			break;
+        case MSG_KEYDOWN_RED:
+            break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
@@ -1069,8 +1071,8 @@ LOCAL MMI_RESULT_E HandleFormulaTableTipWinMsg(MMI_WIN_ID_T win_id, MMI_MESSAGE_
             }
             break;
         case MSG_KEYDOWN_CANCEL:
-		case MSG_KEYDOWN_RED:
-			break;
+        case MSG_KEYDOWN_RED:
+            break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             MMK_CloseWin(win_id);
@@ -1466,8 +1468,8 @@ LOCAL MMI_RESULT_E HandleFormulaTableWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
             }
             break; 
         case MSG_KEYDOWN_CANCEL:
-		case MSG_KEYDOWN_RED:
-			break;
+        case MSG_KEYDOWN_RED:
+            break;
         case MSG_KEYUP_RED:
         case MSG_KEYUP_CANCEL:
             {
