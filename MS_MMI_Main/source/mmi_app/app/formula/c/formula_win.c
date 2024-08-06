@@ -317,7 +317,7 @@ LOCAL void FormulaWin_PlayRing(uint8 idx)
     audio_srv.info.ring_buf.fmt = MMISRVAUD_RING_FMT_MIDI;
     audio_srv.info.ring_buf.data = ring_data.data_ptr;
     audio_srv.info.ring_buf.data_len = ring_data.data_len;
-    audio_srv.volume=MMIAPISET_GetMultimVolume();
+    audio_srv.volume = formula_player_volume;
 
     audio_srv.all_support_route = MMISRVAUD_ROUTE_SPEAKER | MMISRVAUD_ROUTE_EARPHONE;
     formula_player_handle = MMISRVMGR_Request(STR_SRV_AUD_NAME, &req, &audio_srv);
@@ -360,7 +360,7 @@ LOCAL void FormulaWin_PlayAudioData(uint8 *data,uint32 data_len)
     audio_srv.info.ring_buf.fmt = MMISRVAUD_RING_FMT_MP3;
     audio_srv.info.ring_buf.data = data;
     audio_srv.info.ring_buf.data_len = data_len;
-    audio_srv.volume=MMIAPISET_GetMultimVolume();
+    audio_srv.volume = formula_player_volume;
     audio_srv.all_support_route = MMISRVAUD_ROUTE_SPEAKER | MMISRVAUD_ROUTE_EARPHONE;
     formula_player_handle = MMISRVMGR_Request(STR_SRV_AUD_NAME, &req, &audio_srv);
     if(formula_player_handle > 0)
@@ -382,6 +382,7 @@ LOCAL void FormulaWin_PlayAudioData(uint8 *data,uint32 data_len)
         SCI_TRACE_LOW("%s formula_player_handle <= 0", __FUNCTION__);
     }
 }
+
 LOCAL void FormulaWin_ParseAudioResponse(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id)
 {
     SCI_TRACE_LOW("%s: is_ok = %d, Rcv_len = %d", __FUNCTION__, is_ok, Rcv_len);
@@ -391,15 +392,17 @@ LOCAL void FormulaWin_ParseAudioResponse(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_l
             SCI_TRACE_LOW("%s: 01empty audio info!!", __FUNCTION__);
             return;
         }
-        formula_audio_info[formula_play_info.play_idx]->audio_len = Rcv_len;
-        if(formula_audio_info[formula_play_info.play_idx]->audio_data != PNULL)
-        {
-            SCI_FREE(formula_audio_info[formula_play_info.play_idx]->audio_data);
-            formula_audio_info[formula_play_info.play_idx]->audio_data = NULL;
+        if(formula_play_info.play_status == FORMULA_ACTION_NONE || formula_play_info.play_status == FORMULA_ACTION_END){
+            SCI_TRACE_LOW("%s: play stop!!", __FUNCTION__);
+            return;
         }
-        formula_audio_info[formula_play_info.play_idx]->audio_data = SCI_ALLOCA(Rcv_len);
-        SCI_MEMSET(formula_audio_info[formula_play_info.play_idx]->audio_data, 0, Rcv_len);
-        SCI_MEMCPY(formula_audio_info[formula_play_info.play_idx]->audio_data, pRcv, Rcv_len);
+        if(formula_audio_info[formula_play_info.play_idx]->audio_data == PNULL)
+        {
+            formula_audio_info[formula_play_info.play_idx]->audio_len = Rcv_len;
+            formula_audio_info[formula_play_info.play_idx]->audio_data = SCI_ALLOCA(Rcv_len);
+            SCI_MEMSET(formula_audio_info[formula_play_info.play_idx]->audio_data, 0, Rcv_len);
+            SCI_MEMCPY(formula_audio_info[formula_play_info.play_idx]->audio_data, pRcv, Rcv_len);
+        }
     }
     else
     {
@@ -413,6 +416,7 @@ LOCAL void FormulaWin_ParseAudioResponse(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_l
         FormulaWin_PlayAudio();
     }
 }
+
 LOCAL void FormulaWin_PlayAudio(void)
 {
     if(formula_audio_info[formula_play_info.play_idx] == NULL){

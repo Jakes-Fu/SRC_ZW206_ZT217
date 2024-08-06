@@ -289,7 +289,7 @@ extern PUBLIC uint8 Video_Call_Incoming_Test();
 #define MENU_ALIPAY  {18, 1, alipay_text, res_app_ic_alipay, light_blue_bg, MMIZFB_OpenMainWin} //÷ß∏∂±¶
 #endif
 #ifdef TULING_AI_SUPPORT
-#define MENU_AI_CHAT   {0, 1, ai_assistant_text, res_app_ic_assistant, bright_yellow_bg, MMIAPIMENU_EnterAiChat}//Õº¡ÈAI
+#define MENU_AI_CHAT   {0, 1, ai_assistant_text, res_app_ic_assistant, bright_purple_bg, MMIAPIMENU_EnterAiChat}//Õº¡ÈAI
 #endif
 #ifdef BAIDU_AI_SUPPORT
 #define MENU_XIAODU   {17, 1, xiaodu_text, res_app_ic_xiaodu, bright_yellow_bg, MMIAPIMENU_EnterAiChat}//–°∂»
