@@ -96,7 +96,7 @@ LOCAL uint32 ai_record_update_anim_index =0;
 
 static uint8 max_record_time_timer_id = 0;
 
-#define AI_BOTTOM_HEIGHT 64 //52   // 58
+#define AI_BOTTOM_HEIGHT DP2PX_VALUE(64)//52   // 58
 #define AI_LIST_BOTTON_POSITON  (MMI_MAINSCREEN_HEIGHT-AI_BOTTOM_HEIGHT)//160
 
 
@@ -1433,7 +1433,7 @@ LOCAL void AI_ShowBottom(MMI_WIN_ID_T        win_id)
     GUISTR_STATE_T      state =         GUISTR_STATE_ALIGN|GUISTR_STATE_WORDBREAK|GUISTR_STATE_SINGLE_LINE; 
     //uint16 tittle[10] = {0x957F, 0x6309, 0x5E95 ,0x90E8, 0x8BB2, 0x8BDD, 0}; //长按此处讲话957F 6309 6B64 5904 8BB2 8BDD 
     uint16 tittle[5] = {0x6309,0x4F4F,0x8BB2,0x8BDD, 0}; ///按住讲话    
-    GUI_FONT_T f_big = SONG_FONT_26;//SONG_FONT_22;//SONG_FONT_20;//SONG_FONT_34;
+    GUI_FONT_T f_big = DP_FONT_26;//SONG_FONT_22;//SONG_FONT_20;//SONG_FONT_34;
     GUI_POINT_T      point = {0};
     GUI_RECT_T bottom_rect = AI_CHAT_BOTTOM_RECT;
     
@@ -1477,7 +1477,7 @@ LOCAL void DisplayAiChatRecordAnim(MMI_WIN_ID_T win_id)
     GUISTR_STYLE_T      text_style      = {0};  
     GUISTR_STATE_T      state =         GUISTR_STATE_ALIGN|GUISTR_STATE_WORDBREAK|GUISTR_STATE_SINGLE_LINE; 
     uint16 tittle[10] = {0x6b63, 0x5728, 0x5f55, 0x97f3,0}; //正在录音
-    GUI_FONT_T f_big = SONG_FONT_26;//SONG_FONT_22;//SONG_FONT_20;//SONG_FONT_34;
+    GUI_FONT_T f_big = DP_FONT_26;//SONG_FONT_22;//SONG_FONT_20;//SONG_FONT_34;
 
     LCD_FillRect(&lcd_dev_info, rect, MMI_BLACK_COLOR);
 
@@ -1671,7 +1671,7 @@ LOCAL MMI_RESULT_E  Handle_AIChat_WinMsg(
 #if defined(ZDT_MMI_USE_SMALL_FONT)
         CTRLLIST_SetTextFont(ctrl_id, SONG_FONT_20, MMI_CYAN_COLOR);
 #else
-        CTRLLIST_SetTextFont(ctrl_id, SONG_FONT_28, MMI_CYAN_COLOR);
+        CTRLLIST_SetTextFont(ctrl_id, SONG_FONT_26, MMI_CYAN_COLOR);
 #endif
         ret = GUILIST_SetMaxItem(ctrl_id, AI_LIST_MAX_SIZE, FALSE);
         //CTRLLIST_SetAutoSwitchItem(ctrl_id , TRUE);
