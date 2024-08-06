@@ -41,16 +41,26 @@
 #include "tasks_id.h"
 
 #include "nvitem.h"//add_get_mac
+#include "version.h"
 
 /**--------------------------------------------------------------------------*
 **                         MACRO DEFINITION                                 *
 **--------------------------------------------------------------------------*/
-#define CMCC_REG_HEART_BEAT_TIME (15*60*1000) //milliseconds - 24 hours (24*60*60*1000)
+#ifndef RELEASE_INFO
+#define CMCC_REG_HEART_BEAT_TIME (24*60*1000) //milliseconds - 24 hours (24*60*60*1000)
+#define CMCC_REG_REPORT_TIME (24*60*1000) //milliseconds - 24 hours
+#define CMCC_REG_RETRY_TIME_INTERVAL (3*60*1000) //milliseconds-10mins
+#define CMCC_REG_RETRY_MAX_TIMES (1)  //retry max times
+#define CMCC_REG_REPORT_NUM (3)
+#define CMCC_REG_RESTART_TO_CONNEXT_TIME (1*60*1000) //milliseconds - 2 MIN
+#else
+#define CMCC_REG_HEART_BEAT_TIME (24*60*60*1000) //milliseconds - 24 hours (24*60*60*1000)
 #define CMCC_REG_REPORT_TIME (24*60*60*1000) //milliseconds - 24 hours
 #define CMCC_REG_RETRY_TIME_INTERVAL (10*60*1000) //milliseconds-10mins
 #define CMCC_REG_RETRY_MAX_TIMES (1)  //retry max times
 #define CMCC_REG_REPORT_NUM (8)
 #define CMCC_REG_RESTART_TO_CONNEXT_TIME (2*60*1000) //milliseconds - 2 MIN
+#endif
 
 /**--------------------------------------------------------------------------*
 **                         EXTERNAL DECLARE                                 *
@@ -73,11 +83,11 @@ time_t s_report_start = 0;
 uint32 s_retry_fail_times = 0;
 BOOLEAN s_first_report_in_reportTime = TRUE;
 #ifdef ZT217_LISENNING_PAD
-#define ZDT_CMCC_SFR_MANUF 			"LT"
+#define ZDT_CMCC_SFR_MANUF 			ZDT_SFR_MANUF//"LT"
 
-#define ZDT_CMCC_SFR_TYPE 			"LT-T01"
+#define ZDT_CMCC_SFR_TYPE 			ZDT_SFR_TYPE//"LT-T01"
 //Èí¼þ°æ±¾ºÅ
-#define ZDT_CMCC_SFR_SW_VER 			"ZT217_LT-T01V1.0.1"//"ZW206_K1_RDA_240X284_V01"
+#define ZDT_CMCC_SFR_SW_VER 			ZDT_SFR_SW_VER//"ZT217_LT-T01V1.0.1"//"ZW206_K1_RDA_240X284_V01"
 //×Ô×¢²á±àÂë
 #define ZDT_CMCC_SFR_MODEL 			"NM-ESC-A"
 //Ó²¼þ°æ±¾ºÅ
@@ -139,8 +149,11 @@ char s_cmcc_register_info[MMISFR_CMCC_INDEX_MAX][MMISFR_CMCC_STR_LEN + 1] =
     "V4.0",  //MMISFR_CMCC_INDEX_DMVERSION
     "M100000514",     //MMISFR_CMCC_INDEX_APPKEY
     "To7Z21d3f205HpQ92d26p51dmwZ9Jl66", //MMISFR_CMCC_INDEX_PASSWORD
+    #ifndef RELEASE_INFO
+    "b.fxltsbl.com",  //MMISFR_CMCC_INDEX_OPTURL test url
+    #else
     "m.fxltsbl.com",  //MMISFR_CMCC_INDEX_OPTURL
-    //"b.fxltsbl.com",  //MMISFR_CMCC_INDEX_OPTURL
+    #endif
 };
 
 char s_cmcc_device_info[MMISFR_CMCC_DEVICEINFO_INDEX_MAX][MMISFR_CMCC_STR_LEN + 1] =
@@ -148,19 +161,19 @@ char s_cmcc_device_info[MMISFR_CMCC_DEVICEINFO_INDEX_MAX][MMISFR_CMCC_STR_LEN + 
     "",  //IMSI,MMISFR_CMCC_DEVICEINFO_INDEX_IMSI
     "***",  //SN,MMISFR_CMCC_DEVICEINFO_INDEX_SN
     "***",  //DEVINFO,MMISFR_CMCC_DEVICEINFO_INDEX_DEVINFO
-    "",  //MAC,MMISFR_CMCC_DEVICEINFO_INDEX_MAC
+    "***",  //MAC,MMISFR_CMCC_DEVICEINFO_INDEX_MAC
     "***",  //ROM,MMISFR_CMCC_DEVICEINFO_INDEX_ROM
     "***",  //RAM,MMISFR_CMCC_DEVICEINFO_INDEX_RAM
     "***",  //CPU,MMISFR_CMCC_DEVICEINFO_INDEX_CPU
     "RTOS",  //SYSVERSION,MMISFR_CMCC_DEVICEINFO_INDEX_SYS_VERSION
     "1.0.0.1",  //SOFTWAREVER,MMISFR_CMCC_DEVICEINFO_INDEX_SOFTWARE_VER
     "TEST",  //SOFTWARENAME,MMISFR_CMCC_DEVICEINFO_INDEX_SOFTWARE_NAME
-    "",     //NETTYPE,MMISFR_CMCC_DEVICEINFO_INDEX_NETTYPE
-    "",     //PHONENUMBER,MMISFR_CMCC_DEVICEINFO_INDEX_PHONENUMBER
+    "***",     //NETTYPE,MMISFR_CMCC_DEVICEINFO_INDEX_NETTYPE
+    "***",     //PHONENUMBER,MMISFR_CMCC_DEVICEINFO_INDEX_PHONENUMBER
     "***",     //BATTERYCAPACITY,MMISFR_CMCC_DEVICEINFO_INDEX_BATTERYCAPACITY
     "2.4",     //SCREENSIZE,MMISFR_CMCC_DEVICEINFO_INDEX_SCREENSIZE
     "***",     //NETWORKSTATUS,MMISFR_CMCC_DEVICEINFO_INDEX_NETWORKSTATUS
-    "0",     //WEARINGSTATUS,MMISFR_CMCC_DEVICEINFO_INDEX_WEARINGSTATUS
+    "***",     //WEARINGSTATUS,MMISFR_CMCC_DEVICEINFO_INDEX_WEARINGSTATUS
     "***",     //ROUTERMAC,MMISFR_CMCC_DEVICEINFO_INDEX_ROUTER_MAC
     "***",     //BLUETOOTHMAC,MMISFR_CMCC_DEVICEINFO_INDEX_BT_MAC
     "***",     //GPU,MMISFR_CMCC_DEVICEINFO_INDEX_GPU
@@ -608,43 +621,45 @@ LOCAL int sfrCmccDmReadInfo(int resId, char **outbuff)
 			snprintf(buff, buflen, "%s", "");
             break;
         case 6603://mac
-		#if 1//def ZDT_ZFB_SUPPORT	
-		{
-			temp_len = 100;
-			get_dev_mac(temp_buf,&temp_len);
-			snprintf(buff, buflen, temp_buf);
-		}
-		#else
-			/*if(WIFISUPP_GetMac(mac_addr))
-			{
-				snprintf(buff, buflen, mac_addr);
-			}else{
-				snprintf(buff, buflen, "");
-			}*/
-		snprintf(buff, buflen, "");
-		#endif
+         {
+            if(0 != strcmp(s_cmcc_device_info[MMISFR_CMCC_DEVICEINFO_INDEX_MAC],""))
+            {
+                snprintf(buff, buflen, s_cmcc_device_info[MMISFR_CMCC_DEVICEINFO_INDEX_MAC]);
+            }
+            else
+            {
+                temp_len = 100;
+                get_dev_mac(temp_buf,&temp_len);
+                snprintf(buff, buflen, temp_buf);
+            }
             break;
+        }
         case 6604://rom
-			snprintf(buff, buflen, "16M");
+			//snprintf(buff, buflen, "16M");
+			snprintf(buff, buflen, "***");
             break;
         case 6605://ram
-			snprintf(buff, buflen, "16M");
+			//snprintf(buff, buflen, "16M");
+			snprintf(buff, buflen, "***");
             break;
         case 6606://CPU
-			snprintf(buff, buflen, "ARM A53");
+			//snprintf(buff, buflen, "ARM A53");
+			snprintf(buff, buflen, "***");
             break;
         case 6607://SYS VERSION
-			snprintf(buff, buflen, "MOCOR20B");
+			//snprintf(buff, buflen, "MOCOR20B");
+			snprintf(buff, buflen, "***");
             break;
         case 6608://FIRMWARE VERSION
 			snprintf(buff, buflen, ZDT_CMCC_SFR_SW_VER);
             break;
         case 6609://FIRMWARE NAME
-			snprintf(buff, buflen, ZDT_CMCC_SFR_TYPE);
+			//snprintf(buff, buflen, ZDT_CMCC_SFR_TYPE);
+			snprintf(buff, buflen, "***");
             break;
         case 6610://Volte
         {
-            is_volte_state = ual_tele_radio_get_volte_state(0);
+           /* is_volte_state = ual_tele_radio_get_volte_state(0);
             if (is_volte_state == TRUE)
             {
                 snprintf(buff, buflen, "1");
@@ -652,7 +667,8 @@ LOCAL int sfrCmccDmReadInfo(int resId, char **outbuff)
             else
             {
                 snprintf(buff, buflen, "0");
-            }
+            }*/
+            snprintf(buff, buflen, "***");
             break;
         }
         case 6611://NetType
@@ -795,7 +811,7 @@ LOCAL void sfrCmccResetFlags()
 {
     s_in_register = TRUE;
     s_run_result = FALSE;
-    s_retry_fail_times = 0;
+    //s_retry_fail_times = 0;
 }
 
 /**--------------------------------------------------------------------------*
@@ -1047,6 +1063,7 @@ PUBLIC uint32 MMISFR_CMCC_GetTotalRoportNum(void)
 PUBLIC void MMISFR_CMCC_SetTotalRoportNum(uint32 total_report_num)
 {
     TRACE_SFR_CMCC("total_report_num=%d",total_report_num);
+    s_first_report_in_reportTime = TRUE;
     s_total_reportnum = total_report_num;
     return;
 }
@@ -1060,7 +1077,7 @@ PUBLIC void MMISFR_CMCC_SetTotalRoportNum(uint32 total_report_num)
 /*****************************************************************************/
 PUBLIC uint32 MMISFR_CMCC_GetFailNum(void)
 {
-    TRACE_SFR_CMCC("fail_num=%d",s_retry_fail_times);
+    TRACE_SFR_CMCC("s_retry_fail_times=%d",s_retry_fail_times);
     return s_retry_fail_times;
 }
 
@@ -1072,8 +1089,8 @@ PUBLIC uint32 MMISFR_CMCC_GetFailNum(void)
 //  Note:
 /*****************************************************************************/
 PUBLIC void MMISFR_CMCC_SetFailNum(uint32 fail_num)
-{
-    TRACE_SFR_CMCC("total_report_num=%d",fail_num);
+{    
+     TRACE_SFR_CMCC("s_retry_fail_times=%d,fail_num= %d",s_retry_fail_times,fail_num);
     s_retry_fail_times = fail_num;
     return;
 }
@@ -1087,7 +1104,7 @@ PUBLIC void MMISFR_CMCC_SetFailNum(uint32 fail_num)
 /*****************************************************************************/
 PUBLIC time_t MMISFR_CMCC_GetLwm2mStartTime(void)
 {
-    TRACE_SFR_CMCC("fail_num=%d",s_report_start);
+    TRACE_SFR_CMCC("s_report_start=%d",s_report_start);
     return s_report_start;
 }
 

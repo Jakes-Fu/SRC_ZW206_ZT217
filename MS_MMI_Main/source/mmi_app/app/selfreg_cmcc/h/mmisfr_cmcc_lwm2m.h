@@ -135,6 +135,14 @@ typedef struct
     MMISFR_CMCC_MSG_T    *p_content;
 }MMISFR_CMCC_SIGNAL_T;
 
+typedef enum
+{
+    MSG_MMISFR_CMCC_HEARTBEAT_TIMER = 1,
+    MSG_MMISFR_CMCC_RYREGISTER_TIMER,
+    MSG_MMISFR_CMCC_RYUPDATE_TIMER,
+    MSG_MMISFR_CMCC_UPTIMER_MAX
+}MMISFR_CMCC_UPTIMER_E;
+
 /**--------------------------------------------------------------------------*
 **                         FUNCTION DECLARE                                 *
 **--------------------------------------------------------------------------*/

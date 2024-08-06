@@ -537,10 +537,6 @@ EXPORTLIBS += ual_sensorhub
 endif
 endif
 
-ifeq ($(strip $(SFR_SUPPORT_CMCC)), TRUE)
-COMPLIBS_DBG += sfr
-endif
-
 # export INTERNAL_LIBS = ps layer1 layer1_dsp
 export INTERNAL_LIBS = 
 ifeq ($(strip $(SPRD_CUSTOMER)), TRUE)

@@ -48,6 +48,7 @@ LOCAL BOOLEAN s_allow_use_pdp = TRUE;
 LOCAL uint32 s_srfcmcc_reg_data_handle = 0;
 LOCAL uint32 s_srfcmcc_reg_sim_handle = 0;
 LOCAL uint32 s_clean_fail_num_timer_id = 0;
+LOCAL uint32 s_srfcmcc_heartbeat_timer_id = 0;
 /*---------------------------------------------------------------------------*/
 /*                          LOCAL FUNCTION DECLARE                           */
 /*---------------------------------------------------------------------------*/
@@ -58,6 +59,8 @@ LOCAL uint32 s_clean_fail_num_timer_id = 0;
 //  Note:
 /*****************************************************************************/
 LOCAL BOOLEAN SFR_CMCC_RegisterData(void);
+LOCAL void sfr_cmcc_handle_regupdate_timer(uint32  timer_id, uint32 param);
+extern time_t s_report_start;
 
 /*****************************************************************************/
 //Description : timer to clean report num and fail num
@@ -67,17 +70,20 @@ LOCAL BOOLEAN SFR_CMCC_RegisterData(void);
 //Author: miao.liu2
 //Note:
 /*****************************************************************************/
-LOCAL void SFR_CMCC_CleanFailNum(uint32 param)
+PUBLIC void MMISFR_CMCC_RetryUpdate(BOOLEAN is_success);
+LOCAL void SFR_CMCC_CleanFailNum(uint32  timer_id, uint32 param)
 {
     BOOLEAN result = FALSE;
 
-    TRACE_SFR_CMCC("enter");
-    if(0 != s_clean_fail_num_timer_id)
+    TRACE_SFR_CMCC("enter s_clean_fail_num_timer_id=%d",s_clean_fail_num_timer_id);
+    //if(0 != s_clean_fail_num_timer_id)
+    if(0 != timer_id)
     {
-        result = ual_timer_stop(s_clean_fail_num_timer_id);
+        result = ual_timer_stop(timer_id);
         TRACE_SFR_CMCC("result=%d",result);
-        s_clean_fail_num_timer_id = 0;
+        //s_clean_fail_num_timer_id = 0;
     }
+    s_clean_fail_num_timer_id = 0;
     //clean total_report_num and fail_num
     MMISFR_CMCC_SetTotalRoportNum(0);
     MMISFR_CMCC_SetFailNum(0);
@@ -104,12 +110,15 @@ PUBLIC void MMISFR_CMCC_HandleNetworkStatus(void)
     uint32 reportTime = 0;
     time_t current_time = 0;
     time_t start_time = 0;
+    uint32 heartBeatTime = 0;
+
     TRACE_SFR_CMCC("s_allow_use_pdp=%d", s_allow_use_pdp);
 
     sim_status = ual_tele_sim_get_sim_status(sim_id);
     TRACE_SFR_CMCC("sim_status=%d", sim_status);
     if (s_allow_use_pdp && (UAL_TELE_SIM_STATUS_READY == sim_status)
-            && (TRUE == ual_tele_radio_get_gprs_state(sim_id)))
+            && (TRUE == MMIPHONE_IsSimOk(sim_id)))
+            //&& (TRUE == ual_tele_radio_get_gprs_state(sim_id)))
     {
         total_report_num = MMISFR_CMCC_GetTotalRoportNum();
         reportNum = MMISFR_CMCC_GetRuleConfig(MMISFR_CMCC_RULE_CONFIG_REPORTNUM);
@@ -122,16 +131,29 @@ PUBLIC void MMISFR_CMCC_HandleNetworkStatus(void)
             TRACE_SFR_CMCC("current_time=%d, start_time=%d, reportTime=%d", current_time, start_time, reportTime);
             if((current_time - start_time) < (reportTime/1000))
             {
-                s_clean_fail_num_timer_id = ual_timer_start(CMCC_CLEAN_FAIL_NUM_TIME, SFR_CMCC_CleanFailNum, 0, FALSE);
+                TRACE_SFR_CMCC("clean fail time");
+               /* s_clean_fail_num_timer_id = ual_timer_start(CMCC_CLEAN_FAIL_NUM_TIME, SFR_CMCC_CleanFailNum, 0, FALSE);
                 if(PNULL == s_clean_fail_num_timer_id)
                 {
                     TRACE_SFR_CMCC("create timer fail");
                     return;
+                }*/
+                
+                heartBeatTime = MMISFR_CMCC_GetRuleConfig(MMISFR_CMCC_RULE_CONFIG_HEARTBEATTIME);
+    
+                 if(s_srfcmcc_heartbeat_timer_id)
+                {
+                    BOOLEAN result = FALSE;
+                    result = ual_timer_stop(s_srfcmcc_heartbeat_timer_id);
+                    TRACE_SFR_CMCC("stop timer result=%d,s_srfcmcc_heartbeat_timer_id=%d",result,s_srfcmcc_heartbeat_timer_id);
+                    s_srfcmcc_heartbeat_timer_id = 0;
                 }
+                s_srfcmcc_heartbeat_timer_id = ual_timer_start(heartBeatTime, sfr_cmcc_handle_regupdate_timer, NULL, FALSE);
                 return;
             }
             else
             {
+                TRACE_SFR_CMCC("clean fail");
                 //clean total_report_num and fail_num
                 MMISFR_CMCC_SetTotalRoportNum(0);
                 MMISFR_CMCC_SetFailNum(0);
@@ -149,6 +171,16 @@ PUBLIC void MMISFR_CMCC_HandleNetworkStatus(void)
         {
             //stop lwm2m
             MMISFR_CMCC_Lwm2mStop(TRUE);
+            if(s_srfcmcc_heartbeat_timer_id)
+            {
+                BOOLEAN result = FALSE;
+                result = ual_timer_stop(s_srfcmcc_heartbeat_timer_id);
+                TRACE_SFR_CMCC("stop timer result=%d,s_srfcmcc_heartbeat_timer_id=%d",result,s_srfcmcc_heartbeat_timer_id);
+                s_srfcmcc_heartbeat_timer_id = 0;
+            }
+            MMISFR_CMCC_SetFailNum(0);
+            heartBeatTime = MMISFR_CMCC_GetRuleConfig(MMISFR_CMCC_RULE_CONFIG_HEARTBEATTIME);
+            s_srfcmcc_heartbeat_timer_id = ual_timer_start(heartBeatTime, sfr_cmcc_handle_regupdate_timer, NULL, FALSE);
         }
     }
 }
@@ -313,7 +345,7 @@ PUBLIC void MMISFR_CMCC_InitModule(void)
     }
 }
 
-LOCAL void sfr_cmcc_handle_regupdate_timer(uint8  timer_id, uint32 param)
+LOCAL void sfr_cmcc_handle_regupdate_timer(uint32  timer_id, uint32 param)
 {
     BOOLEAN result = FALSE;
 
@@ -323,6 +355,7 @@ LOCAL void sfr_cmcc_handle_regupdate_timer(uint8  timer_id, uint32 param)
         result = ual_timer_stop(timer_id);
         TRACE_SFR_CMCC("result=%d",result);
     }
+    s_srfcmcc_heartbeat_timer_id = 0;
     s_allow_use_pdp = TRUE;
 
     MMISFR_CMCC_HandleNetworkStatus();
@@ -337,9 +370,16 @@ PUBLIC void MMISFR_CMCC_RetryRegister(void)
     TRACE_SFR_CMCC("enter");
     unregister_data_ret = ual_tele_data_unregister(s_srfcmcc_reg_data_handle);
     retryInterval_time = MMISFR_CMCC_GetRuleConfig(MMISFR_CMCC_RULE_CONFIG_RETRYINTERVAL);
-    
-    timer = ual_timer_start(retryInterval_time, sfr_cmcc_handle_regupdate_timer, NULL, FALSE);
-    TRACE_SFR_CMCC("unregister_data_ret=%d,retryInterval_time=%d,timer=%d", unregister_data_ret,retryInterval_time,timer);
+    if(s_srfcmcc_heartbeat_timer_id)
+    {
+        BOOLEAN result = FALSE;
+        //result = ual_timer_stop(s_srfcmcc_heartbeat_timer_id);
+        result = ual_timer_stop(s_srfcmcc_heartbeat_timer_id);
+        TRACE_SFR_CMCC("stop timer result=%d,s_srfcmcc_heartbeat_timer_id=%d",result,s_srfcmcc_heartbeat_timer_id);
+        s_srfcmcc_heartbeat_timer_id = 0;
+    }
+    s_srfcmcc_heartbeat_timer_id = ual_timer_start(retryInterval_time, sfr_cmcc_handle_regupdate_timer, MSG_MMISFR_CMCC_RYREGISTER_TIMER, FALSE);
+    TRACE_SFR_CMCC("unregister_data_ret=%d,retryInterval_time=%d,timer=%d", unregister_data_ret,retryInterval_time,s_srfcmcc_heartbeat_timer_id);
 }
 
 PUBLIC void MMISFR_CMCC_RetryUpdate(BOOLEAN is_success)
@@ -353,15 +393,22 @@ PUBLIC void MMISFR_CMCC_RetryUpdate(BOOLEAN is_success)
     unregister_data_ret = ual_tele_data_unregister(s_srfcmcc_reg_data_handle);
     retryInterval_time = MMISFR_CMCC_GetRuleConfig(MMISFR_CMCC_RULE_CONFIG_RETRYINTERVAL);
     heartBeatTime = MMISFR_CMCC_GetRuleConfig(MMISFR_CMCC_RULE_CONFIG_HEARTBEATTIME);
+    if(s_srfcmcc_heartbeat_timer_id)
+    {
+        BOOLEAN result = FALSE;
+        result = ual_timer_stop(s_srfcmcc_heartbeat_timer_id);
+        TRACE_SFR_CMCC("stop timer result=%d,s_srfcmcc_heartbeat_timer_id=%d",result,s_srfcmcc_heartbeat_timer_id);
+        s_srfcmcc_heartbeat_timer_id = 0;
+    }
     if (TRUE == is_success)
     {
-        timer = ual_timer_start(heartBeatTime, sfr_cmcc_handle_regupdate_timer, NULL, FALSE);
+        s_srfcmcc_heartbeat_timer_id = ual_timer_start(heartBeatTime, sfr_cmcc_handle_regupdate_timer, NULL, FALSE);
     }
     else
     {
-        timer = ual_timer_start(retryInterval_time, sfr_cmcc_handle_regupdate_timer, NULL, FALSE);
+        s_srfcmcc_heartbeat_timer_id = ual_timer_start(retryInterval_time, sfr_cmcc_handle_regupdate_timer, NULL, FALSE);
     }
-    TRACE_SFR_CMCC("unregister_data_ret=%d,retryInterval_time=%d,heartBeatTime=%d,timer=%d", unregister_data_ret,retryInterval_time,heartBeatTime,timer);
+    TRACE_SFR_CMCC("unregister_data_ret=%d,retryInterval_time=%d,heartBeatTime=%d,timer=%d", unregister_data_ret,retryInterval_time,heartBeatTime,s_srfcmcc_heartbeat_timer_id);
 }
 
 /*****************************************************************************/

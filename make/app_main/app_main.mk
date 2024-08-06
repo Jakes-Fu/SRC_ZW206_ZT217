@@ -2295,7 +2295,18 @@ SOURCES += sfr_carrier_ctcc.c
 endif
 
 ifeq ($(strip $(SFR_SUPPORT_CMCC)), TRUE)
-MINCPATH += MS_MMI_Main/source/mmi_app/app/selfreg_cmcc/h
+MINCPATH += MS_MMI_Main/source/mmi_app/app/selfreg_cmcc/h \
+            Third-party/lwm2m/richinfo-lwm2msdk-M-v2.0/core \
+            Third-party/lwm2m/richinfo-lwm2msdk-M-v2.0/sdksrc/sdk \
+            external/libc/h \
+            external/libc/h/sys \
+            external/libc
+ifeq ($(strip $(UAL_TELE_SUPPORT)), FALSE)
+MINCPATH += ual/inc/tele
+endif
+MSRCPATH += MS_MMI_Main/source/mmi_app/app/selfreg_cmcc/c
+
+SOURCES += mmisfr_cmcc_main.c  mmisfr_cmcc_lwm2m.c
 endif
 
 ifeq ($(strip $(SFR_SUPPORT_CTCC)), TRUE)
