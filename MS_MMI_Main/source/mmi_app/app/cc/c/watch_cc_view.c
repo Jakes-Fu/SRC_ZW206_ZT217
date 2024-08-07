@@ -2005,7 +2005,7 @@ LOCAL MMI_RESULT_E   HandleCcMoCallingWinMsg(
 		case MSG_KEYUP_CANCEL:
         case MSG_APP_OK:
         {
-            MMK_CloseWin(win_id);
+		
 			MMICC_ReleaseCurrentCallReq(MN_CAUSE_USER_BUSY);
             break;
         }
@@ -2263,9 +2263,9 @@ LOCAL MMI_RESULT_E   HandleCcVoiceCallConnectedWinMsg(
 		case MSG_APP_OK:
 		case MSG_KEYUP_CANCEL:
         case MSG_BT_CANCEL_CALL:
-        case MSG_APP_CANCEL:
         case MSG_CTL_CANCEL:
         {
+		
             MMICC_ReleaseCallReq(MMIAPICC_GetCallDualSys(), MMICC_GetCurrentCallIndex(), MN_CAUSE_NORMAL_CLEARING);
             break;
         }
@@ -2491,13 +2491,14 @@ LOCAL MMI_RESULT_E   HandleCcMtCallingWinMsg(
             break;
         }
         case MSG_BT_REJECT_INCOMING_CALL:
-        case MSG_APP_OK:
+        case MSG_APP_CANCEL:
         {
+
             MMICC_ReleaseCurrentCallReq(MN_CAUSE_USER_BUSY);
             break;
         }
         case MSG_BT_ACCEPT_INCOMING_CALL:
-        case MSG_APP_CANCEL:
+        case MSG_APP_OK:
         {
             if(!MMICC_AnswerCall())
             {
