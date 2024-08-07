@@ -1842,14 +1842,15 @@ LOCAL MMI_RESULT_E   HandleCcMoCallQueryWinMsg(
             break;
         }
         case MSG_KEYDOWN_RED:
-        case MSG_APP_OK:
+        case MSG_APP_CANCEL:
         {
-            WatchCC_MoCallQueryWin_Exit();
+          	MMK_CloseWin(win_id);
+			/* WatchCC_MoCallQueryWin_Exit();
           MMICC_StopRecordInCall();
-        WatchCC_EndedAndSaved_NoteWin_Enter();
+        WatchCC_EndedAndSaved_NoteWin_Enter();*/
 			break;
         }
-        case MSG_APP_CANCEL:
+        case MSG_APP_OK:
         case MSG_CTL_CANCEL:
         {
             //make call
