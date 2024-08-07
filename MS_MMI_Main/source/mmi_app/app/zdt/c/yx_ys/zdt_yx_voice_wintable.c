@@ -2973,7 +2973,7 @@ PUBLIC BOOLEAN ZdtApp_YX_Friend_DrawSearchRcv(YX_APP_T *pMe, uint8 index, uint8*
 
 #ifdef ZDT_PLAT_YX_SUPPORT_FRIEND
 ///-----------insert sim  tips win start-----------
-LOCAL uint8 s_friend_pp_status = 3;//0;
+LOCAL uint8 s_friend_pp_status = 0;//0;
 uint8 g_pp_friend_id[YX_DB_FRIEND_MAX_ID_SIZE+1] = {0};
 uint16 g_pp_wstr_pp_name[41] = {0};
 uint16 g_pp_wstr_pp_num[41] = {0};
@@ -3343,8 +3343,11 @@ LOCAL MMI_RESULT_E  HandleZDT_FriendPPWinMsg(
                 MMIZDT_FriendPPWin_TimeStart(200, MMIZDT_FriendPPWin_GSENSOR_HandleTimer);
                 MMIZDT_FriendPPWin_GSENSOR_Start();
 #else
-            s_friend_pp_status = 0;
-            ZdtTalk_BackLight(FALSE);
+                s_friend_pp_status = 0;
+                SCI_MEMSET(g_pp_wstr_pp_name,0,sizeof(g_pp_wstr_pp_name));
+                SCI_MEMSET(g_pp_wstr_pp_num,0,sizeof(g_pp_wstr_pp_num));
+                YX_Net_Friend_Start(&g_yx_app);
+                ZdtTalk_BackLight(TRUE);
 #endif
 
             break;
@@ -3383,26 +3386,7 @@ LOCAL MMI_RESULT_E  HandleZDT_FriendPPWinMsg(
                 ZdtTalk_BackLight(FALSE);
                 MMIZDT_PPDisplay_TimerStart(5000,MMIZDT_PPDisplay_HandleFailTimer);
             }
-            else  if(s_friend_pp_status == 3)
-            {
-                GUI_POINT_T point = {FIND_FRIEND_SHAKE_IMG_X, FIND_FRIEND_SHAKE_IMG_Y};
-                GUI_RECT_T         	disp_rect   		= {0,0,MMI_MAINSCREEN_WIDTH,80};
-                 //ҡһҡ
-                GUIRES_DisplayImg(&point,PNULL,PNULL,win_id,shake_icon,&lcd_dev_info);
-                ZdtTalk_BackLight(FALSE);
-                MMI_GetLabelTextByLang(TXT_SHAKE_FRIEND,&str_data);
-                text_style.align = ALIGN_HVMIDDLE;
-                text_style.font = SONG_FONT_22;
-                text_style.font_color = MMI_WHITE_COLOR;
-                GUISTR_DrawTextToLCDInRect(
-                &lcd_dev_info,
-                (const GUI_RECT_T *)&disp_rect,       //the fixed display area
-                (const GUI_RECT_T *)&disp_rect,       
-                (const MMI_STRING_T *)&str_data,
-                &text_style,
-                GUISTR_STATE_ALIGN|GUISTR_STATE_SINGLE_LINE,
-                GUISTR_TEXT_DIR_AUTO);
-            }
+     
             else
             {
             #ifdef ZTE_WATCH
