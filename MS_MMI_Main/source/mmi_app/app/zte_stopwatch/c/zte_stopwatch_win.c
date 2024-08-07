@@ -415,12 +415,12 @@ LOCAL MMI_RESULT_E HandleMsgStopWatchWindow( MMI_WIN_ID_T win_id, MMI_MESSAGE_ID
 
         case MSG_KEYDOWN_RED:
         {
-            SCI_TRACE_LOW("[HandleMsgStopWatchWindow]:receive MSG_KEYDOWN_RED");
-            if(STOPWATCH_STATUS_RUNNING == s_stopwatch_status)
-            {
+          /*  SCI_TRACE_LOW("[HandleMsgStopWatchWindow]:receive MSG_KEYDOWN_RED");
+            if(STOPWATCH_STATUS_RUNNING == s_stopwatch_status ||STOPWATCH_STATUS_STOP== s_stopwatch_status)
+            {*/
                 //StopWatch_StartOrPauseTime(win_id);
-				  StopWatch_ResetTime(win_id);
-            }
+				 StopWatch_ResetTime(win_id);
+          //  }
 			
             MMK_CloseWin(win_id);
             break;
