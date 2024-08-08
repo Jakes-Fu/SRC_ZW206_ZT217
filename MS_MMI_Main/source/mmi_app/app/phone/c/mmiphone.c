@@ -9644,6 +9644,14 @@ LOCAL BOOLEAN NotifySIMPlugInd(MN_DUAL_SYS_E dual_sys, MMIPHONE_SIM_PLUG_EVENT_E
     }
     else if (MMIPHONE_NOTIFY_SIM_PLUG_OUT == notify_event)
     {
+#ifdef  XYSDK_SUPPORT
+	   LIBXMLYAPI_AppExit();
+#endif
+#ifdef LEBAO_MUSIC_SUPPORT
+		StopLebaoApp();
+		// or
+		// lebao_stop_playing();
+#endif
         MMIPUB_OpenAlertWinByTextId(PNULL, TXT_SIM_PLUG_OUT, TXT_NULL, IMAGE_PUBWIN_WARNING, &alert_win_id, &win_priority, MMIPUB_SOFTKEY_ONE, HandleSIMPlugAlertWinMsg);
         //add code by wangwp when hot plug out the sim card
         if(FALSE == ual_tele_radio_get_fly_mode_state())//bug2080829 in fly mode not need to change ps_ready
