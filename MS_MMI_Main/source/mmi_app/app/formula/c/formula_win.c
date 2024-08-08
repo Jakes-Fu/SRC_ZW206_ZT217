@@ -715,6 +715,14 @@ LOCAL void FormulaWin_HANDLE_UP(MMI_WIN_ID_T win_id, GUI_POINT_T point)
     #endif
         MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
     }
+    else if(GUI_PointIsInRect(point, formula_action_play_rect) && formula_play_info.play_status == FORMULA_ACTION_END)
+    {
+        formula_play_info.play_status = FORMULA_ACTION_NONE;
+        formula_play_info.play_idx = 0;
+        formula_click_btn = 0;
+        FormulaWin_StopRing();
+        MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
+    }
     else if(GUI_PointIsInRect(point, formula_action_stop_rect) && 
         (formula_play_info.play_status == FORMULA_ACTION_PLAY || formula_play_info.play_status == FORMULA_ACTION_STOP))
     {

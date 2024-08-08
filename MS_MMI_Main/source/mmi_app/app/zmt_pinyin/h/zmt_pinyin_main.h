@@ -29,7 +29,7 @@
 
 #define PINYIN_APP_ID "00000004"
 #define PINYIN_APP_SECRET "ZmtPinyinSec"
-#define PINYIN_BASE_URL_HEADER_PATH "http://8.130.95.8:8866/"
+#define PINYIN_BASE_URL_HEADER_PATH "http://api.zhumengtech.cn:8866/"
 #define PINYIN_AUDIO_BASE_URL_PATH "hanzi/getPinyinAudio?%s"
 #define PINYIN_MP3_DATA_BASE_PATH "E:/zmt_pinyin/pinyin_%d/%s.mp3"
 

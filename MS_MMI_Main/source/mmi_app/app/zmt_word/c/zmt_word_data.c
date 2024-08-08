@@ -609,7 +609,7 @@ LOCAL char * Word_ReplaceSpaceString(char * str, char* replacement)
 
 LOCAL BOOLEAN Word_DetailMakeAudioUrl(WORD_BOOK_DETAIL_T * detail, char * text, char * baseUrl)
 {
-    //http://8.130.95.8:8866/file/english/taxi.mp3
+    //http://res.zhumengtech.cn:8866/file/english/taxi.mp3
     char * str = NULL;
     char * data = NULL;
     int len = 0;

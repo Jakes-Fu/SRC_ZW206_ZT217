@@ -16,7 +16,7 @@
 
 #define FORMULA_APP_ID "00000003"
 #define FORMULA_APP_SECRET "ZmtFormulaSec"
-#define FORMULA_HEADER_PATH "http://8.130.95.8:8866/"
+#define FORMULA_HEADER_PATH "http://api.zhumengtech.cn:8866/"
 #define FORMULA_BASE_TEXT_PATH "formulas/getFormulasAudio?%s"
 #define FORMULA_AUDIO_USE_OFF_DATA 1
 #define FORMULA_APP_COUNT_MAX 2

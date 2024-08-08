@@ -140,11 +140,11 @@ PUBLIC void Pinyin_RequestAudioPath(void)
     char url[200] = {0};
     char * query_str = NULL;
 #ifdef WIN32
-    char * data_buf = "{\"baseUrl\":\"http://8.130.95.8:8866/file/pinyin/\"}";
+    char * data_buf = "{\"baseUrl\":\"http://res.zhumengtech.cn:8866/file/pinyin/\"}";
     Pinyin_ParseAudioPath(1, data_buf, strlen(data_buf), 0);
 #else
     if(!ZMTApp_GetSimIsExist()){
-        char * data_buf = "{\"baseUrl\":\"http://8.130.95.8:8866/file/pinyin/\"}";
+        char * data_buf = "{\"baseUrl\":\"http://res.zhumengtech.cn:8866/file/pinyin/\"}";
         Pinyin_ParseAudioPath(1, data_buf, strlen(data_buf), 0);
     }else{
         query_str = makeBaseQueryUrlString(PINYIN_APP_ID, PINYIN_APP_SECRET);

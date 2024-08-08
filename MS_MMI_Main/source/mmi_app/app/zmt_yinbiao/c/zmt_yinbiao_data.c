@@ -144,11 +144,11 @@ PUBLIC void Yinbiao_RequestAudioPath(void)
     char url[200] = {0};
     char * query_str = NULL;
 #ifdef WIN32
-    char * data_buf = "{\"baseUrl\":\"http://8.130.95.8:8866/file/english/IPA/\"}";
+    char * data_buf = "{\"baseUrl\":\"http://res.zhumengtech.cn:8866/file/english/IPA/\"}";
     Yinbiao_ParseAudioPath(1, data_buf, strlen(data_buf), 0);
 #else
     if(!ZMTApp_GetSimIsExist()){
-        char * data_buf = "{\"baseUrl\":\"http://8.130.95.8:8866/file/english/IPA/\"}";
+        char * data_buf = "{\"baseUrl\":\"http://res.zhumengtech.cn:8866/file/english/IPA/\"}";
         Yinbiao_ParseAudioPath(1, data_buf, strlen(data_buf), 0);
     }else{
         query_str = makeBaseQueryUrlString(YINBIAO_APP_ID, YINBIAO_APP_SECRET);
