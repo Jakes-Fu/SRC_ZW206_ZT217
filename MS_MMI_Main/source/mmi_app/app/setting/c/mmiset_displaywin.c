@@ -2538,6 +2538,7 @@ LOCAL void setVolume(MMI_WIN_ID_T win_id,uint32 volume_index, MMIENVSET_SET_OPT_
     else if(volumeType == CALL_RING_VOL)
     {
         MMIAPISET_SetCallRingVolume(volume_index);
+        MMIAPISET_SetMultimVolume(volume_index);
     }
     MMK_CloseWin(win_id);
 }
