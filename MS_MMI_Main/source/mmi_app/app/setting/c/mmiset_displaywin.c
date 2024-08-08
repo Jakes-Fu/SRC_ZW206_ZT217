@@ -3754,26 +3754,31 @@ LOCAL MMI_RESULT_E HandlePowerRestartSelectWindow(
 	case MSG_CTL_PENOK:
 #endif //TOUCH_PANEL_SUPPORT //IGNORE9527
 	    //MMIAPIPHONE_PowerReset(); //开机
-		PowerRestartSet(win_id);
-      if(MMISET_BRIGHTNESS_R_BTN_CTRL_ID == ((MMI_NOTIFY_T*)param)->src_id)//play button被选中
+		{	
+      if(MMISET_BRIGHTNESS_L_BTN_CTRL_ID == ((MMI_NOTIFY_T*)param)->src_id)//play button被选中
         {
-            MMK_CloseWin(win_id); //取消
-        }
-        break;
+            PowerRestartSet(win_id);  
+        }else if( MMISET_BRIGHTNESS_R_BTN_CTRL_ID == ((MMI_NOTIFY_T*)param)->src_id){
+
+	MMK_CloseWin(win_id); //取消
+	  }	
+	  break;
+		}
+
     case MSG_TP_PRESS_UP:
-        /*{
-            GUI_POINT_T   point = {0};
-            point.x = MMK_GET_TP_X(param);
-            point.y = MMK_GET_TP_Y(param);
-            if((point.x > 5&& point.x <110)&&(point.y > 190 &&  point.y < 240 ))
-            {
-            MMIAPIPHONE_PowerReset(); //开机
-            }
-            else if((point.x > 130 && point.x <240)&&(point.y > 190 &&  point.y < 240 ))
-            {
-            MMK_CloseWin(win_id); //取消
-            }
-        }*/
+       // {
+       //     GUI_POINT_T   point = {0};
+       //     point.x = MMK_GET_TP_X(param);
+       //     point.y = MMK_GET_TP_Y(param);
+       //     if((point.x > 5&& point.x <110)&&(point.y > 190 &&  point.y < 240 ))
+       //     {
+       //MMK_CloseWin(win_id);  //   MMIAPIPHONE_PowerReset(); //开机
+       //     }
+       //     else if((point.x > 130 && point.x <240)&&(point.y > 190 &&  point.y < 240 ))
+       //     {
+       //      //取消
+       //     }
+       // }
         break;
 	case MSG_APP_CANCEL:
 	case MSG_CTL_CANCEL:
