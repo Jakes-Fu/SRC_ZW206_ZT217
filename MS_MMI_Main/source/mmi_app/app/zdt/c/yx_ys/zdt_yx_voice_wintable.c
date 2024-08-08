@@ -2682,6 +2682,8 @@ PUBLIC MMI_RESULT_E  HandleZDT_ChatGroupWinMsg(
     switch(msg_id) {
         case MSG_OPEN_WINDOW:
             {
+				 if(struct_yx_statues_data.bingd_statues != 0) //没有绑定
+                {
                 GUI_RECT_T list_rect = {0, MMI_SPECIAL_TITLE_HEIGHT, MMI_MAINSCREEN_WIDTH, MMI_MAINSCREEN_HEIGHT};
                 Create_Chat_Contact_List_Listbox(win_id, ctrl_id,list_rect);
                 GUI_FillRect(&lcd_dev_info, rect, MMI_BLACK_COLOR);
@@ -2691,9 +2693,13 @@ PUBLIC MMI_RESULT_E  HandleZDT_ChatGroupWinMsg(
                 {
                     YX_VCHAT_GetAllGroupInfo();
                 }
-            }
+            }else
+                {
+                    GUI_FillRect(&lcd_dev_info, rect, MMI_BLACK_COLOR);
+                    Chat_Contact_Show_Tip(win_id,ctrl_id);
+                }
             break;
-        
+			}
         case MSG_GET_FOCUS:
                 s_cur_gproup_long_key_handle = 0;
             break;
@@ -2749,6 +2755,7 @@ PUBLIC MMI_RESULT_E  HandleZDT_ChatGroupWinMsg(
     return recode;
 
 }
+
 
 PUBLIC MMI_RESULT_E HandleLauncher_ChatContactListWinMsg( MMI_WIN_ID_T win_id, MMI_MESSAGE_ID_E msg_id, DPARAM param)
 {
@@ -3310,6 +3317,7 @@ LOCAL MMI_RESULT_E  HandleZDT_FriendPPWinMsg(
     GUI_LCD_DEV_INFO  lcd_dev_info = { GUI_MAIN_LCD_ID, GUI_BLOCK_MAIN };
     MMI_STRING_T		str_data = {0};
     GUI_RECT_T	text_display_rect={0};
+	GUI_RECT_T	rect={0,0,MMI_MAINSCREEN_WIDTH,MMI_MAINSCREEN_HEIGHT};
     GUISTR_STYLE_T		text_style = {0};
     GUISTR_STATE_T		state = GUISTR_STATE_ALIGN|GUISTR_STATE_SINGLE_LINE| GUISTR_STATE_ELLIPSIS;
     uint16 wstr_search_1[10] = {0x641C,0x7D22,0x4E2D,0x002E,0x002E,0x002E,0x0};//搜索中...
@@ -3319,6 +3327,8 @@ LOCAL MMI_RESULT_E  HandleZDT_FriendPPWinMsg(
     switch(msg_id)
     {
         case MSG_OPEN_WINDOW:
+	 if(struct_yx_statues_data.bingd_statues != 0) //没有绑定
+                {	
 #ifdef ZDT_GSENSOR_SUPPORT
                 s_friend_pp_status = 3;
                 g_friendPP_shakecount = 0;
@@ -3350,13 +3360,19 @@ LOCAL MMI_RESULT_E  HandleZDT_FriendPPWinMsg(
                 ZdtTalk_BackLight(TRUE);
 #endif
 
-            break;
+			 }else{	
+			GUI_FillRect(&lcd_dev_info, rect, MMI_BLACK_COLOR);
+          WATCHCOM_DisplayTips(win_id,TXT_BIND_DEVICE_TIP);
+	}
+				 break;
             
         case MSG_GET_FOCUS:
             break;
             
         case MSG_FULL_PAINT:
         {
+			 if(struct_yx_statues_data.bingd_statues != 0) //没有绑定
+                {	
             GUI_FillRect(&lcd_dev_info, bg_rect, MMI_BLACK_COLOR);
             if(s_friend_pp_status == 0)
             {
@@ -3401,7 +3417,10 @@ LOCAL MMI_RESULT_E  HandleZDT_FriendPPWinMsg(
                 MMIZDT_PPDisplay_TimerStart(5000,MMIZDT_PPDisplay_HandleFailTimer);
 
             }
-        }
+        } else{	
+			GUI_FillRect(&lcd_dev_info, rect, MMI_BLACK_COLOR);
+			WATCHCOM_DisplayTips(win_id,TXT_BIND_DEVICE_TIP);}
+		}
         break;
 		
 #if 1//def TOUCH_PANEL_SUPPORT
