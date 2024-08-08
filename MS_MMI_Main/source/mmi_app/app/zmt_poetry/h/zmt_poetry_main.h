@@ -18,9 +18,28 @@
 extern "C"
  {
 #endif
+
+#define ZMT_POETRY_USE_RB_DATA 0
+
+#if ZMT_POETRY_USE_RB_DATA != 0
 #define BASE_POETRY_TEST_URL "http://open-api-test.readboy.com/shici/"
 #define BASE_POETRY_URL "http://open.readboy.com/shici/"
 #define BASE_DEVICE_IMEI "868750061006384"
+#else
+#define BASE_POETRY_TEST_URL "http://api.zhumengtech.cn:8866/"
+#define BASE_POETRY_URL "http://api.zhumengtech.cn:8866/"
+#define BASE_DEVICE_IMEI "868750061006384"
+#endif
+#define BASE_POETRY_GET_POEM_URL "poetry/get?gradeId=%d"
+#define BASE_POETRY_GET_POEM_ID_URL "poetry/get?id=%d"
+#define BASE_POETRY_GET_POEM_AUDIO_URL "%s/id/%d/name/%s"
+
+#define POETRY_POEM_FAVORITE_PATH "E:/zmt_poetry/favorite_list.bin"
+#define POETRY_POEM_LIST_INFO_PATH "E:/zmt_poetry/grade_%d/list.json"
+#define POETRY_POEM_LIST_AUDIO_PATH "E:/zmt_poetry/%s/%s_%d.mp3"
+
+#define POETRY_WIN_BG_COLOR GUI_RGB2RGB565(80, 162, 254)
+#define POETRY_TITLE_BG_COLOR GUI_RGB2RGB565(108, 181, 255)
 
 #define POETRY_LINE_WIDTH MMI_MAINSCREEN_WIDTH/6
 #define POETRY_LINE_HIGHT MMI_MAINSCREEN_HEIGHT/10
@@ -84,6 +103,8 @@ typedef struct
 typedef struct
 {
     char audio[200];
+    char * audio_data;
+    uint32 audio_len;
 }ZMT_POETRY_DETAIL_AUDIO_T;
 
 typedef struct
@@ -98,6 +119,8 @@ typedef struct
     char * translation;
     char * appreciation;
     uint8 sentences_num;
+    char * title_audio_buf;
+    uint32 title_audio_len;
     ZMT_POETRY_DETAIL_AUDIO_T *sen_audio[MAX_POETRY_SENTENCES_SIZE];
 } ZMT_POETRY_DETAIL_T;
 
