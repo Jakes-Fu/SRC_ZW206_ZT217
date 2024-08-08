@@ -2584,7 +2584,7 @@ uint16 YX_Net_Friend_Start(YX_APP_T * pMe)
     else
     {
         YX_LOCTION_Start(pMe,YX_LOCTION_TYPE_FRIEND,NULL,0);
-        //YX_Net_Send_PP(pMe,0);
+        YX_Net_Send_PP(pMe,0);
     }
     return YX_FRIEND_SEARCH;
 }

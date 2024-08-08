@@ -3393,6 +3393,7 @@ LOCAL MMI_RESULT_E  HandleZDT_FriendPPWinMsg(
                 GUI_POINT_T point = {FIND_FRIEND_SHAKE_FINDING_IMG_X, FIND_FRIEND_SHAKE_FINDING_IMG_Y};
                 GUIRES_DisplayImg(&point,PNULL,PNULL,win_id,friend_finding,&lcd_dev_info);              
                 HandleZDT_FriendPP_ShowTxt(wstr_search_1,NULL,NULL);
+				  YX_Net_Friend_Start(&g_yx_app);
             #else
                 GUIRES_DisplayImg(PNULL,&bg_rect,PNULL,win_id,IMAGE_PP_BG,&lcd_dev_info);
             #endif
@@ -3425,7 +3426,7 @@ LOCAL MMI_RESULT_E  HandleZDT_FriendPPWinMsg(
                  s_friend_pp_status = 0;
                 YX_Net_Friend_Start(&g_yx_app);
                 MMK_SendMsg(win_id, MSG_FULL_PAINT, PNULL);
-                s_friend_pp_status = 3;
+              //  s_friend_pp_status = 3;
 #ifdef ZDT_GSENSOR_SUPPORT
                 MMIZDT_FriendPPWin_GSENSOR_Start();
 #endif
