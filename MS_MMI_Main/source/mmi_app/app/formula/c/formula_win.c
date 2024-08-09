@@ -86,6 +86,7 @@ LOCAL int formula_player_volume = 0;
 LOCAL int formula_click_btn = 0;
 LOCAL int formula_click_up_idx = 0;
 LOCAL int formula_click_list_index = 0;
+LOCAL BOOLEAN formula_form_move = FALSE;
 
 LOCAL void MMI_CloseFormulaTableTipWin(void);
 LOCAL void FormulaWin_StopRing(void);
@@ -1454,6 +1455,16 @@ LOCAL MMI_RESULT_E HandleFormulaTableWinMsg(MMI_WIN_ID_T win_id,MMI_MESSAGE_ID_E
         case MSG_CTL_PENOK:
             {
                 FormulaTableWin_CTL_PENOK(win_id, param);
+            }
+            break;
+        case MSG_NOTIFY_FORM_DOWN:
+            {
+                formula_form_move = FALSE;
+            }
+            break;
+        case MSG_NOTIFY_FORM_MOVE:
+            {
+                formula_form_move = TRUE;
             }
             break;
         case MSG_TP_PRESS_UP:

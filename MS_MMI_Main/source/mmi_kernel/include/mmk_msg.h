@@ -85,6 +85,8 @@
 
 // form
 #define     MSG_NOTIFY_HIGHLIGHT                        0x27
+#define     MSG_NOTIFY_FORM_DOWN                      0x28
+#define     MSG_NOTIFY_FORM_MOVE                      0x29
 
 //edit
 #define     MSG_NOTIFY_LINE_CHANGE                      0x30

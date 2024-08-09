@@ -926,14 +926,19 @@ LOCAL MMI_RESULT_E FormHandleMsg(
         break;
         
 #ifdef TOUCH_PANEL_SUPPORT
-    case MSG_TP_PRESS_DOWN:
     case MSG_TP_PRESS_SHORT:
     case MSG_TP_PRESS_LONG:
-    case MSG_TP_PRESS_MOVE:
     case MSG_TP_PRESS_UP:
         result = CTRLFORM_DispatchTpMsg(form_ctrl_ptr,msg_id,param);
         break;
-        
+    case MSG_TP_PRESS_DOWN:
+        GUICTRL_PostNotify(base_ctrl_ptr->handle,MSG_NOTIFY_FORM_DOWN);
+        result = CTRLFORM_DispatchTpMsg(form_ctrl_ptr,msg_id,param);
+        break;
+    case MSG_TP_PRESS_MOVE:
+        GUICTRL_PostNotify(base_ctrl_ptr->handle,MSG_NOTIFY_FORM_MOVE);
+        result = CTRLFORM_DispatchTpMsg(form_ctrl_ptr,msg_id,param);
+        break;
     case MSG_CTL_PRGBOX_MOVEUP_ONE:
     case MSG_CTL_PRGBOX_MOVEDOWN_ONE:
     case MSG_CTL_PRGBOX_MOVEUP_PAGE:
