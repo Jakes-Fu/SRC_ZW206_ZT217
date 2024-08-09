@@ -1845,7 +1845,7 @@ LOCAL MMI_RESULT_E   HandleCcMoCallQueryWinMsg(
         case MSG_APP_CANCEL:
         {
           	MMK_CloseWin(win_id);
-			/* WatchCC_MoCallQueryWin_Exit();
+			/*WatchCC_MoCallQueryWin_Exit();
           MMICC_StopRecordInCall();
         WatchCC_EndedAndSaved_NoteWin_Enter();*/
 			break;
@@ -2223,6 +2223,7 @@ LOCAL MMI_RESULT_E   HandleCcVoiceCallConnectedWinMsg(
 		#ifdef ZTE_WATCH	
 			if(GUI_PointIsInRect(point,img_rect))
 			{
+
 				MMK_SendMsg(win_id, MSG_APP_CANCEL, PNULL);
 			}
 			else if(GUI_PointIsInRect(point,volume_state_rect))
@@ -2261,6 +2262,7 @@ LOCAL MMI_RESULT_E   HandleCcVoiceCallConnectedWinMsg(
 #endif
             break;
         } 
+		case MSG_APP_CANCEL:
 		case MSG_APP_OK:
 		case MSG_KEYUP_CANCEL:
         case MSG_BT_CANCEL_CALL:
