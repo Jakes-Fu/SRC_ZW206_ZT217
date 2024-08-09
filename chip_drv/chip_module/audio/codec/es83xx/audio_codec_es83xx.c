@@ -29,7 +29,7 @@ extern "C" {
 **                               Micro Define                                **
 **---------------------------------------------------------------------------*/
 #define CODEC_I2S_SLAVER 1
-#define EXTPA_OPEN_DELAY    20      //if pop, please modify there
+#define EXTPA_OPEN_DELAY    58      //if pop, please modify there
 
 /**---------------------------------------------------------------------------*
  **                         Data Structure                                    *
