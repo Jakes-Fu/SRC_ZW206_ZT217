@@ -884,7 +884,7 @@ static void __lcd_render(uint8_t *rgb565, int width, int height)
     if(w217->b_hangup_on)
     {
         cfg.start_x         = 90;
-        cfg.start_y         = 180 - 24;
+        cfg.start_y         = 226;//180 - 24;
         cfg.end_x           = cfg.start_x + 60 - 1;
         cfg.end_y           = cfg.start_y + 60 - 1;
         cfg.resolution      = LCD_RESOLUTION_RGB888;
