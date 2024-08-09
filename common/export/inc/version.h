@@ -37,7 +37,7 @@
 #define ZDT_SFR_MANUF 			"LT"
 #define ZDT_SFR_TYPE 			"LT-01"//"ZW35" //app 视频画面用这个名称判断240X284
 //软件版本号
-#define ZDT_SFR_SW_VER 			"LT-T01V1.0.1B01.0"//"ZTE_ZW35V1.0.0B17.0"//"ZW206_K1_RDA_240X284_V01"
+#define ZDT_SFR_SW_VER 			"LT-T01_ZMTV1.0.1"//"ZTE_ZW35V1.0.0B17.0"//"ZW206_K1_RDA_240X284_V01"
 //自注册编码
 #define ZDT_SFR_MODEL 			"NM-ESC-A"
 //硬件版本号
