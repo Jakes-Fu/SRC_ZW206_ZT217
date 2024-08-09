@@ -96,7 +96,7 @@ PUBLIC GUI_COLOR_T MMITHEME_GetAccentColorByOffset(MMITHEME_OFFSET_COLOR_E offse
 // for gui title
 
 #ifdef ZTE_WATCH
-#define MMI_KBD_LONG_KEY_VALUE          5000
+#define MMI_KBD_LONG_KEY_VALUE          2000
 #else
 #define MMI_KBD_LONG_KEY_VALUE          1500
 #endif
