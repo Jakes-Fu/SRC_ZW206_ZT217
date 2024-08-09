@@ -1575,7 +1575,7 @@ LOCAL void AUDDEV_Dual_SetSamplerat (uint32 uiSampleRate)
 
     AUDDEV_Dual_SetDownlinkMute(s_auddev_playinfo.mute);//bDownlink_mute
     AUDDEV_SetVolume(s_auddev_playinfo.volume, s_auddev_playinfo.app_type);          // spk Volume
-    AUDDEV_SetDevMode(AUDIO_DEVICE_MODE_HANDFREE);
+    //AUDDEV_SetDevMode(AUDIO_DEVICE_MODE_HANDFREE);
     AUDDEV_Record_SetVolume(s_auddev_playinfo.volume, s_auddev_playinfo.app_type);   // mic Volume
     AUDDEV_Dual_SetUplinkMute(s_auddev_recordinfo.mute);
     AUDDEV_Record_SetDevMode(AUDIO_DEVICE_MODE_HANDFREE);

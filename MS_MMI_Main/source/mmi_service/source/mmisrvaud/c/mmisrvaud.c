@@ -2017,12 +2017,12 @@ LOCAL MMISRVAUD_ROUTE_T GetShouldBeRoute(SRVAUD_ENTITY_INFO_T *entity_ptr)
         else
         {
             /*if default route is not 0, we set to default directly */
-            if(entity_ptr->audio.audio_info.default_route != 0)
+           // if(entity_ptr->audio.audio_info.default_route != 0)
             {
-                route = entity_ptr->audio.audio_info.default_route;
+              //  route = entity_ptr->audio.audio_info.default_route;
             }
             /*  But, if defautl route is 0, we look for the route from low bit to high bit by all_support_route */
-            else
+           // else
             {
                 uint32 i = 1;
                 uint32 val = entity_ptr->audio.audio_info.all_support_route;
