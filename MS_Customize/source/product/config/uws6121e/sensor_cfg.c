@@ -129,7 +129,8 @@ LOCAL const SENSOR_INFO_T* main_sensor_infor_tab[]=
     &g_bf30a2_yuv_info,
 #endif
     //&g_GC0310_yuv_info,
-    &g_GC032A_yuv_info,
+    &g_GC032A_F_yuv_info,
+    
     //&g_GC6133_yuv_info,
     //&g_GC2145_yuv_info,
     //&g_OV7676_yuv_info,
@@ -152,7 +153,7 @@ LOCAL const SENSOR_INFO_T* sub_sensor_infor_tab[]=
     //&g_GC0306_yuv_info,
     //&g_GC0310_yuv_info,
     //&g_GC6113_yuv_info,
-    &g_GC032A_F_yuv_info,
+    &g_GC032A_yuv_info,
     PNULL
 };
 
