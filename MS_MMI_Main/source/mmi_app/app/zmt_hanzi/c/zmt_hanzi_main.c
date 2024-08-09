@@ -1040,7 +1040,7 @@ LOCAL BOOLEAN Hanzi_ChatPlayMp3DataNotify(MMISRV_HANDLE_T handle, MMISRVMGR_NOTI
                 {
                     case MMISRVAUD_REPORT_END:  
                         {
-                            
+                            Hanzi_StopPlayMp3Data();
                         }
                         break;
                     default:
@@ -1063,7 +1063,7 @@ LOCAL void Hanzi_ChatPlayMp3Data(uint8 *data,uint32 data_len)
         req.is_auto_free = FALSE;
         req.notify = Hanzi_ListenPlayMp3DataNotify;
     }else{
-        req.is_auto_free = TRUE;
+        req.is_auto_free = FALSE;
         req.notify = Hanzi_ChatPlayMp3DataNotify;
     }
     req.pri = MMISRVAUD_PRI_NORMAL;

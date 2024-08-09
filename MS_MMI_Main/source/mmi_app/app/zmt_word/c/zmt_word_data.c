@@ -376,6 +376,9 @@ PUBLIC void Word_ReleaseBookInfo(void)
 PUBLIC void Word_ParseBookInfo(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id)
 {
     SCI_TRACE_LOW("%s: is_ok = %d, Rcv_len = %d", __FUNCTION__, is_ok, Rcv_len);
+    if(!MMK_IsOpenWin(MMI_WORD_MAIN_WIN_ID)){
+        return;
+    }
     if (is_ok && pRcv != PNULL && Rcv_len> 2)
     {
         uint8 i = 0;
@@ -710,6 +713,9 @@ LOCAL void Word_AddDetailInfo(WORD_BOOK_DETAIL_T * detail, cJSON* text, cJSON * 
 PUBLIC void Word_ParseChapterInfo(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id)
 {
     SCI_TRACE_LOW("%s: is_ok = %d, Rcv_len = %d", __FUNCTION__, is_ok, Rcv_len);
+    if(!MMK_IsOpenWin(MMI_WORD_CHAPTER_WIN_ID)){
+        return;
+    }
     if (is_ok && pRcv != PNULL && Rcv_len> 2)
     {
         uint8 i = 0;

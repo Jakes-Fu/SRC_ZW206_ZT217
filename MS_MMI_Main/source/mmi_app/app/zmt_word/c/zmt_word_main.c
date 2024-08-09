@@ -1152,7 +1152,7 @@ LOCAL BOOLEAN Word_ChatPlayMp3DataNotify(MMISRV_HANDLE_T handle, MMISRVMGR_NOTIF
                 {
                     case MMISRVAUD_REPORT_END:  
                         {
-                            
+                            Word_StopPlayMp3Data();
                         }
                         break;
                     default:
@@ -1175,7 +1175,7 @@ LOCAL void Word_ChatPlayMp3Data(uint8 *data,uint32 data_len)
         req.is_auto_free = FALSE;
         req.notify = Word_ListenPlayMp3DataNotify;
     }else{
-        req.is_auto_free = TRUE;
+        req.is_auto_free = FALSE;
         req.notify = Word_ChatPlayMp3DataNotify;
     }
     req.pri = MMISRVAUD_PRI_NORMAL;

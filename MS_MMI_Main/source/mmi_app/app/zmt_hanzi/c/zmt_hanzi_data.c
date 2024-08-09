@@ -393,6 +393,10 @@ PUBLIC void Hanzi_ReleaseBookInfo(void)
 
 PUBLIC void Hanzi_ParseBookInfo(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id)
 {
+    SCI_TRACE_LOW("%s: is_ok = %d, Rcv_len = %d", __FUNCTION__, is_ok, Rcv_len);
+    if(!MMK_IsOpenWin(MMI_HANZI_MAIN_WIN_ID)){
+        return;
+    }
     if (is_ok && pRcv != PNULL && Rcv_len> 2)
     {
         uint8 i = 0;
@@ -537,6 +541,9 @@ PUBLIC void Hanzi_ReleaseChapterInfo(void)
 
 PUBLIC void Hanzi_ParseChapterInfo(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id)
 {
+    if(!MMK_IsOpenWin(MMI_HANZI_CHAPTER_WIN_ID)){
+        return;
+    }
     if (is_ok && pRcv != PNULL && Rcv_len> 2)
     {
         uint8 i = 0;
@@ -842,6 +849,9 @@ LOCAL void Hanzi_AddDetailInfo(uint8 idx, cJSON* text, cJSON * audio, cJSON * pi
 
 PUBLIC void Hanzi_ParseDetailInfo(BOOLEAN is_ok,uint8 * pRcv,uint32 Rcv_len,uint32 err_id)
 {
+    if(!MMK_IsOpenWin(MMI_HANZI_DETAIL_WIN_ID)){
+        return;
+    }
     if (is_ok && pRcv != PNULL && Rcv_len> 2)
     {
         uint8 i = 0;
