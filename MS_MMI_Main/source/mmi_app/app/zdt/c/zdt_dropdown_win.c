@@ -1016,6 +1016,7 @@ LOCAL void updateRingVolume(MMI_WIN_ID_T win_id, uint32 cur_item_index)
 		}
 		WATCHCOM_ProgressBarByIndex(win_id, progress_volume_rect, cur_ring_volume_img_id,volume_item_total,res_progress_bg, res_progress_fg, res_progress_hand);
         MMIAPISET_SetCallRingVolume(cur_ring_volume_img_id);
+        MMIAPISET_SetMultimVolume(cur_ring_volume_img_id);
 		MMK_UpdateScreen();
 	}
 }
